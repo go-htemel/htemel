@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type EmbedElement struct {
-	attributes embedAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type EmbedElement struct {
 //
 // Spec Description: The embed element provides an integration point for an external application or interactive content.
 func Embed() *EmbedElement {
-	node := &EmbedElement{
-
-		attributes: make(embedAttrs),
-	}
+	node := &EmbedElement{}
 
 	return node
 }
 
+// EmbedIf creates a tag <embed> instance that is only rendered when condition is true.
 func EmbedIf(condition bool) *EmbedElement {
 	if condition {
 		return Embed()
@@ -35,7 +33,6 @@ func EmbedIf(condition bool) *EmbedElement {
 
 	return &EmbedElement{
 
-		attributes: make(embedAttrs),
 		skipRender: true,
 	}
 }
@@ -48,22 +45,49 @@ func (e *EmbedElement) With(fn func(*EmbedElement)) *EmbedElement {
 
 // AddClass appends a class to the element.
 func (e *EmbedElement) AddClass(classes ...string) *EmbedElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *EmbedElement) ToggleClass(class string, enable bool) *EmbedElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *EmbedElement) Attr(name, value string) *EmbedElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *EmbedElement) AttrUnsafe(name, value string) *EmbedElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *EmbedElement) BoolAttr(name string, on bool) *EmbedElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -89,9 +113,9 @@ const (
 type EmbedContenteditable string
 
 const (
+	EmbedContenteditableFalse         EmbedContenteditable = "false"
 	EmbedContenteditablePlaintextOnly EmbedContenteditable = "plaintext-only"
 	EmbedContenteditableTrue          EmbedContenteditable = "true"
-	EmbedContenteditableFalse         EmbedContenteditable = "false"
 	EmbedContenteditableEmpty         EmbedContenteditable = ""
 )
 
@@ -113,13 +137,13 @@ const (
 type EmbedEnterkeyhint string
 
 const (
+	EmbedEnterkeyhintDone     EmbedEnterkeyhint = "done"
+	EmbedEnterkeyhintEnter    EmbedEnterkeyhint = "enter"
 	EmbedEnterkeyhintGo       EmbedEnterkeyhint = "go"
 	EmbedEnterkeyhintNext     EmbedEnterkeyhint = "next"
 	EmbedEnterkeyhintPrevious EmbedEnterkeyhint = "previous"
 	EmbedEnterkeyhintSearch   EmbedEnterkeyhint = "search"
 	EmbedEnterkeyhintSend     EmbedEnterkeyhint = "send"
-	EmbedEnterkeyhintDone     EmbedEnterkeyhint = "done"
-	EmbedEnterkeyhintEnter    EmbedEnterkeyhint = "enter"
 )
 
 type EmbedHidden string
@@ -133,14 +157,14 @@ const (
 type EmbedInputmode string
 
 const (
-	EmbedInputmodeText    EmbedInputmode = "text"
-	EmbedInputmodeUrl     EmbedInputmode = "url"
 	EmbedInputmodeDecimal EmbedInputmode = "decimal"
 	EmbedInputmodeEmail   EmbedInputmode = "email"
 	EmbedInputmodeNone    EmbedInputmode = "none"
 	EmbedInputmodeNumeric EmbedInputmode = "numeric"
 	EmbedInputmodeSearch  EmbedInputmode = "search"
 	EmbedInputmodeTel     EmbedInputmode = "tel"
+	EmbedInputmodeText    EmbedInputmode = "text"
+	EmbedInputmodeUrl     EmbedInputmode = "url"
 )
 
 type EmbedSpellcheck string
@@ -167,28 +191,26 @@ const (
 	EmbedWritingsuggestionsEmpty EmbedWritingsuggestions = ""
 )
 
-type embedAttrs map[string]any
-
 func (e *EmbedElement) Src(s string) *EmbedElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *EmbedElement) Type(s string) *EmbedElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *EmbedElement) Width(i int) *EmbedElement {
-	e.attributes["width"] = i
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *EmbedElement) Height(i int) *EmbedElement {
-	e.attributes["height"] = i
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -196,41 +218,47 @@ func (e *EmbedElement) Height(i int) *EmbedElement {
 func (e *EmbedElement) AriaUnsafe(name string, s string) *EmbedElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *EmbedElement) Aria(name string, s string) *EmbedElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *EmbedElement) Autocapitalize(a EmbedAutocapitalize) *EmbedElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Autocorrect(a EmbedAutocorrect) *EmbedElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *EmbedElement) Autofocus(b bool) *EmbedElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *EmbedElement) Class(s ...string) *EmbedElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *EmbedElement) Contenteditable(a EmbedContenteditable) *EmbedElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -238,149 +266,157 @@ func (e *EmbedElement) Contenteditable(a EmbedContenteditable) *EmbedElement {
 func (e *EmbedElement) DataUnsafe(name string, s string) *EmbedElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *EmbedElement) Data(name string, s string) *EmbedElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *EmbedElement) Dir(a EmbedDir) *EmbedElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Draggable(a EmbedDraggable) *EmbedElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Enterkeyhint(a EmbedEnterkeyhint) *EmbedElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Hidden(a EmbedHidden) *EmbedElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Id(s string) *EmbedElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *EmbedElement) Inert(b bool) *EmbedElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *EmbedElement) Inputmode(a EmbedInputmode) *EmbedElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Itemid(s string) *EmbedElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *EmbedElement) Itemprop(s ...string) *EmbedElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *EmbedElement) Itemref(s ...string) *EmbedElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *EmbedElement) Itemscope(b bool) *EmbedElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *EmbedElement) Itemtype(s ...string) *EmbedElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *EmbedElement) Lang(s string) *EmbedElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *EmbedElement) Nonce(s string) *EmbedElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *EmbedElement) Popover(s string) *EmbedElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *EmbedElement) Role(s string) *EmbedElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *EmbedElement) Slot(s string) *EmbedElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *EmbedElement) Spellcheck(a EmbedSpellcheck) *EmbedElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Style(s string) *EmbedElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *EmbedElement) Tabindex(i int) *EmbedElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *EmbedElement) Title(s string) *EmbedElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *EmbedElement) Translate(a EmbedTranslate) *EmbedElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *EmbedElement) Writingsuggestions(a EmbedWritingsuggestions) *EmbedElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -398,18 +434,7 @@ func (e *EmbedElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<embed")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type MapElement struct {
-	attributes mapAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Map creates a tag <map> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The map element, in conjunction with an img element and any area element descendants, defines an image map. The element represents its children.
 func Map(children ...htemel.Node) *MapElement {
 	node := &MapElement{
-		children:   children,
-		attributes: make(mapAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// MapIf creates a tag <map> instance that is only rendered when condition is true.
 func MapIf(condition bool, children ...htemel.Node) *MapElement {
 	if condition {
 		return Map(children...)
@@ -36,16 +38,16 @@ func MapIf(condition bool, children ...htemel.Node) *MapElement {
 
 	return &MapElement{
 		children:   children,
-		attributes: make(mapAttrs),
 		skipRender: true,
 	}
 }
 
-func MapTernary(condition bool, true htemel.Node, false htemel.Node) *MapElement {
+// MapTernary creates a tag <map> containing then when condition is true, otherwise containing otherwise.
+func MapTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MapElement {
 	if condition {
-		return Map(true)
+		return Map(then)
 	}
-	return Map(false)
+	return Map(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *MapElement) With(fn func(*MapElement)) *MapElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *MapElement) Text(text string) *MapElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *MapElement) Textf(format string, args ...any) *MapElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *MapElement) If(cond bool, child htemel.Node) *MapElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *MapElement) IfElse(cond bool, then, els htemel.Node) *MapElement {
 	if cond {
 		e.Children(then)
@@ -97,50 +101,77 @@ func (e *MapElement) IfThen(cond bool, fn func(*MapElement)) *MapElement {
 
 // AddClass appends a class to the element.
 func (e *MapElement) AddClass(classes ...string) *MapElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *MapElement) ToggleClass(class string, enable bool) *MapElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *MapElement) Attr(name, value string) *MapElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *MapElement) AttrUnsafe(name, value string) *MapElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *MapElement) BoolAttr(name string, on bool) *MapElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type MapAutocapitalize string
 
 const (
-	MapAutocapitalizeOn         MapAutocapitalize = "on"
-	MapAutocapitalizeSentences  MapAutocapitalize = "sentences"
-	MapAutocapitalizeWords      MapAutocapitalize = "words"
 	MapAutocapitalizeCharacters MapAutocapitalize = "characters"
 	MapAutocapitalizeNone       MapAutocapitalize = "none"
 	MapAutocapitalizeOff        MapAutocapitalize = "off"
+	MapAutocapitalizeOn         MapAutocapitalize = "on"
+	MapAutocapitalizeSentences  MapAutocapitalize = "sentences"
+	MapAutocapitalizeWords      MapAutocapitalize = "words"
 )
 
 type MapAutocorrect string
 
 const (
-	MapAutocorrectOn    MapAutocorrect = "on"
 	MapAutocorrectOff   MapAutocorrect = "off"
+	MapAutocorrectOn    MapAutocorrect = "on"
 	MapAutocorrectEmpty MapAutocorrect = ""
 )
 
 type MapContenteditable string
 
 const (
+	MapContenteditableFalse         MapContenteditable = "false"
 	MapContenteditablePlaintextOnly MapContenteditable = "plaintext-only"
 	MapContenteditableTrue          MapContenteditable = "true"
-	MapContenteditableFalse         MapContenteditable = "false"
 	MapContenteditableEmpty         MapContenteditable = ""
 )
 
@@ -155,8 +186,8 @@ const (
 type MapDraggable string
 
 const (
-	MapDraggableTrue  MapDraggable = "true"
 	MapDraggableFalse MapDraggable = "false"
+	MapDraggableTrue  MapDraggable = "true"
 )
 
 type MapEnterkeyhint string
@@ -182,14 +213,14 @@ const (
 type MapInputmode string
 
 const (
+	MapInputmodeDecimal MapInputmode = "decimal"
+	MapInputmodeEmail   MapInputmode = "email"
 	MapInputmodeNone    MapInputmode = "none"
 	MapInputmodeNumeric MapInputmode = "numeric"
 	MapInputmodeSearch  MapInputmode = "search"
 	MapInputmodeTel     MapInputmode = "tel"
 	MapInputmodeText    MapInputmode = "text"
 	MapInputmodeUrl     MapInputmode = "url"
-	MapInputmodeDecimal MapInputmode = "decimal"
-	MapInputmodeEmail   MapInputmode = "email"
 )
 
 type MapSpellcheck string
@@ -216,10 +247,8 @@ const (
 	MapWritingsuggestionsEmpty MapWritingsuggestions = ""
 )
 
-type mapAttrs map[string]any
-
 func (e *MapElement) Name(s string) *MapElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
@@ -227,41 +256,47 @@ func (e *MapElement) Name(s string) *MapElement {
 func (e *MapElement) AriaUnsafe(name string, s string) *MapElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MapElement) Aria(name string, s string) *MapElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MapElement) Autocapitalize(a MapAutocapitalize) *MapElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *MapElement) Autocorrect(a MapAutocorrect) *MapElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MapElement) Autofocus(b bool) *MapElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *MapElement) Class(s ...string) *MapElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MapElement) Contenteditable(a MapContenteditable) *MapElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -269,149 +304,157 @@ func (e *MapElement) Contenteditable(a MapContenteditable) *MapElement {
 func (e *MapElement) DataUnsafe(name string, s string) *MapElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MapElement) Data(name string, s string) *MapElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MapElement) Dir(a MapDir) *MapElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *MapElement) Draggable(a MapDraggable) *MapElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *MapElement) Enterkeyhint(a MapEnterkeyhint) *MapElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *MapElement) Hidden(a MapHidden) *MapElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *MapElement) Id(s string) *MapElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MapElement) Inert(b bool) *MapElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *MapElement) Inputmode(a MapInputmode) *MapElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *MapElement) Itemid(s string) *MapElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *MapElement) Itemprop(s ...string) *MapElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MapElement) Itemref(s ...string) *MapElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MapElement) Itemscope(b bool) *MapElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *MapElement) Itemtype(s ...string) *MapElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MapElement) Lang(s string) *MapElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *MapElement) Nonce(s string) *MapElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *MapElement) Popover(s string) *MapElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *MapElement) Role(s string) *MapElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *MapElement) Slot(s string) *MapElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *MapElement) Spellcheck(a MapSpellcheck) *MapElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *MapElement) Style(s string) *MapElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *MapElement) Tabindex(i int) *MapElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *MapElement) Title(s string) *MapElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *MapElement) Translate(a MapTranslate) *MapElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *MapElement) Writingsuggestions(a MapWritingsuggestions) *MapElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -429,18 +472,7 @@ func (e *MapElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<map")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

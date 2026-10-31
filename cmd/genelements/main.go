@@ -37,6 +37,7 @@ func generate(pkg string, e *spec.Element) error {
 		generators.IfThenFunc,
 		generators.AddClassFunc,
 		generators.ToggleClassFunc,
+		generators.AttrFunc,
 		generators.BuildAttributes(e),
 		generators.RenderFunc,
 	}

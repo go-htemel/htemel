@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type SElement struct {
-	attributes sAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // S creates a tag <s> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The s element represents contents that are no longer accurate or no longer relevant.
 func S(children ...htemel.Node) *SElement {
 	node := &SElement{
-		children:   children,
-		attributes: make(sAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// SIf creates a tag <s> instance that is only rendered when condition is true.
 func SIf(condition bool, children ...htemel.Node) *SElement {
 	if condition {
 		return S(children...)
@@ -36,16 +38,16 @@ func SIf(condition bool, children ...htemel.Node) *SElement {
 
 	return &SElement{
 		children:   children,
-		attributes: make(sAttrs),
 		skipRender: true,
 	}
 }
 
-func STernary(condition bool, true htemel.Node, false htemel.Node) *SElement {
+// STernary creates a tag <s> containing then when condition is true, otherwise containing otherwise.
+func STernary(condition bool, then htemel.Node, otherwise htemel.Node) *SElement {
 	if condition {
-		return S(true)
+		return S(then)
 	}
-	return S(false)
+	return S(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *SElement) With(fn func(*SElement)) *SElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *SElement) Text(text string) *SElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *SElement) Textf(format string, args ...any) *SElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *SElement) If(cond bool, child htemel.Node) *SElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *SElement) IfElse(cond bool, then, els htemel.Node) *SElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *SElement) IfThen(cond bool, fn func(*SElement)) *SElement {
 
 // AddClass appends a class to the element.
 func (e *SElement) AddClass(classes ...string) *SElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *SElement) ToggleClass(class string, enable bool) *SElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *SElement) Attr(name, value string) *SElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *SElement) AttrUnsafe(name, value string) *SElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *SElement) BoolAttr(name string, on bool) *SElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -182,14 +213,14 @@ const (
 type SInputmode string
 
 const (
-	SInputmodeSearch  SInputmode = "search"
-	SInputmodeTel     SInputmode = "tel"
-	SInputmodeText    SInputmode = "text"
-	SInputmodeUrl     SInputmode = "url"
 	SInputmodeDecimal SInputmode = "decimal"
 	SInputmodeEmail   SInputmode = "email"
 	SInputmodeNone    SInputmode = "none"
 	SInputmodeNumeric SInputmode = "numeric"
+	SInputmodeSearch  SInputmode = "search"
+	SInputmodeTel     SInputmode = "tel"
+	SInputmodeText    SInputmode = "text"
+	SInputmodeUrl     SInputmode = "url"
 )
 
 type SSpellcheck string
@@ -216,46 +247,50 @@ const (
 	SWritingsuggestionsEmpty SWritingsuggestions = ""
 )
 
-type sAttrs map[string]any
-
 func (e *SElement) AriaUnsafe(name string, s string) *SElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SElement) Aria(name string, s string) *SElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SElement) Autocapitalize(a SAutocapitalize) *SElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *SElement) Autocorrect(a SAutocorrect) *SElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SElement) Autofocus(b bool) *SElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *SElement) Class(s ...string) *SElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SElement) Contenteditable(a SContenteditable) *SElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *SElement) Contenteditable(a SContenteditable) *SElement {
 func (e *SElement) DataUnsafe(name string, s string) *SElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SElement) Data(name string, s string) *SElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SElement) Dir(a SDir) *SElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *SElement) Draggable(a SDraggable) *SElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *SElement) Enterkeyhint(a SEnterkeyhint) *SElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *SElement) Hidden(a SHidden) *SElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *SElement) Id(s string) *SElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SElement) Inert(b bool) *SElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *SElement) Inputmode(a SInputmode) *SElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *SElement) Itemid(s string) *SElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *SElement) Itemprop(s ...string) *SElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SElement) Itemref(s ...string) *SElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SElement) Itemscope(b bool) *SElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *SElement) Itemtype(s ...string) *SElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SElement) Lang(s string) *SElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *SElement) Nonce(s string) *SElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *SElement) Popover(s string) *SElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *SElement) Role(s string) *SElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *SElement) Slot(s string) *SElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *SElement) Spellcheck(a SSpellcheck) *SElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *SElement) Style(s string) *SElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *SElement) Tabindex(i int) *SElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SElement) Title(s string) *SElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *SElement) Translate(a STranslate) *SElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *SElement) Writingsuggestions(a SWritingsuggestions) *SElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *SElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<s")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

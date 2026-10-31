@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type BaseElement struct {
-	attributes baseAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type BaseElement struct {
 //
 // Spec Description: The base element allows authors to specify the document base URL for the purposes of parsing URLs, and the name of the default navigable for the purposes of following hyperlinks. The element does not represent any content beyond this information.
 func Base() *BaseElement {
-	node := &BaseElement{
-
-		attributes: make(baseAttrs),
-	}
+	node := &BaseElement{}
 
 	return node
 }
 
+// BaseIf creates a tag <base> instance that is only rendered when condition is true.
 func BaseIf(condition bool) *BaseElement {
 	if condition {
 		return Base()
@@ -35,7 +33,6 @@ func BaseIf(condition bool) *BaseElement {
 
 	return &BaseElement{
 
-		attributes: make(baseAttrs),
 		skipRender: true,
 	}
 }
@@ -48,22 +45,49 @@ func (e *BaseElement) With(fn func(*BaseElement)) *BaseElement {
 
 // AddClass appends a class to the element.
 func (e *BaseElement) AddClass(classes ...string) *BaseElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *BaseElement) ToggleClass(class string, enable bool) *BaseElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *BaseElement) Attr(name, value string) *BaseElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *BaseElement) AttrUnsafe(name, value string) *BaseElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *BaseElement) BoolAttr(name string, on bool) *BaseElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -113,13 +137,13 @@ const (
 type BaseEnterkeyhint string
 
 const (
-	BaseEnterkeyhintPrevious BaseEnterkeyhint = "previous"
-	BaseEnterkeyhintSearch   BaseEnterkeyhint = "search"
-	BaseEnterkeyhintSend     BaseEnterkeyhint = "send"
 	BaseEnterkeyhintDone     BaseEnterkeyhint = "done"
 	BaseEnterkeyhintEnter    BaseEnterkeyhint = "enter"
 	BaseEnterkeyhintGo       BaseEnterkeyhint = "go"
 	BaseEnterkeyhintNext     BaseEnterkeyhint = "next"
+	BaseEnterkeyhintPrevious BaseEnterkeyhint = "previous"
+	BaseEnterkeyhintSearch   BaseEnterkeyhint = "search"
+	BaseEnterkeyhintSend     BaseEnterkeyhint = "send"
 )
 
 type BaseHidden string
@@ -167,16 +191,14 @@ const (
 	BaseWritingsuggestionsEmpty BaseWritingsuggestions = ""
 )
 
-type baseAttrs map[string]any
-
 func (e *BaseElement) Href(s string) *BaseElement {
-	e.attributes["href"] = s
+	e.attributes.Set("href", s)
 
 	return e
 }
 
 func (e *BaseElement) Target(s string) *BaseElement {
-	e.attributes["target"] = s
+	e.attributes.Set("target", s)
 
 	return e
 }
@@ -184,41 +206,47 @@ func (e *BaseElement) Target(s string) *BaseElement {
 func (e *BaseElement) AriaUnsafe(name string, s string) *BaseElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BaseElement) Aria(name string, s string) *BaseElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BaseElement) Autocapitalize(a BaseAutocapitalize) *BaseElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Autocorrect(a BaseAutocorrect) *BaseElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BaseElement) Autofocus(b bool) *BaseElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *BaseElement) Class(s ...string) *BaseElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BaseElement) Contenteditable(a BaseContenteditable) *BaseElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -226,149 +254,157 @@ func (e *BaseElement) Contenteditable(a BaseContenteditable) *BaseElement {
 func (e *BaseElement) DataUnsafe(name string, s string) *BaseElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BaseElement) Data(name string, s string) *BaseElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BaseElement) Dir(a BaseDir) *BaseElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Draggable(a BaseDraggable) *BaseElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Enterkeyhint(a BaseEnterkeyhint) *BaseElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Hidden(a BaseHidden) *BaseElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Id(s string) *BaseElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BaseElement) Inert(b bool) *BaseElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *BaseElement) Inputmode(a BaseInputmode) *BaseElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Itemid(s string) *BaseElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *BaseElement) Itemprop(s ...string) *BaseElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BaseElement) Itemref(s ...string) *BaseElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BaseElement) Itemscope(b bool) *BaseElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *BaseElement) Itemtype(s ...string) *BaseElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BaseElement) Lang(s string) *BaseElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *BaseElement) Nonce(s string) *BaseElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *BaseElement) Popover(s string) *BaseElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *BaseElement) Role(s string) *BaseElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *BaseElement) Slot(s string) *BaseElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *BaseElement) Spellcheck(a BaseSpellcheck) *BaseElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Style(s string) *BaseElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *BaseElement) Tabindex(i int) *BaseElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *BaseElement) Title(s string) *BaseElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *BaseElement) Translate(a BaseTranslate) *BaseElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *BaseElement) Writingsuggestions(a BaseWritingsuggestions) *BaseElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -386,18 +422,7 @@ func (e *BaseElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<base")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

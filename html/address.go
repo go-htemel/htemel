@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type AddressElement struct {
-	attributes addressAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Address creates a tag <address> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The address element represents the contact information for its nearest article or body element ancestor. If that is the body element, then the contact information applies to the document as a whole.
 func Address(children ...htemel.Node) *AddressElement {
 	node := &AddressElement{
-		children:   children,
-		attributes: make(addressAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// AddressIf creates a tag <address> instance that is only rendered when condition is true.
 func AddressIf(condition bool, children ...htemel.Node) *AddressElement {
 	if condition {
 		return Address(children...)
@@ -36,16 +38,16 @@ func AddressIf(condition bool, children ...htemel.Node) *AddressElement {
 
 	return &AddressElement{
 		children:   children,
-		attributes: make(addressAttrs),
 		skipRender: true,
 	}
 }
 
-func AddressTernary(condition bool, true htemel.Node, false htemel.Node) *AddressElement {
+// AddressTernary creates a tag <address> containing then when condition is true, otherwise containing otherwise.
+func AddressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AddressElement {
 	if condition {
-		return Address(true)
+		return Address(then)
 	}
-	return Address(false)
+	return Address(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *AddressElement) With(fn func(*AddressElement)) *AddressElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *AddressElement) Text(text string) *AddressElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *AddressElement) Textf(format string, args ...any) *AddressElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *AddressElement) If(cond bool, child htemel.Node) *AddressElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *AddressElement) IfElse(cond bool, then, els htemel.Node) *AddressElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *AddressElement) IfThen(cond bool, fn func(*AddressElement)) *AddressEle
 
 // AddClass appends a class to the element.
 func (e *AddressElement) AddClass(classes ...string) *AddressElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *AddressElement) ToggleClass(class string, enable bool) *AddressElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *AddressElement) Attr(name, value string) *AddressElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *AddressElement) AttrUnsafe(name, value string) *AddressElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *AddressElement) BoolAttr(name string, on bool) *AddressElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type AddressAutocapitalize string
 
 const (
+	AddressAutocapitalizeCharacters AddressAutocapitalize = "characters"
 	AddressAutocapitalizeNone       AddressAutocapitalize = "none"
 	AddressAutocapitalizeOff        AddressAutocapitalize = "off"
 	AddressAutocapitalizeOn         AddressAutocapitalize = "on"
 	AddressAutocapitalizeSentences  AddressAutocapitalize = "sentences"
 	AddressAutocapitalizeWords      AddressAutocapitalize = "words"
-	AddressAutocapitalizeCharacters AddressAutocapitalize = "characters"
 )
 
 type AddressAutocorrect string
@@ -162,13 +193,13 @@ const (
 type AddressEnterkeyhint string
 
 const (
-	AddressEnterkeyhintPrevious AddressEnterkeyhint = "previous"
-	AddressEnterkeyhintSearch   AddressEnterkeyhint = "search"
-	AddressEnterkeyhintSend     AddressEnterkeyhint = "send"
 	AddressEnterkeyhintDone     AddressEnterkeyhint = "done"
 	AddressEnterkeyhintEnter    AddressEnterkeyhint = "enter"
 	AddressEnterkeyhintGo       AddressEnterkeyhint = "go"
 	AddressEnterkeyhintNext     AddressEnterkeyhint = "next"
+	AddressEnterkeyhintPrevious AddressEnterkeyhint = "previous"
+	AddressEnterkeyhintSearch   AddressEnterkeyhint = "search"
+	AddressEnterkeyhintSend     AddressEnterkeyhint = "send"
 )
 
 type AddressHidden string
@@ -203,59 +234,63 @@ const (
 type AddressTranslate string
 
 const (
-	AddressTranslateYes   AddressTranslate = "yes"
 	AddressTranslateNo    AddressTranslate = "no"
+	AddressTranslateYes   AddressTranslate = "yes"
 	AddressTranslateEmpty AddressTranslate = ""
 )
 
 type AddressWritingsuggestions string
 
 const (
-	AddressWritingsuggestionsTrue  AddressWritingsuggestions = "true"
 	AddressWritingsuggestionsFalse AddressWritingsuggestions = "false"
+	AddressWritingsuggestionsTrue  AddressWritingsuggestions = "true"
 	AddressWritingsuggestionsEmpty AddressWritingsuggestions = ""
 )
-
-type addressAttrs map[string]any
 
 func (e *AddressElement) AriaUnsafe(name string, s string) *AddressElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AddressElement) Aria(name string, s string) *AddressElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AddressElement) Autocapitalize(a AddressAutocapitalize) *AddressElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Autocorrect(a AddressAutocorrect) *AddressElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AddressElement) Autofocus(b bool) *AddressElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *AddressElement) Class(s ...string) *AddressElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AddressElement) Contenteditable(a AddressContenteditable) *AddressElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *AddressElement) Contenteditable(a AddressContenteditable) *AddressEleme
 func (e *AddressElement) DataUnsafe(name string, s string) *AddressElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AddressElement) Data(name string, s string) *AddressElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AddressElement) Dir(a AddressDir) *AddressElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Draggable(a AddressDraggable) *AddressElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Enterkeyhint(a AddressEnterkeyhint) *AddressElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Hidden(a AddressHidden) *AddressElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Id(s string) *AddressElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AddressElement) Inert(b bool) *AddressElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *AddressElement) Inputmode(a AddressInputmode) *AddressElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Itemid(s string) *AddressElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *AddressElement) Itemprop(s ...string) *AddressElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AddressElement) Itemref(s ...string) *AddressElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AddressElement) Itemscope(b bool) *AddressElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *AddressElement) Itemtype(s ...string) *AddressElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AddressElement) Lang(s string) *AddressElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *AddressElement) Nonce(s string) *AddressElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *AddressElement) Popover(s string) *AddressElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *AddressElement) Role(s string) *AddressElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *AddressElement) Slot(s string) *AddressElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *AddressElement) Spellcheck(a AddressSpellcheck) *AddressElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Style(s string) *AddressElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *AddressElement) Tabindex(i int) *AddressElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *AddressElement) Title(s string) *AddressElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *AddressElement) Translate(a AddressTranslate) *AddressElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *AddressElement) Writingsuggestions(a AddressWritingsuggestions) *AddressElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *AddressElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<address")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

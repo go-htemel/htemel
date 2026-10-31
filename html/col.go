@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ColElement struct {
-	attributes colAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type ColElement struct {
 //
 // Spec Description: If a col element has a parent and that is a colgroup element that itself has a parent that is a table element, then the col element represents one or more columns in the column group represented by that colgroup.
 func Col() *ColElement {
-	node := &ColElement{
-
-		attributes: make(colAttrs),
-	}
+	node := &ColElement{}
 
 	return node
 }
 
+// ColIf creates a tag <col> instance that is only rendered when condition is true.
 func ColIf(condition bool) *ColElement {
 	if condition {
 		return Col()
@@ -35,7 +33,6 @@ func ColIf(condition bool) *ColElement {
 
 	return &ColElement{
 
-		attributes: make(colAttrs),
 		skipRender: true,
 	}
 }
@@ -48,34 +45,61 @@ func (e *ColElement) With(fn func(*ColElement)) *ColElement {
 
 // AddClass appends a class to the element.
 func (e *ColElement) AddClass(classes ...string) *ColElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ColElement) ToggleClass(class string, enable bool) *ColElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ColElement) Attr(name, value string) *ColElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ColElement) AttrUnsafe(name, value string) *ColElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ColElement) BoolAttr(name string, on bool) *ColElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type ColAutocapitalize string
 
 const (
+	ColAutocapitalizeCharacters ColAutocapitalize = "characters"
+	ColAutocapitalizeNone       ColAutocapitalize = "none"
 	ColAutocapitalizeOff        ColAutocapitalize = "off"
 	ColAutocapitalizeOn         ColAutocapitalize = "on"
 	ColAutocapitalizeSentences  ColAutocapitalize = "sentences"
 	ColAutocapitalizeWords      ColAutocapitalize = "words"
-	ColAutocapitalizeCharacters ColAutocapitalize = "characters"
-	ColAutocapitalizeNone       ColAutocapitalize = "none"
 )
 
 type ColAutocorrect string
@@ -113,13 +137,13 @@ const (
 type ColEnterkeyhint string
 
 const (
+	ColEnterkeyhintDone     ColEnterkeyhint = "done"
+	ColEnterkeyhintEnter    ColEnterkeyhint = "enter"
 	ColEnterkeyhintGo       ColEnterkeyhint = "go"
 	ColEnterkeyhintNext     ColEnterkeyhint = "next"
 	ColEnterkeyhintPrevious ColEnterkeyhint = "previous"
 	ColEnterkeyhintSearch   ColEnterkeyhint = "search"
 	ColEnterkeyhintSend     ColEnterkeyhint = "send"
-	ColEnterkeyhintDone     ColEnterkeyhint = "done"
-	ColEnterkeyhintEnter    ColEnterkeyhint = "enter"
 )
 
 type ColHidden string
@@ -133,21 +157,21 @@ const (
 type ColInputmode string
 
 const (
+	ColInputmodeDecimal ColInputmode = "decimal"
+	ColInputmodeEmail   ColInputmode = "email"
 	ColInputmodeNone    ColInputmode = "none"
 	ColInputmodeNumeric ColInputmode = "numeric"
 	ColInputmodeSearch  ColInputmode = "search"
 	ColInputmodeTel     ColInputmode = "tel"
 	ColInputmodeText    ColInputmode = "text"
 	ColInputmodeUrl     ColInputmode = "url"
-	ColInputmodeDecimal ColInputmode = "decimal"
-	ColInputmodeEmail   ColInputmode = "email"
 )
 
 type ColSpellcheck string
 
 const (
-	ColSpellcheckTrue  ColSpellcheck = "true"
 	ColSpellcheckFalse ColSpellcheck = "false"
+	ColSpellcheckTrue  ColSpellcheck = "true"
 	ColSpellcheckEmpty ColSpellcheck = ""
 )
 
@@ -167,10 +191,8 @@ const (
 	ColWritingsuggestionsEmpty ColWritingsuggestions = ""
 )
 
-type colAttrs map[string]any
-
 func (e *ColElement) Span(i int) *ColElement {
-	e.attributes["span"] = i
+	e.attributes.Set("span", strconv.Itoa(i))
 
 	return e
 }
@@ -178,41 +200,47 @@ func (e *ColElement) Span(i int) *ColElement {
 func (e *ColElement) AriaUnsafe(name string, s string) *ColElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ColElement) Aria(name string, s string) *ColElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ColElement) Autocapitalize(a ColAutocapitalize) *ColElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ColElement) Autocorrect(a ColAutocorrect) *ColElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColElement) Autofocus(b bool) *ColElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ColElement) Class(s ...string) *ColElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColElement) Contenteditable(a ColContenteditable) *ColElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -220,149 +248,157 @@ func (e *ColElement) Contenteditable(a ColContenteditable) *ColElement {
 func (e *ColElement) DataUnsafe(name string, s string) *ColElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ColElement) Data(name string, s string) *ColElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ColElement) Dir(a ColDir) *ColElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ColElement) Draggable(a ColDraggable) *ColElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ColElement) Enterkeyhint(a ColEnterkeyhint) *ColElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ColElement) Hidden(a ColHidden) *ColElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ColElement) Id(s string) *ColElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColElement) Inert(b bool) *ColElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ColElement) Inputmode(a ColInputmode) *ColElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ColElement) Itemid(s string) *ColElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ColElement) Itemprop(s ...string) *ColElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColElement) Itemref(s ...string) *ColElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColElement) Itemscope(b bool) *ColElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ColElement) Itemtype(s ...string) *ColElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColElement) Lang(s string) *ColElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ColElement) Nonce(s string) *ColElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ColElement) Popover(s string) *ColElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ColElement) Role(s string) *ColElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ColElement) Slot(s string) *ColElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ColElement) Spellcheck(a ColSpellcheck) *ColElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ColElement) Style(s string) *ColElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ColElement) Tabindex(i int) *ColElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ColElement) Title(s string) *ColElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ColElement) Translate(a ColTranslate) *ColElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ColElement) Writingsuggestions(a ColWritingsuggestions) *ColElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -380,18 +416,7 @@ func (e *ColElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<col")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

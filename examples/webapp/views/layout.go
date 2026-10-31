@@ -19,7 +19,7 @@ func Layout(data PageData, children ...Node) Node {
 	}
 
 	layout := Group(
-		GenericVoid("!DOCTYPE", map[string]any{"html": true}),
+		Doctype(),
 		Html().Class("bg-zinc-50 dark:bg-zinc-950").Children(
 			Head().Children(
 				Meta().Charset("utf-8"),

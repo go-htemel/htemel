@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type InsElement struct {
-	attributes insAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Ins creates a tag <ins> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The ins element represents an addition to the document.
 func Ins(children ...htemel.Node) *InsElement {
 	node := &InsElement{
-		children:   children,
-		attributes: make(insAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// InsIf creates a tag <ins> instance that is only rendered when condition is true.
 func InsIf(condition bool, children ...htemel.Node) *InsElement {
 	if condition {
 		return Ins(children...)
@@ -36,16 +38,16 @@ func InsIf(condition bool, children ...htemel.Node) *InsElement {
 
 	return &InsElement{
 		children:   children,
-		attributes: make(insAttrs),
 		skipRender: true,
 	}
 }
 
-func InsTernary(condition bool, true htemel.Node, false htemel.Node) *InsElement {
+// InsTernary creates a tag <ins> containing then when condition is true, otherwise containing otherwise.
+func InsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *InsElement {
 	if condition {
-		return Ins(true)
+		return Ins(then)
 	}
-	return Ins(false)
+	return Ins(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *InsElement) With(fn func(*InsElement)) *InsElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *InsElement) Text(text string) *InsElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *InsElement) Textf(format string, args ...any) *InsElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *InsElement) If(cond bool, child htemel.Node) *InsElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *InsElement) IfElse(cond bool, then, els htemel.Node) *InsElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *InsElement) IfThen(cond bool, fn func(*InsElement)) *InsElement {
 
 // AddClass appends a class to the element.
 func (e *InsElement) AddClass(classes ...string) *InsElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *InsElement) ToggleClass(class string, enable bool) *InsElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *InsElement) Attr(name, value string) *InsElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *InsElement) AttrUnsafe(name, value string) *InsElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *InsElement) BoolAttr(name string, on bool) *InsElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -147,9 +178,9 @@ const (
 type InsDir string
 
 const (
+	InsDirAuto InsDir = "auto"
 	InsDirLtr  InsDir = "ltr"
 	InsDirRtl  InsDir = "rtl"
-	InsDirAuto InsDir = "auto"
 )
 
 type InsDraggable string
@@ -162,13 +193,13 @@ const (
 type InsEnterkeyhint string
 
 const (
-	InsEnterkeyhintPrevious InsEnterkeyhint = "previous"
-	InsEnterkeyhintSearch   InsEnterkeyhint = "search"
-	InsEnterkeyhintSend     InsEnterkeyhint = "send"
 	InsEnterkeyhintDone     InsEnterkeyhint = "done"
 	InsEnterkeyhintEnter    InsEnterkeyhint = "enter"
 	InsEnterkeyhintGo       InsEnterkeyhint = "go"
 	InsEnterkeyhintNext     InsEnterkeyhint = "next"
+	InsEnterkeyhintPrevious InsEnterkeyhint = "previous"
+	InsEnterkeyhintSearch   InsEnterkeyhint = "search"
+	InsEnterkeyhintSend     InsEnterkeyhint = "send"
 )
 
 type InsHidden string
@@ -182,14 +213,14 @@ const (
 type InsInputmode string
 
 const (
+	InsInputmodeDecimal InsInputmode = "decimal"
+	InsInputmodeEmail   InsInputmode = "email"
+	InsInputmodeNone    InsInputmode = "none"
 	InsInputmodeNumeric InsInputmode = "numeric"
 	InsInputmodeSearch  InsInputmode = "search"
 	InsInputmodeTel     InsInputmode = "tel"
 	InsInputmodeText    InsInputmode = "text"
 	InsInputmodeUrl     InsInputmode = "url"
-	InsInputmodeDecimal InsInputmode = "decimal"
-	InsInputmodeEmail   InsInputmode = "email"
-	InsInputmodeNone    InsInputmode = "none"
 )
 
 type InsSpellcheck string
@@ -216,16 +247,14 @@ const (
 	InsWritingsuggestionsEmpty InsWritingsuggestions = ""
 )
 
-type insAttrs map[string]any
-
 func (e *InsElement) Cite(s string) *InsElement {
-	e.attributes["cite"] = s
+	e.attributes.Set("cite", s)
 
 	return e
 }
 
 func (e *InsElement) Datetime(s string) *InsElement {
-	e.attributes["datetime"] = s
+	e.attributes.Set("datetime", s)
 
 	return e
 }
@@ -233,41 +262,47 @@ func (e *InsElement) Datetime(s string) *InsElement {
 func (e *InsElement) AriaUnsafe(name string, s string) *InsElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *InsElement) Aria(name string, s string) *InsElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *InsElement) Autocapitalize(a InsAutocapitalize) *InsElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *InsElement) Autocorrect(a InsAutocorrect) *InsElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InsElement) Autofocus(b bool) *InsElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *InsElement) Class(s ...string) *InsElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InsElement) Contenteditable(a InsContenteditable) *InsElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -275,149 +310,157 @@ func (e *InsElement) Contenteditable(a InsContenteditable) *InsElement {
 func (e *InsElement) DataUnsafe(name string, s string) *InsElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *InsElement) Data(name string, s string) *InsElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *InsElement) Dir(a InsDir) *InsElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *InsElement) Draggable(a InsDraggable) *InsElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *InsElement) Enterkeyhint(a InsEnterkeyhint) *InsElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *InsElement) Hidden(a InsHidden) *InsElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *InsElement) Id(s string) *InsElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InsElement) Inert(b bool) *InsElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *InsElement) Inputmode(a InsInputmode) *InsElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *InsElement) Itemid(s string) *InsElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *InsElement) Itemprop(s ...string) *InsElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InsElement) Itemref(s ...string) *InsElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InsElement) Itemscope(b bool) *InsElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *InsElement) Itemtype(s ...string) *InsElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InsElement) Lang(s string) *InsElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *InsElement) Nonce(s string) *InsElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *InsElement) Popover(s string) *InsElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *InsElement) Role(s string) *InsElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *InsElement) Slot(s string) *InsElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *InsElement) Spellcheck(a InsSpellcheck) *InsElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *InsElement) Style(s string) *InsElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *InsElement) Tabindex(i int) *InsElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InsElement) Title(s string) *InsElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *InsElement) Translate(a InsTranslate) *InsElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *InsElement) Writingsuggestions(a InsWritingsuggestions) *InsElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -435,18 +478,7 @@ func (e *InsElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<ins")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

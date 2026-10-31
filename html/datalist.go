@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type DatalistElement struct {
-	attributes datalistAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Datalist creates a tag <datalist> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The datalist element represents a set of option elements that represent predefined options for other controls. In the rendering, the datalist element represents nothing and it, along with its children, should be hidden.
 func Datalist(children ...htemel.Node) *DatalistElement {
 	node := &DatalistElement{
-		children:   children,
-		attributes: make(datalistAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// DatalistIf creates a tag <datalist> instance that is only rendered when condition is true.
 func DatalistIf(condition bool, children ...htemel.Node) *DatalistElement {
 	if condition {
 		return Datalist(children...)
@@ -36,16 +38,16 @@ func DatalistIf(condition bool, children ...htemel.Node) *DatalistElement {
 
 	return &DatalistElement{
 		children:   children,
-		attributes: make(datalistAttrs),
 		skipRender: true,
 	}
 }
 
-func DatalistTernary(condition bool, true htemel.Node, false htemel.Node) *DatalistElement {
+// DatalistTernary creates a tag <datalist> containing then when condition is true, otherwise containing otherwise.
+func DatalistTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DatalistElement {
 	if condition {
-		return Datalist(true)
+		return Datalist(then)
 	}
-	return Datalist(false)
+	return Datalist(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *DatalistElement) With(fn func(*DatalistElement)) *DatalistElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *DatalistElement) Text(text string) *DatalistElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *DatalistElement) Textf(format string, args ...any) *DatalistElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *DatalistElement) If(cond bool, child htemel.Node) *DatalistElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *DatalistElement) IfElse(cond bool, then, els htemel.Node) *DatalistElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *DatalistElement) IfThen(cond bool, fn func(*DatalistElement)) *Datalist
 
 // AddClass appends a class to the element.
 func (e *DatalistElement) AddClass(classes ...string) *DatalistElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *DatalistElement) ToggleClass(class string, enable bool) *DatalistElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *DatalistElement) Attr(name, value string) *DatalistElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *DatalistElement) AttrUnsafe(name, value string) *DatalistElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *DatalistElement) BoolAttr(name string, on bool) *DatalistElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type DatalistEnterkeyhint string
 
 const (
+	DatalistEnterkeyhintDone     DatalistEnterkeyhint = "done"
 	DatalistEnterkeyhintEnter    DatalistEnterkeyhint = "enter"
 	DatalistEnterkeyhintGo       DatalistEnterkeyhint = "go"
 	DatalistEnterkeyhintNext     DatalistEnterkeyhint = "next"
 	DatalistEnterkeyhintPrevious DatalistEnterkeyhint = "previous"
 	DatalistEnterkeyhintSearch   DatalistEnterkeyhint = "search"
 	DatalistEnterkeyhintSend     DatalistEnterkeyhint = "send"
-	DatalistEnterkeyhintDone     DatalistEnterkeyhint = "done"
 )
 
 type DatalistHidden string
@@ -182,14 +213,14 @@ const (
 type DatalistInputmode string
 
 const (
+	DatalistInputmodeDecimal DatalistInputmode = "decimal"
+	DatalistInputmodeEmail   DatalistInputmode = "email"
 	DatalistInputmodeNone    DatalistInputmode = "none"
 	DatalistInputmodeNumeric DatalistInputmode = "numeric"
 	DatalistInputmodeSearch  DatalistInputmode = "search"
 	DatalistInputmodeTel     DatalistInputmode = "tel"
 	DatalistInputmodeText    DatalistInputmode = "text"
 	DatalistInputmodeUrl     DatalistInputmode = "url"
-	DatalistInputmodeDecimal DatalistInputmode = "decimal"
-	DatalistInputmodeEmail   DatalistInputmode = "email"
 )
 
 type DatalistSpellcheck string
@@ -216,46 +247,50 @@ const (
 	DatalistWritingsuggestionsEmpty DatalistWritingsuggestions = ""
 )
 
-type datalistAttrs map[string]any
-
 func (e *DatalistElement) AriaUnsafe(name string, s string) *DatalistElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DatalistElement) Aria(name string, s string) *DatalistElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DatalistElement) Autocapitalize(a DatalistAutocapitalize) *DatalistElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Autocorrect(a DatalistAutocorrect) *DatalistElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DatalistElement) Autofocus(b bool) *DatalistElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *DatalistElement) Class(s ...string) *DatalistElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DatalistElement) Contenteditable(a DatalistContenteditable) *DatalistElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *DatalistElement) Contenteditable(a DatalistContenteditable) *DatalistEl
 func (e *DatalistElement) DataUnsafe(name string, s string) *DatalistElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DatalistElement) Data(name string, s string) *DatalistElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DatalistElement) Dir(a DatalistDir) *DatalistElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Draggable(a DatalistDraggable) *DatalistElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Enterkeyhint(a DatalistEnterkeyhint) *DatalistElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Hidden(a DatalistHidden) *DatalistElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Id(s string) *DatalistElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DatalistElement) Inert(b bool) *DatalistElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *DatalistElement) Inputmode(a DatalistInputmode) *DatalistElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Itemid(s string) *DatalistElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *DatalistElement) Itemprop(s ...string) *DatalistElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DatalistElement) Itemref(s ...string) *DatalistElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DatalistElement) Itemscope(b bool) *DatalistElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *DatalistElement) Itemtype(s ...string) *DatalistElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DatalistElement) Lang(s string) *DatalistElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *DatalistElement) Nonce(s string) *DatalistElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *DatalistElement) Popover(s string) *DatalistElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *DatalistElement) Role(s string) *DatalistElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *DatalistElement) Slot(s string) *DatalistElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *DatalistElement) Spellcheck(a DatalistSpellcheck) *DatalistElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Style(s string) *DatalistElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *DatalistElement) Tabindex(i int) *DatalistElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *DatalistElement) Title(s string) *DatalistElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *DatalistElement) Translate(a DatalistTranslate) *DatalistElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *DatalistElement) Writingsuggestions(a DatalistWritingsuggestions) *DatalistElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *DatalistElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<datalist")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

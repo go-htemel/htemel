@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type BdiElement struct {
-	attributes bdiAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Bdi creates a tag <bdi> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The bdi element represents a span of text that is to be isolated from its surroundings for the purposes of bidirectional text formatting. [BIDI]
 func Bdi(children ...htemel.Node) *BdiElement {
 	node := &BdiElement{
-		children:   children,
-		attributes: make(bdiAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// BdiIf creates a tag <bdi> instance that is only rendered when condition is true.
 func BdiIf(condition bool, children ...htemel.Node) *BdiElement {
 	if condition {
 		return Bdi(children...)
@@ -36,16 +38,16 @@ func BdiIf(condition bool, children ...htemel.Node) *BdiElement {
 
 	return &BdiElement{
 		children:   children,
-		attributes: make(bdiAttrs),
 		skipRender: true,
 	}
 }
 
-func BdiTernary(condition bool, true htemel.Node, false htemel.Node) *BdiElement {
+// BdiTernary creates a tag <bdi> containing then when condition is true, otherwise containing otherwise.
+func BdiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdiElement {
 	if condition {
-		return Bdi(true)
+		return Bdi(then)
 	}
-	return Bdi(false)
+	return Bdi(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *BdiElement) With(fn func(*BdiElement)) *BdiElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *BdiElement) Text(text string) *BdiElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *BdiElement) Textf(format string, args ...any) *BdiElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *BdiElement) If(cond bool, child htemel.Node) *BdiElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *BdiElement) IfElse(cond bool, then, els htemel.Node) *BdiElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *BdiElement) IfThen(cond bool, fn func(*BdiElement)) *BdiElement {
 
 // AddClass appends a class to the element.
 func (e *BdiElement) AddClass(classes ...string) *BdiElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *BdiElement) ToggleClass(class string, enable bool) *BdiElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *BdiElement) Attr(name, value string) *BdiElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *BdiElement) AttrUnsafe(name, value string) *BdiElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *BdiElement) BoolAttr(name string, on bool) *BdiElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type BdiAutocapitalize string
 
 const (
+	BdiAutocapitalizeCharacters BdiAutocapitalize = "characters"
 	BdiAutocapitalizeNone       BdiAutocapitalize = "none"
 	BdiAutocapitalizeOff        BdiAutocapitalize = "off"
 	BdiAutocapitalizeOn         BdiAutocapitalize = "on"
 	BdiAutocapitalizeSentences  BdiAutocapitalize = "sentences"
 	BdiAutocapitalizeWords      BdiAutocapitalize = "words"
-	BdiAutocapitalizeCharacters BdiAutocapitalize = "characters"
 )
 
 type BdiAutocorrect string
@@ -138,9 +169,9 @@ const (
 type BdiContenteditable string
 
 const (
-	BdiContenteditableTrue          BdiContenteditable = "true"
 	BdiContenteditableFalse         BdiContenteditable = "false"
 	BdiContenteditablePlaintextOnly BdiContenteditable = "plaintext-only"
+	BdiContenteditableTrue          BdiContenteditable = "true"
 	BdiContenteditableEmpty         BdiContenteditable = ""
 )
 
@@ -162,34 +193,34 @@ const (
 type BdiEnterkeyhint string
 
 const (
+	BdiEnterkeyhintDone     BdiEnterkeyhint = "done"
 	BdiEnterkeyhintEnter    BdiEnterkeyhint = "enter"
 	BdiEnterkeyhintGo       BdiEnterkeyhint = "go"
 	BdiEnterkeyhintNext     BdiEnterkeyhint = "next"
 	BdiEnterkeyhintPrevious BdiEnterkeyhint = "previous"
 	BdiEnterkeyhintSearch   BdiEnterkeyhint = "search"
 	BdiEnterkeyhintSend     BdiEnterkeyhint = "send"
-	BdiEnterkeyhintDone     BdiEnterkeyhint = "done"
 )
 
 type BdiHidden string
 
 const (
-	BdiHiddenUntilFound BdiHidden = "until-found"
 	BdiHiddenHidden     BdiHidden = "hidden"
+	BdiHiddenUntilFound BdiHidden = "until-found"
 	BdiHiddenEmpty      BdiHidden = ""
 )
 
 type BdiInputmode string
 
 const (
-	BdiInputmodeText    BdiInputmode = "text"
-	BdiInputmodeUrl     BdiInputmode = "url"
 	BdiInputmodeDecimal BdiInputmode = "decimal"
 	BdiInputmodeEmail   BdiInputmode = "email"
 	BdiInputmodeNone    BdiInputmode = "none"
 	BdiInputmodeNumeric BdiInputmode = "numeric"
 	BdiInputmodeSearch  BdiInputmode = "search"
 	BdiInputmodeTel     BdiInputmode = "tel"
+	BdiInputmodeText    BdiInputmode = "text"
+	BdiInputmodeUrl     BdiInputmode = "url"
 )
 
 type BdiSpellcheck string
@@ -216,46 +247,50 @@ const (
 	BdiWritingsuggestionsEmpty BdiWritingsuggestions = ""
 )
 
-type bdiAttrs map[string]any
-
 func (e *BdiElement) AriaUnsafe(name string, s string) *BdiElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BdiElement) Aria(name string, s string) *BdiElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BdiElement) Autocapitalize(a BdiAutocapitalize) *BdiElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Autocorrect(a BdiAutocorrect) *BdiElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdiElement) Autofocus(b bool) *BdiElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *BdiElement) Class(s ...string) *BdiElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdiElement) Contenteditable(a BdiContenteditable) *BdiElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *BdiElement) Contenteditable(a BdiContenteditable) *BdiElement {
 func (e *BdiElement) DataUnsafe(name string, s string) *BdiElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BdiElement) Data(name string, s string) *BdiElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BdiElement) Dir(a BdiDir) *BdiElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Draggable(a BdiDraggable) *BdiElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Enterkeyhint(a BdiEnterkeyhint) *BdiElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Hidden(a BdiHidden) *BdiElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Id(s string) *BdiElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdiElement) Inert(b bool) *BdiElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *BdiElement) Inputmode(a BdiInputmode) *BdiElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Itemid(s string) *BdiElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *BdiElement) Itemprop(s ...string) *BdiElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdiElement) Itemref(s ...string) *BdiElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdiElement) Itemscope(b bool) *BdiElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *BdiElement) Itemtype(s ...string) *BdiElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdiElement) Lang(s string) *BdiElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *BdiElement) Nonce(s string) *BdiElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *BdiElement) Popover(s string) *BdiElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *BdiElement) Role(s string) *BdiElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *BdiElement) Slot(s string) *BdiElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *BdiElement) Spellcheck(a BdiSpellcheck) *BdiElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Style(s string) *BdiElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *BdiElement) Tabindex(i int) *BdiElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *BdiElement) Title(s string) *BdiElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *BdiElement) Translate(a BdiTranslate) *BdiElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *BdiElement) Writingsuggestions(a BdiWritingsuggestions) *BdiElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *BdiElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<bdi")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

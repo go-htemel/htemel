@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type VideoElement struct {
-	attributes videoAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Video creates a tag <video> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: A video element is used for playing videos or movies, and audio files with captions.
 func Video(children ...htemel.Node) *VideoElement {
 	node := &VideoElement{
-		children:   children,
-		attributes: make(videoAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// VideoIf creates a tag <video> instance that is only rendered when condition is true.
 func VideoIf(condition bool, children ...htemel.Node) *VideoElement {
 	if condition {
 		return Video(children...)
@@ -36,16 +38,16 @@ func VideoIf(condition bool, children ...htemel.Node) *VideoElement {
 
 	return &VideoElement{
 		children:   children,
-		attributes: make(videoAttrs),
 		skipRender: true,
 	}
 }
 
-func VideoTernary(condition bool, true htemel.Node, false htemel.Node) *VideoElement {
+// VideoTernary creates a tag <video> containing then when condition is true, otherwise containing otherwise.
+func VideoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *VideoElement {
 	if condition {
-		return Video(true)
+		return Video(then)
 	}
-	return Video(false)
+	return Video(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *VideoElement) With(fn func(*VideoElement)) *VideoElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *VideoElement) Text(text string) *VideoElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *VideoElement) Textf(format string, args ...any) *VideoElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *VideoElement) If(cond bool, child htemel.Node) *VideoElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *VideoElement) IfElse(cond bool, then, els htemel.Node) *VideoElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *VideoElement) IfThen(cond bool, fn func(*VideoElement)) *VideoElement {
 
 // AddClass appends a class to the element.
 func (e *VideoElement) AddClass(classes ...string) *VideoElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *VideoElement) ToggleClass(class string, enable bool) *VideoElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *VideoElement) Attr(name, value string) *VideoElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *VideoElement) AttrUnsafe(name, value string) *VideoElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *VideoElement) BoolAttr(name string, on bool) *VideoElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -179,20 +210,20 @@ const (
 type VideoEnterkeyhint string
 
 const (
+	VideoEnterkeyhintDone     VideoEnterkeyhint = "done"
 	VideoEnterkeyhintEnter    VideoEnterkeyhint = "enter"
 	VideoEnterkeyhintGo       VideoEnterkeyhint = "go"
 	VideoEnterkeyhintNext     VideoEnterkeyhint = "next"
 	VideoEnterkeyhintPrevious VideoEnterkeyhint = "previous"
 	VideoEnterkeyhintSearch   VideoEnterkeyhint = "search"
 	VideoEnterkeyhintSend     VideoEnterkeyhint = "send"
-	VideoEnterkeyhintDone     VideoEnterkeyhint = "done"
 )
 
 type VideoHidden string
 
 const (
-	VideoHiddenUntilFound VideoHidden = "until-found"
 	VideoHiddenHidden     VideoHidden = "hidden"
+	VideoHiddenUntilFound VideoHidden = "until-found"
 	VideoHiddenEmpty      VideoHidden = ""
 )
 
@@ -212,8 +243,8 @@ const (
 type VideoSpellcheck string
 
 const (
-	VideoSpellcheckTrue  VideoSpellcheck = "true"
 	VideoSpellcheckFalse VideoSpellcheck = "false"
+	VideoSpellcheckTrue  VideoSpellcheck = "true"
 	VideoSpellcheckEmpty VideoSpellcheck = ""
 )
 
@@ -233,70 +264,78 @@ const (
 	VideoWritingsuggestionsEmpty VideoWritingsuggestions = ""
 )
 
-type videoAttrs map[string]any
-
 func (e *VideoElement) Src(s string) *VideoElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *VideoElement) Crossorigin(a VideoCrossorigin) *VideoElement {
-	e.attributes["crossorigin"] = a
+	e.attributes.Set("crossorigin", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Poster(s string) *VideoElement {
-	e.attributes["poster"] = s
+	e.attributes.Set("poster", s)
 
 	return e
 }
 
 func (e *VideoElement) Preload(a VideoPreload) *VideoElement {
-	e.attributes["preload"] = a
+	e.attributes.Set("preload", string(a))
 
 	return e
 }
 
+// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Autoplay(b bool) *VideoElement {
-	e.attributes["autoplay"] = b
+	e.attributes.SetBool("autoplay", b)
 
 	return e
 }
 
+// Playsinline sets the boolean attribute "playsinline". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Playsinline(b bool) *VideoElement {
-	e.attributes["playsinline"] = b
+	e.attributes.SetBool("playsinline", b)
 
 	return e
 }
 
+// Loop sets the boolean attribute "loop". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Loop(b bool) *VideoElement {
-	e.attributes["loop"] = b
+	e.attributes.SetBool("loop", b)
 
 	return e
 }
 
+// Muted sets the boolean attribute "muted". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Muted(b bool) *VideoElement {
-	e.attributes["muted"] = b
+	e.attributes.SetBool("muted", b)
 
 	return e
 }
 
+// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Controls(b bool) *VideoElement {
-	e.attributes["controls"] = b
+	e.attributes.SetBool("controls", b)
 
 	return e
 }
 
 func (e *VideoElement) Width(i int) *VideoElement {
-	e.attributes["width"] = i
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *VideoElement) Height(i int) *VideoElement {
-	e.attributes["height"] = i
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -304,41 +343,47 @@ func (e *VideoElement) Height(i int) *VideoElement {
 func (e *VideoElement) AriaUnsafe(name string, s string) *VideoElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *VideoElement) Aria(name string, s string) *VideoElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *VideoElement) Autocapitalize(a VideoAutocapitalize) *VideoElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Autocorrect(a VideoAutocorrect) *VideoElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Autofocus(b bool) *VideoElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *VideoElement) Class(s ...string) *VideoElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VideoElement) Contenteditable(a VideoContenteditable) *VideoElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -346,149 +391,157 @@ func (e *VideoElement) Contenteditable(a VideoContenteditable) *VideoElement {
 func (e *VideoElement) DataUnsafe(name string, s string) *VideoElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *VideoElement) Data(name string, s string) *VideoElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *VideoElement) Dir(a VideoDir) *VideoElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Draggable(a VideoDraggable) *VideoElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Enterkeyhint(a VideoEnterkeyhint) *VideoElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Hidden(a VideoHidden) *VideoElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Id(s string) *VideoElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Inert(b bool) *VideoElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *VideoElement) Inputmode(a VideoInputmode) *VideoElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Itemid(s string) *VideoElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *VideoElement) Itemprop(s ...string) *VideoElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VideoElement) Itemref(s ...string) *VideoElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Itemscope(b bool) *VideoElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *VideoElement) Itemtype(s ...string) *VideoElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VideoElement) Lang(s string) *VideoElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *VideoElement) Nonce(s string) *VideoElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *VideoElement) Popover(s string) *VideoElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *VideoElement) Role(s string) *VideoElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *VideoElement) Slot(s string) *VideoElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *VideoElement) Spellcheck(a VideoSpellcheck) *VideoElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Style(s string) *VideoElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *VideoElement) Tabindex(i int) *VideoElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *VideoElement) Title(s string) *VideoElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *VideoElement) Translate(a VideoTranslate) *VideoElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *VideoElement) Writingsuggestions(a VideoWritingsuggestions) *VideoElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -506,18 +559,7 @@ func (e *VideoElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<video")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

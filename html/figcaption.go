@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type FigcaptionElement struct {
-	attributes figcaptionAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Figcaption creates a tag <figcaption> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The figcaption element represents a caption or legend for the rest of the contents of the figcaption element's parent figure element, if any.
 func Figcaption(children ...htemel.Node) *FigcaptionElement {
 	node := &FigcaptionElement{
-		children:   children,
-		attributes: make(figcaptionAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// FigcaptionIf creates a tag <figcaption> instance that is only rendered when condition is true.
 func FigcaptionIf(condition bool, children ...htemel.Node) *FigcaptionElement {
 	if condition {
 		return Figcaption(children...)
@@ -36,16 +38,16 @@ func FigcaptionIf(condition bool, children ...htemel.Node) *FigcaptionElement {
 
 	return &FigcaptionElement{
 		children:   children,
-		attributes: make(figcaptionAttrs),
 		skipRender: true,
 	}
 }
 
-func FigcaptionTernary(condition bool, true htemel.Node, false htemel.Node) *FigcaptionElement {
+// FigcaptionTernary creates a tag <figcaption> containing then when condition is true, otherwise containing otherwise.
+func FigcaptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FigcaptionElement {
 	if condition {
-		return Figcaption(true)
+		return Figcaption(then)
 	}
-	return Figcaption(false)
+	return Figcaption(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *FigcaptionElement) With(fn func(*FigcaptionElement)) *FigcaptionElement
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *FigcaptionElement) Text(text string) *FigcaptionElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *FigcaptionElement) Textf(format string, args ...any) *FigcaptionElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *FigcaptionElement) If(cond bool, child htemel.Node) *FigcaptionElement 
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *FigcaptionElement) IfElse(cond bool, then, els htemel.Node) *FigcaptionElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *FigcaptionElement) IfThen(cond bool, fn func(*FigcaptionElement)) *Figc
 
 // AddClass appends a class to the element.
 func (e *FigcaptionElement) AddClass(classes ...string) *FigcaptionElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *FigcaptionElement) ToggleClass(class string, enable bool) *FigcaptionElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *FigcaptionElement) Attr(name, value string) *FigcaptionElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *FigcaptionElement) AttrUnsafe(name, value string) *FigcaptionElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *FigcaptionElement) BoolAttr(name string, on bool) *FigcaptionElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -138,9 +169,9 @@ const (
 type FigcaptionContenteditable string
 
 const (
-	FigcaptionContenteditableTrue          FigcaptionContenteditable = "true"
 	FigcaptionContenteditableFalse         FigcaptionContenteditable = "false"
 	FigcaptionContenteditablePlaintextOnly FigcaptionContenteditable = "plaintext-only"
+	FigcaptionContenteditableTrue          FigcaptionContenteditable = "true"
 	FigcaptionContenteditableEmpty         FigcaptionContenteditable = ""
 )
 
@@ -182,6 +213,7 @@ const (
 type FigcaptionInputmode string
 
 const (
+	FigcaptionInputmodeDecimal FigcaptionInputmode = "decimal"
 	FigcaptionInputmodeEmail   FigcaptionInputmode = "email"
 	FigcaptionInputmodeNone    FigcaptionInputmode = "none"
 	FigcaptionInputmodeNumeric FigcaptionInputmode = "numeric"
@@ -189,7 +221,6 @@ const (
 	FigcaptionInputmodeTel     FigcaptionInputmode = "tel"
 	FigcaptionInputmodeText    FigcaptionInputmode = "text"
 	FigcaptionInputmodeUrl     FigcaptionInputmode = "url"
-	FigcaptionInputmodeDecimal FigcaptionInputmode = "decimal"
 )
 
 type FigcaptionSpellcheck string
@@ -203,8 +234,8 @@ const (
 type FigcaptionTranslate string
 
 const (
-	FigcaptionTranslateYes   FigcaptionTranslate = "yes"
 	FigcaptionTranslateNo    FigcaptionTranslate = "no"
+	FigcaptionTranslateYes   FigcaptionTranslate = "yes"
 	FigcaptionTranslateEmpty FigcaptionTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	FigcaptionWritingsuggestionsEmpty FigcaptionWritingsuggestions = ""
 )
 
-type figcaptionAttrs map[string]any
-
 func (e *FigcaptionElement) AriaUnsafe(name string, s string) *FigcaptionElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Aria(name string, s string) *FigcaptionElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *FigcaptionElement) Autocapitalize(a FigcaptionAutocapitalize) *FigcaptionElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Autocorrect(a FigcaptionAutocorrect) *FigcaptionElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FigcaptionElement) Autofocus(b bool) *FigcaptionElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *FigcaptionElement) Class(s ...string) *FigcaptionElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FigcaptionElement) Contenteditable(a FigcaptionContenteditable) *FigcaptionElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *FigcaptionElement) Contenteditable(a FigcaptionContenteditable) *Figcap
 func (e *FigcaptionElement) DataUnsafe(name string, s string) *FigcaptionElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Data(name string, s string) *FigcaptionElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *FigcaptionElement) Dir(a FigcaptionDir) *FigcaptionElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Draggable(a FigcaptionDraggable) *FigcaptionElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Enterkeyhint(a FigcaptionEnterkeyhint) *FigcaptionElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Hidden(a FigcaptionHidden) *FigcaptionElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Id(s string) *FigcaptionElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FigcaptionElement) Inert(b bool) *FigcaptionElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *FigcaptionElement) Inputmode(a FigcaptionInputmode) *FigcaptionElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Itemid(s string) *FigcaptionElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Itemprop(s ...string) *FigcaptionElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FigcaptionElement) Itemref(s ...string) *FigcaptionElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FigcaptionElement) Itemscope(b bool) *FigcaptionElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *FigcaptionElement) Itemtype(s ...string) *FigcaptionElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FigcaptionElement) Lang(s string) *FigcaptionElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Nonce(s string) *FigcaptionElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Popover(s string) *FigcaptionElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Role(s string) *FigcaptionElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Slot(s string) *FigcaptionElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Spellcheck(a FigcaptionSpellcheck) *FigcaptionElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Style(s string) *FigcaptionElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Tabindex(i int) *FigcaptionElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *FigcaptionElement) Title(s string) *FigcaptionElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *FigcaptionElement) Translate(a FigcaptionTranslate) *FigcaptionElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *FigcaptionElement) Writingsuggestions(a FigcaptionWritingsuggestions) *FigcaptionElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *FigcaptionElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<figcaption")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

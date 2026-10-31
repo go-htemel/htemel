@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type OptgroupElement struct {
-	attributes optgroupAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Optgroup creates a tag <optgroup> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The optgroup element represents a group of option elements with a common label.
 func Optgroup(children ...htemel.Node) *OptgroupElement {
 	node := &OptgroupElement{
-		children:   children,
-		attributes: make(optgroupAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// OptgroupIf creates a tag <optgroup> instance that is only rendered when condition is true.
 func OptgroupIf(condition bool, children ...htemel.Node) *OptgroupElement {
 	if condition {
 		return Optgroup(children...)
@@ -36,16 +38,16 @@ func OptgroupIf(condition bool, children ...htemel.Node) *OptgroupElement {
 
 	return &OptgroupElement{
 		children:   children,
-		attributes: make(optgroupAttrs),
 		skipRender: true,
 	}
 }
 
-func OptgroupTernary(condition bool, true htemel.Node, false htemel.Node) *OptgroupElement {
+// OptgroupTernary creates a tag <optgroup> containing then when condition is true, otherwise containing otherwise.
+func OptgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OptgroupElement {
 	if condition {
-		return Optgroup(true)
+		return Optgroup(then)
 	}
-	return Optgroup(false)
+	return Optgroup(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *OptgroupElement) With(fn func(*OptgroupElement)) *OptgroupElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *OptgroupElement) Text(text string) *OptgroupElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *OptgroupElement) Textf(format string, args ...any) *OptgroupElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *OptgroupElement) If(cond bool, child htemel.Node) *OptgroupElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *OptgroupElement) IfElse(cond bool, then, els htemel.Node) *OptgroupElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *OptgroupElement) IfThen(cond bool, fn func(*OptgroupElement)) *Optgroup
 
 // AddClass appends a class to the element.
 func (e *OptgroupElement) AddClass(classes ...string) *OptgroupElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *OptgroupElement) ToggleClass(class string, enable bool) *OptgroupElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *OptgroupElement) Attr(name, value string) *OptgroupElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *OptgroupElement) AttrUnsafe(name, value string) *OptgroupElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *OptgroupElement) BoolAttr(name string, on bool) *OptgroupElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type OptgroupAutocapitalize string
 
 const (
+	OptgroupAutocapitalizeCharacters OptgroupAutocapitalize = "characters"
 	OptgroupAutocapitalizeNone       OptgroupAutocapitalize = "none"
 	OptgroupAutocapitalizeOff        OptgroupAutocapitalize = "off"
 	OptgroupAutocapitalizeOn         OptgroupAutocapitalize = "on"
 	OptgroupAutocapitalizeSentences  OptgroupAutocapitalize = "sentences"
 	OptgroupAutocapitalizeWords      OptgroupAutocapitalize = "words"
-	OptgroupAutocapitalizeCharacters OptgroupAutocapitalize = "characters"
 )
 
 type OptgroupAutocorrect string
@@ -162,13 +193,13 @@ const (
 type OptgroupEnterkeyhint string
 
 const (
-	OptgroupEnterkeyhintPrevious OptgroupEnterkeyhint = "previous"
-	OptgroupEnterkeyhintSearch   OptgroupEnterkeyhint = "search"
-	OptgroupEnterkeyhintSend     OptgroupEnterkeyhint = "send"
 	OptgroupEnterkeyhintDone     OptgroupEnterkeyhint = "done"
 	OptgroupEnterkeyhintEnter    OptgroupEnterkeyhint = "enter"
 	OptgroupEnterkeyhintGo       OptgroupEnterkeyhint = "go"
 	OptgroupEnterkeyhintNext     OptgroupEnterkeyhint = "next"
+	OptgroupEnterkeyhintPrevious OptgroupEnterkeyhint = "previous"
+	OptgroupEnterkeyhintSearch   OptgroupEnterkeyhint = "search"
+	OptgroupEnterkeyhintSend     OptgroupEnterkeyhint = "send"
 )
 
 type OptgroupHidden string
@@ -182,21 +213,21 @@ const (
 type OptgroupInputmode string
 
 const (
+	OptgroupInputmodeDecimal OptgroupInputmode = "decimal"
+	OptgroupInputmodeEmail   OptgroupInputmode = "email"
+	OptgroupInputmodeNone    OptgroupInputmode = "none"
 	OptgroupInputmodeNumeric OptgroupInputmode = "numeric"
 	OptgroupInputmodeSearch  OptgroupInputmode = "search"
 	OptgroupInputmodeTel     OptgroupInputmode = "tel"
 	OptgroupInputmodeText    OptgroupInputmode = "text"
 	OptgroupInputmodeUrl     OptgroupInputmode = "url"
-	OptgroupInputmodeDecimal OptgroupInputmode = "decimal"
-	OptgroupInputmodeEmail   OptgroupInputmode = "email"
-	OptgroupInputmodeNone    OptgroupInputmode = "none"
 )
 
 type OptgroupSpellcheck string
 
 const (
-	OptgroupSpellcheckTrue  OptgroupSpellcheck = "true"
 	OptgroupSpellcheckFalse OptgroupSpellcheck = "false"
+	OptgroupSpellcheckTrue  OptgroupSpellcheck = "true"
 	OptgroupSpellcheckEmpty OptgroupSpellcheck = ""
 )
 
@@ -211,21 +242,21 @@ const (
 type OptgroupWritingsuggestions string
 
 const (
-	OptgroupWritingsuggestionsTrue  OptgroupWritingsuggestions = "true"
 	OptgroupWritingsuggestionsFalse OptgroupWritingsuggestions = "false"
+	OptgroupWritingsuggestionsTrue  OptgroupWritingsuggestions = "true"
 	OptgroupWritingsuggestionsEmpty OptgroupWritingsuggestions = ""
 )
 
-type optgroupAttrs map[string]any
-
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptgroupElement) Disabled(b bool) *OptgroupElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *OptgroupElement) Label(s string) *OptgroupElement {
-	e.attributes["label"] = s
+	e.attributes.Set("label", s)
 
 	return e
 }
@@ -233,41 +264,47 @@ func (e *OptgroupElement) Label(s string) *OptgroupElement {
 func (e *OptgroupElement) AriaUnsafe(name string, s string) *OptgroupElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OptgroupElement) Aria(name string, s string) *OptgroupElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OptgroupElement) Autocapitalize(a OptgroupAutocapitalize) *OptgroupElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Autocorrect(a OptgroupAutocorrect) *OptgroupElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptgroupElement) Autofocus(b bool) *OptgroupElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *OptgroupElement) Class(s ...string) *OptgroupElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptgroupElement) Contenteditable(a OptgroupContenteditable) *OptgroupElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -275,149 +312,157 @@ func (e *OptgroupElement) Contenteditable(a OptgroupContenteditable) *OptgroupEl
 func (e *OptgroupElement) DataUnsafe(name string, s string) *OptgroupElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OptgroupElement) Data(name string, s string) *OptgroupElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OptgroupElement) Dir(a OptgroupDir) *OptgroupElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Draggable(a OptgroupDraggable) *OptgroupElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Enterkeyhint(a OptgroupEnterkeyhint) *OptgroupElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Hidden(a OptgroupHidden) *OptgroupElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Id(s string) *OptgroupElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptgroupElement) Inert(b bool) *OptgroupElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *OptgroupElement) Inputmode(a OptgroupInputmode) *OptgroupElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Itemid(s string) *OptgroupElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Itemprop(s ...string) *OptgroupElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptgroupElement) Itemref(s ...string) *OptgroupElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptgroupElement) Itemscope(b bool) *OptgroupElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *OptgroupElement) Itemtype(s ...string) *OptgroupElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptgroupElement) Lang(s string) *OptgroupElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Nonce(s string) *OptgroupElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Popover(s string) *OptgroupElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Role(s string) *OptgroupElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Slot(s string) *OptgroupElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Spellcheck(a OptgroupSpellcheck) *OptgroupElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Style(s string) *OptgroupElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Tabindex(i int) *OptgroupElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *OptgroupElement) Title(s string) *OptgroupElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *OptgroupElement) Translate(a OptgroupTranslate) *OptgroupElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *OptgroupElement) Writingsuggestions(a OptgroupWritingsuggestions) *OptgroupElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -435,18 +480,7 @@ func (e *OptgroupElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<optgroup")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

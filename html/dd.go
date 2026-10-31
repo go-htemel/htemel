@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type DdElement struct {
-	attributes ddAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Dd creates a tag <dd> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The dd element represents the description, definition, or value, part of a term-description group in a description list (dl element).
 func Dd(children ...htemel.Node) *DdElement {
 	node := &DdElement{
-		children:   children,
-		attributes: make(ddAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// DdIf creates a tag <dd> instance that is only rendered when condition is true.
 func DdIf(condition bool, children ...htemel.Node) *DdElement {
 	if condition {
 		return Dd(children...)
@@ -36,16 +38,16 @@ func DdIf(condition bool, children ...htemel.Node) *DdElement {
 
 	return &DdElement{
 		children:   children,
-		attributes: make(ddAttrs),
 		skipRender: true,
 	}
 }
 
-func DdTernary(condition bool, true htemel.Node, false htemel.Node) *DdElement {
+// DdTernary creates a tag <dd> containing then when condition is true, otherwise containing otherwise.
+func DdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DdElement {
 	if condition {
-		return Dd(true)
+		return Dd(then)
 	}
-	return Dd(false)
+	return Dd(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *DdElement) With(fn func(*DdElement)) *DdElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *DdElement) Text(text string) *DdElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *DdElement) Textf(format string, args ...any) *DdElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *DdElement) If(cond bool, child htemel.Node) *DdElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *DdElement) IfElse(cond bool, then, els htemel.Node) *DdElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *DdElement) IfThen(cond bool, fn func(*DdElement)) *DdElement {
 
 // AddClass appends a class to the element.
 func (e *DdElement) AddClass(classes ...string) *DdElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *DdElement) ToggleClass(class string, enable bool) *DdElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *DdElement) Attr(name, value string) *DdElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *DdElement) AttrUnsafe(name, value string) *DdElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *DdElement) BoolAttr(name string, on bool) *DdElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,34 +193,34 @@ const (
 type DdEnterkeyhint string
 
 const (
-	DdEnterkeyhintPrevious DdEnterkeyhint = "previous"
-	DdEnterkeyhintSearch   DdEnterkeyhint = "search"
-	DdEnterkeyhintSend     DdEnterkeyhint = "send"
 	DdEnterkeyhintDone     DdEnterkeyhint = "done"
 	DdEnterkeyhintEnter    DdEnterkeyhint = "enter"
 	DdEnterkeyhintGo       DdEnterkeyhint = "go"
 	DdEnterkeyhintNext     DdEnterkeyhint = "next"
+	DdEnterkeyhintPrevious DdEnterkeyhint = "previous"
+	DdEnterkeyhintSearch   DdEnterkeyhint = "search"
+	DdEnterkeyhintSend     DdEnterkeyhint = "send"
 )
 
 type DdHidden string
 
 const (
-	DdHiddenUntilFound DdHidden = "until-found"
 	DdHiddenHidden     DdHidden = "hidden"
+	DdHiddenUntilFound DdHidden = "until-found"
 	DdHiddenEmpty      DdHidden = ""
 )
 
 type DdInputmode string
 
 const (
+	DdInputmodeDecimal DdInputmode = "decimal"
+	DdInputmodeEmail   DdInputmode = "email"
+	DdInputmodeNone    DdInputmode = "none"
 	DdInputmodeNumeric DdInputmode = "numeric"
 	DdInputmodeSearch  DdInputmode = "search"
 	DdInputmodeTel     DdInputmode = "tel"
 	DdInputmodeText    DdInputmode = "text"
 	DdInputmodeUrl     DdInputmode = "url"
-	DdInputmodeDecimal DdInputmode = "decimal"
-	DdInputmodeEmail   DdInputmode = "email"
-	DdInputmodeNone    DdInputmode = "none"
 )
 
 type DdSpellcheck string
@@ -203,8 +234,8 @@ const (
 type DdTranslate string
 
 const (
-	DdTranslateYes   DdTranslate = "yes"
 	DdTranslateNo    DdTranslate = "no"
+	DdTranslateYes   DdTranslate = "yes"
 	DdTranslateEmpty DdTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	DdWritingsuggestionsEmpty DdWritingsuggestions = ""
 )
 
-type ddAttrs map[string]any
-
 func (e *DdElement) AriaUnsafe(name string, s string) *DdElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DdElement) Aria(name string, s string) *DdElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DdElement) Autocapitalize(a DdAutocapitalize) *DdElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *DdElement) Autocorrect(a DdAutocorrect) *DdElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DdElement) Autofocus(b bool) *DdElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *DdElement) Class(s ...string) *DdElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DdElement) Contenteditable(a DdContenteditable) *DdElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *DdElement) Contenteditable(a DdContenteditable) *DdElement {
 func (e *DdElement) DataUnsafe(name string, s string) *DdElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DdElement) Data(name string, s string) *DdElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DdElement) Dir(a DdDir) *DdElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *DdElement) Draggable(a DdDraggable) *DdElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *DdElement) Enterkeyhint(a DdEnterkeyhint) *DdElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *DdElement) Hidden(a DdHidden) *DdElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *DdElement) Id(s string) *DdElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DdElement) Inert(b bool) *DdElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *DdElement) Inputmode(a DdInputmode) *DdElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *DdElement) Itemid(s string) *DdElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *DdElement) Itemprop(s ...string) *DdElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DdElement) Itemref(s ...string) *DdElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DdElement) Itemscope(b bool) *DdElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *DdElement) Itemtype(s ...string) *DdElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DdElement) Lang(s string) *DdElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *DdElement) Nonce(s string) *DdElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *DdElement) Popover(s string) *DdElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *DdElement) Role(s string) *DdElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *DdElement) Slot(s string) *DdElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *DdElement) Spellcheck(a DdSpellcheck) *DdElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *DdElement) Style(s string) *DdElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *DdElement) Tabindex(i int) *DdElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *DdElement) Title(s string) *DdElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *DdElement) Translate(a DdTranslate) *DdElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *DdElement) Writingsuggestions(a DdWritingsuggestions) *DdElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *DdElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<dd")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

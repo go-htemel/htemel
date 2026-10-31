@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ColgroupElement struct {
-	attributes colgroupAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Colgroup creates a tag <colgroup> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The colgroup element represents a group of one or more columns in the table that is its parent, if it has a parent and that is a table element.
 func Colgroup(children ...htemel.Node) *ColgroupElement {
 	node := &ColgroupElement{
-		children:   children,
-		attributes: make(colgroupAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// ColgroupIf creates a tag <colgroup> instance that is only rendered when condition is true.
 func ColgroupIf(condition bool, children ...htemel.Node) *ColgroupElement {
 	if condition {
 		return Colgroup(children...)
@@ -36,16 +38,16 @@ func ColgroupIf(condition bool, children ...htemel.Node) *ColgroupElement {
 
 	return &ColgroupElement{
 		children:   children,
-		attributes: make(colgroupAttrs),
 		skipRender: true,
 	}
 }
 
-func ColgroupTernary(condition bool, true htemel.Node, false htemel.Node) *ColgroupElement {
+// ColgroupTernary creates a tag <colgroup> containing then when condition is true, otherwise containing otherwise.
+func ColgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ColgroupElement {
 	if condition {
-		return Colgroup(true)
+		return Colgroup(then)
 	}
-	return Colgroup(false)
+	return Colgroup(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *ColgroupElement) With(fn func(*ColgroupElement)) *ColgroupElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *ColgroupElement) Text(text string) *ColgroupElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *ColgroupElement) Textf(format string, args ...any) *ColgroupElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *ColgroupElement) If(cond bool, child htemel.Node) *ColgroupElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *ColgroupElement) IfElse(cond bool, then, els htemel.Node) *ColgroupElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *ColgroupElement) IfThen(cond bool, fn func(*ColgroupElement)) *Colgroup
 
 // AddClass appends a class to the element.
 func (e *ColgroupElement) AddClass(classes ...string) *ColgroupElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ColgroupElement) ToggleClass(class string, enable bool) *ColgroupElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ColgroupElement) Attr(name, value string) *ColgroupElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ColgroupElement) AttrUnsafe(name, value string) *ColgroupElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ColgroupElement) BoolAttr(name string, on bool) *ColgroupElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type ColgroupAutocapitalize string
 
 const (
-	ColgroupAutocapitalizeWords      ColgroupAutocapitalize = "words"
 	ColgroupAutocapitalizeCharacters ColgroupAutocapitalize = "characters"
 	ColgroupAutocapitalizeNone       ColgroupAutocapitalize = "none"
 	ColgroupAutocapitalizeOff        ColgroupAutocapitalize = "off"
 	ColgroupAutocapitalizeOn         ColgroupAutocapitalize = "on"
 	ColgroupAutocapitalizeSentences  ColgroupAutocapitalize = "sentences"
+	ColgroupAutocapitalizeWords      ColgroupAutocapitalize = "words"
 )
 
 type ColgroupAutocorrect string
@@ -155,20 +186,20 @@ const (
 type ColgroupDraggable string
 
 const (
-	ColgroupDraggableTrue  ColgroupDraggable = "true"
 	ColgroupDraggableFalse ColgroupDraggable = "false"
+	ColgroupDraggableTrue  ColgroupDraggable = "true"
 )
 
 type ColgroupEnterkeyhint string
 
 const (
+	ColgroupEnterkeyhintDone     ColgroupEnterkeyhint = "done"
+	ColgroupEnterkeyhintEnter    ColgroupEnterkeyhint = "enter"
 	ColgroupEnterkeyhintGo       ColgroupEnterkeyhint = "go"
 	ColgroupEnterkeyhintNext     ColgroupEnterkeyhint = "next"
 	ColgroupEnterkeyhintPrevious ColgroupEnterkeyhint = "previous"
 	ColgroupEnterkeyhintSearch   ColgroupEnterkeyhint = "search"
 	ColgroupEnterkeyhintSend     ColgroupEnterkeyhint = "send"
-	ColgroupEnterkeyhintDone     ColgroupEnterkeyhint = "done"
-	ColgroupEnterkeyhintEnter    ColgroupEnterkeyhint = "enter"
 )
 
 type ColgroupHidden string
@@ -182,14 +213,14 @@ const (
 type ColgroupInputmode string
 
 const (
-	ColgroupInputmodeSearch  ColgroupInputmode = "search"
-	ColgroupInputmodeTel     ColgroupInputmode = "tel"
-	ColgroupInputmodeText    ColgroupInputmode = "text"
-	ColgroupInputmodeUrl     ColgroupInputmode = "url"
 	ColgroupInputmodeDecimal ColgroupInputmode = "decimal"
 	ColgroupInputmodeEmail   ColgroupInputmode = "email"
 	ColgroupInputmodeNone    ColgroupInputmode = "none"
 	ColgroupInputmodeNumeric ColgroupInputmode = "numeric"
+	ColgroupInputmodeSearch  ColgroupInputmode = "search"
+	ColgroupInputmodeTel     ColgroupInputmode = "tel"
+	ColgroupInputmodeText    ColgroupInputmode = "text"
+	ColgroupInputmodeUrl     ColgroupInputmode = "url"
 )
 
 type ColgroupSpellcheck string
@@ -211,15 +242,13 @@ const (
 type ColgroupWritingsuggestions string
 
 const (
-	ColgroupWritingsuggestionsTrue  ColgroupWritingsuggestions = "true"
 	ColgroupWritingsuggestionsFalse ColgroupWritingsuggestions = "false"
+	ColgroupWritingsuggestionsTrue  ColgroupWritingsuggestions = "true"
 	ColgroupWritingsuggestionsEmpty ColgroupWritingsuggestions = ""
 )
 
-type colgroupAttrs map[string]any
-
 func (e *ColgroupElement) Span(i int) *ColgroupElement {
-	e.attributes["span"] = i
+	e.attributes.Set("span", strconv.Itoa(i))
 
 	return e
 }
@@ -227,41 +256,47 @@ func (e *ColgroupElement) Span(i int) *ColgroupElement {
 func (e *ColgroupElement) AriaUnsafe(name string, s string) *ColgroupElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ColgroupElement) Aria(name string, s string) *ColgroupElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ColgroupElement) Autocapitalize(a ColgroupAutocapitalize) *ColgroupElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Autocorrect(a ColgroupAutocorrect) *ColgroupElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColgroupElement) Autofocus(b bool) *ColgroupElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ColgroupElement) Class(s ...string) *ColgroupElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColgroupElement) Contenteditable(a ColgroupContenteditable) *ColgroupElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -269,149 +304,157 @@ func (e *ColgroupElement) Contenteditable(a ColgroupContenteditable) *ColgroupEl
 func (e *ColgroupElement) DataUnsafe(name string, s string) *ColgroupElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ColgroupElement) Data(name string, s string) *ColgroupElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ColgroupElement) Dir(a ColgroupDir) *ColgroupElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Draggable(a ColgroupDraggable) *ColgroupElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Enterkeyhint(a ColgroupEnterkeyhint) *ColgroupElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Hidden(a ColgroupHidden) *ColgroupElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Id(s string) *ColgroupElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColgroupElement) Inert(b bool) *ColgroupElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ColgroupElement) Inputmode(a ColgroupInputmode) *ColgroupElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Itemid(s string) *ColgroupElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Itemprop(s ...string) *ColgroupElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColgroupElement) Itemref(s ...string) *ColgroupElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ColgroupElement) Itemscope(b bool) *ColgroupElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ColgroupElement) Itemtype(s ...string) *ColgroupElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ColgroupElement) Lang(s string) *ColgroupElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Nonce(s string) *ColgroupElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Popover(s string) *ColgroupElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Role(s string) *ColgroupElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Slot(s string) *ColgroupElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Spellcheck(a ColgroupSpellcheck) *ColgroupElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Style(s string) *ColgroupElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Tabindex(i int) *ColgroupElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ColgroupElement) Title(s string) *ColgroupElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ColgroupElement) Translate(a ColgroupTranslate) *ColgroupElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ColgroupElement) Writingsuggestions(a ColgroupWritingsuggestions) *ColgroupElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -429,18 +472,7 @@ func (e *ColgroupElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<colgroup")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

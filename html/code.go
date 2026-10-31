@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type CodeElement struct {
-	attributes codeAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Code creates a tag <code> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The code element represents a fragment of computer code. This could be an XML element name, a filename, a computer program, or any other string that a computer would recognize.
 func Code(children ...htemel.Node) *CodeElement {
 	node := &CodeElement{
-		children:   children,
-		attributes: make(codeAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// CodeIf creates a tag <code> instance that is only rendered when condition is true.
 func CodeIf(condition bool, children ...htemel.Node) *CodeElement {
 	if condition {
 		return Code(children...)
@@ -36,16 +38,16 @@ func CodeIf(condition bool, children ...htemel.Node) *CodeElement {
 
 	return &CodeElement{
 		children:   children,
-		attributes: make(codeAttrs),
 		skipRender: true,
 	}
 }
 
-func CodeTernary(condition bool, true htemel.Node, false htemel.Node) *CodeElement {
+// CodeTernary creates a tag <code> containing then when condition is true, otherwise containing otherwise.
+func CodeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CodeElement {
 	if condition {
-		return Code(true)
+		return Code(then)
 	}
-	return Code(false)
+	return Code(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *CodeElement) With(fn func(*CodeElement)) *CodeElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *CodeElement) Text(text string) *CodeElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *CodeElement) Textf(format string, args ...any) *CodeElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *CodeElement) If(cond bool, child htemel.Node) *CodeElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *CodeElement) IfElse(cond bool, then, els htemel.Node) *CodeElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *CodeElement) IfThen(cond bool, fn func(*CodeElement)) *CodeElement {
 
 // AddClass appends a class to the element.
 func (e *CodeElement) AddClass(classes ...string) *CodeElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *CodeElement) ToggleClass(class string, enable bool) *CodeElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *CodeElement) Attr(name, value string) *CodeElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *CodeElement) AttrUnsafe(name, value string) *CodeElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *CodeElement) BoolAttr(name string, on bool) *CodeElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type CodeEnterkeyhint string
 
 const (
-	CodeEnterkeyhintPrevious CodeEnterkeyhint = "previous"
-	CodeEnterkeyhintSearch   CodeEnterkeyhint = "search"
-	CodeEnterkeyhintSend     CodeEnterkeyhint = "send"
 	CodeEnterkeyhintDone     CodeEnterkeyhint = "done"
 	CodeEnterkeyhintEnter    CodeEnterkeyhint = "enter"
 	CodeEnterkeyhintGo       CodeEnterkeyhint = "go"
 	CodeEnterkeyhintNext     CodeEnterkeyhint = "next"
+	CodeEnterkeyhintPrevious CodeEnterkeyhint = "previous"
+	CodeEnterkeyhintSearch   CodeEnterkeyhint = "search"
+	CodeEnterkeyhintSend     CodeEnterkeyhint = "send"
 )
 
 type CodeHidden string
@@ -182,21 +213,21 @@ const (
 type CodeInputmode string
 
 const (
+	CodeInputmodeDecimal CodeInputmode = "decimal"
+	CodeInputmodeEmail   CodeInputmode = "email"
 	CodeInputmodeNone    CodeInputmode = "none"
 	CodeInputmodeNumeric CodeInputmode = "numeric"
 	CodeInputmodeSearch  CodeInputmode = "search"
 	CodeInputmodeTel     CodeInputmode = "tel"
 	CodeInputmodeText    CodeInputmode = "text"
 	CodeInputmodeUrl     CodeInputmode = "url"
-	CodeInputmodeDecimal CodeInputmode = "decimal"
-	CodeInputmodeEmail   CodeInputmode = "email"
 )
 
 type CodeSpellcheck string
 
 const (
-	CodeSpellcheckTrue  CodeSpellcheck = "true"
 	CodeSpellcheckFalse CodeSpellcheck = "false"
+	CodeSpellcheckTrue  CodeSpellcheck = "true"
 	CodeSpellcheckEmpty CodeSpellcheck = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	CodeWritingsuggestionsEmpty CodeWritingsuggestions = ""
 )
 
-type codeAttrs map[string]any
-
 func (e *CodeElement) AriaUnsafe(name string, s string) *CodeElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *CodeElement) Aria(name string, s string) *CodeElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *CodeElement) Autocapitalize(a CodeAutocapitalize) *CodeElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Autocorrect(a CodeAutocorrect) *CodeElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *CodeElement) Autofocus(b bool) *CodeElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *CodeElement) Class(s ...string) *CodeElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *CodeElement) Contenteditable(a CodeContenteditable) *CodeElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *CodeElement) Contenteditable(a CodeContenteditable) *CodeElement {
 func (e *CodeElement) DataUnsafe(name string, s string) *CodeElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *CodeElement) Data(name string, s string) *CodeElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *CodeElement) Dir(a CodeDir) *CodeElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Draggable(a CodeDraggable) *CodeElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Enterkeyhint(a CodeEnterkeyhint) *CodeElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Hidden(a CodeHidden) *CodeElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Id(s string) *CodeElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *CodeElement) Inert(b bool) *CodeElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *CodeElement) Inputmode(a CodeInputmode) *CodeElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Itemid(s string) *CodeElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *CodeElement) Itemprop(s ...string) *CodeElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *CodeElement) Itemref(s ...string) *CodeElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *CodeElement) Itemscope(b bool) *CodeElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *CodeElement) Itemtype(s ...string) *CodeElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *CodeElement) Lang(s string) *CodeElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *CodeElement) Nonce(s string) *CodeElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *CodeElement) Popover(s string) *CodeElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *CodeElement) Role(s string) *CodeElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *CodeElement) Slot(s string) *CodeElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *CodeElement) Spellcheck(a CodeSpellcheck) *CodeElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Style(s string) *CodeElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *CodeElement) Tabindex(i int) *CodeElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *CodeElement) Title(s string) *CodeElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *CodeElement) Translate(a CodeTranslate) *CodeElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *CodeElement) Writingsuggestions(a CodeWritingsuggestions) *CodeElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *CodeElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<code")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

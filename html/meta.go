@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type MetaElement struct {
-	attributes metaAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type MetaElement struct {
 //
 // Spec Description: The meta element represents various kinds of metadata that cannot be expressed using the title, base, link, style, and script elements.
 func Meta() *MetaElement {
-	node := &MetaElement{
-
-		attributes: make(metaAttrs),
-	}
+	node := &MetaElement{}
 
 	return node
 }
 
+// MetaIf creates a tag <meta> instance that is only rendered when condition is true.
 func MetaIf(condition bool) *MetaElement {
 	if condition {
 		return Meta()
@@ -35,7 +33,6 @@ func MetaIf(condition bool) *MetaElement {
 
 	return &MetaElement{
 
-		attributes: make(metaAttrs),
 		skipRender: true,
 	}
 }
@@ -48,46 +45,73 @@ func (e *MetaElement) With(fn func(*MetaElement)) *MetaElement {
 
 // AddClass appends a class to the element.
 func (e *MetaElement) AddClass(classes ...string) *MetaElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *MetaElement) ToggleClass(class string, enable bool) *MetaElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *MetaElement) Attr(name, value string) *MetaElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *MetaElement) AttrUnsafe(name, value string) *MetaElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *MetaElement) BoolAttr(name string, on bool) *MetaElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type MetaHttpEquiv string
 
 const (
-	MetaHttpEquivSetCookie             MetaHttpEquiv = "set-cookie"
-	MetaHttpEquivXUaCompatible         MetaHttpEquiv = "x-ua-compatible"
 	MetaHttpEquivContentLanguage       MetaHttpEquiv = "content-language"
 	MetaHttpEquivContentSecurityPolicy MetaHttpEquiv = "content-security-policy"
 	MetaHttpEquivContentType           MetaHttpEquiv = "content-type"
 	MetaHttpEquivDefaultStyle          MetaHttpEquiv = "default-style"
 	MetaHttpEquivRefresh               MetaHttpEquiv = "refresh"
+	MetaHttpEquivSetCookie             MetaHttpEquiv = "set-cookie"
+	MetaHttpEquivXUaCompatible         MetaHttpEquiv = "x-ua-compatible"
 )
 
 type MetaAutocapitalize string
 
 const (
+	MetaAutocapitalizeCharacters MetaAutocapitalize = "characters"
 	MetaAutocapitalizeNone       MetaAutocapitalize = "none"
 	MetaAutocapitalizeOff        MetaAutocapitalize = "off"
 	MetaAutocapitalizeOn         MetaAutocapitalize = "on"
 	MetaAutocapitalizeSentences  MetaAutocapitalize = "sentences"
 	MetaAutocapitalizeWords      MetaAutocapitalize = "words"
-	MetaAutocapitalizeCharacters MetaAutocapitalize = "characters"
 )
 
 type MetaAutocorrect string
@@ -125,13 +149,13 @@ const (
 type MetaEnterkeyhint string
 
 const (
+	MetaEnterkeyhintDone     MetaEnterkeyhint = "done"
+	MetaEnterkeyhintEnter    MetaEnterkeyhint = "enter"
+	MetaEnterkeyhintGo       MetaEnterkeyhint = "go"
 	MetaEnterkeyhintNext     MetaEnterkeyhint = "next"
 	MetaEnterkeyhintPrevious MetaEnterkeyhint = "previous"
 	MetaEnterkeyhintSearch   MetaEnterkeyhint = "search"
 	MetaEnterkeyhintSend     MetaEnterkeyhint = "send"
-	MetaEnterkeyhintDone     MetaEnterkeyhint = "done"
-	MetaEnterkeyhintEnter    MetaEnterkeyhint = "enter"
-	MetaEnterkeyhintGo       MetaEnterkeyhint = "go"
 )
 
 type MetaHidden string
@@ -145,14 +169,14 @@ const (
 type MetaInputmode string
 
 const (
+	MetaInputmodeDecimal MetaInputmode = "decimal"
+	MetaInputmodeEmail   MetaInputmode = "email"
+	MetaInputmodeNone    MetaInputmode = "none"
 	MetaInputmodeNumeric MetaInputmode = "numeric"
 	MetaInputmodeSearch  MetaInputmode = "search"
 	MetaInputmodeTel     MetaInputmode = "tel"
 	MetaInputmodeText    MetaInputmode = "text"
 	MetaInputmodeUrl     MetaInputmode = "url"
-	MetaInputmodeDecimal MetaInputmode = "decimal"
-	MetaInputmodeEmail   MetaInputmode = "email"
-	MetaInputmodeNone    MetaInputmode = "none"
 )
 
 type MetaSpellcheck string
@@ -179,34 +203,32 @@ const (
 	MetaWritingsuggestionsEmpty MetaWritingsuggestions = ""
 )
 
-type metaAttrs map[string]any
-
 func (e *MetaElement) Name(s string) *MetaElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
 func (e *MetaElement) HttpEquiv(a MetaHttpEquiv) *MetaElement {
-	e.attributes["http-equiv"] = a
+	e.attributes.Set("http-equiv", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Content(s string) *MetaElement {
-	e.attributes["content"] = s
+	e.attributes.Set("content", s)
 
 	return e
 }
 
 func (e *MetaElement) Charset(s string) *MetaElement {
-	e.attributes["charset"] = s
+	e.attributes.Set("charset", s)
 
 	return e
 }
 
 func (e *MetaElement) Media(s string) *MetaElement {
-	e.attributes["media"] = s
+	e.attributes.Set("media", s)
 
 	return e
 }
@@ -214,41 +236,47 @@ func (e *MetaElement) Media(s string) *MetaElement {
 func (e *MetaElement) AriaUnsafe(name string, s string) *MetaElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MetaElement) Aria(name string, s string) *MetaElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MetaElement) Autocapitalize(a MetaAutocapitalize) *MetaElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Autocorrect(a MetaAutocorrect) *MetaElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MetaElement) Autofocus(b bool) *MetaElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *MetaElement) Class(s ...string) *MetaElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MetaElement) Contenteditable(a MetaContenteditable) *MetaElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -256,149 +284,157 @@ func (e *MetaElement) Contenteditable(a MetaContenteditable) *MetaElement {
 func (e *MetaElement) DataUnsafe(name string, s string) *MetaElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MetaElement) Data(name string, s string) *MetaElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MetaElement) Dir(a MetaDir) *MetaElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Draggable(a MetaDraggable) *MetaElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Enterkeyhint(a MetaEnterkeyhint) *MetaElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Hidden(a MetaHidden) *MetaElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Id(s string) *MetaElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MetaElement) Inert(b bool) *MetaElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *MetaElement) Inputmode(a MetaInputmode) *MetaElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Itemid(s string) *MetaElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *MetaElement) Itemprop(s ...string) *MetaElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MetaElement) Itemref(s ...string) *MetaElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MetaElement) Itemscope(b bool) *MetaElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *MetaElement) Itemtype(s ...string) *MetaElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MetaElement) Lang(s string) *MetaElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *MetaElement) Nonce(s string) *MetaElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *MetaElement) Popover(s string) *MetaElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *MetaElement) Role(s string) *MetaElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *MetaElement) Slot(s string) *MetaElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *MetaElement) Spellcheck(a MetaSpellcheck) *MetaElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Style(s string) *MetaElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *MetaElement) Tabindex(i int) *MetaElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *MetaElement) Title(s string) *MetaElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *MetaElement) Translate(a MetaTranslate) *MetaElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Writingsuggestions(a MetaWritingsuggestions) *MetaElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -416,18 +452,7 @@ func (e *MetaElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<meta")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

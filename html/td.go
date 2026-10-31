@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type TdElement struct {
-	attributes tdAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Td creates a tag <td> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The td element represents a data cell in a table.
 func Td(children ...htemel.Node) *TdElement {
 	node := &TdElement{
-		children:   children,
-		attributes: make(tdAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// TdIf creates a tag <td> instance that is only rendered when condition is true.
 func TdIf(condition bool, children ...htemel.Node) *TdElement {
 	if condition {
 		return Td(children...)
@@ -36,16 +38,16 @@ func TdIf(condition bool, children ...htemel.Node) *TdElement {
 
 	return &TdElement{
 		children:   children,
-		attributes: make(tdAttrs),
 		skipRender: true,
 	}
 }
 
-func TdTernary(condition bool, true htemel.Node, false htemel.Node) *TdElement {
+// TdTernary creates a tag <td> containing then when condition is true, otherwise containing otherwise.
+func TdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TdElement {
 	if condition {
-		return Td(true)
+		return Td(then)
 	}
-	return Td(false)
+	return Td(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *TdElement) With(fn func(*TdElement)) *TdElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *TdElement) Text(text string) *TdElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *TdElement) Textf(format string, args ...any) *TdElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *TdElement) If(cond bool, child htemel.Node) *TdElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *TdElement) IfElse(cond bool, then, els htemel.Node) *TdElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *TdElement) IfThen(cond bool, fn func(*TdElement)) *TdElement {
 
 // AddClass appends a class to the element.
 func (e *TdElement) AddClass(classes ...string) *TdElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *TdElement) ToggleClass(class string, enable bool) *TdElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *TdElement) Attr(name, value string) *TdElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *TdElement) AttrUnsafe(name, value string) *TdElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *TdElement) BoolAttr(name string, on bool) *TdElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -147,9 +178,9 @@ const (
 type TdDir string
 
 const (
+	TdDirAuto TdDir = "auto"
 	TdDirLtr  TdDir = "ltr"
 	TdDirRtl  TdDir = "rtl"
-	TdDirAuto TdDir = "auto"
 )
 
 type TdDraggable string
@@ -162,34 +193,34 @@ const (
 type TdEnterkeyhint string
 
 const (
-	TdEnterkeyhintSearch   TdEnterkeyhint = "search"
-	TdEnterkeyhintSend     TdEnterkeyhint = "send"
 	TdEnterkeyhintDone     TdEnterkeyhint = "done"
 	TdEnterkeyhintEnter    TdEnterkeyhint = "enter"
 	TdEnterkeyhintGo       TdEnterkeyhint = "go"
 	TdEnterkeyhintNext     TdEnterkeyhint = "next"
 	TdEnterkeyhintPrevious TdEnterkeyhint = "previous"
+	TdEnterkeyhintSearch   TdEnterkeyhint = "search"
+	TdEnterkeyhintSend     TdEnterkeyhint = "send"
 )
 
 type TdHidden string
 
 const (
-	TdHiddenUntilFound TdHidden = "until-found"
 	TdHiddenHidden     TdHidden = "hidden"
+	TdHiddenUntilFound TdHidden = "until-found"
 	TdHiddenEmpty      TdHidden = ""
 )
 
 type TdInputmode string
 
 const (
+	TdInputmodeDecimal TdInputmode = "decimal"
+	TdInputmodeEmail   TdInputmode = "email"
+	TdInputmodeNone    TdInputmode = "none"
 	TdInputmodeNumeric TdInputmode = "numeric"
 	TdInputmodeSearch  TdInputmode = "search"
 	TdInputmodeTel     TdInputmode = "tel"
 	TdInputmodeText    TdInputmode = "text"
 	TdInputmodeUrl     TdInputmode = "url"
-	TdInputmodeDecimal TdInputmode = "decimal"
-	TdInputmodeEmail   TdInputmode = "email"
-	TdInputmodeNone    TdInputmode = "none"
 )
 
 type TdSpellcheck string
@@ -211,27 +242,25 @@ const (
 type TdWritingsuggestions string
 
 const (
-	TdWritingsuggestionsTrue  TdWritingsuggestions = "true"
 	TdWritingsuggestionsFalse TdWritingsuggestions = "false"
+	TdWritingsuggestionsTrue  TdWritingsuggestions = "true"
 	TdWritingsuggestionsEmpty TdWritingsuggestions = ""
 )
 
-type tdAttrs map[string]any
-
 func (e *TdElement) Span(i int) *TdElement {
-	e.attributes["span"] = i
+	e.attributes.Set("span", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TdElement) Rowspan(i int) *TdElement {
-	e.attributes["rowspan"] = i
+	e.attributes.Set("rowspan", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TdElement) Headers(s ...string) *TdElement {
-	e.attributes["headers"] = strings.Join(s, " ")
+	e.attributes.Set("headers", strings.Join(s, " "))
 
 	return e
 }
@@ -239,41 +268,47 @@ func (e *TdElement) Headers(s ...string) *TdElement {
 func (e *TdElement) AriaUnsafe(name string, s string) *TdElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TdElement) Aria(name string, s string) *TdElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TdElement) Autocapitalize(a TdAutocapitalize) *TdElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *TdElement) Autocorrect(a TdAutocorrect) *TdElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TdElement) Autofocus(b bool) *TdElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *TdElement) Class(s ...string) *TdElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TdElement) Contenteditable(a TdContenteditable) *TdElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -281,149 +316,157 @@ func (e *TdElement) Contenteditable(a TdContenteditable) *TdElement {
 func (e *TdElement) DataUnsafe(name string, s string) *TdElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TdElement) Data(name string, s string) *TdElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TdElement) Dir(a TdDir) *TdElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *TdElement) Draggable(a TdDraggable) *TdElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *TdElement) Enterkeyhint(a TdEnterkeyhint) *TdElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *TdElement) Hidden(a TdHidden) *TdElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *TdElement) Id(s string) *TdElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TdElement) Inert(b bool) *TdElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *TdElement) Inputmode(a TdInputmode) *TdElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *TdElement) Itemid(s string) *TdElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *TdElement) Itemprop(s ...string) *TdElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TdElement) Itemref(s ...string) *TdElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TdElement) Itemscope(b bool) *TdElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *TdElement) Itemtype(s ...string) *TdElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TdElement) Lang(s string) *TdElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *TdElement) Nonce(s string) *TdElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *TdElement) Popover(s string) *TdElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *TdElement) Role(s string) *TdElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *TdElement) Slot(s string) *TdElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *TdElement) Spellcheck(a TdSpellcheck) *TdElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *TdElement) Style(s string) *TdElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *TdElement) Tabindex(i int) *TdElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TdElement) Title(s string) *TdElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *TdElement) Translate(a TdTranslate) *TdElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *TdElement) Writingsuggestions(a TdWritingsuggestions) *TdElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -441,18 +484,7 @@ func (e *TdElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<td")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

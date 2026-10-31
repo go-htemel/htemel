@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type H2Element struct {
-	attributes h2Attrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // H2 creates a tag <h2> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: These elements represent headings for their sections.
 func H2(children ...htemel.Node) *H2Element {
 	node := &H2Element{
-		children:   children,
-		attributes: make(h2Attrs),
+		children: children,
 	}
 
 	return node
 }
 
+// H2If creates a tag <h2> instance that is only rendered when condition is true.
 func H2If(condition bool, children ...htemel.Node) *H2Element {
 	if condition {
 		return H2(children...)
@@ -36,16 +38,16 @@ func H2If(condition bool, children ...htemel.Node) *H2Element {
 
 	return &H2Element{
 		children:   children,
-		attributes: make(h2Attrs),
 		skipRender: true,
 	}
 }
 
-func H2Ternary(condition bool, true htemel.Node, false htemel.Node) *H2Element {
+// H2Ternary creates a tag <h2> containing then when condition is true, otherwise containing otherwise.
+func H2Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H2Element {
 	if condition {
-		return H2(true)
+		return H2(then)
 	}
-	return H2(false)
+	return H2(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *H2Element) With(fn func(*H2Element)) *H2Element {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *H2Element) Text(text string) *H2Element {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *H2Element) Textf(format string, args ...any) *H2Element {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *H2Element) If(cond bool, child htemel.Node) *H2Element {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *H2Element) IfElse(cond bool, then, els htemel.Node) *H2Element {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *H2Element) IfThen(cond bool, fn func(*H2Element)) *H2Element {
 
 // AddClass appends a class to the element.
 func (e *H2Element) AddClass(classes ...string) *H2Element {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *H2Element) ToggleClass(class string, enable bool) *H2Element {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *H2Element) Attr(name, value string) *H2Element {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *H2Element) AttrUnsafe(name, value string) *H2Element {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *H2Element) BoolAttr(name string, on bool) *H2Element {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -147,9 +178,9 @@ const (
 type H2Dir string
 
 const (
+	H2DirAuto H2Dir = "auto"
 	H2DirLtr  H2Dir = "ltr"
 	H2DirRtl  H2Dir = "rtl"
-	H2DirAuto H2Dir = "auto"
 )
 
 type H2Draggable string
@@ -182,14 +213,14 @@ const (
 type H2Inputmode string
 
 const (
-	H2InputmodeText    H2Inputmode = "text"
-	H2InputmodeUrl     H2Inputmode = "url"
 	H2InputmodeDecimal H2Inputmode = "decimal"
 	H2InputmodeEmail   H2Inputmode = "email"
 	H2InputmodeNone    H2Inputmode = "none"
 	H2InputmodeNumeric H2Inputmode = "numeric"
 	H2InputmodeSearch  H2Inputmode = "search"
 	H2InputmodeTel     H2Inputmode = "tel"
+	H2InputmodeText    H2Inputmode = "text"
+	H2InputmodeUrl     H2Inputmode = "url"
 )
 
 type H2Spellcheck string
@@ -216,46 +247,50 @@ const (
 	H2WritingsuggestionsEmpty H2Writingsuggestions = ""
 )
 
-type h2Attrs map[string]any
-
 func (e *H2Element) AriaUnsafe(name string, s string) *H2Element {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *H2Element) Aria(name string, s string) *H2Element {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *H2Element) Autocapitalize(a H2Autocapitalize) *H2Element {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *H2Element) Autocorrect(a H2Autocorrect) *H2Element {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *H2Element) Autofocus(b bool) *H2Element {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *H2Element) Class(s ...string) *H2Element {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *H2Element) Contenteditable(a H2Contenteditable) *H2Element {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *H2Element) Contenteditable(a H2Contenteditable) *H2Element {
 func (e *H2Element) DataUnsafe(name string, s string) *H2Element {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *H2Element) Data(name string, s string) *H2Element {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *H2Element) Dir(a H2Dir) *H2Element {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *H2Element) Draggable(a H2Draggable) *H2Element {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *H2Element) Enterkeyhint(a H2Enterkeyhint) *H2Element {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *H2Element) Hidden(a H2Hidden) *H2Element {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *H2Element) Id(s string) *H2Element {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *H2Element) Inert(b bool) *H2Element {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *H2Element) Inputmode(a H2Inputmode) *H2Element {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *H2Element) Itemid(s string) *H2Element {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *H2Element) Itemprop(s ...string) *H2Element {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *H2Element) Itemref(s ...string) *H2Element {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *H2Element) Itemscope(b bool) *H2Element {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *H2Element) Itemtype(s ...string) *H2Element {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *H2Element) Lang(s string) *H2Element {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *H2Element) Nonce(s string) *H2Element {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *H2Element) Popover(s string) *H2Element {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *H2Element) Role(s string) *H2Element {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *H2Element) Slot(s string) *H2Element {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *H2Element) Spellcheck(a H2Spellcheck) *H2Element {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *H2Element) Style(s string) *H2Element {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *H2Element) Tabindex(i int) *H2Element {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *H2Element) Title(s string) *H2Element {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *H2Element) Translate(a H2Translate) *H2Element {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *H2Element) Writingsuggestions(a H2Writingsuggestions) *H2Element {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *H2Element) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<h2")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

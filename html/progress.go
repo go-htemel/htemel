@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ProgressElement struct {
-	attributes progressAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Progress creates a tag <progress> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The progress element represents the completion progress of a task. The progress is either indeterminate, indicating that progress is being made but that it is not clear how much more work remains to be done before the task is complete (e.g. because the task is waiting for a remote host to respond), or the progress is a number in the range zero to a maximum, giving the fraction of work that has so far been completed.
 func Progress(children ...htemel.Node) *ProgressElement {
 	node := &ProgressElement{
-		children:   children,
-		attributes: make(progressAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// ProgressIf creates a tag <progress> instance that is only rendered when condition is true.
 func ProgressIf(condition bool, children ...htemel.Node) *ProgressElement {
 	if condition {
 		return Progress(children...)
@@ -36,16 +38,16 @@ func ProgressIf(condition bool, children ...htemel.Node) *ProgressElement {
 
 	return &ProgressElement{
 		children:   children,
-		attributes: make(progressAttrs),
 		skipRender: true,
 	}
 }
 
-func ProgressTernary(condition bool, true htemel.Node, false htemel.Node) *ProgressElement {
+// ProgressTernary creates a tag <progress> containing then when condition is true, otherwise containing otherwise.
+func ProgressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ProgressElement {
 	if condition {
-		return Progress(true)
+		return Progress(then)
 	}
-	return Progress(false)
+	return Progress(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *ProgressElement) With(fn func(*ProgressElement)) *ProgressElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *ProgressElement) Text(text string) *ProgressElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *ProgressElement) Textf(format string, args ...any) *ProgressElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *ProgressElement) If(cond bool, child htemel.Node) *ProgressElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *ProgressElement) IfElse(cond bool, then, els htemel.Node) *ProgressElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *ProgressElement) IfThen(cond bool, fn func(*ProgressElement)) *Progress
 
 // AddClass appends a class to the element.
 func (e *ProgressElement) AddClass(classes ...string) *ProgressElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ProgressElement) ToggleClass(class string, enable bool) *ProgressElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ProgressElement) Attr(name, value string) *ProgressElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ProgressElement) AttrUnsafe(name, value string) *ProgressElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ProgressElement) BoolAttr(name string, on bool) *ProgressElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -182,14 +213,14 @@ const (
 type ProgressInputmode string
 
 const (
+	ProgressInputmodeDecimal ProgressInputmode = "decimal"
+	ProgressInputmodeEmail   ProgressInputmode = "email"
 	ProgressInputmodeNone    ProgressInputmode = "none"
 	ProgressInputmodeNumeric ProgressInputmode = "numeric"
 	ProgressInputmodeSearch  ProgressInputmode = "search"
 	ProgressInputmodeTel     ProgressInputmode = "tel"
 	ProgressInputmodeText    ProgressInputmode = "text"
 	ProgressInputmodeUrl     ProgressInputmode = "url"
-	ProgressInputmodeDecimal ProgressInputmode = "decimal"
-	ProgressInputmodeEmail   ProgressInputmode = "email"
 )
 
 type ProgressSpellcheck string
@@ -216,16 +247,14 @@ const (
 	ProgressWritingsuggestionsEmpty ProgressWritingsuggestions = ""
 )
 
-type progressAttrs map[string]any
-
 func (e *ProgressElement) Value(f float64) *ProgressElement {
-	e.attributes["value"] = f
+	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *ProgressElement) Max(f float64) *ProgressElement {
-	e.attributes["max"] = f
+	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -233,41 +262,47 @@ func (e *ProgressElement) Max(f float64) *ProgressElement {
 func (e *ProgressElement) AriaUnsafe(name string, s string) *ProgressElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ProgressElement) Aria(name string, s string) *ProgressElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ProgressElement) Autocapitalize(a ProgressAutocapitalize) *ProgressElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Autocorrect(a ProgressAutocorrect) *ProgressElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ProgressElement) Autofocus(b bool) *ProgressElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ProgressElement) Class(s ...string) *ProgressElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ProgressElement) Contenteditable(a ProgressContenteditable) *ProgressElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -275,149 +310,157 @@ func (e *ProgressElement) Contenteditable(a ProgressContenteditable) *ProgressEl
 func (e *ProgressElement) DataUnsafe(name string, s string) *ProgressElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ProgressElement) Data(name string, s string) *ProgressElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ProgressElement) Dir(a ProgressDir) *ProgressElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Draggable(a ProgressDraggable) *ProgressElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Enterkeyhint(a ProgressEnterkeyhint) *ProgressElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Hidden(a ProgressHidden) *ProgressElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Id(s string) *ProgressElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ProgressElement) Inert(b bool) *ProgressElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ProgressElement) Inputmode(a ProgressInputmode) *ProgressElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Itemid(s string) *ProgressElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ProgressElement) Itemprop(s ...string) *ProgressElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ProgressElement) Itemref(s ...string) *ProgressElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ProgressElement) Itemscope(b bool) *ProgressElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ProgressElement) Itemtype(s ...string) *ProgressElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ProgressElement) Lang(s string) *ProgressElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ProgressElement) Nonce(s string) *ProgressElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ProgressElement) Popover(s string) *ProgressElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ProgressElement) Role(s string) *ProgressElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ProgressElement) Slot(s string) *ProgressElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ProgressElement) Spellcheck(a ProgressSpellcheck) *ProgressElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Style(s string) *ProgressElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ProgressElement) Tabindex(i int) *ProgressElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ProgressElement) Title(s string) *ProgressElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ProgressElement) Translate(a ProgressTranslate) *ProgressElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ProgressElement) Writingsuggestions(a ProgressWritingsuggestions) *ProgressElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -435,18 +478,7 @@ func (e *ProgressElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<progress")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

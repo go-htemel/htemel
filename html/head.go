@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type HeadElement struct {
-	attributes headAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Head creates a tag <head> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The head element represents a collection of metadata for the Document.
 func Head(children ...htemel.Node) *HeadElement {
 	node := &HeadElement{
-		children:   children,
-		attributes: make(headAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// HeadIf creates a tag <head> instance that is only rendered when condition is true.
 func HeadIf(condition bool, children ...htemel.Node) *HeadElement {
 	if condition {
 		return Head(children...)
@@ -36,16 +38,16 @@ func HeadIf(condition bool, children ...htemel.Node) *HeadElement {
 
 	return &HeadElement{
 		children:   children,
-		attributes: make(headAttrs),
 		skipRender: true,
 	}
 }
 
-func HeadTernary(condition bool, true htemel.Node, false htemel.Node) *HeadElement {
+// HeadTernary creates a tag <head> containing then when condition is true, otherwise containing otherwise.
+func HeadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HeadElement {
 	if condition {
-		return Head(true)
+		return Head(then)
 	}
-	return Head(false)
+	return Head(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *HeadElement) With(fn func(*HeadElement)) *HeadElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *HeadElement) Text(text string) *HeadElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *HeadElement) Textf(format string, args ...any) *HeadElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *HeadElement) If(cond bool, child htemel.Node) *HeadElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *HeadElement) IfElse(cond bool, then, els htemel.Node) *HeadElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *HeadElement) IfThen(cond bool, fn func(*HeadElement)) *HeadElement {
 
 // AddClass appends a class to the element.
 func (e *HeadElement) AddClass(classes ...string) *HeadElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *HeadElement) ToggleClass(class string, enable bool) *HeadElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *HeadElement) Attr(name, value string) *HeadElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *HeadElement) AttrUnsafe(name, value string) *HeadElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *HeadElement) BoolAttr(name string, on bool) *HeadElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -182,14 +213,14 @@ const (
 type HeadInputmode string
 
 const (
+	HeadInputmodeDecimal HeadInputmode = "decimal"
+	HeadInputmodeEmail   HeadInputmode = "email"
+	HeadInputmodeNone    HeadInputmode = "none"
 	HeadInputmodeNumeric HeadInputmode = "numeric"
 	HeadInputmodeSearch  HeadInputmode = "search"
 	HeadInputmodeTel     HeadInputmode = "tel"
 	HeadInputmodeText    HeadInputmode = "text"
 	HeadInputmodeUrl     HeadInputmode = "url"
-	HeadInputmodeDecimal HeadInputmode = "decimal"
-	HeadInputmodeEmail   HeadInputmode = "email"
-	HeadInputmodeNone    HeadInputmode = "none"
 )
 
 type HeadSpellcheck string
@@ -211,51 +242,55 @@ const (
 type HeadWritingsuggestions string
 
 const (
-	HeadWritingsuggestionsTrue  HeadWritingsuggestions = "true"
 	HeadWritingsuggestionsFalse HeadWritingsuggestions = "false"
+	HeadWritingsuggestionsTrue  HeadWritingsuggestions = "true"
 	HeadWritingsuggestionsEmpty HeadWritingsuggestions = ""
 )
-
-type headAttrs map[string]any
 
 func (e *HeadElement) AriaUnsafe(name string, s string) *HeadElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HeadElement) Aria(name string, s string) *HeadElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HeadElement) Autocapitalize(a HeadAutocapitalize) *HeadElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Autocorrect(a HeadAutocorrect) *HeadElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HeadElement) Autofocus(b bool) *HeadElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *HeadElement) Class(s ...string) *HeadElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HeadElement) Contenteditable(a HeadContenteditable) *HeadElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *HeadElement) Contenteditable(a HeadContenteditable) *HeadElement {
 func (e *HeadElement) DataUnsafe(name string, s string) *HeadElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HeadElement) Data(name string, s string) *HeadElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HeadElement) Dir(a HeadDir) *HeadElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Draggable(a HeadDraggable) *HeadElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Enterkeyhint(a HeadEnterkeyhint) *HeadElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Hidden(a HeadHidden) *HeadElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Id(s string) *HeadElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HeadElement) Inert(b bool) *HeadElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *HeadElement) Inputmode(a HeadInputmode) *HeadElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Itemid(s string) *HeadElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *HeadElement) Itemprop(s ...string) *HeadElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HeadElement) Itemref(s ...string) *HeadElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HeadElement) Itemscope(b bool) *HeadElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *HeadElement) Itemtype(s ...string) *HeadElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HeadElement) Lang(s string) *HeadElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *HeadElement) Nonce(s string) *HeadElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *HeadElement) Popover(s string) *HeadElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *HeadElement) Role(s string) *HeadElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *HeadElement) Slot(s string) *HeadElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *HeadElement) Spellcheck(a HeadSpellcheck) *HeadElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Style(s string) *HeadElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *HeadElement) Tabindex(i int) *HeadElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *HeadElement) Title(s string) *HeadElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *HeadElement) Translate(a HeadTranslate) *HeadElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *HeadElement) Writingsuggestions(a HeadWritingsuggestions) *HeadElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *HeadElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<head")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ButtonElement struct {
-	attributes buttonAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Button creates a tag <button> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The button element represents a button labeled by its contents.
 func Button(children ...htemel.Node) *ButtonElement {
 	node := &ButtonElement{
-		children:   children,
-		attributes: make(buttonAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// ButtonIf creates a tag <button> instance that is only rendered when condition is true.
 func ButtonIf(condition bool, children ...htemel.Node) *ButtonElement {
 	if condition {
 		return Button(children...)
@@ -36,16 +38,16 @@ func ButtonIf(condition bool, children ...htemel.Node) *ButtonElement {
 
 	return &ButtonElement{
 		children:   children,
-		attributes: make(buttonAttrs),
 		skipRender: true,
 	}
 }
 
-func ButtonTernary(condition bool, true htemel.Node, false htemel.Node) *ButtonElement {
+// ButtonTernary creates a tag <button> containing then when condition is true, otherwise containing otherwise.
+func ButtonTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ButtonElement {
 	if condition {
-		return Button(true)
+		return Button(then)
 	}
-	return Button(false)
+	return Button(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *ButtonElement) With(fn func(*ButtonElement)) *ButtonElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *ButtonElement) Text(text string) *ButtonElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *ButtonElement) Textf(format string, args ...any) *ButtonElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *ButtonElement) If(cond bool, child htemel.Node) *ButtonElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *ButtonElement) IfElse(cond bool, then, els htemel.Node) *ButtonElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *ButtonElement) IfThen(cond bool, fn func(*ButtonElement)) *ButtonElemen
 
 // AddClass appends a class to the element.
 func (e *ButtonElement) AddClass(classes ...string) *ButtonElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ButtonElement) ToggleClass(class string, enable bool) *ButtonElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ButtonElement) Attr(name, value string) *ButtonElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ButtonElement) AttrUnsafe(name, value string) *ButtonElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ButtonElement) BoolAttr(name string, on bool) *ButtonElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -165,17 +196,17 @@ const (
 type ButtonAutocorrect string
 
 const (
-	ButtonAutocorrectOn    ButtonAutocorrect = "on"
 	ButtonAutocorrectOff   ButtonAutocorrect = "off"
+	ButtonAutocorrectOn    ButtonAutocorrect = "on"
 	ButtonAutocorrectEmpty ButtonAutocorrect = ""
 )
 
 type ButtonContenteditable string
 
 const (
-	ButtonContenteditableTrue          ButtonContenteditable = "true"
 	ButtonContenteditableFalse         ButtonContenteditable = "false"
 	ButtonContenteditablePlaintextOnly ButtonContenteditable = "plaintext-only"
+	ButtonContenteditableTrue          ButtonContenteditable = "true"
 	ButtonContenteditableEmpty         ButtonContenteditable = ""
 )
 
@@ -190,20 +221,20 @@ const (
 type ButtonDraggable string
 
 const (
-	ButtonDraggableTrue  ButtonDraggable = "true"
 	ButtonDraggableFalse ButtonDraggable = "false"
+	ButtonDraggableTrue  ButtonDraggable = "true"
 )
 
 type ButtonEnterkeyhint string
 
 const (
+	ButtonEnterkeyhintDone     ButtonEnterkeyhint = "done"
+	ButtonEnterkeyhintEnter    ButtonEnterkeyhint = "enter"
+	ButtonEnterkeyhintGo       ButtonEnterkeyhint = "go"
 	ButtonEnterkeyhintNext     ButtonEnterkeyhint = "next"
 	ButtonEnterkeyhintPrevious ButtonEnterkeyhint = "previous"
 	ButtonEnterkeyhintSearch   ButtonEnterkeyhint = "search"
 	ButtonEnterkeyhintSend     ButtonEnterkeyhint = "send"
-	ButtonEnterkeyhintDone     ButtonEnterkeyhint = "done"
-	ButtonEnterkeyhintEnter    ButtonEnterkeyhint = "enter"
-	ButtonEnterkeyhintGo       ButtonEnterkeyhint = "go"
 )
 
 type ButtonHidden string
@@ -217,7 +248,6 @@ const (
 type ButtonInputmode string
 
 const (
-	ButtonInputmodeUrl     ButtonInputmode = "url"
 	ButtonInputmodeDecimal ButtonInputmode = "decimal"
 	ButtonInputmodeEmail   ButtonInputmode = "email"
 	ButtonInputmodeNone    ButtonInputmode = "none"
@@ -225,6 +255,7 @@ const (
 	ButtonInputmodeSearch  ButtonInputmode = "search"
 	ButtonInputmodeTel     ButtonInputmode = "tel"
 	ButtonInputmodeText    ButtonInputmode = "text"
+	ButtonInputmodeUrl     ButtonInputmode = "url"
 )
 
 type ButtonSpellcheck string
@@ -251,10 +282,8 @@ const (
 	ButtonWritingsuggestionsEmpty ButtonWritingsuggestions = ""
 )
 
-type buttonAttrs map[string]any
-
 func (e *ButtonElement) Command(a ButtonCommand) *ButtonElement {
-	e.attributes["command"] = a
+	e.attributes.Set("command", string(a))
 
 	return e
 }
@@ -264,79 +293,83 @@ func ButtonCommandCustom(s string) ButtonCommand {
 }
 
 func (e *ButtonElement) Commandfor(s string) *ButtonElement {
-	e.attributes["commandfor"] = s
+	e.attributes.Set("commandfor", s)
 
 	return e
 }
 
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ButtonElement) Disabled(b bool) *ButtonElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *ButtonElement) Form(s string) *ButtonElement {
-	e.attributes["form"] = s
+	e.attributes.Set("form", s)
 
 	return e
 }
 
 func (e *ButtonElement) Formaction(s string) *ButtonElement {
-	e.attributes["formaction"] = s
+	e.attributes.Set("formaction", s)
 
 	return e
 }
 
 func (e *ButtonElement) Formenctype(s string) *ButtonElement {
-	e.attributes["formenctype"] = s
+	e.attributes.Set("formenctype", s)
 
 	return e
 }
 
 func (e *ButtonElement) Formmethod(a ButtonFormmethod) *ButtonElement {
-	e.attributes["formmethod"] = a
+	e.attributes.Set("formmethod", string(a))
 
 	return e
 }
 
+// Formnovalidate sets the boolean attribute "formnovalidate". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ButtonElement) Formnovalidate(b bool) *ButtonElement {
-	e.attributes["formnovalidate"] = b
+	e.attributes.SetBool("formnovalidate", b)
 
 	return e
 }
 
 func (e *ButtonElement) Formtarget(s string) *ButtonElement {
-	e.attributes["formtarget"] = s
+	e.attributes.Set("formtarget", s)
 
 	return e
 }
 
 func (e *ButtonElement) Name(s string) *ButtonElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
 func (e *ButtonElement) Popovertarget(s string) *ButtonElement {
-	e.attributes["popovertarget"] = s
+	e.attributes.Set("popovertarget", s)
 
 	return e
 }
 
 func (e *ButtonElement) Popovertargetaction(a ButtonPopovertargetaction) *ButtonElement {
-	e.attributes["popovertargetaction"] = a
+	e.attributes.Set("popovertargetaction", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Type(a ButtonType) *ButtonElement {
-	e.attributes["type"] = a
+	e.attributes.Set("type", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Value(s string) *ButtonElement {
-	e.attributes["value"] = s
+	e.attributes.Set("value", s)
 
 	return e
 }
@@ -344,41 +377,47 @@ func (e *ButtonElement) Value(s string) *ButtonElement {
 func (e *ButtonElement) AriaUnsafe(name string, s string) *ButtonElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ButtonElement) Aria(name string, s string) *ButtonElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ButtonElement) Autocapitalize(a ButtonAutocapitalize) *ButtonElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Autocorrect(a ButtonAutocorrect) *ButtonElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ButtonElement) Autofocus(b bool) *ButtonElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ButtonElement) Class(s ...string) *ButtonElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ButtonElement) Contenteditable(a ButtonContenteditable) *ButtonElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -386,149 +425,157 @@ func (e *ButtonElement) Contenteditable(a ButtonContenteditable) *ButtonElement 
 func (e *ButtonElement) DataUnsafe(name string, s string) *ButtonElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ButtonElement) Data(name string, s string) *ButtonElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ButtonElement) Dir(a ButtonDir) *ButtonElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Draggable(a ButtonDraggable) *ButtonElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Enterkeyhint(a ButtonEnterkeyhint) *ButtonElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Hidden(a ButtonHidden) *ButtonElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Id(s string) *ButtonElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ButtonElement) Inert(b bool) *ButtonElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ButtonElement) Inputmode(a ButtonInputmode) *ButtonElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Itemid(s string) *ButtonElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ButtonElement) Itemprop(s ...string) *ButtonElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ButtonElement) Itemref(s ...string) *ButtonElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ButtonElement) Itemscope(b bool) *ButtonElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ButtonElement) Itemtype(s ...string) *ButtonElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ButtonElement) Lang(s string) *ButtonElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ButtonElement) Nonce(s string) *ButtonElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ButtonElement) Popover(s string) *ButtonElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ButtonElement) Role(s string) *ButtonElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ButtonElement) Slot(s string) *ButtonElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ButtonElement) Spellcheck(a ButtonSpellcheck) *ButtonElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Style(s string) *ButtonElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ButtonElement) Tabindex(i int) *ButtonElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ButtonElement) Title(s string) *ButtonElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ButtonElement) Translate(a ButtonTranslate) *ButtonElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ButtonElement) Writingsuggestions(a ButtonWritingsuggestions) *ButtonElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -546,18 +593,7 @@ func (e *ButtonElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<button")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

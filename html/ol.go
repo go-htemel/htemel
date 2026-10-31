@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type OlElement struct {
-	attributes olAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Ol creates a tag <ol> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The ol element represents a list of items, where the items have been intentionally ordered, such that changing the order would change the meaning of the document.
 func Ol(children ...htemel.Node) *OlElement {
 	node := &OlElement{
-		children:   children,
-		attributes: make(olAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// OlIf creates a tag <ol> instance that is only rendered when condition is true.
 func OlIf(condition bool, children ...htemel.Node) *OlElement {
 	if condition {
 		return Ol(children...)
@@ -36,16 +38,16 @@ func OlIf(condition bool, children ...htemel.Node) *OlElement {
 
 	return &OlElement{
 		children:   children,
-		attributes: make(olAttrs),
 		skipRender: true,
 	}
 }
 
-func OlTernary(condition bool, true htemel.Node, false htemel.Node) *OlElement {
+// OlTernary creates a tag <ol> containing then when condition is true, otherwise containing otherwise.
+func OlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OlElement {
 	if condition {
-		return Ol(true)
+		return Ol(then)
 	}
-	return Ol(false)
+	return Ol(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *OlElement) With(fn func(*OlElement)) *OlElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *OlElement) Text(text string) *OlElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *OlElement) Textf(format string, args ...any) *OlElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *OlElement) If(cond bool, child htemel.Node) *OlElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *OlElement) IfElse(cond bool, then, els htemel.Node) *OlElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *OlElement) IfThen(cond bool, fn func(*OlElement)) *OlElement {
 
 // AddClass appends a class to the element.
 func (e *OlElement) AddClass(classes ...string) *OlElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *OlElement) ToggleClass(class string, enable bool) *OlElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *OlElement) Attr(name, value string) *OlElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *OlElement) AttrUnsafe(name, value string) *OlElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *OlElement) BoolAttr(name string, on bool) *OlElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type OlEnterkeyhint string
 
 const (
+	OlEnterkeyhintDone     OlEnterkeyhint = "done"
+	OlEnterkeyhintEnter    OlEnterkeyhint = "enter"
 	OlEnterkeyhintGo       OlEnterkeyhint = "go"
 	OlEnterkeyhintNext     OlEnterkeyhint = "next"
 	OlEnterkeyhintPrevious OlEnterkeyhint = "previous"
 	OlEnterkeyhintSearch   OlEnterkeyhint = "search"
 	OlEnterkeyhintSend     OlEnterkeyhint = "send"
-	OlEnterkeyhintDone     OlEnterkeyhint = "done"
-	OlEnterkeyhintEnter    OlEnterkeyhint = "enter"
 )
 
 type OlHidden string
@@ -182,14 +213,14 @@ const (
 type OlInputmode string
 
 const (
+	OlInputmodeDecimal OlInputmode = "decimal"
+	OlInputmodeEmail   OlInputmode = "email"
 	OlInputmodeNone    OlInputmode = "none"
 	OlInputmodeNumeric OlInputmode = "numeric"
 	OlInputmodeSearch  OlInputmode = "search"
 	OlInputmodeTel     OlInputmode = "tel"
 	OlInputmodeText    OlInputmode = "text"
 	OlInputmodeUrl     OlInputmode = "url"
-	OlInputmodeDecimal OlInputmode = "decimal"
-	OlInputmodeEmail   OlInputmode = "email"
 )
 
 type OlSpellcheck string
@@ -211,21 +242,21 @@ const (
 type OlWritingsuggestions string
 
 const (
-	OlWritingsuggestionsTrue  OlWritingsuggestions = "true"
 	OlWritingsuggestionsFalse OlWritingsuggestions = "false"
+	OlWritingsuggestionsTrue  OlWritingsuggestions = "true"
 	OlWritingsuggestionsEmpty OlWritingsuggestions = ""
 )
 
-type olAttrs map[string]any
-
+// Reversed sets the boolean attribute "reversed". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OlElement) Reversed(b bool) *OlElement {
-	e.attributes["reversed"] = b
+	e.attributes.SetBool("reversed", b)
 
 	return e
 }
 
 func (e *OlElement) Start(i int) *OlElement {
-	e.attributes["start"] = i
+	e.attributes.Set("start", strconv.Itoa(i))
 
 	return e
 }
@@ -233,41 +264,47 @@ func (e *OlElement) Start(i int) *OlElement {
 func (e *OlElement) AriaUnsafe(name string, s string) *OlElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OlElement) Aria(name string, s string) *OlElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OlElement) Autocapitalize(a OlAutocapitalize) *OlElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *OlElement) Autocorrect(a OlAutocorrect) *OlElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OlElement) Autofocus(b bool) *OlElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *OlElement) Class(s ...string) *OlElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OlElement) Contenteditable(a OlContenteditable) *OlElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -275,149 +312,157 @@ func (e *OlElement) Contenteditable(a OlContenteditable) *OlElement {
 func (e *OlElement) DataUnsafe(name string, s string) *OlElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OlElement) Data(name string, s string) *OlElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OlElement) Dir(a OlDir) *OlElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *OlElement) Draggable(a OlDraggable) *OlElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *OlElement) Enterkeyhint(a OlEnterkeyhint) *OlElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *OlElement) Hidden(a OlHidden) *OlElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *OlElement) Id(s string) *OlElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OlElement) Inert(b bool) *OlElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *OlElement) Inputmode(a OlInputmode) *OlElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *OlElement) Itemid(s string) *OlElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *OlElement) Itemprop(s ...string) *OlElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OlElement) Itemref(s ...string) *OlElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OlElement) Itemscope(b bool) *OlElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *OlElement) Itemtype(s ...string) *OlElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OlElement) Lang(s string) *OlElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *OlElement) Nonce(s string) *OlElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *OlElement) Popover(s string) *OlElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *OlElement) Role(s string) *OlElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *OlElement) Slot(s string) *OlElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *OlElement) Spellcheck(a OlSpellcheck) *OlElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *OlElement) Style(s string) *OlElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *OlElement) Tabindex(i int) *OlElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *OlElement) Title(s string) *OlElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *OlElement) Translate(a OlTranslate) *OlElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *OlElement) Writingsuggestions(a OlWritingsuggestions) *OlElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -435,18 +480,7 @@ func (e *OlElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<ol")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

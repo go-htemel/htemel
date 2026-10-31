@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type OptionElement struct {
-	attributes optionAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Option creates a tag <option> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The option element represents an option in a select element or as part of a list of suggestions in a datalist element.
 func Option(children ...htemel.Node) *OptionElement {
 	node := &OptionElement{
-		children:   children,
-		attributes: make(optionAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// OptionIf creates a tag <option> instance that is only rendered when condition is true.
 func OptionIf(condition bool, children ...htemel.Node) *OptionElement {
 	if condition {
 		return Option(children...)
@@ -36,16 +38,16 @@ func OptionIf(condition bool, children ...htemel.Node) *OptionElement {
 
 	return &OptionElement{
 		children:   children,
-		attributes: make(optionAttrs),
 		skipRender: true,
 	}
 }
 
-func OptionTernary(condition bool, true htemel.Node, false htemel.Node) *OptionElement {
+// OptionTernary creates a tag <option> containing then when condition is true, otherwise containing otherwise.
+func OptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OptionElement {
 	if condition {
-		return Option(true)
+		return Option(then)
 	}
-	return Option(false)
+	return Option(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *OptionElement) With(fn func(*OptionElement)) *OptionElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *OptionElement) Text(text string) *OptionElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *OptionElement) Textf(format string, args ...any) *OptionElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *OptionElement) If(cond bool, child htemel.Node) *OptionElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *OptionElement) IfElse(cond bool, then, els htemel.Node) *OptionElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *OptionElement) IfThen(cond bool, fn func(*OptionElement)) *OptionElemen
 
 // AddClass appends a class to the element.
 func (e *OptionElement) AddClass(classes ...string) *OptionElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *OptionElement) ToggleClass(class string, enable bool) *OptionElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *OptionElement) Attr(name, value string) *OptionElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *OptionElement) AttrUnsafe(name, value string) *OptionElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *OptionElement) BoolAttr(name string, on bool) *OptionElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type OptionAutocapitalize string
 
 const (
-	OptionAutocapitalizeWords      OptionAutocapitalize = "words"
 	OptionAutocapitalizeCharacters OptionAutocapitalize = "characters"
 	OptionAutocapitalizeNone       OptionAutocapitalize = "none"
 	OptionAutocapitalizeOff        OptionAutocapitalize = "off"
 	OptionAutocapitalizeOn         OptionAutocapitalize = "on"
 	OptionAutocapitalizeSentences  OptionAutocapitalize = "sentences"
+	OptionAutocapitalizeWords      OptionAutocapitalize = "words"
 )
 
 type OptionAutocorrect string
@@ -155,27 +186,27 @@ const (
 type OptionDraggable string
 
 const (
-	OptionDraggableTrue  OptionDraggable = "true"
 	OptionDraggableFalse OptionDraggable = "false"
+	OptionDraggableTrue  OptionDraggable = "true"
 )
 
 type OptionEnterkeyhint string
 
 const (
+	OptionEnterkeyhintDone     OptionEnterkeyhint = "done"
+	OptionEnterkeyhintEnter    OptionEnterkeyhint = "enter"
 	OptionEnterkeyhintGo       OptionEnterkeyhint = "go"
 	OptionEnterkeyhintNext     OptionEnterkeyhint = "next"
 	OptionEnterkeyhintPrevious OptionEnterkeyhint = "previous"
 	OptionEnterkeyhintSearch   OptionEnterkeyhint = "search"
 	OptionEnterkeyhintSend     OptionEnterkeyhint = "send"
-	OptionEnterkeyhintDone     OptionEnterkeyhint = "done"
-	OptionEnterkeyhintEnter    OptionEnterkeyhint = "enter"
 )
 
 type OptionHidden string
 
 const (
-	OptionHiddenUntilFound OptionHidden = "until-found"
 	OptionHiddenHidden     OptionHidden = "hidden"
+	OptionHiddenUntilFound OptionHidden = "until-found"
 	OptionHiddenEmpty      OptionHidden = ""
 )
 
@@ -203,8 +234,8 @@ const (
 type OptionTranslate string
 
 const (
-	OptionTranslateYes   OptionTranslate = "yes"
 	OptionTranslateNo    OptionTranslate = "no"
+	OptionTranslateYes   OptionTranslate = "yes"
 	OptionTranslateEmpty OptionTranslate = ""
 )
 
@@ -216,28 +247,30 @@ const (
 	OptionWritingsuggestionsEmpty OptionWritingsuggestions = ""
 )
 
-type optionAttrs map[string]any
-
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Disabled(b bool) *OptionElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *OptionElement) Label(s string) *OptionElement {
-	e.attributes["label"] = s
+	e.attributes.Set("label", s)
 
 	return e
 }
 
+// Selected sets the boolean attribute "selected". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Selected(b bool) *OptionElement {
-	e.attributes["selected"] = b
+	e.attributes.SetBool("selected", b)
 
 	return e
 }
 
 func (e *OptionElement) Value(s string) *OptionElement {
-	e.attributes["value"] = s
+	e.attributes.Set("value", s)
 
 	return e
 }
@@ -245,41 +278,47 @@ func (e *OptionElement) Value(s string) *OptionElement {
 func (e *OptionElement) AriaUnsafe(name string, s string) *OptionElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OptionElement) Aria(name string, s string) *OptionElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OptionElement) Autocapitalize(a OptionAutocapitalize) *OptionElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Autocorrect(a OptionAutocorrect) *OptionElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Autofocus(b bool) *OptionElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *OptionElement) Class(s ...string) *OptionElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptionElement) Contenteditable(a OptionContenteditable) *OptionElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -287,149 +326,157 @@ func (e *OptionElement) Contenteditable(a OptionContenteditable) *OptionElement 
 func (e *OptionElement) DataUnsafe(name string, s string) *OptionElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *OptionElement) Data(name string, s string) *OptionElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *OptionElement) Dir(a OptionDir) *OptionElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Draggable(a OptionDraggable) *OptionElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Enterkeyhint(a OptionEnterkeyhint) *OptionElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Hidden(a OptionHidden) *OptionElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Id(s string) *OptionElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Inert(b bool) *OptionElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *OptionElement) Inputmode(a OptionInputmode) *OptionElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Itemid(s string) *OptionElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *OptionElement) Itemprop(s ...string) *OptionElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptionElement) Itemref(s ...string) *OptionElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Itemscope(b bool) *OptionElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *OptionElement) Itemtype(s ...string) *OptionElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *OptionElement) Lang(s string) *OptionElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *OptionElement) Nonce(s string) *OptionElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *OptionElement) Popover(s string) *OptionElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *OptionElement) Role(s string) *OptionElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *OptionElement) Slot(s string) *OptionElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *OptionElement) Spellcheck(a OptionSpellcheck) *OptionElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Style(s string) *OptionElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *OptionElement) Tabindex(i int) *OptionElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *OptionElement) Title(s string) *OptionElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *OptionElement) Translate(a OptionTranslate) *OptionElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *OptionElement) Writingsuggestions(a OptionWritingsuggestions) *OptionElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -447,18 +494,7 @@ func (e *OptionElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<option")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -97,7 +97,7 @@ func BaseStruct() (*template.Template, ImportSet) {
 		}).
 		Parse(`
 type {{ .Tag | titleCase }}Element struct {
-	attributes {{ .Tag }}Attrs
+	attributes render.Attrs
 	{{ if not .Void }}children []htemel.Node{{ end }}
 	skipRender bool
 }
@@ -112,13 +112,13 @@ func BaseFunc() (*template.Template, ImportSet) {
 			"titleCase": titleCase,
 		}).Parse(`
 // {{ .Tag | titleCase }} creates a tag <{{ .Tag }}> instance and returns it for further modification.
-{{ if not .Void }}// Any children passed will be nested within the tag.{{ end -}}
+{{ if not .Void }}// Any children passed will be nested within the tag.
+{{ end -}}
 //
 // Spec Description: {{ .Description }}
 func {{ .Tag | titleCase }}({{ if not .Void }}children ...htemel.Node{{ end }}) *{{ .Tag | titleCase }}Element {
 	node := &{{ .Tag | titleCase }}Element{
 		{{ if not .Void }}children: children,{{ end }}
-		attributes: make({{ .Tag }}Attrs),
 	}
 
 	return node
@@ -133,6 +133,7 @@ func BaseCondFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"titleCase": titleCase,
 		}).Parse(`
+// {{ .Tag | titleCase }}If creates a tag <{{ .Tag }}> instance that is only rendered when condition is true.
 func {{ .Tag | titleCase }}If(condition bool{{ if not .Void }}, children ...htemel.Node{{ end }}) *{{ .Tag | titleCase }}Element {
 	if condition {
 		return {{ .Tag | titleCase }}({{ if not .Void }}children...{{ end }})
@@ -140,7 +141,6 @@ func {{ .Tag | titleCase }}If(condition bool{{ if not .Void }}, children ...htem
 
 	return &{{ .Tag | titleCase }}Element{
 		{{ if not .Void }}children: children,{{ end }}
-		attributes: make({{ .Tag }}Attrs),
 		skipRender: true,
 	}
 }
@@ -155,11 +155,12 @@ func BaseTernaryFunc() (*template.Template, ImportSet) {
 			"titleCase": titleCase,
 		}).Parse(`
 {{ if not .Void }}
-func {{ .Tag | titleCase }}Ternary(condition bool, true htemel.Node, false htemel.Node) *{{ .Tag | titleCase }}Element {
+// {{ .Tag | titleCase }}Ternary creates a tag <{{ .Tag }}> containing then when condition is true, otherwise containing otherwise.
+func {{ .Tag | titleCase }}Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *{{ .Tag | titleCase }}Element {
 	if condition {
-		return {{ .Tag | titleCase }}(true)
+		return {{ .Tag | titleCase }}(then)
 	}
-	return {{ .Tag | titleCase }}(false)
+	return {{ .Tag | titleCase }}(otherwise)
 }
 {{ end }}
 `))
@@ -199,20 +200,41 @@ func (e *{{ .Tag | titleCase }}Element) With(fn func(*{{ .Tag | titleCase }}Elem
 	return tmpl, nil
 }
 
+// rawTextElements are elements whose content is raw text per the HTML spec and must not be HTML-escaped.
+var rawTextElements = map[string]bool{
+	"script": true,
+	"style":  true,
+}
+
+func isRawText(tag string) bool { return rawTextElements[tag] }
+
 func TextFunc() (*template.Template, ImportSet) {
 	tmpl := template.Must(template.New("TextFunc").
 		Funcs(template.FuncMap{
 			"titleCase": titleCase,
+			"isRawText": isRawText,
 		}).Parse(`
 {{ if not .Void }}
-// Text adds a text node to the element.
+{{ if isRawText .Tag }}
+// Text adds a raw text node to the element. Because <{{ .Tag }}> is a raw text element, the
+// content is NOT HTML-escaped (so code like "a < b" is preserved). The only transformation is
+// that any case-insensitive "</{{ .Tag }}" sequence is rewritten as "<\/{{ .Tag }}" so the
+// content cannot close the element early. Never pass untrusted input here.
+func (e *{{ .Tag | titleCase }}Element) Text(text string) *{{ .Tag | titleCase }}Element {
+	return e.Children(htemel.TextUnsafe(render.RawText("{{ .Tag }}", text)))
+}
+{{ else }}
+// Text adds an HTML-escaped text node to the element.
 func (e *{{ .Tag | titleCase }}Element) Text(text string) *{{ .Tag | titleCase }}Element {
 	return e.Children(htemel.Text(text))
 }
 {{ end }}
+{{ end }}
 `))
 
-	return tmpl, nil
+	is := ImportSet{}
+
+	return tmpl, is.Add("github.com/go-htemel/htemel/internal/render")
 }
 
 func TextfFunc() (*template.Template, ImportSet) {
@@ -222,13 +244,16 @@ func TextfFunc() (*template.Template, ImportSet) {
 		}).Parse(`
 {{ if not .Void }}
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *{{ .Tag | titleCase }}Element) Textf(format string, args ...any) *{{ .Tag | titleCase }}Element {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 {{ end }}
 `))
 
-	return tmpl, nil
+	is := ImportSet{}
+
+	return tmpl, is.Add("fmt")
 }
 
 func IfFunc() (*template.Template, ImportSet) {
@@ -256,7 +281,7 @@ func IfElseFunc() (*template.Template, ImportSet) {
 			"titleCase": titleCase,
 		}).Parse(`
 {{ if not .Void }}
-// 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *{{ .Tag | titleCase }}Element) IfElse(cond bool, then, els htemel.Node) *{{ .Tag | titleCase }}Element {
 	if cond {
 		e.Children(then)
@@ -297,9 +322,9 @@ func AddClassFunc() (*template.Template, ImportSet) {
 		}).Parse(`
 // AddClass appends a class to the element.
 func (e *{{ .Tag | titleCase }}Element) AddClass(classes ...string) *{{ .Tag | titleCase }}Element {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 `))
@@ -314,14 +339,52 @@ func ToggleClassFunc() (*template.Template, ImportSet) {
 		}).Parse(`
 // ToggleClass toggles a class on or off.
 func (e *{{ .Tag | titleCase }}Element) ToggleClass(class string, enable bool) *{{ .Tag | titleCase }}Element {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+`))
+
+	is := ImportSet{}
+
+	return tmpl, is.Add("slices").Add("strings")
+}
+
+func AttrFunc() (*template.Template, ImportSet) {
+	tmpl := template.Must(template.New("AttrFunc").
+		Funcs(template.FuncMap{
+			"titleCase": titleCase,
+		}).Parse(`
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *{{ .Tag | titleCase }}Element) Attr(name, value string) *{{ .Tag | titleCase }}Element {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *{{ .Tag | titleCase }}Element) AttrUnsafe(name, value string) *{{ .Tag | titleCase }}Element {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *{{ .Tag | titleCase }}Element) BoolAttr(name string, on bool) *{{ .Tag | titleCase }}Element {
+	e.attributes.SetBool(name, on)
 	return e
 }
 `))
@@ -348,18 +411,7 @@ func (e *{{ .Tag | titleCase }}Element) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<{{ .Tag }}")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 
@@ -380,5 +432,5 @@ func (e *{{ .Tag | titleCase }}Element) Render(w io.Writer) error {
 
 	is := ImportSet{}
 
-	return tmpl, is.Add("io").Add("fmt").Add("golang.org/x/net/html")
+	return tmpl, is.Add("io").Add("strings").Add("github.com/go-htemel/htemel/internal/render")
 }

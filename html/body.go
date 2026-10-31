@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type BodyElement struct {
-	attributes bodyAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Body creates a tag <body> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The body element represents the contents of the document.
 func Body(children ...htemel.Node) *BodyElement {
 	node := &BodyElement{
-		children:   children,
-		attributes: make(bodyAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// BodyIf creates a tag <body> instance that is only rendered when condition is true.
 func BodyIf(condition bool, children ...htemel.Node) *BodyElement {
 	if condition {
 		return Body(children...)
@@ -36,16 +38,16 @@ func BodyIf(condition bool, children ...htemel.Node) *BodyElement {
 
 	return &BodyElement{
 		children:   children,
-		attributes: make(bodyAttrs),
 		skipRender: true,
 	}
 }
 
-func BodyTernary(condition bool, true htemel.Node, false htemel.Node) *BodyElement {
+// BodyTernary creates a tag <body> containing then when condition is true, otherwise containing otherwise.
+func BodyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BodyElement {
 	if condition {
-		return Body(true)
+		return Body(then)
 	}
-	return Body(false)
+	return Body(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *BodyElement) With(fn func(*BodyElement)) *BodyElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *BodyElement) Text(text string) *BodyElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *BodyElement) Textf(format string, args ...any) *BodyElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *BodyElement) If(cond bool, child htemel.Node) *BodyElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *BodyElement) IfElse(cond bool, then, els htemel.Node) *BodyElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *BodyElement) IfThen(cond bool, fn func(*BodyElement)) *BodyElement {
 
 // AddClass appends a class to the element.
 func (e *BodyElement) AddClass(classes ...string) *BodyElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *BodyElement) ToggleClass(class string, enable bool) *BodyElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *BodyElement) Attr(name, value string) *BodyElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *BodyElement) AttrUnsafe(name, value string) *BodyElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *BodyElement) BoolAttr(name string, on bool) *BodyElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type BodyAutocapitalize string
 
 const (
+	BodyAutocapitalizeCharacters BodyAutocapitalize = "characters"
+	BodyAutocapitalizeNone       BodyAutocapitalize = "none"
 	BodyAutocapitalizeOff        BodyAutocapitalize = "off"
 	BodyAutocapitalizeOn         BodyAutocapitalize = "on"
 	BodyAutocapitalizeSentences  BodyAutocapitalize = "sentences"
 	BodyAutocapitalizeWords      BodyAutocapitalize = "words"
-	BodyAutocapitalizeCharacters BodyAutocapitalize = "characters"
-	BodyAutocapitalizeNone       BodyAutocapitalize = "none"
 )
 
 type BodyAutocorrect string
@@ -138,9 +169,9 @@ const (
 type BodyContenteditable string
 
 const (
-	BodyContenteditableTrue          BodyContenteditable = "true"
 	BodyContenteditableFalse         BodyContenteditable = "false"
 	BodyContenteditablePlaintextOnly BodyContenteditable = "plaintext-only"
+	BodyContenteditableTrue          BodyContenteditable = "true"
 	BodyContenteditableEmpty         BodyContenteditable = ""
 )
 
@@ -162,13 +193,13 @@ const (
 type BodyEnterkeyhint string
 
 const (
+	BodyEnterkeyhintDone     BodyEnterkeyhint = "done"
+	BodyEnterkeyhintEnter    BodyEnterkeyhint = "enter"
+	BodyEnterkeyhintGo       BodyEnterkeyhint = "go"
 	BodyEnterkeyhintNext     BodyEnterkeyhint = "next"
 	BodyEnterkeyhintPrevious BodyEnterkeyhint = "previous"
 	BodyEnterkeyhintSearch   BodyEnterkeyhint = "search"
 	BodyEnterkeyhintSend     BodyEnterkeyhint = "send"
-	BodyEnterkeyhintDone     BodyEnterkeyhint = "done"
-	BodyEnterkeyhintEnter    BodyEnterkeyhint = "enter"
-	BodyEnterkeyhintGo       BodyEnterkeyhint = "go"
 )
 
 type BodyHidden string
@@ -182,6 +213,7 @@ const (
 type BodyInputmode string
 
 const (
+	BodyInputmodeDecimal BodyInputmode = "decimal"
 	BodyInputmodeEmail   BodyInputmode = "email"
 	BodyInputmodeNone    BodyInputmode = "none"
 	BodyInputmodeNumeric BodyInputmode = "numeric"
@@ -189,7 +221,6 @@ const (
 	BodyInputmodeTel     BodyInputmode = "tel"
 	BodyInputmodeText    BodyInputmode = "text"
 	BodyInputmodeUrl     BodyInputmode = "url"
-	BodyInputmodeDecimal BodyInputmode = "decimal"
 )
 
 type BodySpellcheck string
@@ -211,117 +242,115 @@ const (
 type BodyWritingsuggestions string
 
 const (
-	BodyWritingsuggestionsTrue  BodyWritingsuggestions = "true"
 	BodyWritingsuggestionsFalse BodyWritingsuggestions = "false"
+	BodyWritingsuggestionsTrue  BodyWritingsuggestions = "true"
 	BodyWritingsuggestionsEmpty BodyWritingsuggestions = ""
 )
 
-type bodyAttrs map[string]any
-
 func (e *BodyElement) Onafterprint(s string) *BodyElement {
-	e.attributes["onafterprint"] = s
+	e.attributes.Set("onafterprint", s)
 
 	return e
 }
 
 func (e *BodyElement) Onbeforeprint(s string) *BodyElement {
-	e.attributes["onbeforeprint"] = s
+	e.attributes.Set("onbeforeprint", s)
 
 	return e
 }
 
 func (e *BodyElement) Onbeforeunload(s string) *BodyElement {
-	e.attributes["onbeforeunload"] = s
+	e.attributes.Set("onbeforeunload", s)
 
 	return e
 }
 
 func (e *BodyElement) Onhashchange(s string) *BodyElement {
-	e.attributes["onhashchange"] = s
+	e.attributes.Set("onhashchange", s)
 
 	return e
 }
 
 func (e *BodyElement) Onlanguagechange(s string) *BodyElement {
-	e.attributes["onlanguagechange"] = s
+	e.attributes.Set("onlanguagechange", s)
 
 	return e
 }
 
 func (e *BodyElement) Onmessage(s string) *BodyElement {
-	e.attributes["onmessage"] = s
+	e.attributes.Set("onmessage", s)
 
 	return e
 }
 
 func (e *BodyElement) Onmessageerror(s string) *BodyElement {
-	e.attributes["onmessageerror"] = s
+	e.attributes.Set("onmessageerror", s)
 
 	return e
 }
 
 func (e *BodyElement) Onoffline(s string) *BodyElement {
-	e.attributes["onoffline"] = s
+	e.attributes.Set("onoffline", s)
 
 	return e
 }
 
 func (e *BodyElement) Ononline(s string) *BodyElement {
-	e.attributes["ononline"] = s
+	e.attributes.Set("ononline", s)
 
 	return e
 }
 
 func (e *BodyElement) Onpageswap(s string) *BodyElement {
-	e.attributes["onpageswap"] = s
+	e.attributes.Set("onpageswap", s)
 
 	return e
 }
 
 func (e *BodyElement) Onpagehide(s string) *BodyElement {
-	e.attributes["onpagehide"] = s
+	e.attributes.Set("onpagehide", s)
 
 	return e
 }
 
 func (e *BodyElement) Onpagereveal(s string) *BodyElement {
-	e.attributes["onpagereveal"] = s
+	e.attributes.Set("onpagereveal", s)
 
 	return e
 }
 
 func (e *BodyElement) Onpageshow(s string) *BodyElement {
-	e.attributes["onpageshow"] = s
+	e.attributes.Set("onpageshow", s)
 
 	return e
 }
 
 func (e *BodyElement) Onpopstate(s string) *BodyElement {
-	e.attributes["onpopstate"] = s
+	e.attributes.Set("onpopstate", s)
 
 	return e
 }
 
 func (e *BodyElement) Onrejectionhandled(s string) *BodyElement {
-	e.attributes["onrejectionhandled"] = s
+	e.attributes.Set("onrejectionhandled", s)
 
 	return e
 }
 
 func (e *BodyElement) Onstorage(s string) *BodyElement {
-	e.attributes["onstorage"] = s
+	e.attributes.Set("onstorage", s)
 
 	return e
 }
 
 func (e *BodyElement) Onunhandledrejection(s string) *BodyElement {
-	e.attributes["onunhandledrejection"] = s
+	e.attributes.Set("onunhandledrejection", s)
 
 	return e
 }
 
 func (e *BodyElement) Onunload(s string) *BodyElement {
-	e.attributes["onunload"] = s
+	e.attributes.Set("onunload", s)
 
 	return e
 }
@@ -329,41 +358,47 @@ func (e *BodyElement) Onunload(s string) *BodyElement {
 func (e *BodyElement) AriaUnsafe(name string, s string) *BodyElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BodyElement) Aria(name string, s string) *BodyElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BodyElement) Autocapitalize(a BodyAutocapitalize) *BodyElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Autocorrect(a BodyAutocorrect) *BodyElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BodyElement) Autofocus(b bool) *BodyElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *BodyElement) Class(s ...string) *BodyElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BodyElement) Contenteditable(a BodyContenteditable) *BodyElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -371,149 +406,157 @@ func (e *BodyElement) Contenteditable(a BodyContenteditable) *BodyElement {
 func (e *BodyElement) DataUnsafe(name string, s string) *BodyElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BodyElement) Data(name string, s string) *BodyElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BodyElement) Dir(a BodyDir) *BodyElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Draggable(a BodyDraggable) *BodyElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Enterkeyhint(a BodyEnterkeyhint) *BodyElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Hidden(a BodyHidden) *BodyElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Id(s string) *BodyElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BodyElement) Inert(b bool) *BodyElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *BodyElement) Inputmode(a BodyInputmode) *BodyElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Itemid(s string) *BodyElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *BodyElement) Itemprop(s ...string) *BodyElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BodyElement) Itemref(s ...string) *BodyElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BodyElement) Itemscope(b bool) *BodyElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *BodyElement) Itemtype(s ...string) *BodyElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BodyElement) Lang(s string) *BodyElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *BodyElement) Nonce(s string) *BodyElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *BodyElement) Popover(s string) *BodyElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *BodyElement) Role(s string) *BodyElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *BodyElement) Slot(s string) *BodyElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *BodyElement) Spellcheck(a BodySpellcheck) *BodyElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Style(s string) *BodyElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *BodyElement) Tabindex(i int) *BodyElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *BodyElement) Title(s string) *BodyElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *BodyElement) Translate(a BodyTranslate) *BodyElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *BodyElement) Writingsuggestions(a BodyWritingsuggestions) *BodyElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -531,18 +574,7 @@ func (e *BodyElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<body")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type PreElement struct {
-	attributes preAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Pre creates a tag <pre> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The pre element represents a block of preformatted text, in which structure is represented by typographic conventions rather than by elements.
 func Pre(children ...htemel.Node) *PreElement {
 	node := &PreElement{
-		children:   children,
-		attributes: make(preAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// PreIf creates a tag <pre> instance that is only rendered when condition is true.
 func PreIf(condition bool, children ...htemel.Node) *PreElement {
 	if condition {
 		return Pre(children...)
@@ -36,16 +38,16 @@ func PreIf(condition bool, children ...htemel.Node) *PreElement {
 
 	return &PreElement{
 		children:   children,
-		attributes: make(preAttrs),
 		skipRender: true,
 	}
 }
 
-func PreTernary(condition bool, true htemel.Node, false htemel.Node) *PreElement {
+// PreTernary creates a tag <pre> containing then when condition is true, otherwise containing otherwise.
+func PreTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PreElement {
 	if condition {
-		return Pre(true)
+		return Pre(then)
 	}
-	return Pre(false)
+	return Pre(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *PreElement) With(fn func(*PreElement)) *PreElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *PreElement) Text(text string) *PreElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *PreElement) Textf(format string, args ...any) *PreElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *PreElement) If(cond bool, child htemel.Node) *PreElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *PreElement) IfElse(cond bool, then, els htemel.Node) *PreElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *PreElement) IfThen(cond bool, fn func(*PreElement)) *PreElement {
 
 // AddClass appends a class to the element.
 func (e *PreElement) AddClass(classes ...string) *PreElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *PreElement) ToggleClass(class string, enable bool) *PreElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *PreElement) Attr(name, value string) *PreElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *PreElement) AttrUnsafe(name, value string) *PreElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *PreElement) BoolAttr(name string, on bool) *PreElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -182,14 +213,14 @@ const (
 type PreInputmode string
 
 const (
+	PreInputmodeDecimal PreInputmode = "decimal"
+	PreInputmodeEmail   PreInputmode = "email"
 	PreInputmodeNone    PreInputmode = "none"
 	PreInputmodeNumeric PreInputmode = "numeric"
 	PreInputmodeSearch  PreInputmode = "search"
 	PreInputmodeTel     PreInputmode = "tel"
 	PreInputmodeText    PreInputmode = "text"
 	PreInputmodeUrl     PreInputmode = "url"
-	PreInputmodeDecimal PreInputmode = "decimal"
-	PreInputmodeEmail   PreInputmode = "email"
 )
 
 type PreSpellcheck string
@@ -216,46 +247,50 @@ const (
 	PreWritingsuggestionsEmpty PreWritingsuggestions = ""
 )
 
-type preAttrs map[string]any
-
 func (e *PreElement) AriaUnsafe(name string, s string) *PreElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *PreElement) Aria(name string, s string) *PreElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *PreElement) Autocapitalize(a PreAutocapitalize) *PreElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *PreElement) Autocorrect(a PreAutocorrect) *PreElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *PreElement) Autofocus(b bool) *PreElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *PreElement) Class(s ...string) *PreElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *PreElement) Contenteditable(a PreContenteditable) *PreElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *PreElement) Contenteditable(a PreContenteditable) *PreElement {
 func (e *PreElement) DataUnsafe(name string, s string) *PreElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *PreElement) Data(name string, s string) *PreElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *PreElement) Dir(a PreDir) *PreElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *PreElement) Draggable(a PreDraggable) *PreElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *PreElement) Enterkeyhint(a PreEnterkeyhint) *PreElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *PreElement) Hidden(a PreHidden) *PreElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *PreElement) Id(s string) *PreElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *PreElement) Inert(b bool) *PreElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *PreElement) Inputmode(a PreInputmode) *PreElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *PreElement) Itemid(s string) *PreElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *PreElement) Itemprop(s ...string) *PreElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *PreElement) Itemref(s ...string) *PreElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *PreElement) Itemscope(b bool) *PreElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *PreElement) Itemtype(s ...string) *PreElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *PreElement) Lang(s string) *PreElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *PreElement) Nonce(s string) *PreElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *PreElement) Popover(s string) *PreElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *PreElement) Role(s string) *PreElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *PreElement) Slot(s string) *PreElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *PreElement) Spellcheck(a PreSpellcheck) *PreElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *PreElement) Style(s string) *PreElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *PreElement) Tabindex(i int) *PreElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *PreElement) Title(s string) *PreElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *PreElement) Translate(a PreTranslate) *PreElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *PreElement) Writingsuggestions(a PreWritingsuggestions) *PreElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *PreElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<pre")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type SmallElement struct {
-	attributes smallAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Small creates a tag <small> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The small element represents side comments such as small print.
 func Small(children ...htemel.Node) *SmallElement {
 	node := &SmallElement{
-		children:   children,
-		attributes: make(smallAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// SmallIf creates a tag <small> instance that is only rendered when condition is true.
 func SmallIf(condition bool, children ...htemel.Node) *SmallElement {
 	if condition {
 		return Small(children...)
@@ -36,16 +38,16 @@ func SmallIf(condition bool, children ...htemel.Node) *SmallElement {
 
 	return &SmallElement{
 		children:   children,
-		attributes: make(smallAttrs),
 		skipRender: true,
 	}
 }
 
-func SmallTernary(condition bool, true htemel.Node, false htemel.Node) *SmallElement {
+// SmallTernary creates a tag <small> containing then when condition is true, otherwise containing otherwise.
+func SmallTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SmallElement {
 	if condition {
-		return Small(true)
+		return Small(then)
 	}
-	return Small(false)
+	return Small(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *SmallElement) With(fn func(*SmallElement)) *SmallElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *SmallElement) Text(text string) *SmallElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *SmallElement) Textf(format string, args ...any) *SmallElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *SmallElement) If(cond bool, child htemel.Node) *SmallElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *SmallElement) IfElse(cond bool, then, els htemel.Node) *SmallElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *SmallElement) IfThen(cond bool, fn func(*SmallElement)) *SmallElement {
 
 // AddClass appends a class to the element.
 func (e *SmallElement) AddClass(classes ...string) *SmallElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *SmallElement) ToggleClass(class string, enable bool) *SmallElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *SmallElement) Attr(name, value string) *SmallElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *SmallElement) AttrUnsafe(name, value string) *SmallElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *SmallElement) BoolAttr(name string, on bool) *SmallElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type SmallEnterkeyhint string
 
 const (
+	SmallEnterkeyhintDone     SmallEnterkeyhint = "done"
+	SmallEnterkeyhintEnter    SmallEnterkeyhint = "enter"
 	SmallEnterkeyhintGo       SmallEnterkeyhint = "go"
 	SmallEnterkeyhintNext     SmallEnterkeyhint = "next"
 	SmallEnterkeyhintPrevious SmallEnterkeyhint = "previous"
 	SmallEnterkeyhintSearch   SmallEnterkeyhint = "search"
 	SmallEnterkeyhintSend     SmallEnterkeyhint = "send"
-	SmallEnterkeyhintDone     SmallEnterkeyhint = "done"
-	SmallEnterkeyhintEnter    SmallEnterkeyhint = "enter"
 )
 
 type SmallHidden string
@@ -182,14 +213,14 @@ const (
 type SmallInputmode string
 
 const (
+	SmallInputmodeDecimal SmallInputmode = "decimal"
+	SmallInputmodeEmail   SmallInputmode = "email"
 	SmallInputmodeNone    SmallInputmode = "none"
 	SmallInputmodeNumeric SmallInputmode = "numeric"
 	SmallInputmodeSearch  SmallInputmode = "search"
 	SmallInputmodeTel     SmallInputmode = "tel"
 	SmallInputmodeText    SmallInputmode = "text"
 	SmallInputmodeUrl     SmallInputmode = "url"
-	SmallInputmodeDecimal SmallInputmode = "decimal"
-	SmallInputmodeEmail   SmallInputmode = "email"
 )
 
 type SmallSpellcheck string
@@ -216,46 +247,50 @@ const (
 	SmallWritingsuggestionsEmpty SmallWritingsuggestions = ""
 )
 
-type smallAttrs map[string]any
-
 func (e *SmallElement) AriaUnsafe(name string, s string) *SmallElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SmallElement) Aria(name string, s string) *SmallElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SmallElement) Autocapitalize(a SmallAutocapitalize) *SmallElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Autocorrect(a SmallAutocorrect) *SmallElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SmallElement) Autofocus(b bool) *SmallElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *SmallElement) Class(s ...string) *SmallElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SmallElement) Contenteditable(a SmallContenteditable) *SmallElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *SmallElement) Contenteditable(a SmallContenteditable) *SmallElement {
 func (e *SmallElement) DataUnsafe(name string, s string) *SmallElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SmallElement) Data(name string, s string) *SmallElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SmallElement) Dir(a SmallDir) *SmallElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Draggable(a SmallDraggable) *SmallElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Enterkeyhint(a SmallEnterkeyhint) *SmallElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Hidden(a SmallHidden) *SmallElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Id(s string) *SmallElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SmallElement) Inert(b bool) *SmallElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *SmallElement) Inputmode(a SmallInputmode) *SmallElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Itemid(s string) *SmallElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *SmallElement) Itemprop(s ...string) *SmallElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SmallElement) Itemref(s ...string) *SmallElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SmallElement) Itemscope(b bool) *SmallElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *SmallElement) Itemtype(s ...string) *SmallElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SmallElement) Lang(s string) *SmallElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *SmallElement) Nonce(s string) *SmallElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *SmallElement) Popover(s string) *SmallElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *SmallElement) Role(s string) *SmallElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *SmallElement) Slot(s string) *SmallElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *SmallElement) Spellcheck(a SmallSpellcheck) *SmallElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Style(s string) *SmallElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *SmallElement) Tabindex(i int) *SmallElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SmallElement) Title(s string) *SmallElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *SmallElement) Translate(a SmallTranslate) *SmallElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *SmallElement) Writingsuggestions(a SmallWritingsuggestions) *SmallElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *SmallElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<small")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

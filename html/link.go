@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type LinkElement struct {
-	attributes linkAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type LinkElement struct {
 //
 // Spec Description: The link element allows authors to link their document to other resources.
 func Link() *LinkElement {
-	node := &LinkElement{
-
-		attributes: make(linkAttrs),
-	}
+	node := &LinkElement{}
 
 	return node
 }
 
+// LinkIf creates a tag <link> instance that is only rendered when condition is true.
 func LinkIf(condition bool) *LinkElement {
 	if condition {
 		return Link()
@@ -35,7 +33,6 @@ func LinkIf(condition bool) *LinkElement {
 
 	return &LinkElement{
 
-		attributes: make(linkAttrs),
 		skipRender: true,
 	}
 }
@@ -48,22 +45,49 @@ func (e *LinkElement) With(fn func(*LinkElement)) *LinkElement {
 
 // AddClass appends a class to the element.
 func (e *LinkElement) AddClass(classes ...string) *LinkElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *LinkElement) ToggleClass(class string, enable bool) *LinkElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *LinkElement) Attr(name, value string) *LinkElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *LinkElement) AttrUnsafe(name, value string) *LinkElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *LinkElement) BoolAttr(name string, on bool) *LinkElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -84,9 +108,9 @@ const (
 type LinkFetchpriority string
 
 const (
-	LinkFetchpriorityLow  LinkFetchpriority = "low"
 	LinkFetchpriorityAuto LinkFetchpriority = "auto"
 	LinkFetchpriorityHigh LinkFetchpriority = "high"
+	LinkFetchpriorityLow  LinkFetchpriority = "low"
 )
 
 type LinkAutocapitalize string
@@ -135,13 +159,13 @@ const (
 type LinkEnterkeyhint string
 
 const (
-	LinkEnterkeyhintSend     LinkEnterkeyhint = "send"
 	LinkEnterkeyhintDone     LinkEnterkeyhint = "done"
 	LinkEnterkeyhintEnter    LinkEnterkeyhint = "enter"
 	LinkEnterkeyhintGo       LinkEnterkeyhint = "go"
 	LinkEnterkeyhintNext     LinkEnterkeyhint = "next"
 	LinkEnterkeyhintPrevious LinkEnterkeyhint = "previous"
 	LinkEnterkeyhintSearch   LinkEnterkeyhint = "search"
+	LinkEnterkeyhintSend     LinkEnterkeyhint = "send"
 )
 
 type LinkHidden string
@@ -155,14 +179,14 @@ const (
 type LinkInputmode string
 
 const (
-	LinkInputmodeText    LinkInputmode = "text"
-	LinkInputmodeUrl     LinkInputmode = "url"
 	LinkInputmodeDecimal LinkInputmode = "decimal"
 	LinkInputmodeEmail   LinkInputmode = "email"
 	LinkInputmodeNone    LinkInputmode = "none"
 	LinkInputmodeNumeric LinkInputmode = "numeric"
 	LinkInputmodeSearch  LinkInputmode = "search"
 	LinkInputmodeTel     LinkInputmode = "tel"
+	LinkInputmodeText    LinkInputmode = "text"
+	LinkInputmodeUrl     LinkInputmode = "url"
 )
 
 type LinkSpellcheck string
@@ -189,100 +213,100 @@ const (
 	LinkWritingsuggestionsEmpty LinkWritingsuggestions = ""
 )
 
-type linkAttrs map[string]any
-
 func (e *LinkElement) Href(s string) *LinkElement {
-	e.attributes["href"] = s
+	e.attributes.Set("href", s)
 
 	return e
 }
 
 func (e *LinkElement) Crossorigin(a LinkCrossorigin) *LinkElement {
-	e.attributes["crossorigin"] = a
+	e.attributes.Set("crossorigin", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Rel(s ...string) *LinkElement {
-	e.attributes["rel"] = strings.Join(s, " ")
+	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LinkElement) Media(s string) *LinkElement {
-	e.attributes["media"] = s
+	e.attributes.Set("media", s)
 
 	return e
 }
 
 func (e *LinkElement) Integrity(s string) *LinkElement {
-	e.attributes["integrity"] = s
+	e.attributes.Set("integrity", s)
 
 	return e
 }
 
 func (e *LinkElement) Hreflang(s string) *LinkElement {
-	e.attributes["hreflang"] = s
+	e.attributes.Set("hreflang", s)
 
 	return e
 }
 
 func (e *LinkElement) Type(s string) *LinkElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *LinkElement) Referrerpolicy(s string) *LinkElement {
-	e.attributes["referrerpolicy"] = s
+	e.attributes.Set("referrerpolicy", s)
 
 	return e
 }
 
 func (e *LinkElement) Sizes(s ...string) *LinkElement {
-	e.attributes["sizes"] = strings.Join(s, " ")
+	e.attributes.Set("sizes", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LinkElement) Imagesrcset(s string) *LinkElement {
-	e.attributes["imagesrcset"] = s
+	e.attributes.Set("imagesrcset", s)
 
 	return e
 }
 
 func (e *LinkElement) Imagesizes(s string) *LinkElement {
-	e.attributes["imagesizes"] = s
+	e.attributes.Set("imagesizes", s)
 
 	return e
 }
 
 func (e *LinkElement) As(s string) *LinkElement {
-	e.attributes["as"] = s
+	e.attributes.Set("as", s)
 
 	return e
 }
 
 func (e *LinkElement) Blocking(a LinkBlocking) *LinkElement {
-	e.attributes["blocking"] = a
+	e.attributes.Set("blocking", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Color(s string) *LinkElement {
-	e.attributes["color"] = s
+	e.attributes.Set("color", s)
 
 	return e
 }
 
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LinkElement) Disabled(b bool) *LinkElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *LinkElement) Fetchpriority(a LinkFetchpriority) *LinkElement {
-	e.attributes["fetchpriority"] = a
+	e.attributes.Set("fetchpriority", string(a))
 
 	return e
 }
@@ -290,41 +314,47 @@ func (e *LinkElement) Fetchpriority(a LinkFetchpriority) *LinkElement {
 func (e *LinkElement) AriaUnsafe(name string, s string) *LinkElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LinkElement) Aria(name string, s string) *LinkElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LinkElement) Autocapitalize(a LinkAutocapitalize) *LinkElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Autocorrect(a LinkAutocorrect) *LinkElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LinkElement) Autofocus(b bool) *LinkElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *LinkElement) Class(s ...string) *LinkElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LinkElement) Contenteditable(a LinkContenteditable) *LinkElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -332,149 +362,157 @@ func (e *LinkElement) Contenteditable(a LinkContenteditable) *LinkElement {
 func (e *LinkElement) DataUnsafe(name string, s string) *LinkElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LinkElement) Data(name string, s string) *LinkElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LinkElement) Dir(a LinkDir) *LinkElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Draggable(a LinkDraggable) *LinkElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Enterkeyhint(a LinkEnterkeyhint) *LinkElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Hidden(a LinkHidden) *LinkElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Id(s string) *LinkElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LinkElement) Inert(b bool) *LinkElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *LinkElement) Inputmode(a LinkInputmode) *LinkElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Itemid(s string) *LinkElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *LinkElement) Itemprop(s ...string) *LinkElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LinkElement) Itemref(s ...string) *LinkElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LinkElement) Itemscope(b bool) *LinkElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *LinkElement) Itemtype(s ...string) *LinkElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LinkElement) Lang(s string) *LinkElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *LinkElement) Nonce(s string) *LinkElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *LinkElement) Popover(s string) *LinkElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *LinkElement) Role(s string) *LinkElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *LinkElement) Slot(s string) *LinkElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *LinkElement) Spellcheck(a LinkSpellcheck) *LinkElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Style(s string) *LinkElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *LinkElement) Tabindex(i int) *LinkElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *LinkElement) Title(s string) *LinkElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *LinkElement) Translate(a LinkTranslate) *LinkElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *LinkElement) Writingsuggestions(a LinkWritingsuggestions) *LinkElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -492,18 +530,7 @@ func (e *LinkElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<link")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

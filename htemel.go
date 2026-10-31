@@ -3,8 +3,12 @@ package htemel
 import (
 	"fmt"
 	"io"
+	"sort"
+	"strings"
 
 	"golang.org/x/net/html"
+
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 // Node defines the interface that must be implemented in order to render elements.
@@ -68,49 +72,74 @@ func GenericVoid(tag string, attrs map[string]any) *GenericElement {
 	}
 }
 
+// Render implements the Node interface.
+//
+// Attributes are rendered in sorted key order (the input is a map, so there is no insertion order to preserve).
+// Values are HTML-escaped. A nil or true value renders a bare attribute; a false value omits it.
+// Other values are formatted with fmt.Sprint.
 func (e *GenericElement) Render(w io.Writer) error {
-	if _, err := w.Write([]byte("<" + e.tag)); err != nil {
-		return err
-	}
+	var sb strings.Builder
+	sb.WriteString("<" + e.tag)
 
-	for key, val := range e.attrs {
-		if val == nil {
-			if _, err := w.Write([]byte(fmt.Sprintf(" %s", key))); err != nil {
-				return err
+	keys := make([]string, 0, len(e.attrs))
+	for key := range e.attrs {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
+		switch val := e.attrs[key].(type) {
+		case nil:
+			render.WriteAttr(&sb, key, "", false)
+		case bool:
+			if val {
+				render.WriteAttr(&sb, key, "", false)
 			}
-		} else {
-			if _, err := w.Write([]byte(fmt.Sprintf(" %s=\"%v\"", key, val))); err != nil {
-				return err
+		default:
+			str := fmt.Sprint(val)
+			if str == "" {
+				// Keep an explicit empty value distinct from a bare attribute.
+				sb.WriteString(" " + key + `=""`)
+			} else {
+				render.WriteAttr(&sb, key, str, false)
 			}
 		}
 	}
 
-	if _, err := w.Write([]byte(">")); err != nil {
-		return err
-	}
+	sb.WriteByte('>')
 
-	if e.void {
-		return nil
-	}
-
-	for _, child := range e.children {
-		if err := child.Render(w); err != nil {
-			return err
+	if !e.void {
+		for _, child := range e.children {
+			if err := child.Render(&sb); err != nil {
+				return err
+			}
 		}
+		sb.WriteString("</" + e.tag + ">")
 	}
 
-	if _, err := w.Write([]byte("</" + e.tag + ">")); err != nil {
-		return err
-	}
-
-	return nil
+	_, err := io.WriteString(w, sb.String())
+	return err
 }
 
+// DoctypeElement renders the HTML5 document type declaration.
+type DoctypeElement struct{}
+
+// Doctype returns a node that renders <!DOCTYPE html>.
+func Doctype() DoctypeElement { return DoctypeElement{} }
+
+// Render implements the Node interface.
+func (DoctypeElement) Render(w io.Writer) error {
+	_, err := io.WriteString(w, "<!DOCTYPE html>")
+	return err
+}
+
+// TextElement backs the Text and TextUnsafe functions.
 type TextElement struct {
 	text     string
 	children []Node
 }
 
+// TextUnsafe renders text verbatim, without HTML escaping. Never pass untrusted input.
 func TextUnsafe(text string, children ...Node) *TextElement {
 	return &TextElement{
 		text:     text,
@@ -118,6 +147,7 @@ func TextUnsafe(text string, children ...Node) *TextElement {
 	}
 }
 
+// Text renders HTML-escaped text.
 func Text(text string, children ...Node) *TextElement {
 	return &TextElement{
 		text:     html.EscapeString(text),

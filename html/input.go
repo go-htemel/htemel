@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type InputElement struct {
-	attributes inputAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type InputElement struct {
 //
 // Spec Description: The input element represents a typed data field, usually with a form control to allow the user to edit the data.
 func Input() *InputElement {
-	node := &InputElement{
-
-		attributes: make(inputAttrs),
-	}
+	node := &InputElement{}
 
 	return node
 }
 
+// InputIf creates a tag <input> instance that is only rendered when condition is true.
 func InputIf(condition bool) *InputElement {
 	if condition {
 		return Input()
@@ -35,7 +33,6 @@ func InputIf(condition bool) *InputElement {
 
 	return &InputElement{
 
-		attributes: make(inputAttrs),
 		skipRender: true,
 	}
 }
@@ -48,22 +45,49 @@ func (e *InputElement) With(fn func(*InputElement)) *InputElement {
 
 // AddClass appends a class to the element.
 func (e *InputElement) AddClass(classes ...string) *InputElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *InputElement) ToggleClass(class string, enable bool) *InputElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *InputElement) Attr(name, value string) *InputElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *InputElement) AttrUnsafe(name, value string) *InputElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *InputElement) BoolAttr(name string, on bool) *InputElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -93,39 +117,39 @@ const (
 type InputType string
 
 const (
-	InputTypeColor         InputType = "color"
-	InputTypeDatetimeLocal InputType = "datetime-local"
-	InputTypeSearch        InputType = "search"
-	InputTypeWeek          InputType = "week"
 	InputTypeButton        InputType = "button"
+	InputTypeCheckbox      InputType = "checkbox"
+	InputTypeColor         InputType = "color"
+	InputTypeDate          InputType = "date"
+	InputTypeDatetimeLocal InputType = "datetime-local"
 	InputTypeEmail         InputType = "email"
 	InputTypeFile          InputType = "file"
 	InputTypeHidden        InputType = "hidden"
 	InputTypeImage         InputType = "image"
-	InputTypeReset         InputType = "reset"
-	InputTypeText          InputType = "text"
-	InputTypeCheckbox      InputType = "checkbox"
-	InputTypeDate          InputType = "date"
 	InputTypeMonth         InputType = "month"
 	InputTypeNumber        InputType = "number"
-	InputTypeRange         InputType = "range"
-	InputTypeSubmit        InputType = "submit"
-	InputTypeTel           InputType = "tel"
 	InputTypePassword      InputType = "password"
 	InputTypeRadio         InputType = "radio"
+	InputTypeRange         InputType = "range"
+	InputTypeReset         InputType = "reset"
+	InputTypeSearch        InputType = "search"
+	InputTypeSubmit        InputType = "submit"
+	InputTypeTel           InputType = "tel"
+	InputTypeText          InputType = "text"
 	InputTypeTime          InputType = "time"
 	InputTypeUrl           InputType = "url"
+	InputTypeWeek          InputType = "week"
 )
 
 type InputAutocapitalize string
 
 const (
-	InputAutocapitalizeWords      InputAutocapitalize = "words"
 	InputAutocapitalizeCharacters InputAutocapitalize = "characters"
 	InputAutocapitalizeNone       InputAutocapitalize = "none"
 	InputAutocapitalizeOff        InputAutocapitalize = "off"
 	InputAutocapitalizeOn         InputAutocapitalize = "on"
 	InputAutocapitalizeSentences  InputAutocapitalize = "sentences"
+	InputAutocapitalizeWords      InputAutocapitalize = "words"
 )
 
 type InputAutocorrect string
@@ -183,14 +207,14 @@ const (
 type InputInputmode string
 
 const (
+	InputInputmodeDecimal InputInputmode = "decimal"
+	InputInputmodeEmail   InputInputmode = "email"
 	InputInputmodeNone    InputInputmode = "none"
 	InputInputmodeNumeric InputInputmode = "numeric"
 	InputInputmodeSearch  InputInputmode = "search"
 	InputInputmodeTel     InputInputmode = "tel"
 	InputInputmodeText    InputInputmode = "text"
 	InputInputmodeUrl     InputInputmode = "url"
-	InputInputmodeDecimal InputInputmode = "decimal"
-	InputInputmodeEmail   InputInputmode = "email"
 )
 
 type InputSpellcheck string
@@ -212,213 +236,225 @@ const (
 type InputWritingsuggestions string
 
 const (
-	InputWritingsuggestionsTrue  InputWritingsuggestions = "true"
 	InputWritingsuggestionsFalse InputWritingsuggestions = "false"
+	InputWritingsuggestionsTrue  InputWritingsuggestions = "true"
 	InputWritingsuggestionsEmpty InputWritingsuggestions = ""
 )
 
-type inputAttrs map[string]any
-
 func (e *InputElement) Accept(s string) *InputElement {
-	e.attributes["accept"] = s
+	e.attributes.Set("accept", s)
 
 	return e
 }
 
+// Alpha sets the boolean attribute "alpha". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Alpha(b bool) *InputElement {
-	e.attributes["alpha"] = b
+	e.attributes.SetBool("alpha", b)
 
 	return e
 }
 
 func (e *InputElement) Alt(s string) *InputElement {
-	e.attributes["alt"] = s
+	e.attributes.Set("alt", s)
 
 	return e
 }
 
 func (e *InputElement) Autocomplete(s ...string) *InputElement {
-	e.attributes["autocomplete"] = strings.Join(s, " ")
+	e.attributes.Set("autocomplete", strings.Join(s, " "))
 
 	return e
 }
 
+// Checked sets the boolean attribute "checked". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Checked(b bool) *InputElement {
-	e.attributes["checked"] = b
+	e.attributes.SetBool("checked", b)
 
 	return e
 }
 
 func (e *InputElement) Colorspace(a InputColorspace) *InputElement {
-	e.attributes["colorspace"] = a
+	e.attributes.Set("colorspace", string(a))
 
 	return e
 }
 
 func (e *InputElement) Dirname(s string) *InputElement {
-	e.attributes["dirname"] = s
+	e.attributes.Set("dirname", s)
 
 	return e
 }
 
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Disabled(b bool) *InputElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *InputElement) Form(s string) *InputElement {
-	e.attributes["form"] = s
+	e.attributes.Set("form", s)
 
 	return e
 }
 
 func (e *InputElement) Formaction(s string) *InputElement {
-	e.attributes["formaction"] = s
+	e.attributes.Set("formaction", s)
 
 	return e
 }
 
 func (e *InputElement) Formenctype(s string) *InputElement {
-	e.attributes["formenctype"] = s
+	e.attributes.Set("formenctype", s)
 
 	return e
 }
 
 func (e *InputElement) Formmethod(a InputFormmethod) *InputElement {
-	e.attributes["formmethod"] = a
+	e.attributes.Set("formmethod", string(a))
 
 	return e
 }
 
+// Formnovalidate sets the boolean attribute "formnovalidate". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Formnovalidate(b bool) *InputElement {
-	e.attributes["formnovalidate"] = b
+	e.attributes.SetBool("formnovalidate", b)
 
 	return e
 }
 
 func (e *InputElement) Formtarget(s string) *InputElement {
-	e.attributes["formtarget"] = s
+	e.attributes.Set("formtarget", s)
 
 	return e
 }
 
 func (e *InputElement) Height(i int) *InputElement {
-	e.attributes["height"] = i
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) List(s string) *InputElement {
-	e.attributes["list"] = s
+	e.attributes.Set("list", s)
 
 	return e
 }
 
 func (e *InputElement) Max(i int) *InputElement {
-	e.attributes["max"] = i
+	e.attributes.Set("max", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) Maxlength(i int) *InputElement {
-	e.attributes["maxlength"] = i
+	e.attributes.Set("maxlength", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) Min(i int) *InputElement {
-	e.attributes["min"] = i
+	e.attributes.Set("min", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) Minlength(i int) *InputElement {
-	e.attributes["minlength"] = i
+	e.attributes.Set("minlength", strconv.Itoa(i))
 
 	return e
 }
 
+// Multiple sets the boolean attribute "multiple". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Multiple(b bool) *InputElement {
-	e.attributes["multiple"] = b
+	e.attributes.SetBool("multiple", b)
 
 	return e
 }
 
 func (e *InputElement) Name(s string) *InputElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
 func (e *InputElement) Pattern(s string) *InputElement {
-	e.attributes["pattern"] = s
+	e.attributes.Set("pattern", s)
 
 	return e
 }
 
 func (e *InputElement) Placeholder(s string) *InputElement {
-	e.attributes["placeholder"] = s
+	e.attributes.Set("placeholder", s)
 
 	return e
 }
 
 func (e *InputElement) Popovertarget(s string) *InputElement {
-	e.attributes["popovertarget"] = s
+	e.attributes.Set("popovertarget", s)
 
 	return e
 }
 
 func (e *InputElement) Popovertargetaction(a InputPopovertargetaction) *InputElement {
-	e.attributes["popovertargetaction"] = a
+	e.attributes.Set("popovertargetaction", string(a))
 
 	return e
 }
 
+// Readonly sets the boolean attribute "readonly". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Readonly(b bool) *InputElement {
-	e.attributes["readonly"] = b
+	e.attributes.SetBool("readonly", b)
 
 	return e
 }
 
+// Required sets the boolean attribute "required". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Required(b bool) *InputElement {
-	e.attributes["required"] = b
+	e.attributes.SetBool("required", b)
 
 	return e
 }
 
 func (e *InputElement) Size(i int) *InputElement {
-	e.attributes["size"] = i
+	e.attributes.Set("size", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) Src(s string) *InputElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *InputElement) Step(s string) *InputElement {
-	e.attributes["step"] = s
+	e.attributes.Set("step", s)
 
 	return e
 }
 
 func (e *InputElement) Type(a InputType) *InputElement {
-	e.attributes["type"] = a
+	e.attributes.Set("type", string(a))
 
 	return e
 }
 
 func (e *InputElement) Value(s string) *InputElement {
-	e.attributes["value"] = s
+	e.attributes.Set("value", s)
 
 	return e
 }
 
 func (e *InputElement) Width(i int) *InputElement {
-	e.attributes["width"] = i
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
@@ -426,41 +462,47 @@ func (e *InputElement) Width(i int) *InputElement {
 func (e *InputElement) AriaUnsafe(name string, s string) *InputElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *InputElement) Aria(name string, s string) *InputElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *InputElement) Autocapitalize(a InputAutocapitalize) *InputElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *InputElement) Autocorrect(a InputAutocorrect) *InputElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Autofocus(b bool) *InputElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *InputElement) Class(s ...string) *InputElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InputElement) Contenteditable(a InputContenteditable) *InputElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -468,149 +510,157 @@ func (e *InputElement) Contenteditable(a InputContenteditable) *InputElement {
 func (e *InputElement) DataUnsafe(name string, s string) *InputElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *InputElement) Data(name string, s string) *InputElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *InputElement) Dir(a InputDir) *InputElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *InputElement) Draggable(a InputDraggable) *InputElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *InputElement) Enterkeyhint(a InputEnterkeyhint) *InputElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *InputElement) Hidden(a InputHidden) *InputElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *InputElement) Id(s string) *InputElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Inert(b bool) *InputElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *InputElement) Inputmode(a InputInputmode) *InputElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *InputElement) Itemid(s string) *InputElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *InputElement) Itemprop(s ...string) *InputElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InputElement) Itemref(s ...string) *InputElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Itemscope(b bool) *InputElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *InputElement) Itemtype(s ...string) *InputElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *InputElement) Lang(s string) *InputElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *InputElement) Nonce(s string) *InputElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *InputElement) Popover(s string) *InputElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *InputElement) Role(s string) *InputElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *InputElement) Slot(s string) *InputElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *InputElement) Spellcheck(a InputSpellcheck) *InputElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *InputElement) Style(s string) *InputElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *InputElement) Tabindex(i int) *InputElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *InputElement) Title(s string) *InputElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *InputElement) Translate(a InputTranslate) *InputElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *InputElement) Writingsuggestions(a InputWritingsuggestions) *InputElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -628,18 +678,7 @@ func (e *InputElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<input")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

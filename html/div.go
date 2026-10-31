@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type DivElement struct {
-	attributes divAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Div creates a tag <div> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The div element has no special meaning at all. It represents its children. It can be used with the class, lang, and title attributes to mark up semantics common to a group of consecutive elements. It can also be used in a dl element, wrapping groups of dt and dd elements.
 func Div(children ...htemel.Node) *DivElement {
 	node := &DivElement{
-		children:   children,
-		attributes: make(divAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// DivIf creates a tag <div> instance that is only rendered when condition is true.
 func DivIf(condition bool, children ...htemel.Node) *DivElement {
 	if condition {
 		return Div(children...)
@@ -36,16 +38,16 @@ func DivIf(condition bool, children ...htemel.Node) *DivElement {
 
 	return &DivElement{
 		children:   children,
-		attributes: make(divAttrs),
 		skipRender: true,
 	}
 }
 
-func DivTernary(condition bool, true htemel.Node, false htemel.Node) *DivElement {
+// DivTernary creates a tag <div> containing then when condition is true, otherwise containing otherwise.
+func DivTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DivElement {
 	if condition {
-		return Div(true)
+		return Div(then)
 	}
-	return Div(false)
+	return Div(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *DivElement) With(fn func(*DivElement)) *DivElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *DivElement) Text(text string) *DivElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *DivElement) Textf(format string, args ...any) *DivElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *DivElement) If(cond bool, child htemel.Node) *DivElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *DivElement) IfElse(cond bool, then, els htemel.Node) *DivElement {
 	if cond {
 		e.Children(then)
@@ -97,41 +101,68 @@ func (e *DivElement) IfThen(cond bool, fn func(*DivElement)) *DivElement {
 
 // AddClass appends a class to the element.
 func (e *DivElement) AddClass(classes ...string) *DivElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *DivElement) ToggleClass(class string, enable bool) *DivElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *DivElement) Attr(name, value string) *DivElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *DivElement) AttrUnsafe(name, value string) *DivElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *DivElement) BoolAttr(name string, on bool) *DivElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type DivAutocapitalize string
 
 const (
+	DivAutocapitalizeCharacters DivAutocapitalize = "characters"
 	DivAutocapitalizeNone       DivAutocapitalize = "none"
 	DivAutocapitalizeOff        DivAutocapitalize = "off"
 	DivAutocapitalizeOn         DivAutocapitalize = "on"
 	DivAutocapitalizeSentences  DivAutocapitalize = "sentences"
 	DivAutocapitalizeWords      DivAutocapitalize = "words"
-	DivAutocapitalizeCharacters DivAutocapitalize = "characters"
 )
 
 type DivAutocorrect string
 
 const (
-	DivAutocorrectOn    DivAutocorrect = "on"
 	DivAutocorrectOff   DivAutocorrect = "off"
+	DivAutocorrectOn    DivAutocorrect = "on"
 	DivAutocorrectEmpty DivAutocorrect = ""
 )
 
@@ -182,14 +213,14 @@ const (
 type DivInputmode string
 
 const (
-	DivInputmodeText    DivInputmode = "text"
-	DivInputmodeUrl     DivInputmode = "url"
 	DivInputmodeDecimal DivInputmode = "decimal"
 	DivInputmodeEmail   DivInputmode = "email"
 	DivInputmodeNone    DivInputmode = "none"
 	DivInputmodeNumeric DivInputmode = "numeric"
 	DivInputmodeSearch  DivInputmode = "search"
 	DivInputmodeTel     DivInputmode = "tel"
+	DivInputmodeText    DivInputmode = "text"
+	DivInputmodeUrl     DivInputmode = "url"
 )
 
 type DivSpellcheck string
@@ -216,46 +247,50 @@ const (
 	DivWritingsuggestionsEmpty DivWritingsuggestions = ""
 )
 
-type divAttrs map[string]any
-
 func (e *DivElement) AriaUnsafe(name string, s string) *DivElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DivElement) Aria(name string, s string) *DivElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DivElement) Autocapitalize(a DivAutocapitalize) *DivElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *DivElement) Autocorrect(a DivAutocorrect) *DivElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DivElement) Autofocus(b bool) *DivElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *DivElement) Class(s ...string) *DivElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DivElement) Contenteditable(a DivContenteditable) *DivElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *DivElement) Contenteditable(a DivContenteditable) *DivElement {
 func (e *DivElement) DataUnsafe(name string, s string) *DivElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DivElement) Data(name string, s string) *DivElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DivElement) Dir(a DivDir) *DivElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *DivElement) Draggable(a DivDraggable) *DivElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *DivElement) Enterkeyhint(a DivEnterkeyhint) *DivElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *DivElement) Hidden(a DivHidden) *DivElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *DivElement) Id(s string) *DivElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DivElement) Inert(b bool) *DivElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *DivElement) Inputmode(a DivInputmode) *DivElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *DivElement) Itemid(s string) *DivElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *DivElement) Itemprop(s ...string) *DivElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DivElement) Itemref(s ...string) *DivElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DivElement) Itemscope(b bool) *DivElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *DivElement) Itemtype(s ...string) *DivElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DivElement) Lang(s string) *DivElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *DivElement) Nonce(s string) *DivElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *DivElement) Popover(s string) *DivElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *DivElement) Role(s string) *DivElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *DivElement) Slot(s string) *DivElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *DivElement) Spellcheck(a DivSpellcheck) *DivElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *DivElement) Style(s string) *DivElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *DivElement) Tabindex(i int) *DivElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *DivElement) Title(s string) *DivElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *DivElement) Translate(a DivTranslate) *DivElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *DivElement) Writingsuggestions(a DivWritingsuggestions) *DivElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *DivElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<div")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

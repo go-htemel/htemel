@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type TheadElement struct {
-	attributes theadAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Thead creates a tag <thead> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The thead element represents the block of rows that consist of the column labels (headers) and any ancillary non-header cells for the parent table element, if the thead element has a parent and it is a table.
 func Thead(children ...htemel.Node) *TheadElement {
 	node := &TheadElement{
-		children:   children,
-		attributes: make(theadAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// TheadIf creates a tag <thead> instance that is only rendered when condition is true.
 func TheadIf(condition bool, children ...htemel.Node) *TheadElement {
 	if condition {
 		return Thead(children...)
@@ -36,16 +38,16 @@ func TheadIf(condition bool, children ...htemel.Node) *TheadElement {
 
 	return &TheadElement{
 		children:   children,
-		attributes: make(theadAttrs),
 		skipRender: true,
 	}
 }
 
-func TheadTernary(condition bool, true htemel.Node, false htemel.Node) *TheadElement {
+// TheadTernary creates a tag <thead> containing then when condition is true, otherwise containing otherwise.
+func TheadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TheadElement {
 	if condition {
-		return Thead(true)
+		return Thead(then)
 	}
-	return Thead(false)
+	return Thead(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *TheadElement) With(fn func(*TheadElement)) *TheadElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *TheadElement) Text(text string) *TheadElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *TheadElement) Textf(format string, args ...any) *TheadElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *TheadElement) If(cond bool, child htemel.Node) *TheadElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *TheadElement) IfElse(cond bool, then, els htemel.Node) *TheadElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *TheadElement) IfThen(cond bool, fn func(*TheadElement)) *TheadElement {
 
 // AddClass appends a class to the element.
 func (e *TheadElement) AddClass(classes ...string) *TheadElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *TheadElement) ToggleClass(class string, enable bool) *TheadElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *TheadElement) Attr(name, value string) *TheadElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *TheadElement) AttrUnsafe(name, value string) *TheadElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *TheadElement) BoolAttr(name string, on bool) *TheadElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type TheadAutocapitalize string
 
 const (
-	TheadAutocapitalizeOn         TheadAutocapitalize = "on"
-	TheadAutocapitalizeSentences  TheadAutocapitalize = "sentences"
-	TheadAutocapitalizeWords      TheadAutocapitalize = "words"
 	TheadAutocapitalizeCharacters TheadAutocapitalize = "characters"
 	TheadAutocapitalizeNone       TheadAutocapitalize = "none"
 	TheadAutocapitalizeOff        TheadAutocapitalize = "off"
+	TheadAutocapitalizeOn         TheadAutocapitalize = "on"
+	TheadAutocapitalizeSentences  TheadAutocapitalize = "sentences"
+	TheadAutocapitalizeWords      TheadAutocapitalize = "words"
 )
 
 type TheadAutocorrect string
@@ -147,9 +178,9 @@ const (
 type TheadDir string
 
 const (
+	TheadDirAuto TheadDir = "auto"
 	TheadDirLtr  TheadDir = "ltr"
 	TheadDirRtl  TheadDir = "rtl"
-	TheadDirAuto TheadDir = "auto"
 )
 
 type TheadDraggable string
@@ -182,7 +213,6 @@ const (
 type TheadInputmode string
 
 const (
-	TheadInputmodeUrl     TheadInputmode = "url"
 	TheadInputmodeDecimal TheadInputmode = "decimal"
 	TheadInputmodeEmail   TheadInputmode = "email"
 	TheadInputmodeNone    TheadInputmode = "none"
@@ -190,6 +220,7 @@ const (
 	TheadInputmodeSearch  TheadInputmode = "search"
 	TheadInputmodeTel     TheadInputmode = "tel"
 	TheadInputmodeText    TheadInputmode = "text"
+	TheadInputmodeUrl     TheadInputmode = "url"
 )
 
 type TheadSpellcheck string
@@ -203,8 +234,8 @@ const (
 type TheadTranslate string
 
 const (
-	TheadTranslateYes   TheadTranslate = "yes"
 	TheadTranslateNo    TheadTranslate = "no"
+	TheadTranslateYes   TheadTranslate = "yes"
 	TheadTranslateEmpty TheadTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	TheadWritingsuggestionsEmpty TheadWritingsuggestions = ""
 )
 
-type theadAttrs map[string]any
-
 func (e *TheadElement) AriaUnsafe(name string, s string) *TheadElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TheadElement) Aria(name string, s string) *TheadElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TheadElement) Autocapitalize(a TheadAutocapitalize) *TheadElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Autocorrect(a TheadAutocorrect) *TheadElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TheadElement) Autofocus(b bool) *TheadElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *TheadElement) Class(s ...string) *TheadElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TheadElement) Contenteditable(a TheadContenteditable) *TheadElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *TheadElement) Contenteditable(a TheadContenteditable) *TheadElement {
 func (e *TheadElement) DataUnsafe(name string, s string) *TheadElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TheadElement) Data(name string, s string) *TheadElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TheadElement) Dir(a TheadDir) *TheadElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Draggable(a TheadDraggable) *TheadElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Enterkeyhint(a TheadEnterkeyhint) *TheadElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Hidden(a TheadHidden) *TheadElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Id(s string) *TheadElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TheadElement) Inert(b bool) *TheadElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *TheadElement) Inputmode(a TheadInputmode) *TheadElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Itemid(s string) *TheadElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *TheadElement) Itemprop(s ...string) *TheadElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TheadElement) Itemref(s ...string) *TheadElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TheadElement) Itemscope(b bool) *TheadElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *TheadElement) Itemtype(s ...string) *TheadElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TheadElement) Lang(s string) *TheadElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *TheadElement) Nonce(s string) *TheadElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *TheadElement) Popover(s string) *TheadElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *TheadElement) Role(s string) *TheadElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *TheadElement) Slot(s string) *TheadElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *TheadElement) Spellcheck(a TheadSpellcheck) *TheadElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Style(s string) *TheadElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *TheadElement) Tabindex(i int) *TheadElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TheadElement) Title(s string) *TheadElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *TheadElement) Translate(a TheadTranslate) *TheadElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *TheadElement) Writingsuggestions(a TheadWritingsuggestions) *TheadElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *TheadElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<thead")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

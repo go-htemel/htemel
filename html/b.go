@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type BElement struct {
-	attributes bAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // B creates a tag <b> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The b element represents a span of text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood, such as key words in a document abstract, product names in a review, actionable words in interactive text-driven software, or an article lede.
 func B(children ...htemel.Node) *BElement {
 	node := &BElement{
-		children:   children,
-		attributes: make(bAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// BIf creates a tag <b> instance that is only rendered when condition is true.
 func BIf(condition bool, children ...htemel.Node) *BElement {
 	if condition {
 		return B(children...)
@@ -36,16 +38,16 @@ func BIf(condition bool, children ...htemel.Node) *BElement {
 
 	return &BElement{
 		children:   children,
-		attributes: make(bAttrs),
 		skipRender: true,
 	}
 }
 
-func BTernary(condition bool, true htemel.Node, false htemel.Node) *BElement {
+// BTernary creates a tag <b> containing then when condition is true, otherwise containing otherwise.
+func BTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BElement {
 	if condition {
-		return B(true)
+		return B(then)
 	}
-	return B(false)
+	return B(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *BElement) With(fn func(*BElement)) *BElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *BElement) Text(text string) *BElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *BElement) Textf(format string, args ...any) *BElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *BElement) If(cond bool, child htemel.Node) *BElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *BElement) IfElse(cond bool, then, els htemel.Node) *BElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *BElement) IfThen(cond bool, fn func(*BElement)) *BElement {
 
 // AddClass appends a class to the element.
 func (e *BElement) AddClass(classes ...string) *BElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *BElement) ToggleClass(class string, enable bool) *BElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *BElement) Attr(name, value string) *BElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *BElement) AttrUnsafe(name, value string) *BElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *BElement) BoolAttr(name string, on bool) *BElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type BAutocapitalize string
 
 const (
-	BAutocapitalizeOn         BAutocapitalize = "on"
-	BAutocapitalizeSentences  BAutocapitalize = "sentences"
-	BAutocapitalizeWords      BAutocapitalize = "words"
 	BAutocapitalizeCharacters BAutocapitalize = "characters"
 	BAutocapitalizeNone       BAutocapitalize = "none"
 	BAutocapitalizeOff        BAutocapitalize = "off"
+	BAutocapitalizeOn         BAutocapitalize = "on"
+	BAutocapitalizeSentences  BAutocapitalize = "sentences"
+	BAutocapitalizeWords      BAutocapitalize = "words"
 )
 
 type BAutocorrect string
@@ -162,13 +193,13 @@ const (
 type BEnterkeyhint string
 
 const (
+	BEnterkeyhintDone     BEnterkeyhint = "done"
+	BEnterkeyhintEnter    BEnterkeyhint = "enter"
 	BEnterkeyhintGo       BEnterkeyhint = "go"
 	BEnterkeyhintNext     BEnterkeyhint = "next"
 	BEnterkeyhintPrevious BEnterkeyhint = "previous"
 	BEnterkeyhintSearch   BEnterkeyhint = "search"
 	BEnterkeyhintSend     BEnterkeyhint = "send"
-	BEnterkeyhintDone     BEnterkeyhint = "done"
-	BEnterkeyhintEnter    BEnterkeyhint = "enter"
 )
 
 type BHidden string
@@ -182,6 +213,7 @@ const (
 type BInputmode string
 
 const (
+	BInputmodeDecimal BInputmode = "decimal"
 	BInputmodeEmail   BInputmode = "email"
 	BInputmodeNone    BInputmode = "none"
 	BInputmodeNumeric BInputmode = "numeric"
@@ -189,22 +221,21 @@ const (
 	BInputmodeTel     BInputmode = "tel"
 	BInputmodeText    BInputmode = "text"
 	BInputmodeUrl     BInputmode = "url"
-	BInputmodeDecimal BInputmode = "decimal"
 )
 
 type BSpellcheck string
 
 const (
-	BSpellcheckTrue  BSpellcheck = "true"
 	BSpellcheckFalse BSpellcheck = "false"
+	BSpellcheckTrue  BSpellcheck = "true"
 	BSpellcheckEmpty BSpellcheck = ""
 )
 
 type BTranslate string
 
 const (
-	BTranslateYes   BTranslate = "yes"
 	BTranslateNo    BTranslate = "no"
+	BTranslateYes   BTranslate = "yes"
 	BTranslateEmpty BTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	BWritingsuggestionsEmpty BWritingsuggestions = ""
 )
 
-type bAttrs map[string]any
-
 func (e *BElement) AriaUnsafe(name string, s string) *BElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BElement) Aria(name string, s string) *BElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BElement) Autocapitalize(a BAutocapitalize) *BElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *BElement) Autocorrect(a BAutocorrect) *BElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BElement) Autofocus(b bool) *BElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *BElement) Class(s ...string) *BElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BElement) Contenteditable(a BContenteditable) *BElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *BElement) Contenteditable(a BContenteditable) *BElement {
 func (e *BElement) DataUnsafe(name string, s string) *BElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BElement) Data(name string, s string) *BElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BElement) Dir(a BDir) *BElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *BElement) Draggable(a BDraggable) *BElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *BElement) Enterkeyhint(a BEnterkeyhint) *BElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *BElement) Hidden(a BHidden) *BElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *BElement) Id(s string) *BElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BElement) Inert(b bool) *BElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *BElement) Inputmode(a BInputmode) *BElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *BElement) Itemid(s string) *BElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *BElement) Itemprop(s ...string) *BElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BElement) Itemref(s ...string) *BElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BElement) Itemscope(b bool) *BElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *BElement) Itemtype(s ...string) *BElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BElement) Lang(s string) *BElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *BElement) Nonce(s string) *BElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *BElement) Popover(s string) *BElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *BElement) Role(s string) *BElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *BElement) Slot(s string) *BElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *BElement) Spellcheck(a BSpellcheck) *BElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *BElement) Style(s string) *BElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *BElement) Tabindex(i int) *BElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *BElement) Title(s string) *BElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *BElement) Translate(a BTranslate) *BElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *BElement) Writingsuggestions(a BWritingsuggestions) *BElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *BElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<b")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

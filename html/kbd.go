@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type KbdElement struct {
-	attributes kbdAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Kbd creates a tag <kbd> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The kbd element represents user input (typically keyboard input, although it may also be used to represent other input, such as voice commands).
 func Kbd(children ...htemel.Node) *KbdElement {
 	node := &KbdElement{
-		children:   children,
-		attributes: make(kbdAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// KbdIf creates a tag <kbd> instance that is only rendered when condition is true.
 func KbdIf(condition bool, children ...htemel.Node) *KbdElement {
 	if condition {
 		return Kbd(children...)
@@ -36,16 +38,16 @@ func KbdIf(condition bool, children ...htemel.Node) *KbdElement {
 
 	return &KbdElement{
 		children:   children,
-		attributes: make(kbdAttrs),
 		skipRender: true,
 	}
 }
 
-func KbdTernary(condition bool, true htemel.Node, false htemel.Node) *KbdElement {
+// KbdTernary creates a tag <kbd> containing then when condition is true, otherwise containing otherwise.
+func KbdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *KbdElement {
 	if condition {
-		return Kbd(true)
+		return Kbd(then)
 	}
-	return Kbd(false)
+	return Kbd(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *KbdElement) With(fn func(*KbdElement)) *KbdElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *KbdElement) Text(text string) *KbdElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *KbdElement) Textf(format string, args ...any) *KbdElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *KbdElement) If(cond bool, child htemel.Node) *KbdElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *KbdElement) IfElse(cond bool, then, els htemel.Node) *KbdElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *KbdElement) IfThen(cond bool, fn func(*KbdElement)) *KbdElement {
 
 // AddClass appends a class to the element.
 func (e *KbdElement) AddClass(classes ...string) *KbdElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *KbdElement) ToggleClass(class string, enable bool) *KbdElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *KbdElement) Attr(name, value string) *KbdElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *KbdElement) AttrUnsafe(name, value string) *KbdElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *KbdElement) BoolAttr(name string, on bool) *KbdElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type KbdAutocapitalize string
 
 const (
-	KbdAutocapitalizeWords      KbdAutocapitalize = "words"
 	KbdAutocapitalizeCharacters KbdAutocapitalize = "characters"
 	KbdAutocapitalizeNone       KbdAutocapitalize = "none"
 	KbdAutocapitalizeOff        KbdAutocapitalize = "off"
 	KbdAutocapitalizeOn         KbdAutocapitalize = "on"
 	KbdAutocapitalizeSentences  KbdAutocapitalize = "sentences"
+	KbdAutocapitalizeWords      KbdAutocapitalize = "words"
 )
 
 type KbdAutocorrect string
@@ -182,14 +213,14 @@ const (
 type KbdInputmode string
 
 const (
+	KbdInputmodeDecimal KbdInputmode = "decimal"
+	KbdInputmodeEmail   KbdInputmode = "email"
+	KbdInputmodeNone    KbdInputmode = "none"
 	KbdInputmodeNumeric KbdInputmode = "numeric"
 	KbdInputmodeSearch  KbdInputmode = "search"
 	KbdInputmodeTel     KbdInputmode = "tel"
 	KbdInputmodeText    KbdInputmode = "text"
 	KbdInputmodeUrl     KbdInputmode = "url"
-	KbdInputmodeDecimal KbdInputmode = "decimal"
-	KbdInputmodeEmail   KbdInputmode = "email"
-	KbdInputmodeNone    KbdInputmode = "none"
 )
 
 type KbdSpellcheck string
@@ -216,46 +247,50 @@ const (
 	KbdWritingsuggestionsEmpty KbdWritingsuggestions = ""
 )
 
-type kbdAttrs map[string]any
-
 func (e *KbdElement) AriaUnsafe(name string, s string) *KbdElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *KbdElement) Aria(name string, s string) *KbdElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *KbdElement) Autocapitalize(a KbdAutocapitalize) *KbdElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Autocorrect(a KbdAutocorrect) *KbdElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *KbdElement) Autofocus(b bool) *KbdElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *KbdElement) Class(s ...string) *KbdElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *KbdElement) Contenteditable(a KbdContenteditable) *KbdElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *KbdElement) Contenteditable(a KbdContenteditable) *KbdElement {
 func (e *KbdElement) DataUnsafe(name string, s string) *KbdElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *KbdElement) Data(name string, s string) *KbdElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *KbdElement) Dir(a KbdDir) *KbdElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Draggable(a KbdDraggable) *KbdElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Enterkeyhint(a KbdEnterkeyhint) *KbdElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Hidden(a KbdHidden) *KbdElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Id(s string) *KbdElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *KbdElement) Inert(b bool) *KbdElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *KbdElement) Inputmode(a KbdInputmode) *KbdElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Itemid(s string) *KbdElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *KbdElement) Itemprop(s ...string) *KbdElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *KbdElement) Itemref(s ...string) *KbdElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *KbdElement) Itemscope(b bool) *KbdElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *KbdElement) Itemtype(s ...string) *KbdElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *KbdElement) Lang(s string) *KbdElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *KbdElement) Nonce(s string) *KbdElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *KbdElement) Popover(s string) *KbdElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *KbdElement) Role(s string) *KbdElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *KbdElement) Slot(s string) *KbdElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *KbdElement) Spellcheck(a KbdSpellcheck) *KbdElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Style(s string) *KbdElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *KbdElement) Tabindex(i int) *KbdElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *KbdElement) Title(s string) *KbdElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *KbdElement) Translate(a KbdTranslate) *KbdElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *KbdElement) Writingsuggestions(a KbdWritingsuggestions) *KbdElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *KbdElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<kbd")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

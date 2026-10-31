@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type SelectedcontentElement struct {
-	attributes selectedcontentAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Selectedcontent creates a tag <selectedcontent> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The selectedcontent element reflects the contents of a select element's currently selected option element. selectedcontent elements can be used to declaratively show the selected option element's contents within the select element's first child button element.
 func Selectedcontent(children ...htemel.Node) *SelectedcontentElement {
 	node := &SelectedcontentElement{
-		children:   children,
-		attributes: make(selectedcontentAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// SelectedcontentIf creates a tag <selectedcontent> instance that is only rendered when condition is true.
 func SelectedcontentIf(condition bool, children ...htemel.Node) *SelectedcontentElement {
 	if condition {
 		return Selectedcontent(children...)
@@ -36,16 +38,16 @@ func SelectedcontentIf(condition bool, children ...htemel.Node) *Selectedcontent
 
 	return &SelectedcontentElement{
 		children:   children,
-		attributes: make(selectedcontentAttrs),
 		skipRender: true,
 	}
 }
 
-func SelectedcontentTernary(condition bool, true htemel.Node, false htemel.Node) *SelectedcontentElement {
+// SelectedcontentTernary creates a tag <selectedcontent> containing then when condition is true, otherwise containing otherwise.
+func SelectedcontentTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SelectedcontentElement {
 	if condition {
-		return Selectedcontent(true)
+		return Selectedcontent(then)
 	}
-	return Selectedcontent(false)
+	return Selectedcontent(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *SelectedcontentElement) With(fn func(*SelectedcontentElement)) *Selecte
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *SelectedcontentElement) Text(text string) *SelectedcontentElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *SelectedcontentElement) Textf(format string, args ...any) *SelectedcontentElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *SelectedcontentElement) If(cond bool, child htemel.Node) *Selectedconte
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *SelectedcontentElement) IfElse(cond bool, then, els htemel.Node) *SelectedcontentElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *SelectedcontentElement) IfThen(cond bool, fn func(*SelectedcontentEleme
 
 // AddClass appends a class to the element.
 func (e *SelectedcontentElement) AddClass(classes ...string) *SelectedcontentElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *SelectedcontentElement) ToggleClass(class string, enable bool) *SelectedcontentElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *SelectedcontentElement) Attr(name, value string) *SelectedcontentElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *SelectedcontentElement) AttrUnsafe(name, value string) *SelectedcontentElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *SelectedcontentElement) BoolAttr(name string, on bool) *SelectedcontentElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type SelectedcontentAutocapitalize string
 
 const (
+	SelectedcontentAutocapitalizeCharacters SelectedcontentAutocapitalize = "characters"
 	SelectedcontentAutocapitalizeNone       SelectedcontentAutocapitalize = "none"
 	SelectedcontentAutocapitalizeOff        SelectedcontentAutocapitalize = "off"
 	SelectedcontentAutocapitalizeOn         SelectedcontentAutocapitalize = "on"
 	SelectedcontentAutocapitalizeSentences  SelectedcontentAutocapitalize = "sentences"
 	SelectedcontentAutocapitalizeWords      SelectedcontentAutocapitalize = "words"
-	SelectedcontentAutocapitalizeCharacters SelectedcontentAutocapitalize = "characters"
 )
 
 type SelectedcontentAutocorrect string
@@ -138,18 +169,18 @@ const (
 type SelectedcontentContenteditable string
 
 const (
-	SelectedcontentContenteditableTrue          SelectedcontentContenteditable = "true"
 	SelectedcontentContenteditableFalse         SelectedcontentContenteditable = "false"
 	SelectedcontentContenteditablePlaintextOnly SelectedcontentContenteditable = "plaintext-only"
+	SelectedcontentContenteditableTrue          SelectedcontentContenteditable = "true"
 	SelectedcontentContenteditableEmpty         SelectedcontentContenteditable = ""
 )
 
 type SelectedcontentDir string
 
 const (
+	SelectedcontentDirAuto SelectedcontentDir = "auto"
 	SelectedcontentDirLtr  SelectedcontentDir = "ltr"
 	SelectedcontentDirRtl  SelectedcontentDir = "rtl"
-	SelectedcontentDirAuto SelectedcontentDir = "auto"
 )
 
 type SelectedcontentDraggable string
@@ -162,13 +193,13 @@ const (
 type SelectedcontentEnterkeyhint string
 
 const (
-	SelectedcontentEnterkeyhintSend     SelectedcontentEnterkeyhint = "send"
 	SelectedcontentEnterkeyhintDone     SelectedcontentEnterkeyhint = "done"
 	SelectedcontentEnterkeyhintEnter    SelectedcontentEnterkeyhint = "enter"
 	SelectedcontentEnterkeyhintGo       SelectedcontentEnterkeyhint = "go"
 	SelectedcontentEnterkeyhintNext     SelectedcontentEnterkeyhint = "next"
 	SelectedcontentEnterkeyhintPrevious SelectedcontentEnterkeyhint = "previous"
 	SelectedcontentEnterkeyhintSearch   SelectedcontentEnterkeyhint = "search"
+	SelectedcontentEnterkeyhintSend     SelectedcontentEnterkeyhint = "send"
 )
 
 type SelectedcontentHidden string
@@ -182,14 +213,14 @@ const (
 type SelectedcontentInputmode string
 
 const (
+	SelectedcontentInputmodeDecimal SelectedcontentInputmode = "decimal"
+	SelectedcontentInputmodeEmail   SelectedcontentInputmode = "email"
+	SelectedcontentInputmodeNone    SelectedcontentInputmode = "none"
 	SelectedcontentInputmodeNumeric SelectedcontentInputmode = "numeric"
 	SelectedcontentInputmodeSearch  SelectedcontentInputmode = "search"
 	SelectedcontentInputmodeTel     SelectedcontentInputmode = "tel"
 	SelectedcontentInputmodeText    SelectedcontentInputmode = "text"
 	SelectedcontentInputmodeUrl     SelectedcontentInputmode = "url"
-	SelectedcontentInputmodeDecimal SelectedcontentInputmode = "decimal"
-	SelectedcontentInputmodeEmail   SelectedcontentInputmode = "email"
-	SelectedcontentInputmodeNone    SelectedcontentInputmode = "none"
 )
 
 type SelectedcontentSpellcheck string
@@ -216,46 +247,50 @@ const (
 	SelectedcontentWritingsuggestionsEmpty SelectedcontentWritingsuggestions = ""
 )
 
-type selectedcontentAttrs map[string]any
-
 func (e *SelectedcontentElement) AriaUnsafe(name string, s string) *SelectedcontentElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Aria(name string, s string) *SelectedcontentElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SelectedcontentElement) Autocapitalize(a SelectedcontentAutocapitalize) *SelectedcontentElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Autocorrect(a SelectedcontentAutocorrect) *SelectedcontentElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectedcontentElement) Autofocus(b bool) *SelectedcontentElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Class(s ...string) *SelectedcontentElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Contenteditable(a SelectedcontentContenteditable) *SelectedcontentElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *SelectedcontentElement) Contenteditable(a SelectedcontentContenteditabl
 func (e *SelectedcontentElement) DataUnsafe(name string, s string) *SelectedcontentElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Data(name string, s string) *SelectedcontentElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SelectedcontentElement) Dir(a SelectedcontentDir) *SelectedcontentElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Draggable(a SelectedcontentDraggable) *SelectedcontentElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Enterkeyhint(a SelectedcontentEnterkeyhint) *SelectedcontentElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Hidden(a SelectedcontentHidden) *SelectedcontentElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Id(s string) *SelectedcontentElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectedcontentElement) Inert(b bool) *SelectedcontentElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Inputmode(a SelectedcontentInputmode) *SelectedcontentElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Itemid(s string) *SelectedcontentElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Itemprop(s ...string) *SelectedcontentElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Itemref(s ...string) *SelectedcontentElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectedcontentElement) Itemscope(b bool) *SelectedcontentElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Itemtype(s ...string) *SelectedcontentElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Lang(s string) *SelectedcontentElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Nonce(s string) *SelectedcontentElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Popover(s string) *SelectedcontentElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Role(s string) *SelectedcontentElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Slot(s string) *SelectedcontentElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Spellcheck(a SelectedcontentSpellcheck) *SelectedcontentElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Style(s string) *SelectedcontentElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Tabindex(i int) *SelectedcontentElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Title(s string) *SelectedcontentElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *SelectedcontentElement) Translate(a SelectedcontentTranslate) *SelectedcontentElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *SelectedcontentElement) Writingsuggestions(a SelectedcontentWritingsuggestions) *SelectedcontentElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *SelectedcontentElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<selectedcontent")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

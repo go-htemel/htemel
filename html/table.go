@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type TableElement struct {
-	attributes tableAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Table creates a tag <table> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The table element represents data with more than one dimension, in the form of a table.
 func Table(children ...htemel.Node) *TableElement {
 	node := &TableElement{
-		children:   children,
-		attributes: make(tableAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// TableIf creates a tag <table> instance that is only rendered when condition is true.
 func TableIf(condition bool, children ...htemel.Node) *TableElement {
 	if condition {
 		return Table(children...)
@@ -36,16 +38,16 @@ func TableIf(condition bool, children ...htemel.Node) *TableElement {
 
 	return &TableElement{
 		children:   children,
-		attributes: make(tableAttrs),
 		skipRender: true,
 	}
 }
 
-func TableTernary(condition bool, true htemel.Node, false htemel.Node) *TableElement {
+// TableTernary creates a tag <table> containing then when condition is true, otherwise containing otherwise.
+func TableTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TableElement {
 	if condition {
-		return Table(true)
+		return Table(then)
 	}
-	return Table(false)
+	return Table(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *TableElement) With(fn func(*TableElement)) *TableElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *TableElement) Text(text string) *TableElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *TableElement) Textf(format string, args ...any) *TableElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *TableElement) If(cond bool, child htemel.Node) *TableElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *TableElement) IfElse(cond bool, then, els htemel.Node) *TableElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *TableElement) IfThen(cond bool, fn func(*TableElement)) *TableElement {
 
 // AddClass appends a class to the element.
 func (e *TableElement) AddClass(classes ...string) *TableElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *TableElement) ToggleClass(class string, enable bool) *TableElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *TableElement) Attr(name, value string) *TableElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *TableElement) AttrUnsafe(name, value string) *TableElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *TableElement) BoolAttr(name string, on bool) *TableElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -147,9 +178,9 @@ const (
 type TableDir string
 
 const (
-	TableDirRtl  TableDir = "rtl"
 	TableDirAuto TableDir = "auto"
 	TableDirLtr  TableDir = "ltr"
+	TableDirRtl  TableDir = "rtl"
 )
 
 type TableDraggable string
@@ -162,13 +193,13 @@ const (
 type TableEnterkeyhint string
 
 const (
-	TableEnterkeyhintPrevious TableEnterkeyhint = "previous"
-	TableEnterkeyhintSearch   TableEnterkeyhint = "search"
-	TableEnterkeyhintSend     TableEnterkeyhint = "send"
 	TableEnterkeyhintDone     TableEnterkeyhint = "done"
 	TableEnterkeyhintEnter    TableEnterkeyhint = "enter"
 	TableEnterkeyhintGo       TableEnterkeyhint = "go"
 	TableEnterkeyhintNext     TableEnterkeyhint = "next"
+	TableEnterkeyhintPrevious TableEnterkeyhint = "previous"
+	TableEnterkeyhintSearch   TableEnterkeyhint = "search"
+	TableEnterkeyhintSend     TableEnterkeyhint = "send"
 )
 
 type TableHidden string
@@ -182,14 +213,14 @@ const (
 type TableInputmode string
 
 const (
-	TableInputmodeTel     TableInputmode = "tel"
-	TableInputmodeText    TableInputmode = "text"
-	TableInputmodeUrl     TableInputmode = "url"
 	TableInputmodeDecimal TableInputmode = "decimal"
 	TableInputmodeEmail   TableInputmode = "email"
 	TableInputmodeNone    TableInputmode = "none"
 	TableInputmodeNumeric TableInputmode = "numeric"
 	TableInputmodeSearch  TableInputmode = "search"
+	TableInputmodeTel     TableInputmode = "tel"
+	TableInputmodeText    TableInputmode = "text"
+	TableInputmodeUrl     TableInputmode = "url"
 )
 
 type TableSpellcheck string
@@ -203,8 +234,8 @@ const (
 type TableTranslate string
 
 const (
-	TableTranslateYes   TableTranslate = "yes"
 	TableTranslateNo    TableTranslate = "no"
+	TableTranslateYes   TableTranslate = "yes"
 	TableTranslateEmpty TableTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	TableWritingsuggestionsEmpty TableWritingsuggestions = ""
 )
 
-type tableAttrs map[string]any
-
 func (e *TableElement) AriaUnsafe(name string, s string) *TableElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TableElement) Aria(name string, s string) *TableElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TableElement) Autocapitalize(a TableAutocapitalize) *TableElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *TableElement) Autocorrect(a TableAutocorrect) *TableElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TableElement) Autofocus(b bool) *TableElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *TableElement) Class(s ...string) *TableElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TableElement) Contenteditable(a TableContenteditable) *TableElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *TableElement) Contenteditable(a TableContenteditable) *TableElement {
 func (e *TableElement) DataUnsafe(name string, s string) *TableElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TableElement) Data(name string, s string) *TableElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TableElement) Dir(a TableDir) *TableElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *TableElement) Draggable(a TableDraggable) *TableElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *TableElement) Enterkeyhint(a TableEnterkeyhint) *TableElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *TableElement) Hidden(a TableHidden) *TableElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *TableElement) Id(s string) *TableElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TableElement) Inert(b bool) *TableElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *TableElement) Inputmode(a TableInputmode) *TableElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *TableElement) Itemid(s string) *TableElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *TableElement) Itemprop(s ...string) *TableElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TableElement) Itemref(s ...string) *TableElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TableElement) Itemscope(b bool) *TableElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *TableElement) Itemtype(s ...string) *TableElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TableElement) Lang(s string) *TableElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *TableElement) Nonce(s string) *TableElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *TableElement) Popover(s string) *TableElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *TableElement) Role(s string) *TableElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *TableElement) Slot(s string) *TableElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *TableElement) Spellcheck(a TableSpellcheck) *TableElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *TableElement) Style(s string) *TableElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *TableElement) Tabindex(i int) *TableElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TableElement) Title(s string) *TableElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *TableElement) Translate(a TableTranslate) *TableElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *TableElement) Writingsuggestions(a TableWritingsuggestions) *TableElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *TableElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<table")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

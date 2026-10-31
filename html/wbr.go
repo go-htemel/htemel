@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type WbrElement struct {
-	attributes wbrAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type WbrElement struct {
 //
 // Spec Description: The wbr element represents a line break opportunity.
 func Wbr() *WbrElement {
-	node := &WbrElement{
-
-		attributes: make(wbrAttrs),
-	}
+	node := &WbrElement{}
 
 	return node
 }
 
+// WbrIf creates a tag <wbr> instance that is only rendered when condition is true.
 func WbrIf(condition bool) *WbrElement {
 	if condition {
 		return Wbr()
@@ -35,7 +33,6 @@ func WbrIf(condition bool) *WbrElement {
 
 	return &WbrElement{
 
-		attributes: make(wbrAttrs),
 		skipRender: true,
 	}
 }
@@ -48,22 +45,49 @@ func (e *WbrElement) With(fn func(*WbrElement)) *WbrElement {
 
 // AddClass appends a class to the element.
 func (e *WbrElement) AddClass(classes ...string) *WbrElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *WbrElement) ToggleClass(class string, enable bool) *WbrElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *WbrElement) Attr(name, value string) *WbrElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *WbrElement) AttrUnsafe(name, value string) *WbrElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *WbrElement) BoolAttr(name string, on bool) *WbrElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -89,9 +113,9 @@ const (
 type WbrContenteditable string
 
 const (
+	WbrContenteditableFalse         WbrContenteditable = "false"
 	WbrContenteditablePlaintextOnly WbrContenteditable = "plaintext-only"
 	WbrContenteditableTrue          WbrContenteditable = "true"
-	WbrContenteditableFalse         WbrContenteditable = "false"
 	WbrContenteditableEmpty         WbrContenteditable = ""
 )
 
@@ -113,13 +137,13 @@ const (
 type WbrEnterkeyhint string
 
 const (
-	WbrEnterkeyhintSend     WbrEnterkeyhint = "send"
 	WbrEnterkeyhintDone     WbrEnterkeyhint = "done"
 	WbrEnterkeyhintEnter    WbrEnterkeyhint = "enter"
 	WbrEnterkeyhintGo       WbrEnterkeyhint = "go"
 	WbrEnterkeyhintNext     WbrEnterkeyhint = "next"
 	WbrEnterkeyhintPrevious WbrEnterkeyhint = "previous"
 	WbrEnterkeyhintSearch   WbrEnterkeyhint = "search"
+	WbrEnterkeyhintSend     WbrEnterkeyhint = "send"
 )
 
 type WbrHidden string
@@ -133,14 +157,14 @@ const (
 type WbrInputmode string
 
 const (
-	WbrInputmodeText    WbrInputmode = "text"
-	WbrInputmodeUrl     WbrInputmode = "url"
 	WbrInputmodeDecimal WbrInputmode = "decimal"
 	WbrInputmodeEmail   WbrInputmode = "email"
 	WbrInputmodeNone    WbrInputmode = "none"
 	WbrInputmodeNumeric WbrInputmode = "numeric"
 	WbrInputmodeSearch  WbrInputmode = "search"
 	WbrInputmodeTel     WbrInputmode = "tel"
+	WbrInputmodeText    WbrInputmode = "text"
+	WbrInputmodeUrl     WbrInputmode = "url"
 )
 
 type WbrSpellcheck string
@@ -167,46 +191,50 @@ const (
 	WbrWritingsuggestionsEmpty WbrWritingsuggestions = ""
 )
 
-type wbrAttrs map[string]any
-
 func (e *WbrElement) AriaUnsafe(name string, s string) *WbrElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *WbrElement) Aria(name string, s string) *WbrElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *WbrElement) Autocapitalize(a WbrAutocapitalize) *WbrElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Autocorrect(a WbrAutocorrect) *WbrElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *WbrElement) Autofocus(b bool) *WbrElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *WbrElement) Class(s ...string) *WbrElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *WbrElement) Contenteditable(a WbrContenteditable) *WbrElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -214,149 +242,157 @@ func (e *WbrElement) Contenteditable(a WbrContenteditable) *WbrElement {
 func (e *WbrElement) DataUnsafe(name string, s string) *WbrElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *WbrElement) Data(name string, s string) *WbrElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *WbrElement) Dir(a WbrDir) *WbrElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Draggable(a WbrDraggable) *WbrElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Enterkeyhint(a WbrEnterkeyhint) *WbrElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Hidden(a WbrHidden) *WbrElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Id(s string) *WbrElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *WbrElement) Inert(b bool) *WbrElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *WbrElement) Inputmode(a WbrInputmode) *WbrElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Itemid(s string) *WbrElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *WbrElement) Itemprop(s ...string) *WbrElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *WbrElement) Itemref(s ...string) *WbrElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *WbrElement) Itemscope(b bool) *WbrElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *WbrElement) Itemtype(s ...string) *WbrElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *WbrElement) Lang(s string) *WbrElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *WbrElement) Nonce(s string) *WbrElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *WbrElement) Popover(s string) *WbrElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *WbrElement) Role(s string) *WbrElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *WbrElement) Slot(s string) *WbrElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *WbrElement) Spellcheck(a WbrSpellcheck) *WbrElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Style(s string) *WbrElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *WbrElement) Tabindex(i int) *WbrElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *WbrElement) Title(s string) *WbrElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *WbrElement) Translate(a WbrTranslate) *WbrElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *WbrElement) Writingsuggestions(a WbrWritingsuggestions) *WbrElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -374,18 +410,7 @@ func (e *WbrElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<wbr")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

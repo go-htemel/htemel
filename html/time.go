@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type TimeElement struct {
-	attributes timeAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Time creates a tag <time> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The time element represents its contents, along with a machine-readable form of those contents in the datetime attribute. The kind of content is limited to various kinds of dates, times, time-zone offsets, and durations, as described below.
 func Time(children ...htemel.Node) *TimeElement {
 	node := &TimeElement{
-		children:   children,
-		attributes: make(timeAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// TimeIf creates a tag <time> instance that is only rendered when condition is true.
 func TimeIf(condition bool, children ...htemel.Node) *TimeElement {
 	if condition {
 		return Time(children...)
@@ -36,16 +38,16 @@ func TimeIf(condition bool, children ...htemel.Node) *TimeElement {
 
 	return &TimeElement{
 		children:   children,
-		attributes: make(timeAttrs),
 		skipRender: true,
 	}
 }
 
-func TimeTernary(condition bool, true htemel.Node, false htemel.Node) *TimeElement {
+// TimeTernary creates a tag <time> containing then when condition is true, otherwise containing otherwise.
+func TimeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TimeElement {
 	if condition {
-		return Time(true)
+		return Time(then)
 	}
-	return Time(false)
+	return Time(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *TimeElement) With(fn func(*TimeElement)) *TimeElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *TimeElement) Text(text string) *TimeElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *TimeElement) Textf(format string, args ...any) *TimeElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *TimeElement) If(cond bool, child htemel.Node) *TimeElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *TimeElement) IfElse(cond bool, then, els htemel.Node) *TimeElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *TimeElement) IfThen(cond bool, fn func(*TimeElement)) *TimeElement {
 
 // AddClass appends a class to the element.
 func (e *TimeElement) AddClass(classes ...string) *TimeElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *TimeElement) ToggleClass(class string, enable bool) *TimeElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *TimeElement) Attr(name, value string) *TimeElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *TimeElement) AttrUnsafe(name, value string) *TimeElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *TimeElement) BoolAttr(name string, on bool) *TimeElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -130,17 +161,17 @@ const (
 type TimeAutocorrect string
 
 const (
-	TimeAutocorrectOn    TimeAutocorrect = "on"
 	TimeAutocorrectOff   TimeAutocorrect = "off"
+	TimeAutocorrectOn    TimeAutocorrect = "on"
 	TimeAutocorrectEmpty TimeAutocorrect = ""
 )
 
 type TimeContenteditable string
 
 const (
-	TimeContenteditableTrue          TimeContenteditable = "true"
 	TimeContenteditableFalse         TimeContenteditable = "false"
 	TimeContenteditablePlaintextOnly TimeContenteditable = "plaintext-only"
+	TimeContenteditableTrue          TimeContenteditable = "true"
 	TimeContenteditableEmpty         TimeContenteditable = ""
 )
 
@@ -162,13 +193,13 @@ const (
 type TimeEnterkeyhint string
 
 const (
+	TimeEnterkeyhintDone     TimeEnterkeyhint = "done"
+	TimeEnterkeyhintEnter    TimeEnterkeyhint = "enter"
 	TimeEnterkeyhintGo       TimeEnterkeyhint = "go"
 	TimeEnterkeyhintNext     TimeEnterkeyhint = "next"
 	TimeEnterkeyhintPrevious TimeEnterkeyhint = "previous"
 	TimeEnterkeyhintSearch   TimeEnterkeyhint = "search"
 	TimeEnterkeyhintSend     TimeEnterkeyhint = "send"
-	TimeEnterkeyhintDone     TimeEnterkeyhint = "done"
-	TimeEnterkeyhintEnter    TimeEnterkeyhint = "enter"
 )
 
 type TimeHidden string
@@ -211,15 +242,13 @@ const (
 type TimeWritingsuggestions string
 
 const (
-	TimeWritingsuggestionsTrue  TimeWritingsuggestions = "true"
 	TimeWritingsuggestionsFalse TimeWritingsuggestions = "false"
+	TimeWritingsuggestionsTrue  TimeWritingsuggestions = "true"
 	TimeWritingsuggestionsEmpty TimeWritingsuggestions = ""
 )
 
-type timeAttrs map[string]any
-
 func (e *TimeElement) Datetime(s string) *TimeElement {
-	e.attributes["datetime"] = s
+	e.attributes.Set("datetime", s)
 
 	return e
 }
@@ -227,41 +256,47 @@ func (e *TimeElement) Datetime(s string) *TimeElement {
 func (e *TimeElement) AriaUnsafe(name string, s string) *TimeElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TimeElement) Aria(name string, s string) *TimeElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TimeElement) Autocapitalize(a TimeAutocapitalize) *TimeElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Autocorrect(a TimeAutocorrect) *TimeElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TimeElement) Autofocus(b bool) *TimeElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *TimeElement) Class(s ...string) *TimeElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TimeElement) Contenteditable(a TimeContenteditable) *TimeElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -269,149 +304,157 @@ func (e *TimeElement) Contenteditable(a TimeContenteditable) *TimeElement {
 func (e *TimeElement) DataUnsafe(name string, s string) *TimeElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *TimeElement) Data(name string, s string) *TimeElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *TimeElement) Dir(a TimeDir) *TimeElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Draggable(a TimeDraggable) *TimeElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Enterkeyhint(a TimeEnterkeyhint) *TimeElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Hidden(a TimeHidden) *TimeElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Id(s string) *TimeElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TimeElement) Inert(b bool) *TimeElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *TimeElement) Inputmode(a TimeInputmode) *TimeElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Itemid(s string) *TimeElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *TimeElement) Itemprop(s ...string) *TimeElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TimeElement) Itemref(s ...string) *TimeElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *TimeElement) Itemscope(b bool) *TimeElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *TimeElement) Itemtype(s ...string) *TimeElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *TimeElement) Lang(s string) *TimeElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *TimeElement) Nonce(s string) *TimeElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *TimeElement) Popover(s string) *TimeElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *TimeElement) Role(s string) *TimeElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *TimeElement) Slot(s string) *TimeElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *TimeElement) Spellcheck(a TimeSpellcheck) *TimeElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Style(s string) *TimeElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *TimeElement) Tabindex(i int) *TimeElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TimeElement) Title(s string) *TimeElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *TimeElement) Translate(a TimeTranslate) *TimeElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *TimeElement) Writingsuggestions(a TimeWritingsuggestions) *TimeElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -429,18 +472,7 @@ func (e *TimeElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<time")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

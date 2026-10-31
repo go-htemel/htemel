@@ -33,7 +33,7 @@ import (
 
 func MainLayout(children ...Node) Node {
     return Group(
-        GenericVoid("!DOCTYPE", map[string]any{"html": nil}),
+        Doctype(),
         Html().Class("h-dvh bg-gray-200").Lang("en").Children(
             Head(
                 Meta().Charset("UTF-8"),

@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type SourceElement struct {
-	attributes sourceAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type SourceElement struct {
 //
 // Spec Description: The source element allows authors to specify multiple alternative source sets for img elements or multiple alternative media resources for media elements. It does not represent anything on its own.
 func Source() *SourceElement {
-	node := &SourceElement{
-
-		attributes: make(sourceAttrs),
-	}
+	node := &SourceElement{}
 
 	return node
 }
 
+// SourceIf creates a tag <source> instance that is only rendered when condition is true.
 func SourceIf(condition bool) *SourceElement {
 	if condition {
 		return Source()
@@ -35,7 +33,6 @@ func SourceIf(condition bool) *SourceElement {
 
 	return &SourceElement{
 
-		attributes: make(sourceAttrs),
 		skipRender: true,
 	}
 }
@@ -48,34 +45,61 @@ func (e *SourceElement) With(fn func(*SourceElement)) *SourceElement {
 
 // AddClass appends a class to the element.
 func (e *SourceElement) AddClass(classes ...string) *SourceElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *SourceElement) ToggleClass(class string, enable bool) *SourceElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *SourceElement) Attr(name, value string) *SourceElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *SourceElement) AttrUnsafe(name, value string) *SourceElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *SourceElement) BoolAttr(name string, on bool) *SourceElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type SourceAutocapitalize string
 
 const (
-	SourceAutocapitalizeSentences  SourceAutocapitalize = "sentences"
-	SourceAutocapitalizeWords      SourceAutocapitalize = "words"
 	SourceAutocapitalizeCharacters SourceAutocapitalize = "characters"
 	SourceAutocapitalizeNone       SourceAutocapitalize = "none"
 	SourceAutocapitalizeOff        SourceAutocapitalize = "off"
 	SourceAutocapitalizeOn         SourceAutocapitalize = "on"
+	SourceAutocapitalizeSentences  SourceAutocapitalize = "sentences"
+	SourceAutocapitalizeWords      SourceAutocapitalize = "words"
 )
 
 type SourceAutocorrect string
@@ -89,9 +113,9 @@ const (
 type SourceContenteditable string
 
 const (
+	SourceContenteditableFalse         SourceContenteditable = "false"
 	SourceContenteditablePlaintextOnly SourceContenteditable = "plaintext-only"
 	SourceContenteditableTrue          SourceContenteditable = "true"
-	SourceContenteditableFalse         SourceContenteditable = "false"
 	SourceContenteditableEmpty         SourceContenteditable = ""
 )
 
@@ -113,13 +137,13 @@ const (
 type SourceEnterkeyhint string
 
 const (
+	SourceEnterkeyhintDone     SourceEnterkeyhint = "done"
+	SourceEnterkeyhintEnter    SourceEnterkeyhint = "enter"
 	SourceEnterkeyhintGo       SourceEnterkeyhint = "go"
 	SourceEnterkeyhintNext     SourceEnterkeyhint = "next"
 	SourceEnterkeyhintPrevious SourceEnterkeyhint = "previous"
 	SourceEnterkeyhintSearch   SourceEnterkeyhint = "search"
 	SourceEnterkeyhintSend     SourceEnterkeyhint = "send"
-	SourceEnterkeyhintDone     SourceEnterkeyhint = "done"
-	SourceEnterkeyhintEnter    SourceEnterkeyhint = "enter"
 )
 
 type SourceHidden string
@@ -133,14 +157,14 @@ const (
 type SourceInputmode string
 
 const (
-	SourceInputmodeSearch  SourceInputmode = "search"
-	SourceInputmodeTel     SourceInputmode = "tel"
-	SourceInputmodeText    SourceInputmode = "text"
-	SourceInputmodeUrl     SourceInputmode = "url"
 	SourceInputmodeDecimal SourceInputmode = "decimal"
 	SourceInputmodeEmail   SourceInputmode = "email"
 	SourceInputmodeNone    SourceInputmode = "none"
 	SourceInputmodeNumeric SourceInputmode = "numeric"
+	SourceInputmodeSearch  SourceInputmode = "search"
+	SourceInputmodeTel     SourceInputmode = "tel"
+	SourceInputmodeText    SourceInputmode = "text"
+	SourceInputmodeUrl     SourceInputmode = "url"
 )
 
 type SourceSpellcheck string
@@ -167,46 +191,44 @@ const (
 	SourceWritingsuggestionsEmpty SourceWritingsuggestions = ""
 )
 
-type sourceAttrs map[string]any
-
 func (e *SourceElement) Type(s string) *SourceElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *SourceElement) Media(s string) *SourceElement {
-	e.attributes["media"] = s
+	e.attributes.Set("media", s)
 
 	return e
 }
 
 func (e *SourceElement) Src(s string) *SourceElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *SourceElement) Srcset(s string) *SourceElement {
-	e.attributes["srcset"] = s
+	e.attributes.Set("srcset", s)
 
 	return e
 }
 
 func (e *SourceElement) Sizes(s string) *SourceElement {
-	e.attributes["sizes"] = s
+	e.attributes.Set("sizes", s)
 
 	return e
 }
 
 func (e *SourceElement) Width(i int) *SourceElement {
-	e.attributes["width"] = i
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SourceElement) Height(i int) *SourceElement {
-	e.attributes["height"] = i
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -214,41 +236,47 @@ func (e *SourceElement) Height(i int) *SourceElement {
 func (e *SourceElement) AriaUnsafe(name string, s string) *SourceElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SourceElement) Aria(name string, s string) *SourceElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SourceElement) Autocapitalize(a SourceAutocapitalize) *SourceElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Autocorrect(a SourceAutocorrect) *SourceElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SourceElement) Autofocus(b bool) *SourceElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *SourceElement) Class(s ...string) *SourceElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SourceElement) Contenteditable(a SourceContenteditable) *SourceElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -256,149 +284,157 @@ func (e *SourceElement) Contenteditable(a SourceContenteditable) *SourceElement 
 func (e *SourceElement) DataUnsafe(name string, s string) *SourceElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SourceElement) Data(name string, s string) *SourceElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SourceElement) Dir(a SourceDir) *SourceElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Draggable(a SourceDraggable) *SourceElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Enterkeyhint(a SourceEnterkeyhint) *SourceElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Hidden(a SourceHidden) *SourceElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Id(s string) *SourceElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SourceElement) Inert(b bool) *SourceElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *SourceElement) Inputmode(a SourceInputmode) *SourceElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Itemid(s string) *SourceElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *SourceElement) Itemprop(s ...string) *SourceElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SourceElement) Itemref(s ...string) *SourceElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SourceElement) Itemscope(b bool) *SourceElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *SourceElement) Itemtype(s ...string) *SourceElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SourceElement) Lang(s string) *SourceElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *SourceElement) Nonce(s string) *SourceElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *SourceElement) Popover(s string) *SourceElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *SourceElement) Role(s string) *SourceElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *SourceElement) Slot(s string) *SourceElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *SourceElement) Spellcheck(a SourceSpellcheck) *SourceElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Style(s string) *SourceElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *SourceElement) Tabindex(i int) *SourceElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SourceElement) Title(s string) *SourceElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *SourceElement) Translate(a SourceTranslate) *SourceElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *SourceElement) Writingsuggestions(a SourceWritingsuggestions) *SourceElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -416,18 +452,7 @@ func (e *SourceElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<source")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

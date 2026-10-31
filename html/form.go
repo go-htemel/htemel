@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type FormElement struct {
-	attributes formAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Form creates a tag <form> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The form element represents a hyperlink that can be manipulated through a collection of form-associated elements, some of which can represent editable values that can be submitted to a server for processing.
 func Form(children ...htemel.Node) *FormElement {
 	node := &FormElement{
-		children:   children,
-		attributes: make(formAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// FormIf creates a tag <form> instance that is only rendered when condition is true.
 func FormIf(condition bool, children ...htemel.Node) *FormElement {
 	if condition {
 		return Form(children...)
@@ -36,16 +38,16 @@ func FormIf(condition bool, children ...htemel.Node) *FormElement {
 
 	return &FormElement{
 		children:   children,
-		attributes: make(formAttrs),
 		skipRender: true,
 	}
 }
 
-func FormTernary(condition bool, true htemel.Node, false htemel.Node) *FormElement {
+// FormTernary creates a tag <form> containing then when condition is true, otherwise containing otherwise.
+func FormTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FormElement {
 	if condition {
-		return Form(true)
+		return Form(then)
 	}
-	return Form(false)
+	return Form(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *FormElement) With(fn func(*FormElement)) *FormElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *FormElement) Text(text string) *FormElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *FormElement) Textf(format string, args ...any) *FormElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *FormElement) If(cond bool, child htemel.Node) *FormElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *FormElement) IfElse(cond bool, then, els htemel.Node) *FormElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *FormElement) IfThen(cond bool, fn func(*FormElement)) *FormElement {
 
 // AddClass appends a class to the element.
 func (e *FormElement) AddClass(classes ...string) *FormElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *FormElement) ToggleClass(class string, enable bool) *FormElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *FormElement) Attr(name, value string) *FormElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *FormElement) AttrUnsafe(name, value string) *FormElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *FormElement) BoolAttr(name string, on bool) *FormElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -126,9 +157,9 @@ const (
 type FormMethod string
 
 const (
+	FormMethodDialog FormMethod = "dialog"
 	FormMethodGet    FormMethod = "get"
 	FormMethodPost   FormMethod = "post"
-	FormMethodDialog FormMethod = "dialog"
 )
 
 type FormAutocapitalize string
@@ -170,20 +201,20 @@ const (
 type FormDraggable string
 
 const (
-	FormDraggableTrue  FormDraggable = "true"
 	FormDraggableFalse FormDraggable = "false"
+	FormDraggableTrue  FormDraggable = "true"
 )
 
 type FormEnterkeyhint string
 
 const (
+	FormEnterkeyhintDone     FormEnterkeyhint = "done"
+	FormEnterkeyhintEnter    FormEnterkeyhint = "enter"
+	FormEnterkeyhintGo       FormEnterkeyhint = "go"
 	FormEnterkeyhintNext     FormEnterkeyhint = "next"
 	FormEnterkeyhintPrevious FormEnterkeyhint = "previous"
 	FormEnterkeyhintSearch   FormEnterkeyhint = "search"
 	FormEnterkeyhintSend     FormEnterkeyhint = "send"
-	FormEnterkeyhintDone     FormEnterkeyhint = "done"
-	FormEnterkeyhintEnter    FormEnterkeyhint = "enter"
-	FormEnterkeyhintGo       FormEnterkeyhint = "go"
 )
 
 type FormHidden string
@@ -197,14 +228,14 @@ const (
 type FormInputmode string
 
 const (
-	FormInputmodeTel     FormInputmode = "tel"
-	FormInputmodeText    FormInputmode = "text"
-	FormInputmodeUrl     FormInputmode = "url"
 	FormInputmodeDecimal FormInputmode = "decimal"
 	FormInputmodeEmail   FormInputmode = "email"
 	FormInputmodeNone    FormInputmode = "none"
 	FormInputmodeNumeric FormInputmode = "numeric"
 	FormInputmodeSearch  FormInputmode = "search"
+	FormInputmodeTel     FormInputmode = "tel"
+	FormInputmodeText    FormInputmode = "text"
+	FormInputmodeUrl     FormInputmode = "url"
 )
 
 type FormSpellcheck string
@@ -231,58 +262,58 @@ const (
 	FormWritingsuggestionsEmpty FormWritingsuggestions = ""
 )
 
-type formAttrs map[string]any
-
 func (e *FormElement) AcceptCharset(s string) *FormElement {
-	e.attributes["accept-charset"] = s
+	e.attributes.Set("accept-charset", s)
 
 	return e
 }
 
 func (e *FormElement) Action(s string) *FormElement {
-	e.attributes["action"] = s
+	e.attributes.Set("action", s)
 
 	return e
 }
 
 func (e *FormElement) Autocomplete(a FormAutocomplete) *FormElement {
-	e.attributes["autocomplete"] = a
+	e.attributes.Set("autocomplete", string(a))
 
 	return e
 }
 
 func (e *FormElement) Enctype(s string) *FormElement {
-	e.attributes["enctype"] = s
+	e.attributes.Set("enctype", s)
 
 	return e
 }
 
 func (e *FormElement) Method(a FormMethod) *FormElement {
-	e.attributes["method"] = a
+	e.attributes.Set("method", string(a))
 
 	return e
 }
 
 func (e *FormElement) Name(s string) *FormElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
+// Novalidate sets the boolean attribute "novalidate". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FormElement) Novalidate(b bool) *FormElement {
-	e.attributes["novalidate"] = b
+	e.attributes.SetBool("novalidate", b)
 
 	return e
 }
 
 func (e *FormElement) Target(s string) *FormElement {
-	e.attributes["target"] = s
+	e.attributes.Set("target", s)
 
 	return e
 }
 
 func (e *FormElement) Rel(s ...string) *FormElement {
-	e.attributes["rel"] = strings.Join(s, " ")
+	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
@@ -290,41 +321,47 @@ func (e *FormElement) Rel(s ...string) *FormElement {
 func (e *FormElement) AriaUnsafe(name string, s string) *FormElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *FormElement) Aria(name string, s string) *FormElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *FormElement) Autocapitalize(a FormAutocapitalize) *FormElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *FormElement) Autocorrect(a FormAutocorrect) *FormElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FormElement) Autofocus(b bool) *FormElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *FormElement) Class(s ...string) *FormElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FormElement) Contenteditable(a FormContenteditable) *FormElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -332,149 +369,157 @@ func (e *FormElement) Contenteditable(a FormContenteditable) *FormElement {
 func (e *FormElement) DataUnsafe(name string, s string) *FormElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *FormElement) Data(name string, s string) *FormElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *FormElement) Dir(a FormDir) *FormElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *FormElement) Draggable(a FormDraggable) *FormElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *FormElement) Enterkeyhint(a FormEnterkeyhint) *FormElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *FormElement) Hidden(a FormHidden) *FormElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *FormElement) Id(s string) *FormElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FormElement) Inert(b bool) *FormElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *FormElement) Inputmode(a FormInputmode) *FormElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *FormElement) Itemid(s string) *FormElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *FormElement) Itemprop(s ...string) *FormElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FormElement) Itemref(s ...string) *FormElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *FormElement) Itemscope(b bool) *FormElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *FormElement) Itemtype(s ...string) *FormElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *FormElement) Lang(s string) *FormElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *FormElement) Nonce(s string) *FormElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *FormElement) Popover(s string) *FormElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *FormElement) Role(s string) *FormElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *FormElement) Slot(s string) *FormElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *FormElement) Spellcheck(a FormSpellcheck) *FormElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *FormElement) Style(s string) *FormElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *FormElement) Tabindex(i int) *FormElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *FormElement) Title(s string) *FormElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *FormElement) Translate(a FormTranslate) *FormElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *FormElement) Writingsuggestions(a FormWritingsuggestions) *FormElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -492,18 +537,7 @@ func (e *FormElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<form")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

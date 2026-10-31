@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type HtmlElement struct {
-	attributes htmlAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Html creates a tag <html> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The html element represents the root of an HTML document.
 func Html(children ...htemel.Node) *HtmlElement {
 	node := &HtmlElement{
-		children:   children,
-		attributes: make(htmlAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// HtmlIf creates a tag <html> instance that is only rendered when condition is true.
 func HtmlIf(condition bool, children ...htemel.Node) *HtmlElement {
 	if condition {
 		return Html(children...)
@@ -36,16 +38,16 @@ func HtmlIf(condition bool, children ...htemel.Node) *HtmlElement {
 
 	return &HtmlElement{
 		children:   children,
-		attributes: make(htmlAttrs),
 		skipRender: true,
 	}
 }
 
-func HtmlTernary(condition bool, true htemel.Node, false htemel.Node) *HtmlElement {
+// HtmlTernary creates a tag <html> containing then when condition is true, otherwise containing otherwise.
+func HtmlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HtmlElement {
 	if condition {
-		return Html(true)
+		return Html(then)
 	}
-	return Html(false)
+	return Html(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *HtmlElement) With(fn func(*HtmlElement)) *HtmlElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *HtmlElement) Text(text string) *HtmlElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *HtmlElement) Textf(format string, args ...any) *HtmlElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *HtmlElement) If(cond bool, child htemel.Node) *HtmlElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *HtmlElement) IfElse(cond bool, then, els htemel.Node) *HtmlElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *HtmlElement) IfThen(cond bool, fn func(*HtmlElement)) *HtmlElement {
 
 // AddClass appends a class to the element.
 func (e *HtmlElement) AddClass(classes ...string) *HtmlElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *HtmlElement) ToggleClass(class string, enable bool) *HtmlElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *HtmlElement) Attr(name, value string) *HtmlElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *HtmlElement) AttrUnsafe(name, value string) *HtmlElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *HtmlElement) BoolAttr(name string, on bool) *HtmlElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,41 +193,41 @@ const (
 type HtmlEnterkeyhint string
 
 const (
+	HtmlEnterkeyhintDone     HtmlEnterkeyhint = "done"
+	HtmlEnterkeyhintEnter    HtmlEnterkeyhint = "enter"
 	HtmlEnterkeyhintGo       HtmlEnterkeyhint = "go"
 	HtmlEnterkeyhintNext     HtmlEnterkeyhint = "next"
 	HtmlEnterkeyhintPrevious HtmlEnterkeyhint = "previous"
 	HtmlEnterkeyhintSearch   HtmlEnterkeyhint = "search"
 	HtmlEnterkeyhintSend     HtmlEnterkeyhint = "send"
-	HtmlEnterkeyhintDone     HtmlEnterkeyhint = "done"
-	HtmlEnterkeyhintEnter    HtmlEnterkeyhint = "enter"
 )
 
 type HtmlHidden string
 
 const (
-	HtmlHiddenUntilFound HtmlHidden = "until-found"
 	HtmlHiddenHidden     HtmlHidden = "hidden"
+	HtmlHiddenUntilFound HtmlHidden = "until-found"
 	HtmlHiddenEmpty      HtmlHidden = ""
 )
 
 type HtmlInputmode string
 
 const (
+	HtmlInputmodeDecimal HtmlInputmode = "decimal"
+	HtmlInputmodeEmail   HtmlInputmode = "email"
 	HtmlInputmodeNone    HtmlInputmode = "none"
 	HtmlInputmodeNumeric HtmlInputmode = "numeric"
 	HtmlInputmodeSearch  HtmlInputmode = "search"
 	HtmlInputmodeTel     HtmlInputmode = "tel"
 	HtmlInputmodeText    HtmlInputmode = "text"
 	HtmlInputmodeUrl     HtmlInputmode = "url"
-	HtmlInputmodeDecimal HtmlInputmode = "decimal"
-	HtmlInputmodeEmail   HtmlInputmode = "email"
 )
 
 type HtmlSpellcheck string
 
 const (
-	HtmlSpellcheckTrue  HtmlSpellcheck = "true"
 	HtmlSpellcheckFalse HtmlSpellcheck = "false"
+	HtmlSpellcheckTrue  HtmlSpellcheck = "true"
 	HtmlSpellcheckEmpty HtmlSpellcheck = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	HtmlWritingsuggestionsEmpty HtmlWritingsuggestions = ""
 )
 
-type htmlAttrs map[string]any
-
 func (e *HtmlElement) AriaUnsafe(name string, s string) *HtmlElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HtmlElement) Aria(name string, s string) *HtmlElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HtmlElement) Autocapitalize(a HtmlAutocapitalize) *HtmlElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Autocorrect(a HtmlAutocorrect) *HtmlElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HtmlElement) Autofocus(b bool) *HtmlElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *HtmlElement) Class(s ...string) *HtmlElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HtmlElement) Contenteditable(a HtmlContenteditable) *HtmlElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *HtmlElement) Contenteditable(a HtmlContenteditable) *HtmlElement {
 func (e *HtmlElement) DataUnsafe(name string, s string) *HtmlElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HtmlElement) Data(name string, s string) *HtmlElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HtmlElement) Dir(a HtmlDir) *HtmlElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Draggable(a HtmlDraggable) *HtmlElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Enterkeyhint(a HtmlEnterkeyhint) *HtmlElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Hidden(a HtmlHidden) *HtmlElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Id(s string) *HtmlElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HtmlElement) Inert(b bool) *HtmlElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *HtmlElement) Inputmode(a HtmlInputmode) *HtmlElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Itemid(s string) *HtmlElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *HtmlElement) Itemprop(s ...string) *HtmlElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HtmlElement) Itemref(s ...string) *HtmlElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HtmlElement) Itemscope(b bool) *HtmlElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *HtmlElement) Itemtype(s ...string) *HtmlElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HtmlElement) Lang(s string) *HtmlElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *HtmlElement) Nonce(s string) *HtmlElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *HtmlElement) Popover(s string) *HtmlElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *HtmlElement) Role(s string) *HtmlElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *HtmlElement) Slot(s string) *HtmlElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *HtmlElement) Spellcheck(a HtmlSpellcheck) *HtmlElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Style(s string) *HtmlElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *HtmlElement) Tabindex(i int) *HtmlElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *HtmlElement) Title(s string) *HtmlElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *HtmlElement) Translate(a HtmlTranslate) *HtmlElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *HtmlElement) Writingsuggestions(a HtmlWritingsuggestions) *HtmlElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *HtmlElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<html")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

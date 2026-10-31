@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type LegendElement struct {
-	attributes legendAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Legend creates a tag <legend> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The legend element represents a caption for the rest of the contents of the legend element's parent fieldset element, if any. Otherwise, if the legend has a parent optgroup element, then the legend represents the optgroup's label.
 func Legend(children ...htemel.Node) *LegendElement {
 	node := &LegendElement{
-		children:   children,
-		attributes: make(legendAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// LegendIf creates a tag <legend> instance that is only rendered when condition is true.
 func LegendIf(condition bool, children ...htemel.Node) *LegendElement {
 	if condition {
 		return Legend(children...)
@@ -36,16 +38,16 @@ func LegendIf(condition bool, children ...htemel.Node) *LegendElement {
 
 	return &LegendElement{
 		children:   children,
-		attributes: make(legendAttrs),
 		skipRender: true,
 	}
 }
 
-func LegendTernary(condition bool, true htemel.Node, false htemel.Node) *LegendElement {
+// LegendTernary creates a tag <legend> containing then when condition is true, otherwise containing otherwise.
+func LegendTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LegendElement {
 	if condition {
-		return Legend(true)
+		return Legend(then)
 	}
-	return Legend(false)
+	return Legend(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *LegendElement) With(fn func(*LegendElement)) *LegendElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *LegendElement) Text(text string) *LegendElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *LegendElement) Textf(format string, args ...any) *LegendElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *LegendElement) If(cond bool, child htemel.Node) *LegendElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *LegendElement) IfElse(cond bool, then, els htemel.Node) *LegendElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *LegendElement) IfThen(cond bool, fn func(*LegendElement)) *LegendElemen
 
 // AddClass appends a class to the element.
 func (e *LegendElement) AddClass(classes ...string) *LegendElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *LegendElement) ToggleClass(class string, enable bool) *LegendElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *LegendElement) Attr(name, value string) *LegendElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *LegendElement) AttrUnsafe(name, value string) *LegendElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *LegendElement) BoolAttr(name string, on bool) *LegendElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type LegendAutocapitalize string
 
 const (
-	LegendAutocapitalizeOn         LegendAutocapitalize = "on"
-	LegendAutocapitalizeSentences  LegendAutocapitalize = "sentences"
-	LegendAutocapitalizeWords      LegendAutocapitalize = "words"
 	LegendAutocapitalizeCharacters LegendAutocapitalize = "characters"
 	LegendAutocapitalizeNone       LegendAutocapitalize = "none"
 	LegendAutocapitalizeOff        LegendAutocapitalize = "off"
+	LegendAutocapitalizeOn         LegendAutocapitalize = "on"
+	LegendAutocapitalizeSentences  LegendAutocapitalize = "sentences"
+	LegendAutocapitalizeWords      LegendAutocapitalize = "words"
 )
 
 type LegendAutocorrect string
@@ -162,13 +193,13 @@ const (
 type LegendEnterkeyhint string
 
 const (
+	LegendEnterkeyhintDone     LegendEnterkeyhint = "done"
+	LegendEnterkeyhintEnter    LegendEnterkeyhint = "enter"
+	LegendEnterkeyhintGo       LegendEnterkeyhint = "go"
 	LegendEnterkeyhintNext     LegendEnterkeyhint = "next"
 	LegendEnterkeyhintPrevious LegendEnterkeyhint = "previous"
 	LegendEnterkeyhintSearch   LegendEnterkeyhint = "search"
 	LegendEnterkeyhintSend     LegendEnterkeyhint = "send"
-	LegendEnterkeyhintDone     LegendEnterkeyhint = "done"
-	LegendEnterkeyhintEnter    LegendEnterkeyhint = "enter"
-	LegendEnterkeyhintGo       LegendEnterkeyhint = "go"
 )
 
 type LegendHidden string
@@ -182,14 +213,14 @@ const (
 type LegendInputmode string
 
 const (
+	LegendInputmodeDecimal LegendInputmode = "decimal"
+	LegendInputmodeEmail   LegendInputmode = "email"
+	LegendInputmodeNone    LegendInputmode = "none"
 	LegendInputmodeNumeric LegendInputmode = "numeric"
 	LegendInputmodeSearch  LegendInputmode = "search"
 	LegendInputmodeTel     LegendInputmode = "tel"
 	LegendInputmodeText    LegendInputmode = "text"
 	LegendInputmodeUrl     LegendInputmode = "url"
-	LegendInputmodeDecimal LegendInputmode = "decimal"
-	LegendInputmodeEmail   LegendInputmode = "email"
-	LegendInputmodeNone    LegendInputmode = "none"
 )
 
 type LegendSpellcheck string
@@ -216,46 +247,50 @@ const (
 	LegendWritingsuggestionsEmpty LegendWritingsuggestions = ""
 )
 
-type legendAttrs map[string]any
-
 func (e *LegendElement) AriaUnsafe(name string, s string) *LegendElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LegendElement) Aria(name string, s string) *LegendElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LegendElement) Autocapitalize(a LegendAutocapitalize) *LegendElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Autocorrect(a LegendAutocorrect) *LegendElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LegendElement) Autofocus(b bool) *LegendElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *LegendElement) Class(s ...string) *LegendElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LegendElement) Contenteditable(a LegendContenteditable) *LegendElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *LegendElement) Contenteditable(a LegendContenteditable) *LegendElement 
 func (e *LegendElement) DataUnsafe(name string, s string) *LegendElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LegendElement) Data(name string, s string) *LegendElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LegendElement) Dir(a LegendDir) *LegendElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Draggable(a LegendDraggable) *LegendElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Enterkeyhint(a LegendEnterkeyhint) *LegendElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Hidden(a LegendHidden) *LegendElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Id(s string) *LegendElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LegendElement) Inert(b bool) *LegendElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *LegendElement) Inputmode(a LegendInputmode) *LegendElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Itemid(s string) *LegendElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *LegendElement) Itemprop(s ...string) *LegendElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LegendElement) Itemref(s ...string) *LegendElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LegendElement) Itemscope(b bool) *LegendElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *LegendElement) Itemtype(s ...string) *LegendElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LegendElement) Lang(s string) *LegendElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *LegendElement) Nonce(s string) *LegendElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *LegendElement) Popover(s string) *LegendElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *LegendElement) Role(s string) *LegendElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *LegendElement) Slot(s string) *LegendElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *LegendElement) Spellcheck(a LegendSpellcheck) *LegendElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Style(s string) *LegendElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *LegendElement) Tabindex(i int) *LegendElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *LegendElement) Title(s string) *LegendElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *LegendElement) Translate(a LegendTranslate) *LegendElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *LegendElement) Writingsuggestions(a LegendWritingsuggestions) *LegendElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *LegendElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<legend")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

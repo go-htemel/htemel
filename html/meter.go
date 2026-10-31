@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type MeterElement struct {
-	attributes meterAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Meter creates a tag <meter> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The meter element represents a scalar measurement within a known range, or a fractional value; for example disk usage, the relevance of a query result, or the fraction of a voting population to have selected a particular candidate.
 func Meter(children ...htemel.Node) *MeterElement {
 	node := &MeterElement{
-		children:   children,
-		attributes: make(meterAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// MeterIf creates a tag <meter> instance that is only rendered when condition is true.
 func MeterIf(condition bool, children ...htemel.Node) *MeterElement {
 	if condition {
 		return Meter(children...)
@@ -36,16 +38,16 @@ func MeterIf(condition bool, children ...htemel.Node) *MeterElement {
 
 	return &MeterElement{
 		children:   children,
-		attributes: make(meterAttrs),
 		skipRender: true,
 	}
 }
 
-func MeterTernary(condition bool, true htemel.Node, false htemel.Node) *MeterElement {
+// MeterTernary creates a tag <meter> containing then when condition is true, otherwise containing otherwise.
+func MeterTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MeterElement {
 	if condition {
-		return Meter(true)
+		return Meter(then)
 	}
-	return Meter(false)
+	return Meter(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *MeterElement) With(fn func(*MeterElement)) *MeterElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *MeterElement) Text(text string) *MeterElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *MeterElement) Textf(format string, args ...any) *MeterElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *MeterElement) If(cond bool, child htemel.Node) *MeterElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *MeterElement) IfElse(cond bool, then, els htemel.Node) *MeterElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *MeterElement) IfThen(cond bool, fn func(*MeterElement)) *MeterElement {
 
 // AddClass appends a class to the element.
 func (e *MeterElement) AddClass(classes ...string) *MeterElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *MeterElement) ToggleClass(class string, enable bool) *MeterElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *MeterElement) Attr(name, value string) *MeterElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *MeterElement) AttrUnsafe(name, value string) *MeterElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *MeterElement) BoolAttr(name string, on bool) *MeterElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type MeterAutocapitalize string
 
 const (
+	MeterAutocapitalizeCharacters MeterAutocapitalize = "characters"
 	MeterAutocapitalizeNone       MeterAutocapitalize = "none"
 	MeterAutocapitalizeOff        MeterAutocapitalize = "off"
 	MeterAutocapitalizeOn         MeterAutocapitalize = "on"
 	MeterAutocapitalizeSentences  MeterAutocapitalize = "sentences"
 	MeterAutocapitalizeWords      MeterAutocapitalize = "words"
-	MeterAutocapitalizeCharacters MeterAutocapitalize = "characters"
 )
 
 type MeterAutocorrect string
@@ -162,13 +193,13 @@ const (
 type MeterEnterkeyhint string
 
 const (
-	MeterEnterkeyhintSend     MeterEnterkeyhint = "send"
 	MeterEnterkeyhintDone     MeterEnterkeyhint = "done"
 	MeterEnterkeyhintEnter    MeterEnterkeyhint = "enter"
 	MeterEnterkeyhintGo       MeterEnterkeyhint = "go"
 	MeterEnterkeyhintNext     MeterEnterkeyhint = "next"
 	MeterEnterkeyhintPrevious MeterEnterkeyhint = "previous"
 	MeterEnterkeyhintSearch   MeterEnterkeyhint = "search"
+	MeterEnterkeyhintSend     MeterEnterkeyhint = "send"
 )
 
 type MeterHidden string
@@ -182,14 +213,14 @@ const (
 type MeterInputmode string
 
 const (
+	MeterInputmodeDecimal MeterInputmode = "decimal"
+	MeterInputmodeEmail   MeterInputmode = "email"
+	MeterInputmodeNone    MeterInputmode = "none"
 	MeterInputmodeNumeric MeterInputmode = "numeric"
 	MeterInputmodeSearch  MeterInputmode = "search"
 	MeterInputmodeTel     MeterInputmode = "tel"
 	MeterInputmodeText    MeterInputmode = "text"
 	MeterInputmodeUrl     MeterInputmode = "url"
-	MeterInputmodeDecimal MeterInputmode = "decimal"
-	MeterInputmodeEmail   MeterInputmode = "email"
-	MeterInputmodeNone    MeterInputmode = "none"
 )
 
 type MeterSpellcheck string
@@ -216,40 +247,38 @@ const (
 	MeterWritingsuggestionsEmpty MeterWritingsuggestions = ""
 )
 
-type meterAttrs map[string]any
-
 func (e *MeterElement) Value(f float64) *MeterElement {
-	e.attributes["value"] = f
+	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) Min(f float64) *MeterElement {
-	e.attributes["min"] = f
+	e.attributes.Set("min", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) Max(f float64) *MeterElement {
-	e.attributes["max"] = f
+	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) Low(f float64) *MeterElement {
-	e.attributes["low"] = f
+	e.attributes.Set("low", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) High(f float64) *MeterElement {
-	e.attributes["high"] = f
+	e.attributes.Set("high", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) Optimum(f float64) *MeterElement {
-	e.attributes["optimum"] = f
+	e.attributes.Set("optimum", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -257,41 +286,47 @@ func (e *MeterElement) Optimum(f float64) *MeterElement {
 func (e *MeterElement) AriaUnsafe(name string, s string) *MeterElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MeterElement) Aria(name string, s string) *MeterElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MeterElement) Autocapitalize(a MeterAutocapitalize) *MeterElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Autocorrect(a MeterAutocorrect) *MeterElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MeterElement) Autofocus(b bool) *MeterElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *MeterElement) Class(s ...string) *MeterElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MeterElement) Contenteditable(a MeterContenteditable) *MeterElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -299,149 +334,157 @@ func (e *MeterElement) Contenteditable(a MeterContenteditable) *MeterElement {
 func (e *MeterElement) DataUnsafe(name string, s string) *MeterElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *MeterElement) Data(name string, s string) *MeterElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *MeterElement) Dir(a MeterDir) *MeterElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Draggable(a MeterDraggable) *MeterElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Enterkeyhint(a MeterEnterkeyhint) *MeterElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Hidden(a MeterHidden) *MeterElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Id(s string) *MeterElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MeterElement) Inert(b bool) *MeterElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *MeterElement) Inputmode(a MeterInputmode) *MeterElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Itemid(s string) *MeterElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *MeterElement) Itemprop(s ...string) *MeterElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MeterElement) Itemref(s ...string) *MeterElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *MeterElement) Itemscope(b bool) *MeterElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *MeterElement) Itemtype(s ...string) *MeterElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *MeterElement) Lang(s string) *MeterElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *MeterElement) Nonce(s string) *MeterElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *MeterElement) Popover(s string) *MeterElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *MeterElement) Role(s string) *MeterElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *MeterElement) Slot(s string) *MeterElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *MeterElement) Spellcheck(a MeterSpellcheck) *MeterElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Style(s string) *MeterElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *MeterElement) Tabindex(i int) *MeterElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *MeterElement) Title(s string) *MeterElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *MeterElement) Translate(a MeterTranslate) *MeterElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *MeterElement) Writingsuggestions(a MeterWritingsuggestions) *MeterElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -459,18 +502,7 @@ func (e *MeterElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<meter")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

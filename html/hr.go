@@ -2,16 +2,16 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type HrElement struct {
-	attributes hrAttrs
+	attributes render.Attrs
 
 	skipRender bool
 }
@@ -20,14 +20,12 @@ type HrElement struct {
 //
 // Spec Description: The hr element represents a paragraph-level thematic break, e.g., a scene change in a story, or a transition to another topic within a section of a reference book; alternatively, it represents a separator between a set of options of a select element.
 func Hr() *HrElement {
-	node := &HrElement{
-
-		attributes: make(hrAttrs),
-	}
+	node := &HrElement{}
 
 	return node
 }
 
+// HrIf creates a tag <hr> instance that is only rendered when condition is true.
 func HrIf(condition bool) *HrElement {
 	if condition {
 		return Hr()
@@ -35,7 +33,6 @@ func HrIf(condition bool) *HrElement {
 
 	return &HrElement{
 
-		attributes: make(hrAttrs),
 		skipRender: true,
 	}
 }
@@ -48,50 +45,77 @@ func (e *HrElement) With(fn func(*HrElement)) *HrElement {
 
 // AddClass appends a class to the element.
 func (e *HrElement) AddClass(classes ...string) *HrElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *HrElement) ToggleClass(class string, enable bool) *HrElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *HrElement) Attr(name, value string) *HrElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *HrElement) AttrUnsafe(name, value string) *HrElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *HrElement) BoolAttr(name string, on bool) *HrElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type HrAutocapitalize string
 
 const (
+	HrAutocapitalizeCharacters HrAutocapitalize = "characters"
+	HrAutocapitalizeNone       HrAutocapitalize = "none"
 	HrAutocapitalizeOff        HrAutocapitalize = "off"
 	HrAutocapitalizeOn         HrAutocapitalize = "on"
 	HrAutocapitalizeSentences  HrAutocapitalize = "sentences"
 	HrAutocapitalizeWords      HrAutocapitalize = "words"
-	HrAutocapitalizeCharacters HrAutocapitalize = "characters"
-	HrAutocapitalizeNone       HrAutocapitalize = "none"
 )
 
 type HrAutocorrect string
 
 const (
-	HrAutocorrectOn    HrAutocorrect = "on"
 	HrAutocorrectOff   HrAutocorrect = "off"
+	HrAutocorrectOn    HrAutocorrect = "on"
 	HrAutocorrectEmpty HrAutocorrect = ""
 )
 
 type HrContenteditable string
 
 const (
+	HrContenteditableFalse         HrContenteditable = "false"
 	HrContenteditablePlaintextOnly HrContenteditable = "plaintext-only"
 	HrContenteditableTrue          HrContenteditable = "true"
-	HrContenteditableFalse         HrContenteditable = "false"
 	HrContenteditableEmpty         HrContenteditable = ""
 )
 
@@ -106,8 +130,8 @@ const (
 type HrDraggable string
 
 const (
-	HrDraggableTrue  HrDraggable = "true"
 	HrDraggableFalse HrDraggable = "false"
+	HrDraggableTrue  HrDraggable = "true"
 )
 
 type HrEnterkeyhint string
@@ -133,7 +157,6 @@ const (
 type HrInputmode string
 
 const (
-	HrInputmodeUrl     HrInputmode = "url"
 	HrInputmodeDecimal HrInputmode = "decimal"
 	HrInputmodeEmail   HrInputmode = "email"
 	HrInputmodeNone    HrInputmode = "none"
@@ -141,6 +164,7 @@ const (
 	HrInputmodeSearch  HrInputmode = "search"
 	HrInputmodeTel     HrInputmode = "tel"
 	HrInputmodeText    HrInputmode = "text"
+	HrInputmodeUrl     HrInputmode = "url"
 )
 
 type HrSpellcheck string
@@ -162,51 +186,55 @@ const (
 type HrWritingsuggestions string
 
 const (
-	HrWritingsuggestionsTrue  HrWritingsuggestions = "true"
 	HrWritingsuggestionsFalse HrWritingsuggestions = "false"
+	HrWritingsuggestionsTrue  HrWritingsuggestions = "true"
 	HrWritingsuggestionsEmpty HrWritingsuggestions = ""
 )
-
-type hrAttrs map[string]any
 
 func (e *HrElement) AriaUnsafe(name string, s string) *HrElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HrElement) Aria(name string, s string) *HrElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HrElement) Autocapitalize(a HrAutocapitalize) *HrElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *HrElement) Autocorrect(a HrAutocorrect) *HrElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HrElement) Autofocus(b bool) *HrElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *HrElement) Class(s ...string) *HrElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HrElement) Contenteditable(a HrContenteditable) *HrElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -214,149 +242,157 @@ func (e *HrElement) Contenteditable(a HrContenteditable) *HrElement {
 func (e *HrElement) DataUnsafe(name string, s string) *HrElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *HrElement) Data(name string, s string) *HrElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *HrElement) Dir(a HrDir) *HrElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *HrElement) Draggable(a HrDraggable) *HrElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *HrElement) Enterkeyhint(a HrEnterkeyhint) *HrElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *HrElement) Hidden(a HrHidden) *HrElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *HrElement) Id(s string) *HrElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HrElement) Inert(b bool) *HrElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *HrElement) Inputmode(a HrInputmode) *HrElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *HrElement) Itemid(s string) *HrElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *HrElement) Itemprop(s ...string) *HrElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HrElement) Itemref(s ...string) *HrElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *HrElement) Itemscope(b bool) *HrElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *HrElement) Itemtype(s ...string) *HrElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *HrElement) Lang(s string) *HrElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *HrElement) Nonce(s string) *HrElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *HrElement) Popover(s string) *HrElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *HrElement) Role(s string) *HrElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *HrElement) Slot(s string) *HrElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *HrElement) Spellcheck(a HrSpellcheck) *HrElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *HrElement) Style(s string) *HrElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *HrElement) Tabindex(i int) *HrElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *HrElement) Title(s string) *HrElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *HrElement) Translate(a HrTranslate) *HrElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *HrElement) Writingsuggestions(a HrWritingsuggestions) *HrElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -374,18 +410,7 @@ func (e *HrElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<hr")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ObjectElement struct {
-	attributes objectAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Object creates a tag <object> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The object element can represent an external resource, which, depending on the type of the resource, will either be treated as an image or as a child navigable.
 func Object(children ...htemel.Node) *ObjectElement {
 	node := &ObjectElement{
-		children:   children,
-		attributes: make(objectAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// ObjectIf creates a tag <object> instance that is only rendered when condition is true.
 func ObjectIf(condition bool, children ...htemel.Node) *ObjectElement {
 	if condition {
 		return Object(children...)
@@ -36,16 +38,16 @@ func ObjectIf(condition bool, children ...htemel.Node) *ObjectElement {
 
 	return &ObjectElement{
 		children:   children,
-		attributes: make(objectAttrs),
 		skipRender: true,
 	}
 }
 
-func ObjectTernary(condition bool, true htemel.Node, false htemel.Node) *ObjectElement {
+// ObjectTernary creates a tag <object> containing then when condition is true, otherwise containing otherwise.
+func ObjectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ObjectElement {
 	if condition {
-		return Object(true)
+		return Object(then)
 	}
-	return Object(false)
+	return Object(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *ObjectElement) With(fn func(*ObjectElement)) *ObjectElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *ObjectElement) Text(text string) *ObjectElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *ObjectElement) Textf(format string, args ...any) *ObjectElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *ObjectElement) If(cond bool, child htemel.Node) *ObjectElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *ObjectElement) IfElse(cond bool, then, els htemel.Node) *ObjectElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *ObjectElement) IfThen(cond bool, fn func(*ObjectElement)) *ObjectElemen
 
 // AddClass appends a class to the element.
 func (e *ObjectElement) AddClass(classes ...string) *ObjectElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ObjectElement) ToggleClass(class string, enable bool) *ObjectElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ObjectElement) Attr(name, value string) *ObjectElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ObjectElement) AttrUnsafe(name, value string) *ObjectElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ObjectElement) BoolAttr(name string, on bool) *ObjectElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type ObjectAutocapitalize string
 
 const (
+	ObjectAutocapitalizeCharacters ObjectAutocapitalize = "characters"
+	ObjectAutocapitalizeNone       ObjectAutocapitalize = "none"
 	ObjectAutocapitalizeOff        ObjectAutocapitalize = "off"
 	ObjectAutocapitalizeOn         ObjectAutocapitalize = "on"
 	ObjectAutocapitalizeSentences  ObjectAutocapitalize = "sentences"
 	ObjectAutocapitalizeWords      ObjectAutocapitalize = "words"
-	ObjectAutocapitalizeCharacters ObjectAutocapitalize = "characters"
-	ObjectAutocapitalizeNone       ObjectAutocapitalize = "none"
 )
 
 type ObjectAutocorrect string
@@ -138,9 +169,9 @@ const (
 type ObjectContenteditable string
 
 const (
+	ObjectContenteditableFalse         ObjectContenteditable = "false"
 	ObjectContenteditablePlaintextOnly ObjectContenteditable = "plaintext-only"
 	ObjectContenteditableTrue          ObjectContenteditable = "true"
-	ObjectContenteditableFalse         ObjectContenteditable = "false"
 	ObjectContenteditableEmpty         ObjectContenteditable = ""
 )
 
@@ -162,13 +193,13 @@ const (
 type ObjectEnterkeyhint string
 
 const (
+	ObjectEnterkeyhintDone     ObjectEnterkeyhint = "done"
+	ObjectEnterkeyhintEnter    ObjectEnterkeyhint = "enter"
+	ObjectEnterkeyhintGo       ObjectEnterkeyhint = "go"
 	ObjectEnterkeyhintNext     ObjectEnterkeyhint = "next"
 	ObjectEnterkeyhintPrevious ObjectEnterkeyhint = "previous"
 	ObjectEnterkeyhintSearch   ObjectEnterkeyhint = "search"
 	ObjectEnterkeyhintSend     ObjectEnterkeyhint = "send"
-	ObjectEnterkeyhintDone     ObjectEnterkeyhint = "done"
-	ObjectEnterkeyhintEnter    ObjectEnterkeyhint = "enter"
-	ObjectEnterkeyhintGo       ObjectEnterkeyhint = "go"
 )
 
 type ObjectHidden string
@@ -182,21 +213,21 @@ const (
 type ObjectInputmode string
 
 const (
-	ObjectInputmodeText    ObjectInputmode = "text"
-	ObjectInputmodeUrl     ObjectInputmode = "url"
 	ObjectInputmodeDecimal ObjectInputmode = "decimal"
 	ObjectInputmodeEmail   ObjectInputmode = "email"
 	ObjectInputmodeNone    ObjectInputmode = "none"
 	ObjectInputmodeNumeric ObjectInputmode = "numeric"
 	ObjectInputmodeSearch  ObjectInputmode = "search"
 	ObjectInputmodeTel     ObjectInputmode = "tel"
+	ObjectInputmodeText    ObjectInputmode = "text"
+	ObjectInputmodeUrl     ObjectInputmode = "url"
 )
 
 type ObjectSpellcheck string
 
 const (
-	ObjectSpellcheckTrue  ObjectSpellcheck = "true"
 	ObjectSpellcheckFalse ObjectSpellcheck = "false"
+	ObjectSpellcheckTrue  ObjectSpellcheck = "true"
 	ObjectSpellcheckEmpty ObjectSpellcheck = ""
 )
 
@@ -216,40 +247,38 @@ const (
 	ObjectWritingsuggestionsEmpty ObjectWritingsuggestions = ""
 )
 
-type objectAttrs map[string]any
-
 func (e *ObjectElement) Data(s string) *ObjectElement {
-	e.attributes["data"] = s
+	e.attributes.Set("data", s)
 
 	return e
 }
 
 func (e *ObjectElement) Type(s string) *ObjectElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *ObjectElement) Name(s string) *ObjectElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
 func (e *ObjectElement) Form(s string) *ObjectElement {
-	e.attributes["form"] = s
+	e.attributes.Set("form", s)
 
 	return e
 }
 
 func (e *ObjectElement) Width(i int) *ObjectElement {
-	e.attributes["width"] = i
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ObjectElement) Height(i int) *ObjectElement {
-	e.attributes["height"] = i
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -257,179 +286,189 @@ func (e *ObjectElement) Height(i int) *ObjectElement {
 func (e *ObjectElement) AriaUnsafe(name string, s string) *ObjectElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ObjectElement) Aria(name string, s string) *ObjectElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ObjectElement) Autocapitalize(a ObjectAutocapitalize) *ObjectElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Autocorrect(a ObjectAutocorrect) *ObjectElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ObjectElement) Autofocus(b bool) *ObjectElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ObjectElement) Class(s ...string) *ObjectElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ObjectElement) Contenteditable(a ObjectContenteditable) *ObjectElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Dir(a ObjectDir) *ObjectElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Draggable(a ObjectDraggable) *ObjectElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Enterkeyhint(a ObjectEnterkeyhint) *ObjectElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Hidden(a ObjectHidden) *ObjectElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Id(s string) *ObjectElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ObjectElement) Inert(b bool) *ObjectElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ObjectElement) Inputmode(a ObjectInputmode) *ObjectElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Itemid(s string) *ObjectElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ObjectElement) Itemprop(s ...string) *ObjectElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ObjectElement) Itemref(s ...string) *ObjectElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ObjectElement) Itemscope(b bool) *ObjectElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ObjectElement) Itemtype(s ...string) *ObjectElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ObjectElement) Lang(s string) *ObjectElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ObjectElement) Nonce(s string) *ObjectElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ObjectElement) Popover(s string) *ObjectElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ObjectElement) Role(s string) *ObjectElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ObjectElement) Slot(s string) *ObjectElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ObjectElement) Spellcheck(a ObjectSpellcheck) *ObjectElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Style(s string) *ObjectElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ObjectElement) Tabindex(i int) *ObjectElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ObjectElement) Title(s string) *ObjectElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ObjectElement) Translate(a ObjectTranslate) *ObjectElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ObjectElement) Writingsuggestions(a ObjectWritingsuggestions) *ObjectElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -447,18 +486,7 @@ func (e *ObjectElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<object")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

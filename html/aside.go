@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type AsideElement struct {
-	attributes asideAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Aside creates a tag <aside> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The aside element represents a section of a page that consists of content that is tangentially related to the content around the aside element, and which could be considered separate from that content. Such sections are often represented as sidebars in printed typography.
 func Aside(children ...htemel.Node) *AsideElement {
 	node := &AsideElement{
-		children:   children,
-		attributes: make(asideAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// AsideIf creates a tag <aside> instance that is only rendered when condition is true.
 func AsideIf(condition bool, children ...htemel.Node) *AsideElement {
 	if condition {
 		return Aside(children...)
@@ -36,16 +38,16 @@ func AsideIf(condition bool, children ...htemel.Node) *AsideElement {
 
 	return &AsideElement{
 		children:   children,
-		attributes: make(asideAttrs),
 		skipRender: true,
 	}
 }
 
-func AsideTernary(condition bool, true htemel.Node, false htemel.Node) *AsideElement {
+// AsideTernary creates a tag <aside> containing then when condition is true, otherwise containing otherwise.
+func AsideTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AsideElement {
 	if condition {
-		return Aside(true)
+		return Aside(then)
 	}
-	return Aside(false)
+	return Aside(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *AsideElement) With(fn func(*AsideElement)) *AsideElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *AsideElement) Text(text string) *AsideElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *AsideElement) Textf(format string, args ...any) *AsideElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *AsideElement) If(cond bool, child htemel.Node) *AsideElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *AsideElement) IfElse(cond bool, then, els htemel.Node) *AsideElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *AsideElement) IfThen(cond bool, fn func(*AsideElement)) *AsideElement {
 
 // AddClass appends a class to the element.
 func (e *AsideElement) AddClass(classes ...string) *AsideElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *AsideElement) ToggleClass(class string, enable bool) *AsideElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *AsideElement) Attr(name, value string) *AsideElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *AsideElement) AttrUnsafe(name, value string) *AsideElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *AsideElement) BoolAttr(name string, on bool) *AsideElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type AsideAutocapitalize string
 
 const (
+	AsideAutocapitalizeCharacters AsideAutocapitalize = "characters"
 	AsideAutocapitalizeNone       AsideAutocapitalize = "none"
 	AsideAutocapitalizeOff        AsideAutocapitalize = "off"
 	AsideAutocapitalizeOn         AsideAutocapitalize = "on"
 	AsideAutocapitalizeSentences  AsideAutocapitalize = "sentences"
 	AsideAutocapitalizeWords      AsideAutocapitalize = "words"
-	AsideAutocapitalizeCharacters AsideAutocapitalize = "characters"
 )
 
 type AsideAutocorrect string
@@ -138,18 +169,18 @@ const (
 type AsideContenteditable string
 
 const (
+	AsideContenteditableFalse         AsideContenteditable = "false"
 	AsideContenteditablePlaintextOnly AsideContenteditable = "plaintext-only"
 	AsideContenteditableTrue          AsideContenteditable = "true"
-	AsideContenteditableFalse         AsideContenteditable = "false"
 	AsideContenteditableEmpty         AsideContenteditable = ""
 )
 
 type AsideDir string
 
 const (
+	AsideDirAuto AsideDir = "auto"
 	AsideDirLtr  AsideDir = "ltr"
 	AsideDirRtl  AsideDir = "rtl"
-	AsideDirAuto AsideDir = "auto"
 )
 
 type AsideDraggable string
@@ -162,13 +193,13 @@ const (
 type AsideEnterkeyhint string
 
 const (
-	AsideEnterkeyhintSearch   AsideEnterkeyhint = "search"
-	AsideEnterkeyhintSend     AsideEnterkeyhint = "send"
 	AsideEnterkeyhintDone     AsideEnterkeyhint = "done"
 	AsideEnterkeyhintEnter    AsideEnterkeyhint = "enter"
 	AsideEnterkeyhintGo       AsideEnterkeyhint = "go"
 	AsideEnterkeyhintNext     AsideEnterkeyhint = "next"
 	AsideEnterkeyhintPrevious AsideEnterkeyhint = "previous"
+	AsideEnterkeyhintSearch   AsideEnterkeyhint = "search"
+	AsideEnterkeyhintSend     AsideEnterkeyhint = "send"
 )
 
 type AsideHidden string
@@ -182,7 +213,6 @@ const (
 type AsideInputmode string
 
 const (
-	AsideInputmodeUrl     AsideInputmode = "url"
 	AsideInputmodeDecimal AsideInputmode = "decimal"
 	AsideInputmodeEmail   AsideInputmode = "email"
 	AsideInputmodeNone    AsideInputmode = "none"
@@ -190,6 +220,7 @@ const (
 	AsideInputmodeSearch  AsideInputmode = "search"
 	AsideInputmodeTel     AsideInputmode = "tel"
 	AsideInputmodeText    AsideInputmode = "text"
+	AsideInputmodeUrl     AsideInputmode = "url"
 )
 
 type AsideSpellcheck string
@@ -211,51 +242,55 @@ const (
 type AsideWritingsuggestions string
 
 const (
-	AsideWritingsuggestionsTrue  AsideWritingsuggestions = "true"
 	AsideWritingsuggestionsFalse AsideWritingsuggestions = "false"
+	AsideWritingsuggestionsTrue  AsideWritingsuggestions = "true"
 	AsideWritingsuggestionsEmpty AsideWritingsuggestions = ""
 )
-
-type asideAttrs map[string]any
 
 func (e *AsideElement) AriaUnsafe(name string, s string) *AsideElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AsideElement) Aria(name string, s string) *AsideElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AsideElement) Autocapitalize(a AsideAutocapitalize) *AsideElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Autocorrect(a AsideAutocorrect) *AsideElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AsideElement) Autofocus(b bool) *AsideElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *AsideElement) Class(s ...string) *AsideElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AsideElement) Contenteditable(a AsideContenteditable) *AsideElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *AsideElement) Contenteditable(a AsideContenteditable) *AsideElement {
 func (e *AsideElement) DataUnsafe(name string, s string) *AsideElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AsideElement) Data(name string, s string) *AsideElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AsideElement) Dir(a AsideDir) *AsideElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Draggable(a AsideDraggable) *AsideElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Enterkeyhint(a AsideEnterkeyhint) *AsideElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Hidden(a AsideHidden) *AsideElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Id(s string) *AsideElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AsideElement) Inert(b bool) *AsideElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *AsideElement) Inputmode(a AsideInputmode) *AsideElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Itemid(s string) *AsideElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *AsideElement) Itemprop(s ...string) *AsideElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AsideElement) Itemref(s ...string) *AsideElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AsideElement) Itemscope(b bool) *AsideElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *AsideElement) Itemtype(s ...string) *AsideElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AsideElement) Lang(s string) *AsideElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *AsideElement) Nonce(s string) *AsideElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *AsideElement) Popover(s string) *AsideElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *AsideElement) Role(s string) *AsideElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *AsideElement) Slot(s string) *AsideElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *AsideElement) Spellcheck(a AsideSpellcheck) *AsideElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Style(s string) *AsideElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *AsideElement) Tabindex(i int) *AsideElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *AsideElement) Title(s string) *AsideElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *AsideElement) Translate(a AsideTranslate) *AsideElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *AsideElement) Writingsuggestions(a AsideWritingsuggestions) *AsideElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *AsideElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<aside")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

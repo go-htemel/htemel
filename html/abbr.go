@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type AbbrElement struct {
-	attributes abbrAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Abbr creates a tag <abbr> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The abbr element represents an abbreviation or acronym, optionally with its expansion. The title attribute may be used to provide an expansion of the abbreviation. The attribute, if specified, must contain an expansion of the abbreviation, and nothing else.
 func Abbr(children ...htemel.Node) *AbbrElement {
 	node := &AbbrElement{
-		children:   children,
-		attributes: make(abbrAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// AbbrIf creates a tag <abbr> instance that is only rendered when condition is true.
 func AbbrIf(condition bool, children ...htemel.Node) *AbbrElement {
 	if condition {
 		return Abbr(children...)
@@ -36,16 +38,16 @@ func AbbrIf(condition bool, children ...htemel.Node) *AbbrElement {
 
 	return &AbbrElement{
 		children:   children,
-		attributes: make(abbrAttrs),
 		skipRender: true,
 	}
 }
 
-func AbbrTernary(condition bool, true htemel.Node, false htemel.Node) *AbbrElement {
+// AbbrTernary creates a tag <abbr> containing then when condition is true, otherwise containing otherwise.
+func AbbrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AbbrElement {
 	if condition {
-		return Abbr(true)
+		return Abbr(then)
 	}
-	return Abbr(false)
+	return Abbr(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *AbbrElement) With(fn func(*AbbrElement)) *AbbrElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *AbbrElement) Text(text string) *AbbrElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *AbbrElement) Textf(format string, args ...any) *AbbrElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *AbbrElement) If(cond bool, child htemel.Node) *AbbrElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *AbbrElement) IfElse(cond bool, then, els htemel.Node) *AbbrElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *AbbrElement) IfThen(cond bool, fn func(*AbbrElement)) *AbbrElement {
 
 // AddClass appends a class to the element.
 func (e *AbbrElement) AddClass(classes ...string) *AbbrElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *AbbrElement) ToggleClass(class string, enable bool) *AbbrElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *AbbrElement) Attr(name, value string) *AbbrElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *AbbrElement) AttrUnsafe(name, value string) *AbbrElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *AbbrElement) BoolAttr(name string, on bool) *AbbrElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type AbbrAutocapitalize string
 
 const (
-	AbbrAutocapitalizeOn         AbbrAutocapitalize = "on"
-	AbbrAutocapitalizeSentences  AbbrAutocapitalize = "sentences"
-	AbbrAutocapitalizeWords      AbbrAutocapitalize = "words"
 	AbbrAutocapitalizeCharacters AbbrAutocapitalize = "characters"
 	AbbrAutocapitalizeNone       AbbrAutocapitalize = "none"
 	AbbrAutocapitalizeOff        AbbrAutocapitalize = "off"
+	AbbrAutocapitalizeOn         AbbrAutocapitalize = "on"
+	AbbrAutocapitalizeSentences  AbbrAutocapitalize = "sentences"
+	AbbrAutocapitalizeWords      AbbrAutocapitalize = "words"
 )
 
 type AbbrAutocorrect string
@@ -162,13 +193,13 @@ const (
 type AbbrEnterkeyhint string
 
 const (
-	AbbrEnterkeyhintSend     AbbrEnterkeyhint = "send"
 	AbbrEnterkeyhintDone     AbbrEnterkeyhint = "done"
 	AbbrEnterkeyhintEnter    AbbrEnterkeyhint = "enter"
 	AbbrEnterkeyhintGo       AbbrEnterkeyhint = "go"
 	AbbrEnterkeyhintNext     AbbrEnterkeyhint = "next"
 	AbbrEnterkeyhintPrevious AbbrEnterkeyhint = "previous"
 	AbbrEnterkeyhintSearch   AbbrEnterkeyhint = "search"
+	AbbrEnterkeyhintSend     AbbrEnterkeyhint = "send"
 )
 
 type AbbrHidden string
@@ -182,7 +213,6 @@ const (
 type AbbrInputmode string
 
 const (
-	AbbrInputmodeUrl     AbbrInputmode = "url"
 	AbbrInputmodeDecimal AbbrInputmode = "decimal"
 	AbbrInputmodeEmail   AbbrInputmode = "email"
 	AbbrInputmodeNone    AbbrInputmode = "none"
@@ -190,6 +220,7 @@ const (
 	AbbrInputmodeSearch  AbbrInputmode = "search"
 	AbbrInputmodeTel     AbbrInputmode = "tel"
 	AbbrInputmodeText    AbbrInputmode = "text"
+	AbbrInputmodeUrl     AbbrInputmode = "url"
 )
 
 type AbbrSpellcheck string
@@ -203,8 +234,8 @@ const (
 type AbbrTranslate string
 
 const (
-	AbbrTranslateYes   AbbrTranslate = "yes"
 	AbbrTranslateNo    AbbrTranslate = "no"
+	AbbrTranslateYes   AbbrTranslate = "yes"
 	AbbrTranslateEmpty AbbrTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	AbbrWritingsuggestionsEmpty AbbrWritingsuggestions = ""
 )
 
-type abbrAttrs map[string]any
-
 func (e *AbbrElement) AriaUnsafe(name string, s string) *AbbrElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AbbrElement) Aria(name string, s string) *AbbrElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AbbrElement) Autocapitalize(a AbbrAutocapitalize) *AbbrElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Autocorrect(a AbbrAutocorrect) *AbbrElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AbbrElement) Autofocus(b bool) *AbbrElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *AbbrElement) Class(s ...string) *AbbrElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AbbrElement) Contenteditable(a AbbrContenteditable) *AbbrElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *AbbrElement) Contenteditable(a AbbrContenteditable) *AbbrElement {
 func (e *AbbrElement) DataUnsafe(name string, s string) *AbbrElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AbbrElement) Data(name string, s string) *AbbrElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AbbrElement) Dir(a AbbrDir) *AbbrElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Draggable(a AbbrDraggable) *AbbrElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Enterkeyhint(a AbbrEnterkeyhint) *AbbrElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Hidden(a AbbrHidden) *AbbrElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Id(s string) *AbbrElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AbbrElement) Inert(b bool) *AbbrElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *AbbrElement) Inputmode(a AbbrInputmode) *AbbrElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Itemid(s string) *AbbrElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *AbbrElement) Itemprop(s ...string) *AbbrElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AbbrElement) Itemref(s ...string) *AbbrElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AbbrElement) Itemscope(b bool) *AbbrElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *AbbrElement) Itemtype(s ...string) *AbbrElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AbbrElement) Lang(s string) *AbbrElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *AbbrElement) Nonce(s string) *AbbrElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *AbbrElement) Popover(s string) *AbbrElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *AbbrElement) Role(s string) *AbbrElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *AbbrElement) Slot(s string) *AbbrElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *AbbrElement) Spellcheck(a AbbrSpellcheck) *AbbrElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Style(s string) *AbbrElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *AbbrElement) Tabindex(i int) *AbbrElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *AbbrElement) Title(s string) *AbbrElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *AbbrElement) Translate(a AbbrTranslate) *AbbrElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *AbbrElement) Writingsuggestions(a AbbrWritingsuggestions) *AbbrElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *AbbrElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<abbr")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

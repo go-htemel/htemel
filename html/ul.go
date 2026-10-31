@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type UlElement struct {
-	attributes ulAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Ul creates a tag <ul> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The ul element represents a list of items, where the order of the items is not important — that is, where changing the order would not materially change the meaning of the document.
 func Ul(children ...htemel.Node) *UlElement {
 	node := &UlElement{
-		children:   children,
-		attributes: make(ulAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// UlIf creates a tag <ul> instance that is only rendered when condition is true.
 func UlIf(condition bool, children ...htemel.Node) *UlElement {
 	if condition {
 		return Ul(children...)
@@ -36,16 +38,16 @@ func UlIf(condition bool, children ...htemel.Node) *UlElement {
 
 	return &UlElement{
 		children:   children,
-		attributes: make(ulAttrs),
 		skipRender: true,
 	}
 }
 
-func UlTernary(condition bool, true htemel.Node, false htemel.Node) *UlElement {
+// UlTernary creates a tag <ul> containing then when condition is true, otherwise containing otherwise.
+func UlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UlElement {
 	if condition {
-		return Ul(true)
+		return Ul(then)
 	}
-	return Ul(false)
+	return Ul(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *UlElement) With(fn func(*UlElement)) *UlElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *UlElement) Text(text string) *UlElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *UlElement) Textf(format string, args ...any) *UlElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *UlElement) If(cond bool, child htemel.Node) *UlElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *UlElement) IfElse(cond bool, then, els htemel.Node) *UlElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *UlElement) IfThen(cond bool, fn func(*UlElement)) *UlElement {
 
 // AddClass appends a class to the element.
 func (e *UlElement) AddClass(classes ...string) *UlElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *UlElement) ToggleClass(class string, enable bool) *UlElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *UlElement) Attr(name, value string) *UlElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *UlElement) AttrUnsafe(name, value string) *UlElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *UlElement) BoolAttr(name string, on bool) *UlElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -138,9 +169,9 @@ const (
 type UlContenteditable string
 
 const (
-	UlContenteditableTrue          UlContenteditable = "true"
 	UlContenteditableFalse         UlContenteditable = "false"
 	UlContenteditablePlaintextOnly UlContenteditable = "plaintext-only"
+	UlContenteditableTrue          UlContenteditable = "true"
 	UlContenteditableEmpty         UlContenteditable = ""
 )
 
@@ -162,13 +193,13 @@ const (
 type UlEnterkeyhint string
 
 const (
+	UlEnterkeyhintDone     UlEnterkeyhint = "done"
 	UlEnterkeyhintEnter    UlEnterkeyhint = "enter"
 	UlEnterkeyhintGo       UlEnterkeyhint = "go"
 	UlEnterkeyhintNext     UlEnterkeyhint = "next"
 	UlEnterkeyhintPrevious UlEnterkeyhint = "previous"
 	UlEnterkeyhintSearch   UlEnterkeyhint = "search"
 	UlEnterkeyhintSend     UlEnterkeyhint = "send"
-	UlEnterkeyhintDone     UlEnterkeyhint = "done"
 )
 
 type UlHidden string
@@ -182,6 +213,7 @@ const (
 type UlInputmode string
 
 const (
+	UlInputmodeDecimal UlInputmode = "decimal"
 	UlInputmodeEmail   UlInputmode = "email"
 	UlInputmodeNone    UlInputmode = "none"
 	UlInputmodeNumeric UlInputmode = "numeric"
@@ -189,7 +221,6 @@ const (
 	UlInputmodeTel     UlInputmode = "tel"
 	UlInputmodeText    UlInputmode = "text"
 	UlInputmodeUrl     UlInputmode = "url"
-	UlInputmodeDecimal UlInputmode = "decimal"
 )
 
 type UlSpellcheck string
@@ -216,46 +247,50 @@ const (
 	UlWritingsuggestionsEmpty UlWritingsuggestions = ""
 )
 
-type ulAttrs map[string]any
-
 func (e *UlElement) AriaUnsafe(name string, s string) *UlElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *UlElement) Aria(name string, s string) *UlElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *UlElement) Autocapitalize(a UlAutocapitalize) *UlElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *UlElement) Autocorrect(a UlAutocorrect) *UlElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *UlElement) Autofocus(b bool) *UlElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *UlElement) Class(s ...string) *UlElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *UlElement) Contenteditable(a UlContenteditable) *UlElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *UlElement) Contenteditable(a UlContenteditable) *UlElement {
 func (e *UlElement) DataUnsafe(name string, s string) *UlElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *UlElement) Data(name string, s string) *UlElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *UlElement) Dir(a UlDir) *UlElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *UlElement) Draggable(a UlDraggable) *UlElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *UlElement) Enterkeyhint(a UlEnterkeyhint) *UlElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *UlElement) Hidden(a UlHidden) *UlElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *UlElement) Id(s string) *UlElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *UlElement) Inert(b bool) *UlElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *UlElement) Inputmode(a UlInputmode) *UlElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *UlElement) Itemid(s string) *UlElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *UlElement) Itemprop(s ...string) *UlElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *UlElement) Itemref(s ...string) *UlElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *UlElement) Itemscope(b bool) *UlElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *UlElement) Itemtype(s ...string) *UlElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *UlElement) Lang(s string) *UlElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *UlElement) Nonce(s string) *UlElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *UlElement) Popover(s string) *UlElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *UlElement) Role(s string) *UlElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *UlElement) Slot(s string) *UlElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *UlElement) Spellcheck(a UlSpellcheck) *UlElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *UlElement) Style(s string) *UlElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *UlElement) Tabindex(i int) *UlElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *UlElement) Title(s string) *UlElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *UlElement) Translate(a UlTranslate) *UlElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *UlElement) Writingsuggestions(a UlWritingsuggestions) *UlElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *UlElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<ul")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

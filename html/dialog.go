@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type DialogElement struct {
-	attributes dialogAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Dialog creates a tag <dialog> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The dialog element represents a transitory part of an application, in the form of a small window ("dialog box"), which the user interacts with to perform a task or gather information. Once the user is done, the dialog can be automatically closed by the application, or manually closed by the user.
 func Dialog(children ...htemel.Node) *DialogElement {
 	node := &DialogElement{
-		children:   children,
-		attributes: make(dialogAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// DialogIf creates a tag <dialog> instance that is only rendered when condition is true.
 func DialogIf(condition bool, children ...htemel.Node) *DialogElement {
 	if condition {
 		return Dialog(children...)
@@ -36,16 +38,16 @@ func DialogIf(condition bool, children ...htemel.Node) *DialogElement {
 
 	return &DialogElement{
 		children:   children,
-		attributes: make(dialogAttrs),
 		skipRender: true,
 	}
 }
 
-func DialogTernary(condition bool, true htemel.Node, false htemel.Node) *DialogElement {
+// DialogTernary creates a tag <dialog> containing then when condition is true, otherwise containing otherwise.
+func DialogTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DialogElement {
 	if condition {
-		return Dialog(true)
+		return Dialog(then)
 	}
-	return Dialog(false)
+	return Dialog(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *DialogElement) With(fn func(*DialogElement)) *DialogElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *DialogElement) Text(text string) *DialogElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *DialogElement) Textf(format string, args ...any) *DialogElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *DialogElement) If(cond bool, child htemel.Node) *DialogElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *DialogElement) IfElse(cond bool, then, els htemel.Node) *DialogElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *DialogElement) IfThen(cond bool, fn func(*DialogElement)) *DialogElemen
 
 // AddClass appends a class to the element.
 func (e *DialogElement) AddClass(classes ...string) *DialogElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *DialogElement) ToggleClass(class string, enable bool) *DialogElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *DialogElement) Attr(name, value string) *DialogElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *DialogElement) AttrUnsafe(name, value string) *DialogElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *DialogElement) BoolAttr(name string, on bool) *DialogElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -170,34 +201,34 @@ const (
 type DialogEnterkeyhint string
 
 const (
-	DialogEnterkeyhintPrevious DialogEnterkeyhint = "previous"
-	DialogEnterkeyhintSearch   DialogEnterkeyhint = "search"
-	DialogEnterkeyhintSend     DialogEnterkeyhint = "send"
 	DialogEnterkeyhintDone     DialogEnterkeyhint = "done"
 	DialogEnterkeyhintEnter    DialogEnterkeyhint = "enter"
 	DialogEnterkeyhintGo       DialogEnterkeyhint = "go"
 	DialogEnterkeyhintNext     DialogEnterkeyhint = "next"
+	DialogEnterkeyhintPrevious DialogEnterkeyhint = "previous"
+	DialogEnterkeyhintSearch   DialogEnterkeyhint = "search"
+	DialogEnterkeyhintSend     DialogEnterkeyhint = "send"
 )
 
 type DialogHidden string
 
 const (
-	DialogHiddenUntilFound DialogHidden = "until-found"
 	DialogHiddenHidden     DialogHidden = "hidden"
+	DialogHiddenUntilFound DialogHidden = "until-found"
 	DialogHiddenEmpty      DialogHidden = ""
 )
 
 type DialogInputmode string
 
 const (
-	DialogInputmodeText    DialogInputmode = "text"
-	DialogInputmodeUrl     DialogInputmode = "url"
 	DialogInputmodeDecimal DialogInputmode = "decimal"
 	DialogInputmodeEmail   DialogInputmode = "email"
 	DialogInputmodeNone    DialogInputmode = "none"
 	DialogInputmodeNumeric DialogInputmode = "numeric"
 	DialogInputmodeSearch  DialogInputmode = "search"
 	DialogInputmodeTel     DialogInputmode = "tel"
+	DialogInputmodeText    DialogInputmode = "text"
+	DialogInputmodeUrl     DialogInputmode = "url"
 )
 
 type DialogSpellcheck string
@@ -224,16 +255,16 @@ const (
 	DialogWritingsuggestionsEmpty DialogWritingsuggestions = ""
 )
 
-type dialogAttrs map[string]any
-
 func (e *DialogElement) Closedby(a DialogClosedby) *DialogElement {
-	e.attributes["closedby"] = a
+	e.attributes.Set("closedby", string(a))
 
 	return e
 }
 
+// Open sets the boolean attribute "open". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DialogElement) Open(b bool) *DialogElement {
-	e.attributes["open"] = b
+	e.attributes.SetBool("open", b)
 
 	return e
 }
@@ -241,41 +272,47 @@ func (e *DialogElement) Open(b bool) *DialogElement {
 func (e *DialogElement) AriaUnsafe(name string, s string) *DialogElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DialogElement) Aria(name string, s string) *DialogElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DialogElement) Autocapitalize(a DialogAutocapitalize) *DialogElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Autocorrect(a DialogAutocorrect) *DialogElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DialogElement) Autofocus(b bool) *DialogElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *DialogElement) Class(s ...string) *DialogElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DialogElement) Contenteditable(a DialogContenteditable) *DialogElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -283,149 +320,157 @@ func (e *DialogElement) Contenteditable(a DialogContenteditable) *DialogElement 
 func (e *DialogElement) DataUnsafe(name string, s string) *DialogElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DialogElement) Data(name string, s string) *DialogElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DialogElement) Dir(a DialogDir) *DialogElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Draggable(a DialogDraggable) *DialogElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Enterkeyhint(a DialogEnterkeyhint) *DialogElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Hidden(a DialogHidden) *DialogElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Id(s string) *DialogElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DialogElement) Inert(b bool) *DialogElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *DialogElement) Inputmode(a DialogInputmode) *DialogElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Itemid(s string) *DialogElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *DialogElement) Itemprop(s ...string) *DialogElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DialogElement) Itemref(s ...string) *DialogElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DialogElement) Itemscope(b bool) *DialogElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *DialogElement) Itemtype(s ...string) *DialogElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DialogElement) Lang(s string) *DialogElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *DialogElement) Nonce(s string) *DialogElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *DialogElement) Popover(s string) *DialogElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *DialogElement) Role(s string) *DialogElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *DialogElement) Slot(s string) *DialogElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *DialogElement) Spellcheck(a DialogSpellcheck) *DialogElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Style(s string) *DialogElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *DialogElement) Tabindex(i int) *DialogElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *DialogElement) Title(s string) *DialogElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *DialogElement) Translate(a DialogTranslate) *DialogElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *DialogElement) Writingsuggestions(a DialogWritingsuggestions) *DialogElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -443,18 +488,7 @@ func (e *DialogElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<dialog")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

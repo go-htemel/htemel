@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type AElement struct {
-	attributes aAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // A creates a tag <a> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: If the a element has an href attribute, then it represents a hyperlink (a hypertext anchor) labeled by its contents.
 func A(children ...htemel.Node) *AElement {
 	node := &AElement{
-		children:   children,
-		attributes: make(aAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// AIf creates a tag <a> instance that is only rendered when condition is true.
 func AIf(condition bool, children ...htemel.Node) *AElement {
 	if condition {
 		return A(children...)
@@ -36,16 +38,16 @@ func AIf(condition bool, children ...htemel.Node) *AElement {
 
 	return &AElement{
 		children:   children,
-		attributes: make(aAttrs),
 		skipRender: true,
 	}
 }
 
-func ATernary(condition bool, true htemel.Node, false htemel.Node) *AElement {
+// ATernary creates a tag <a> containing then when condition is true, otherwise containing otherwise.
+func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement {
 	if condition {
-		return A(true)
+		return A(then)
 	}
-	return A(false)
+	return A(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *AElement) With(fn func(*AElement)) *AElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *AElement) Text(text string) *AElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *AElement) Textf(format string, args ...any) *AElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *AElement) If(cond bool, child htemel.Node) *AElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *AElement) IfElse(cond bool, then, els htemel.Node) *AElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *AElement) IfThen(cond bool, fn func(*AElement)) *AElement {
 
 // AddClass appends a class to the element.
 func (e *AElement) AddClass(classes ...string) *AElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *AElement) ToggleClass(class string, enable bool) *AElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *AElement) Attr(name, value string) *AElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *AElement) AttrUnsafe(name, value string) *AElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *AElement) BoolAttr(name string, on bool) *AElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -130,8 +161,8 @@ const (
 type AAutocorrect string
 
 const (
-	AAutocorrectOn    AAutocorrect = "on"
 	AAutocorrectOff   AAutocorrect = "off"
+	AAutocorrectOn    AAutocorrect = "on"
 	AAutocorrectEmpty AAutocorrect = ""
 )
 
@@ -147,9 +178,9 @@ const (
 type ADir string
 
 const (
+	ADirAuto ADir = "auto"
 	ADirLtr  ADir = "ltr"
 	ADirRtl  ADir = "rtl"
-	ADirAuto ADir = "auto"
 )
 
 type ADraggable string
@@ -174,29 +205,29 @@ const (
 type AHidden string
 
 const (
-	AHiddenUntilFound AHidden = "until-found"
 	AHiddenHidden     AHidden = "hidden"
+	AHiddenUntilFound AHidden = "until-found"
 	AHiddenEmpty      AHidden = ""
 )
 
 type AInputmode string
 
 const (
-	AInputmodeText    AInputmode = "text"
-	AInputmodeUrl     AInputmode = "url"
 	AInputmodeDecimal AInputmode = "decimal"
 	AInputmodeEmail   AInputmode = "email"
 	AInputmodeNone    AInputmode = "none"
 	AInputmodeNumeric AInputmode = "numeric"
 	AInputmodeSearch  AInputmode = "search"
 	AInputmodeTel     AInputmode = "tel"
+	AInputmodeText    AInputmode = "text"
+	AInputmodeUrl     AInputmode = "url"
 )
 
 type ASpellcheck string
 
 const (
-	ASpellcheckTrue  ASpellcheck = "true"
 	ASpellcheckFalse ASpellcheck = "false"
+	ASpellcheckTrue  ASpellcheck = "true"
 	ASpellcheckEmpty ASpellcheck = ""
 )
 
@@ -216,52 +247,52 @@ const (
 	AWritingsuggestionsEmpty AWritingsuggestions = ""
 )
 
-type aAttrs map[string]any
-
 func (e *AElement) Href(s string) *AElement {
-	e.attributes["href"] = s
+	e.attributes.Set("href", s)
 
 	return e
 }
 
 func (e *AElement) Target(s string) *AElement {
-	e.attributes["target"] = s
+	e.attributes.Set("target", s)
 
 	return e
 }
 
+// Download sets the boolean attribute "download". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AElement) Download(b bool) *AElement {
-	e.attributes["download"] = b
+	e.attributes.SetBool("download", b)
 
 	return e
 }
 
 func (e *AElement) Ping(s ...string) *AElement {
-	e.attributes["ping"] = strings.Join(s, " ")
+	e.attributes.Set("ping", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AElement) Rel(s ...string) *AElement {
-	e.attributes["rel"] = strings.Join(s, " ")
+	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AElement) Hreflang(s string) *AElement {
-	e.attributes["hreflang"] = s
+	e.attributes.Set("hreflang", s)
 
 	return e
 }
 
 func (e *AElement) Type(s string) *AElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *AElement) Referrerpolicy(s string) *AElement {
-	e.attributes["referrerpolicy"] = s
+	e.attributes.Set("referrerpolicy", s)
 
 	return e
 }
@@ -269,41 +300,47 @@ func (e *AElement) Referrerpolicy(s string) *AElement {
 func (e *AElement) AriaUnsafe(name string, s string) *AElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AElement) Aria(name string, s string) *AElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AElement) Autocapitalize(a AAutocapitalize) *AElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *AElement) Autocorrect(a AAutocorrect) *AElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AElement) Autofocus(b bool) *AElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *AElement) Class(s ...string) *AElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AElement) Contenteditable(a AContenteditable) *AElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -311,149 +348,157 @@ func (e *AElement) Contenteditable(a AContenteditable) *AElement {
 func (e *AElement) DataUnsafe(name string, s string) *AElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AElement) Data(name string, s string) *AElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AElement) Dir(a ADir) *AElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *AElement) Draggable(a ADraggable) *AElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *AElement) Enterkeyhint(a AEnterkeyhint) *AElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *AElement) Hidden(a AHidden) *AElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *AElement) Id(s string) *AElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AElement) Inert(b bool) *AElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *AElement) Inputmode(a AInputmode) *AElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *AElement) Itemid(s string) *AElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *AElement) Itemprop(s ...string) *AElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AElement) Itemref(s ...string) *AElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AElement) Itemscope(b bool) *AElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *AElement) Itemtype(s ...string) *AElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AElement) Lang(s string) *AElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *AElement) Nonce(s string) *AElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *AElement) Popover(s string) *AElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *AElement) Role(s string) *AElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *AElement) Slot(s string) *AElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *AElement) Spellcheck(a ASpellcheck) *AElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *AElement) Style(s string) *AElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *AElement) Tabindex(i int) *AElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *AElement) Title(s string) *AElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *AElement) Translate(a ATranslate) *AElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *AElement) Writingsuggestions(a AWritingsuggestions) *AElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -471,18 +516,7 @@ func (e *AElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<a")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

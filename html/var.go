@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type VarElement struct {
-	attributes varAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Var creates a tag <var> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The var element represents a variable. This could be an actual variable in a mathematical expression or programming context, an identifier representing a constant, a symbol identifying a physical quantity, a function parameter, or just be a term used as a placeholder in prose.
 func Var(children ...htemel.Node) *VarElement {
 	node := &VarElement{
-		children:   children,
-		attributes: make(varAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// VarIf creates a tag <var> instance that is only rendered when condition is true.
 func VarIf(condition bool, children ...htemel.Node) *VarElement {
 	if condition {
 		return Var(children...)
@@ -36,16 +38,16 @@ func VarIf(condition bool, children ...htemel.Node) *VarElement {
 
 	return &VarElement{
 		children:   children,
-		attributes: make(varAttrs),
 		skipRender: true,
 	}
 }
 
-func VarTernary(condition bool, true htemel.Node, false htemel.Node) *VarElement {
+// VarTernary creates a tag <var> containing then when condition is true, otherwise containing otherwise.
+func VarTernary(condition bool, then htemel.Node, otherwise htemel.Node) *VarElement {
 	if condition {
-		return Var(true)
+		return Var(then)
 	}
-	return Var(false)
+	return Var(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *VarElement) With(fn func(*VarElement)) *VarElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *VarElement) Text(text string) *VarElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *VarElement) Textf(format string, args ...any) *VarElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *VarElement) If(cond bool, child htemel.Node) *VarElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *VarElement) IfElse(cond bool, then, els htemel.Node) *VarElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *VarElement) IfThen(cond bool, fn func(*VarElement)) *VarElement {
 
 // AddClass appends a class to the element.
 func (e *VarElement) AddClass(classes ...string) *VarElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *VarElement) ToggleClass(class string, enable bool) *VarElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *VarElement) Attr(name, value string) *VarElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *VarElement) AttrUnsafe(name, value string) *VarElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *VarElement) BoolAttr(name string, on bool) *VarElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -155,8 +186,8 @@ const (
 type VarDraggable string
 
 const (
-	VarDraggableTrue  VarDraggable = "true"
 	VarDraggableFalse VarDraggable = "false"
+	VarDraggableTrue  VarDraggable = "true"
 )
 
 type VarEnterkeyhint string
@@ -182,14 +213,14 @@ const (
 type VarInputmode string
 
 const (
-	VarInputmodeSearch  VarInputmode = "search"
-	VarInputmodeTel     VarInputmode = "tel"
-	VarInputmodeText    VarInputmode = "text"
-	VarInputmodeUrl     VarInputmode = "url"
 	VarInputmodeDecimal VarInputmode = "decimal"
 	VarInputmodeEmail   VarInputmode = "email"
 	VarInputmodeNone    VarInputmode = "none"
 	VarInputmodeNumeric VarInputmode = "numeric"
+	VarInputmodeSearch  VarInputmode = "search"
+	VarInputmodeTel     VarInputmode = "tel"
+	VarInputmodeText    VarInputmode = "text"
+	VarInputmodeUrl     VarInputmode = "url"
 )
 
 type VarSpellcheck string
@@ -216,46 +247,50 @@ const (
 	VarWritingsuggestionsEmpty VarWritingsuggestions = ""
 )
 
-type varAttrs map[string]any
-
 func (e *VarElement) AriaUnsafe(name string, s string) *VarElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *VarElement) Aria(name string, s string) *VarElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *VarElement) Autocapitalize(a VarAutocapitalize) *VarElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *VarElement) Autocorrect(a VarAutocorrect) *VarElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VarElement) Autofocus(b bool) *VarElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *VarElement) Class(s ...string) *VarElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VarElement) Contenteditable(a VarContenteditable) *VarElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *VarElement) Contenteditable(a VarContenteditable) *VarElement {
 func (e *VarElement) DataUnsafe(name string, s string) *VarElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *VarElement) Data(name string, s string) *VarElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *VarElement) Dir(a VarDir) *VarElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *VarElement) Draggable(a VarDraggable) *VarElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *VarElement) Enterkeyhint(a VarEnterkeyhint) *VarElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *VarElement) Hidden(a VarHidden) *VarElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *VarElement) Id(s string) *VarElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VarElement) Inert(b bool) *VarElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *VarElement) Inputmode(a VarInputmode) *VarElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *VarElement) Itemid(s string) *VarElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *VarElement) Itemprop(s ...string) *VarElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VarElement) Itemref(s ...string) *VarElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *VarElement) Itemscope(b bool) *VarElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *VarElement) Itemtype(s ...string) *VarElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *VarElement) Lang(s string) *VarElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *VarElement) Nonce(s string) *VarElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *VarElement) Popover(s string) *VarElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *VarElement) Role(s string) *VarElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *VarElement) Slot(s string) *VarElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *VarElement) Spellcheck(a VarSpellcheck) *VarElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *VarElement) Style(s string) *VarElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *VarElement) Tabindex(i int) *VarElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *VarElement) Title(s string) *VarElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *VarElement) Translate(a VarTranslate) *VarElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *VarElement) Writingsuggestions(a VarWritingsuggestions) *VarElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *VarElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<var")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type NoscriptElement struct {
-	attributes noscriptAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Noscript creates a tag <noscript> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The noscript element represents nothing if scripting is enabled, and represents its children if scripting is disabled. It is used to present different markup to user agents that support scripting and those that don't support scripting, by affecting how the document is parsed.
 func Noscript(children ...htemel.Node) *NoscriptElement {
 	node := &NoscriptElement{
-		children:   children,
-		attributes: make(noscriptAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// NoscriptIf creates a tag <noscript> instance that is only rendered when condition is true.
 func NoscriptIf(condition bool, children ...htemel.Node) *NoscriptElement {
 	if condition {
 		return Noscript(children...)
@@ -36,16 +38,16 @@ func NoscriptIf(condition bool, children ...htemel.Node) *NoscriptElement {
 
 	return &NoscriptElement{
 		children:   children,
-		attributes: make(noscriptAttrs),
 		skipRender: true,
 	}
 }
 
-func NoscriptTernary(condition bool, true htemel.Node, false htemel.Node) *NoscriptElement {
+// NoscriptTernary creates a tag <noscript> containing then when condition is true, otherwise containing otherwise.
+func NoscriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *NoscriptElement {
 	if condition {
-		return Noscript(true)
+		return Noscript(then)
 	}
-	return Noscript(false)
+	return Noscript(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *NoscriptElement) With(fn func(*NoscriptElement)) *NoscriptElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *NoscriptElement) Text(text string) *NoscriptElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *NoscriptElement) Textf(format string, args ...any) *NoscriptElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *NoscriptElement) If(cond bool, child htemel.Node) *NoscriptElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *NoscriptElement) IfElse(cond bool, then, els htemel.Node) *NoscriptElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *NoscriptElement) IfThen(cond bool, fn func(*NoscriptElement)) *Noscript
 
 // AddClass appends a class to the element.
 func (e *NoscriptElement) AddClass(classes ...string) *NoscriptElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *NoscriptElement) ToggleClass(class string, enable bool) *NoscriptElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *NoscriptElement) Attr(name, value string) *NoscriptElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *NoscriptElement) AttrUnsafe(name, value string) *NoscriptElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *NoscriptElement) BoolAttr(name string, on bool) *NoscriptElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type NoscriptAutocapitalize string
 
 const (
+	NoscriptAutocapitalizeCharacters NoscriptAutocapitalize = "characters"
 	NoscriptAutocapitalizeNone       NoscriptAutocapitalize = "none"
 	NoscriptAutocapitalizeOff        NoscriptAutocapitalize = "off"
 	NoscriptAutocapitalizeOn         NoscriptAutocapitalize = "on"
 	NoscriptAutocapitalizeSentences  NoscriptAutocapitalize = "sentences"
 	NoscriptAutocapitalizeWords      NoscriptAutocapitalize = "words"
-	NoscriptAutocapitalizeCharacters NoscriptAutocapitalize = "characters"
 )
 
 type NoscriptAutocorrect string
@@ -182,14 +213,14 @@ const (
 type NoscriptInputmode string
 
 const (
-	NoscriptInputmodeTel     NoscriptInputmode = "tel"
-	NoscriptInputmodeText    NoscriptInputmode = "text"
-	NoscriptInputmodeUrl     NoscriptInputmode = "url"
 	NoscriptInputmodeDecimal NoscriptInputmode = "decimal"
 	NoscriptInputmodeEmail   NoscriptInputmode = "email"
 	NoscriptInputmodeNone    NoscriptInputmode = "none"
 	NoscriptInputmodeNumeric NoscriptInputmode = "numeric"
 	NoscriptInputmodeSearch  NoscriptInputmode = "search"
+	NoscriptInputmodeTel     NoscriptInputmode = "tel"
+	NoscriptInputmodeText    NoscriptInputmode = "text"
+	NoscriptInputmodeUrl     NoscriptInputmode = "url"
 )
 
 type NoscriptSpellcheck string
@@ -216,46 +247,50 @@ const (
 	NoscriptWritingsuggestionsEmpty NoscriptWritingsuggestions = ""
 )
 
-type noscriptAttrs map[string]any
-
 func (e *NoscriptElement) AriaUnsafe(name string, s string) *NoscriptElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *NoscriptElement) Aria(name string, s string) *NoscriptElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *NoscriptElement) Autocapitalize(a NoscriptAutocapitalize) *NoscriptElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Autocorrect(a NoscriptAutocorrect) *NoscriptElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NoscriptElement) Autofocus(b bool) *NoscriptElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *NoscriptElement) Class(s ...string) *NoscriptElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NoscriptElement) Contenteditable(a NoscriptContenteditable) *NoscriptElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *NoscriptElement) Contenteditable(a NoscriptContenteditable) *NoscriptEl
 func (e *NoscriptElement) DataUnsafe(name string, s string) *NoscriptElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *NoscriptElement) Data(name string, s string) *NoscriptElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *NoscriptElement) Dir(a NoscriptDir) *NoscriptElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Draggable(a NoscriptDraggable) *NoscriptElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Enterkeyhint(a NoscriptEnterkeyhint) *NoscriptElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Hidden(a NoscriptHidden) *NoscriptElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Id(s string) *NoscriptElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NoscriptElement) Inert(b bool) *NoscriptElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *NoscriptElement) Inputmode(a NoscriptInputmode) *NoscriptElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Itemid(s string) *NoscriptElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Itemprop(s ...string) *NoscriptElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NoscriptElement) Itemref(s ...string) *NoscriptElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NoscriptElement) Itemscope(b bool) *NoscriptElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *NoscriptElement) Itemtype(s ...string) *NoscriptElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NoscriptElement) Lang(s string) *NoscriptElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Nonce(s string) *NoscriptElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Popover(s string) *NoscriptElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Role(s string) *NoscriptElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Slot(s string) *NoscriptElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Spellcheck(a NoscriptSpellcheck) *NoscriptElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Style(s string) *NoscriptElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Tabindex(i int) *NoscriptElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *NoscriptElement) Title(s string) *NoscriptElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *NoscriptElement) Translate(a NoscriptTranslate) *NoscriptElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *NoscriptElement) Writingsuggestions(a NoscriptWritingsuggestions) *NoscriptElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *NoscriptElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<noscript")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

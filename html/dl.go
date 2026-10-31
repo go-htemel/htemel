@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type DlElement struct {
-	attributes dlAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Dl creates a tag <dl> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The dl element represents an association list consisting of zero or more name-value groups (a description list). A name-value group consists of one or more names (dt elements, possibly as children of a div element child) followed by one or more values (dd elements, possibly as children of a div element child), ignoring any nodes other than dt and dd element children, and dt and dd elements that are children of div element children. Within a single dl element, there should not be more than one dt element for each name.
 func Dl(children ...htemel.Node) *DlElement {
 	node := &DlElement{
-		children:   children,
-		attributes: make(dlAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// DlIf creates a tag <dl> instance that is only rendered when condition is true.
 func DlIf(condition bool, children ...htemel.Node) *DlElement {
 	if condition {
 		return Dl(children...)
@@ -36,16 +38,16 @@ func DlIf(condition bool, children ...htemel.Node) *DlElement {
 
 	return &DlElement{
 		children:   children,
-		attributes: make(dlAttrs),
 		skipRender: true,
 	}
 }
 
-func DlTernary(condition bool, true htemel.Node, false htemel.Node) *DlElement {
+// DlTernary creates a tag <dl> containing then when condition is true, otherwise containing otherwise.
+func DlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DlElement {
 	if condition {
-		return Dl(true)
+		return Dl(then)
 	}
-	return Dl(false)
+	return Dl(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *DlElement) With(fn func(*DlElement)) *DlElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *DlElement) Text(text string) *DlElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *DlElement) Textf(format string, args ...any) *DlElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *DlElement) If(cond bool, child htemel.Node) *DlElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *DlElement) IfElse(cond bool, then, els htemel.Node) *DlElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *DlElement) IfThen(cond bool, fn func(*DlElement)) *DlElement {
 
 // AddClass appends a class to the element.
 func (e *DlElement) AddClass(classes ...string) *DlElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *DlElement) ToggleClass(class string, enable bool) *DlElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *DlElement) Attr(name, value string) *DlElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *DlElement) AttrUnsafe(name, value string) *DlElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *DlElement) BoolAttr(name string, on bool) *DlElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type DlEnterkeyhint string
 
 const (
-	DlEnterkeyhintSearch   DlEnterkeyhint = "search"
-	DlEnterkeyhintSend     DlEnterkeyhint = "send"
 	DlEnterkeyhintDone     DlEnterkeyhint = "done"
 	DlEnterkeyhintEnter    DlEnterkeyhint = "enter"
 	DlEnterkeyhintGo       DlEnterkeyhint = "go"
 	DlEnterkeyhintNext     DlEnterkeyhint = "next"
 	DlEnterkeyhintPrevious DlEnterkeyhint = "previous"
+	DlEnterkeyhintSearch   DlEnterkeyhint = "search"
+	DlEnterkeyhintSend     DlEnterkeyhint = "send"
 )
 
 type DlHidden string
@@ -182,14 +213,14 @@ const (
 type DlInputmode string
 
 const (
-	DlInputmodeTel     DlInputmode = "tel"
-	DlInputmodeText    DlInputmode = "text"
-	DlInputmodeUrl     DlInputmode = "url"
 	DlInputmodeDecimal DlInputmode = "decimal"
 	DlInputmodeEmail   DlInputmode = "email"
 	DlInputmodeNone    DlInputmode = "none"
 	DlInputmodeNumeric DlInputmode = "numeric"
 	DlInputmodeSearch  DlInputmode = "search"
+	DlInputmodeTel     DlInputmode = "tel"
+	DlInputmodeText    DlInputmode = "text"
+	DlInputmodeUrl     DlInputmode = "url"
 )
 
 type DlSpellcheck string
@@ -216,46 +247,50 @@ const (
 	DlWritingsuggestionsEmpty DlWritingsuggestions = ""
 )
 
-type dlAttrs map[string]any
-
 func (e *DlElement) AriaUnsafe(name string, s string) *DlElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DlElement) Aria(name string, s string) *DlElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DlElement) Autocapitalize(a DlAutocapitalize) *DlElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *DlElement) Autocorrect(a DlAutocorrect) *DlElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DlElement) Autofocus(b bool) *DlElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *DlElement) Class(s ...string) *DlElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DlElement) Contenteditable(a DlContenteditable) *DlElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *DlElement) Contenteditable(a DlContenteditable) *DlElement {
 func (e *DlElement) DataUnsafe(name string, s string) *DlElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *DlElement) Data(name string, s string) *DlElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *DlElement) Dir(a DlDir) *DlElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *DlElement) Draggable(a DlDraggable) *DlElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *DlElement) Enterkeyhint(a DlEnterkeyhint) *DlElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *DlElement) Hidden(a DlHidden) *DlElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *DlElement) Id(s string) *DlElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DlElement) Inert(b bool) *DlElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *DlElement) Inputmode(a DlInputmode) *DlElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *DlElement) Itemid(s string) *DlElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *DlElement) Itemprop(s ...string) *DlElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DlElement) Itemref(s ...string) *DlElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *DlElement) Itemscope(b bool) *DlElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *DlElement) Itemtype(s ...string) *DlElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *DlElement) Lang(s string) *DlElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *DlElement) Nonce(s string) *DlElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *DlElement) Popover(s string) *DlElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *DlElement) Role(s string) *DlElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *DlElement) Slot(s string) *DlElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *DlElement) Spellcheck(a DlSpellcheck) *DlElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *DlElement) Style(s string) *DlElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *DlElement) Tabindex(i int) *DlElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *DlElement) Title(s string) *DlElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *DlElement) Translate(a DlTranslate) *DlElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *DlElement) Writingsuggestions(a DlWritingsuggestions) *DlElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *DlElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<dl")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type LabelElement struct {
-	attributes labelAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Label creates a tag <label> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The label element represents a caption in a user interface. The caption can be associated with a specific form control, known as the label element's labeled control, either using the for attribute, or by putting the form control inside the label element itself.
 func Label(children ...htemel.Node) *LabelElement {
 	node := &LabelElement{
-		children:   children,
-		attributes: make(labelAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// LabelIf creates a tag <label> instance that is only rendered when condition is true.
 func LabelIf(condition bool, children ...htemel.Node) *LabelElement {
 	if condition {
 		return Label(children...)
@@ -36,16 +38,16 @@ func LabelIf(condition bool, children ...htemel.Node) *LabelElement {
 
 	return &LabelElement{
 		children:   children,
-		attributes: make(labelAttrs),
 		skipRender: true,
 	}
 }
 
-func LabelTernary(condition bool, true htemel.Node, false htemel.Node) *LabelElement {
+// LabelTernary creates a tag <label> containing then when condition is true, otherwise containing otherwise.
+func LabelTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LabelElement {
 	if condition {
-		return Label(true)
+		return Label(then)
 	}
-	return Label(false)
+	return Label(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *LabelElement) With(fn func(*LabelElement)) *LabelElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *LabelElement) Text(text string) *LabelElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *LabelElement) Textf(format string, args ...any) *LabelElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *LabelElement) If(cond bool, child htemel.Node) *LabelElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *LabelElement) IfElse(cond bool, then, els htemel.Node) *LabelElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *LabelElement) IfThen(cond bool, fn func(*LabelElement)) *LabelElement {
 
 // AddClass appends a class to the element.
 func (e *LabelElement) AddClass(classes ...string) *LabelElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *LabelElement) ToggleClass(class string, enable bool) *LabelElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *LabelElement) Attr(name, value string) *LabelElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *LabelElement) AttrUnsafe(name, value string) *LabelElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *LabelElement) BoolAttr(name string, on bool) *LabelElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type LabelAutocapitalize string
 
 const (
-	LabelAutocapitalizeWords      LabelAutocapitalize = "words"
 	LabelAutocapitalizeCharacters LabelAutocapitalize = "characters"
 	LabelAutocapitalizeNone       LabelAutocapitalize = "none"
 	LabelAutocapitalizeOff        LabelAutocapitalize = "off"
 	LabelAutocapitalizeOn         LabelAutocapitalize = "on"
 	LabelAutocapitalizeSentences  LabelAutocapitalize = "sentences"
+	LabelAutocapitalizeWords      LabelAutocapitalize = "words"
 )
 
 type LabelAutocorrect string
@@ -216,10 +247,8 @@ const (
 	LabelWritingsuggestionsEmpty LabelWritingsuggestions = ""
 )
 
-type labelAttrs map[string]any
-
 func (e *LabelElement) For(s string) *LabelElement {
-	e.attributes["for"] = s
+	e.attributes.Set("for", s)
 
 	return e
 }
@@ -227,41 +256,47 @@ func (e *LabelElement) For(s string) *LabelElement {
 func (e *LabelElement) AriaUnsafe(name string, s string) *LabelElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LabelElement) Aria(name string, s string) *LabelElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LabelElement) Autocapitalize(a LabelAutocapitalize) *LabelElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Autocorrect(a LabelAutocorrect) *LabelElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LabelElement) Autofocus(b bool) *LabelElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *LabelElement) Class(s ...string) *LabelElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LabelElement) Contenteditable(a LabelContenteditable) *LabelElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -269,149 +304,157 @@ func (e *LabelElement) Contenteditable(a LabelContenteditable) *LabelElement {
 func (e *LabelElement) DataUnsafe(name string, s string) *LabelElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *LabelElement) Data(name string, s string) *LabelElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *LabelElement) Dir(a LabelDir) *LabelElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Draggable(a LabelDraggable) *LabelElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Enterkeyhint(a LabelEnterkeyhint) *LabelElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Hidden(a LabelHidden) *LabelElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Id(s string) *LabelElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LabelElement) Inert(b bool) *LabelElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *LabelElement) Inputmode(a LabelInputmode) *LabelElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Itemid(s string) *LabelElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *LabelElement) Itemprop(s ...string) *LabelElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LabelElement) Itemref(s ...string) *LabelElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *LabelElement) Itemscope(b bool) *LabelElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *LabelElement) Itemtype(s ...string) *LabelElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *LabelElement) Lang(s string) *LabelElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *LabelElement) Nonce(s string) *LabelElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *LabelElement) Popover(s string) *LabelElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *LabelElement) Role(s string) *LabelElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *LabelElement) Slot(s string) *LabelElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *LabelElement) Spellcheck(a LabelSpellcheck) *LabelElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Style(s string) *LabelElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *LabelElement) Tabindex(i int) *LabelElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *LabelElement) Title(s string) *LabelElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *LabelElement) Translate(a LabelTranslate) *LabelElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *LabelElement) Writingsuggestions(a LabelWritingsuggestions) *LabelElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -429,18 +472,7 @@ func (e *LabelElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<label")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

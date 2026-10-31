@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type StyleElement struct {
-	attributes styleAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Style creates a tag <style> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The style element allows authors to embed CSS style sheets in their documents. The style element is one of several inputs to the styling processing model. The element does not represent content for the user.
 func Style(children ...htemel.Node) *StyleElement {
 	node := &StyleElement{
-		children:   children,
-		attributes: make(styleAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// StyleIf creates a tag <style> instance that is only rendered when condition is true.
 func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
 	if condition {
 		return Style(children...)
@@ -36,16 +38,16 @@ func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
 
 	return &StyleElement{
 		children:   children,
-		attributes: make(styleAttrs),
 		skipRender: true,
 	}
 }
 
-func StyleTernary(condition bool, true htemel.Node, false htemel.Node) *StyleElement {
+// StyleTernary creates a tag <style> containing then when condition is true, otherwise containing otherwise.
+func StyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *StyleElement {
 	if condition {
-		return Style(true)
+		return Style(then)
 	}
-	return Style(false)
+	return Style(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,18 @@ func (e *StyleElement) With(fn func(*StyleElement)) *StyleElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds a raw text node to the element. Because <style> is a raw text element, the
+// content is NOT HTML-escaped (so code like "a < b" is preserved). The only transformation is
+// that any case-insensitive "</style" sequence is rewritten as "<\/style" so the
+// content cannot close the element early. Never pass untrusted input here.
 func (e *StyleElement) Text(text string) *StyleElement {
-	return e.Children(htemel.Text(text))
+	return e.Children(htemel.TextUnsafe(render.RawText("style", text)))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *StyleElement) Textf(format string, args ...any) *StyleElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +84,7 @@ func (e *StyleElement) If(cond bool, child htemel.Node) *StyleElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *StyleElement) IfElse(cond bool, then, els htemel.Node) *StyleElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +104,49 @@ func (e *StyleElement) IfThen(cond bool, fn func(*StyleElement)) *StyleElement {
 
 // AddClass appends a class to the element.
 func (e *StyleElement) AddClass(classes ...string) *StyleElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *StyleElement) ToggleClass(class string, enable bool) *StyleElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *StyleElement) Attr(name, value string) *StyleElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *StyleElement) AttrUnsafe(name, value string) *StyleElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *StyleElement) BoolAttr(name string, on bool) *StyleElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -155,20 +189,20 @@ const (
 type StyleDraggable string
 
 const (
-	StyleDraggableTrue  StyleDraggable = "true"
 	StyleDraggableFalse StyleDraggable = "false"
+	StyleDraggableTrue  StyleDraggable = "true"
 )
 
 type StyleEnterkeyhint string
 
 const (
+	StyleEnterkeyhintDone     StyleEnterkeyhint = "done"
+	StyleEnterkeyhintEnter    StyleEnterkeyhint = "enter"
 	StyleEnterkeyhintGo       StyleEnterkeyhint = "go"
 	StyleEnterkeyhintNext     StyleEnterkeyhint = "next"
 	StyleEnterkeyhintPrevious StyleEnterkeyhint = "previous"
 	StyleEnterkeyhintSearch   StyleEnterkeyhint = "search"
 	StyleEnterkeyhintSend     StyleEnterkeyhint = "send"
-	StyleEnterkeyhintDone     StyleEnterkeyhint = "done"
-	StyleEnterkeyhintEnter    StyleEnterkeyhint = "enter"
 )
 
 type StyleHidden string
@@ -182,14 +216,14 @@ const (
 type StyleInputmode string
 
 const (
-	StyleInputmodeTel     StyleInputmode = "tel"
-	StyleInputmodeText    StyleInputmode = "text"
-	StyleInputmodeUrl     StyleInputmode = "url"
 	StyleInputmodeDecimal StyleInputmode = "decimal"
 	StyleInputmodeEmail   StyleInputmode = "email"
 	StyleInputmodeNone    StyleInputmode = "none"
 	StyleInputmodeNumeric StyleInputmode = "numeric"
 	StyleInputmodeSearch  StyleInputmode = "search"
+	StyleInputmodeTel     StyleInputmode = "tel"
+	StyleInputmodeText    StyleInputmode = "text"
+	StyleInputmodeUrl     StyleInputmode = "url"
 )
 
 type StyleSpellcheck string
@@ -216,16 +250,14 @@ const (
 	StyleWritingsuggestionsEmpty StyleWritingsuggestions = ""
 )
 
-type styleAttrs map[string]any
-
 func (e *StyleElement) Media(s string) *StyleElement {
-	e.attributes["media"] = s
+	e.attributes.Set("media", s)
 
 	return e
 }
 
 func (e *StyleElement) Blocking(s string) *StyleElement {
-	e.attributes["blocking"] = s
+	e.attributes.Set("blocking", s)
 
 	return e
 }
@@ -233,41 +265,47 @@ func (e *StyleElement) Blocking(s string) *StyleElement {
 func (e *StyleElement) AriaUnsafe(name string, s string) *StyleElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *StyleElement) Aria(name string, s string) *StyleElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *StyleElement) Autocapitalize(a StyleAutocapitalize) *StyleElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Autocorrect(a StyleAutocorrect) *StyleElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *StyleElement) Autofocus(b bool) *StyleElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *StyleElement) Class(s ...string) *StyleElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *StyleElement) Contenteditable(a StyleContenteditable) *StyleElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -275,149 +313,157 @@ func (e *StyleElement) Contenteditable(a StyleContenteditable) *StyleElement {
 func (e *StyleElement) DataUnsafe(name string, s string) *StyleElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *StyleElement) Data(name string, s string) *StyleElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *StyleElement) Dir(a StyleDir) *StyleElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Draggable(a StyleDraggable) *StyleElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Enterkeyhint(a StyleEnterkeyhint) *StyleElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Hidden(a StyleHidden) *StyleElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Id(s string) *StyleElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *StyleElement) Inert(b bool) *StyleElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *StyleElement) Inputmode(a StyleInputmode) *StyleElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Itemid(s string) *StyleElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *StyleElement) Itemprop(s ...string) *StyleElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *StyleElement) Itemref(s ...string) *StyleElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *StyleElement) Itemscope(b bool) *StyleElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *StyleElement) Itemtype(s ...string) *StyleElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *StyleElement) Lang(s string) *StyleElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *StyleElement) Nonce(s string) *StyleElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *StyleElement) Popover(s string) *StyleElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *StyleElement) Role(s string) *StyleElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *StyleElement) Slot(s string) *StyleElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *StyleElement) Spellcheck(a StyleSpellcheck) *StyleElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Style(s string) *StyleElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *StyleElement) Tabindex(i int) *StyleElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *StyleElement) Title(s string) *StyleElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *StyleElement) Translate(a StyleTranslate) *StyleElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *StyleElement) Writingsuggestions(a StyleWritingsuggestions) *StyleElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -435,18 +481,7 @@ func (e *StyleElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<style")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

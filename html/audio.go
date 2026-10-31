@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type AudioElement struct {
-	attributes audioAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Audio creates a tag <audio> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: An audio element represents a sound or audio stream.
 func Audio(children ...htemel.Node) *AudioElement {
 	node := &AudioElement{
-		children:   children,
-		attributes: make(audioAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// AudioIf creates a tag <audio> instance that is only rendered when condition is true.
 func AudioIf(condition bool, children ...htemel.Node) *AudioElement {
 	if condition {
 		return Audio(children...)
@@ -36,16 +38,16 @@ func AudioIf(condition bool, children ...htemel.Node) *AudioElement {
 
 	return &AudioElement{
 		children:   children,
-		attributes: make(audioAttrs),
 		skipRender: true,
 	}
 }
 
-func AudioTernary(condition bool, true htemel.Node, false htemel.Node) *AudioElement {
+// AudioTernary creates a tag <audio> containing then when condition is true, otherwise containing otherwise.
+func AudioTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AudioElement {
 	if condition {
-		return Audio(true)
+		return Audio(then)
 	}
-	return Audio(false)
+	return Audio(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *AudioElement) With(fn func(*AudioElement)) *AudioElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *AudioElement) Text(text string) *AudioElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *AudioElement) Textf(format string, args ...any) *AudioElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *AudioElement) If(cond bool, child htemel.Node) *AudioElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *AudioElement) IfElse(cond bool, then, els htemel.Node) *AudioElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *AudioElement) IfThen(cond bool, fn func(*AudioElement)) *AudioElement {
 
 // AddClass appends a class to the element.
 func (e *AudioElement) AddClass(classes ...string) *AudioElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *AudioElement) ToggleClass(class string, enable bool) *AudioElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *AudioElement) Attr(name, value string) *AudioElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *AudioElement) AttrUnsafe(name, value string) *AudioElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *AudioElement) BoolAttr(name string, on bool) *AudioElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -147,8 +178,8 @@ const (
 type AudioAutocorrect string
 
 const (
-	AudioAutocorrectOn    AudioAutocorrect = "on"
 	AudioAutocorrectOff   AudioAutocorrect = "off"
+	AudioAutocorrectOn    AudioAutocorrect = "on"
 	AudioAutocorrectEmpty AudioAutocorrect = ""
 )
 
@@ -199,14 +230,14 @@ const (
 type AudioInputmode string
 
 const (
-	AudioInputmodeText    AudioInputmode = "text"
-	AudioInputmodeUrl     AudioInputmode = "url"
 	AudioInputmodeDecimal AudioInputmode = "decimal"
 	AudioInputmodeEmail   AudioInputmode = "email"
 	AudioInputmodeNone    AudioInputmode = "none"
 	AudioInputmodeNumeric AudioInputmode = "numeric"
 	AudioInputmodeSearch  AudioInputmode = "search"
 	AudioInputmodeTel     AudioInputmode = "tel"
+	AudioInputmodeText    AudioInputmode = "text"
+	AudioInputmodeUrl     AudioInputmode = "url"
 )
 
 type AudioSpellcheck string
@@ -233,52 +264,60 @@ const (
 	AudioWritingsuggestionsEmpty AudioWritingsuggestions = ""
 )
 
-type audioAttrs map[string]any
-
 func (e *AudioElement) Src(s string) *AudioElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *AudioElement) Crossorigin(a AudioCrossorigin) *AudioElement {
-	e.attributes["crossorigin"] = a
+	e.attributes.Set("crossorigin", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Preload(a AudioPreload) *AudioElement {
-	e.attributes["preload"] = a
+	e.attributes.Set("preload", string(a))
 
 	return e
 }
 
+// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Autoplay(b bool) *AudioElement {
-	e.attributes["autoplay"] = b
+	e.attributes.SetBool("autoplay", b)
 
 	return e
 }
 
+// Playsinline sets the boolean attribute "playsinline". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Playsinline(b bool) *AudioElement {
-	e.attributes["playsinline"] = b
+	e.attributes.SetBool("playsinline", b)
 
 	return e
 }
 
+// Loop sets the boolean attribute "loop". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Loop(b bool) *AudioElement {
-	e.attributes["loop"] = b
+	e.attributes.SetBool("loop", b)
 
 	return e
 }
 
+// Muted sets the boolean attribute "muted". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Muted(b bool) *AudioElement {
-	e.attributes["muted"] = b
+	e.attributes.SetBool("muted", b)
 
 	return e
 }
 
+// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Controls(b bool) *AudioElement {
-	e.attributes["controls"] = b
+	e.attributes.SetBool("controls", b)
 
 	return e
 }
@@ -286,41 +325,47 @@ func (e *AudioElement) Controls(b bool) *AudioElement {
 func (e *AudioElement) AriaUnsafe(name string, s string) *AudioElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AudioElement) Aria(name string, s string) *AudioElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AudioElement) Autocapitalize(a AudioAutocapitalize) *AudioElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Autocorrect(a AudioAutocorrect) *AudioElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Autofocus(b bool) *AudioElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *AudioElement) Class(s ...string) *AudioElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AudioElement) Contenteditable(a AudioContenteditable) *AudioElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -328,149 +373,157 @@ func (e *AudioElement) Contenteditable(a AudioContenteditable) *AudioElement {
 func (e *AudioElement) DataUnsafe(name string, s string) *AudioElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *AudioElement) Data(name string, s string) *AudioElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *AudioElement) Dir(a AudioDir) *AudioElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Draggable(a AudioDraggable) *AudioElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Enterkeyhint(a AudioEnterkeyhint) *AudioElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Hidden(a AudioHidden) *AudioElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Id(s string) *AudioElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Inert(b bool) *AudioElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *AudioElement) Inputmode(a AudioInputmode) *AudioElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Itemid(s string) *AudioElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *AudioElement) Itemprop(s ...string) *AudioElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AudioElement) Itemref(s ...string) *AudioElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Itemscope(b bool) *AudioElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *AudioElement) Itemtype(s ...string) *AudioElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *AudioElement) Lang(s string) *AudioElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *AudioElement) Nonce(s string) *AudioElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *AudioElement) Popover(s string) *AudioElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *AudioElement) Role(s string) *AudioElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *AudioElement) Slot(s string) *AudioElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *AudioElement) Spellcheck(a AudioSpellcheck) *AudioElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Style(s string) *AudioElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *AudioElement) Tabindex(i int) *AudioElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *AudioElement) Title(s string) *AudioElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *AudioElement) Translate(a AudioTranslate) *AudioElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *AudioElement) Writingsuggestions(a AudioWritingsuggestions) *AudioElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -488,18 +541,7 @@ func (e *AudioElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<audio")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

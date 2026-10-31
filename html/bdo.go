@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type BdoElement struct {
-	attributes bdoAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Bdo creates a tag <bdo> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The bdo element represents explicit text directionality formatting control for its children. It allows authors to override the Unicode bidirectional algorithm by explicitly specifying a direction override. [BIDI]
 func Bdo(children ...htemel.Node) *BdoElement {
 	node := &BdoElement{
-		children:   children,
-		attributes: make(bdoAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// BdoIf creates a tag <bdo> instance that is only rendered when condition is true.
 func BdoIf(condition bool, children ...htemel.Node) *BdoElement {
 	if condition {
 		return Bdo(children...)
@@ -36,16 +38,16 @@ func BdoIf(condition bool, children ...htemel.Node) *BdoElement {
 
 	return &BdoElement{
 		children:   children,
-		attributes: make(bdoAttrs),
 		skipRender: true,
 	}
 }
 
-func BdoTernary(condition bool, true htemel.Node, false htemel.Node) *BdoElement {
+// BdoTernary creates a tag <bdo> containing then when condition is true, otherwise containing otherwise.
+func BdoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdoElement {
 	if condition {
-		return Bdo(true)
+		return Bdo(then)
 	}
-	return Bdo(false)
+	return Bdo(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *BdoElement) With(fn func(*BdoElement)) *BdoElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *BdoElement) Text(text string) *BdoElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *BdoElement) Textf(format string, args ...any) *BdoElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *BdoElement) If(cond bool, child htemel.Node) *BdoElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *BdoElement) IfElse(cond bool, then, els htemel.Node) *BdoElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +101,49 @@ func (e *BdoElement) IfThen(cond bool, fn func(*BdoElement)) *BdoElement {
 
 // AddClass appends a class to the element.
 func (e *BdoElement) AddClass(classes ...string) *BdoElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *BdoElement) ToggleClass(class string, enable bool) *BdoElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *BdoElement) Attr(name, value string) *BdoElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *BdoElement) AttrUnsafe(name, value string) *BdoElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *BdoElement) BoolAttr(name string, on bool) *BdoElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -162,13 +193,13 @@ const (
 type BdoEnterkeyhint string
 
 const (
+	BdoEnterkeyhintDone     BdoEnterkeyhint = "done"
 	BdoEnterkeyhintEnter    BdoEnterkeyhint = "enter"
 	BdoEnterkeyhintGo       BdoEnterkeyhint = "go"
 	BdoEnterkeyhintNext     BdoEnterkeyhint = "next"
 	BdoEnterkeyhintPrevious BdoEnterkeyhint = "previous"
 	BdoEnterkeyhintSearch   BdoEnterkeyhint = "search"
 	BdoEnterkeyhintSend     BdoEnterkeyhint = "send"
-	BdoEnterkeyhintDone     BdoEnterkeyhint = "done"
 )
 
 type BdoHidden string
@@ -182,7 +213,6 @@ const (
 type BdoInputmode string
 
 const (
-	BdoInputmodeUrl     BdoInputmode = "url"
 	BdoInputmodeDecimal BdoInputmode = "decimal"
 	BdoInputmodeEmail   BdoInputmode = "email"
 	BdoInputmodeNone    BdoInputmode = "none"
@@ -190,13 +220,14 @@ const (
 	BdoInputmodeSearch  BdoInputmode = "search"
 	BdoInputmodeTel     BdoInputmode = "tel"
 	BdoInputmodeText    BdoInputmode = "text"
+	BdoInputmodeUrl     BdoInputmode = "url"
 )
 
 type BdoSpellcheck string
 
 const (
-	BdoSpellcheckTrue  BdoSpellcheck = "true"
 	BdoSpellcheckFalse BdoSpellcheck = "false"
+	BdoSpellcheckTrue  BdoSpellcheck = "true"
 	BdoSpellcheckEmpty BdoSpellcheck = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	BdoWritingsuggestionsEmpty BdoWritingsuggestions = ""
 )
 
-type bdoAttrs map[string]any
-
 func (e *BdoElement) AriaUnsafe(name string, s string) *BdoElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BdoElement) Aria(name string, s string) *BdoElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BdoElement) Autocapitalize(a BdoAutocapitalize) *BdoElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Autocorrect(a BdoAutocorrect) *BdoElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdoElement) Autofocus(b bool) *BdoElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *BdoElement) Class(s ...string) *BdoElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdoElement) Contenteditable(a BdoContenteditable) *BdoElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *BdoElement) Contenteditable(a BdoContenteditable) *BdoElement {
 func (e *BdoElement) DataUnsafe(name string, s string) *BdoElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *BdoElement) Data(name string, s string) *BdoElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *BdoElement) Dir(a BdoDir) *BdoElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Draggable(a BdoDraggable) *BdoElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Enterkeyhint(a BdoEnterkeyhint) *BdoElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Hidden(a BdoHidden) *BdoElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Id(s string) *BdoElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdoElement) Inert(b bool) *BdoElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *BdoElement) Inputmode(a BdoInputmode) *BdoElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Itemid(s string) *BdoElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *BdoElement) Itemprop(s ...string) *BdoElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdoElement) Itemref(s ...string) *BdoElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *BdoElement) Itemscope(b bool) *BdoElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *BdoElement) Itemtype(s ...string) *BdoElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *BdoElement) Lang(s string) *BdoElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *BdoElement) Nonce(s string) *BdoElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *BdoElement) Popover(s string) *BdoElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *BdoElement) Role(s string) *BdoElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *BdoElement) Slot(s string) *BdoElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *BdoElement) Spellcheck(a BdoSpellcheck) *BdoElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Style(s string) *BdoElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *BdoElement) Tabindex(i int) *BdoElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *BdoElement) Title(s string) *BdoElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *BdoElement) Translate(a BdoTranslate) *BdoElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *BdoElement) Writingsuggestions(a BdoWritingsuggestions) *BdoElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *BdoElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<bdo")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type ScriptElement struct {
-	attributes scriptAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Script creates a tag <script> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The script element allows authors to include dynamic script, instructions to the user agent, and data blocks in their documents. The element does not represent content for the user.
 func Script(children ...htemel.Node) *ScriptElement {
 	node := &ScriptElement{
-		children:   children,
-		attributes: make(scriptAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// ScriptIf creates a tag <script> instance that is only rendered when condition is true.
 func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
 	if condition {
 		return Script(children...)
@@ -36,16 +38,16 @@ func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
 
 	return &ScriptElement{
 		children:   children,
-		attributes: make(scriptAttrs),
 		skipRender: true,
 	}
 }
 
-func ScriptTernary(condition bool, true htemel.Node, false htemel.Node) *ScriptElement {
+// ScriptTernary creates a tag <script> containing then when condition is true, otherwise containing otherwise.
+func ScriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ScriptElement {
 	if condition {
-		return Script(true)
+		return Script(then)
 	}
-	return Script(false)
+	return Script(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,18 @@ func (e *ScriptElement) With(fn func(*ScriptElement)) *ScriptElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds a raw text node to the element. Because <script> is a raw text element, the
+// content is NOT HTML-escaped (so code like "a < b" is preserved). The only transformation is
+// that any case-insensitive "</script" sequence is rewritten as "<\/script" so the
+// content cannot close the element early. Never pass untrusted input here.
 func (e *ScriptElement) Text(text string) *ScriptElement {
-	return e.Children(htemel.Text(text))
+	return e.Children(htemel.TextUnsafe(render.RawText("script", text)))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *ScriptElement) Textf(format string, args ...any) *ScriptElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +84,7 @@ func (e *ScriptElement) If(cond bool, child htemel.Node) *ScriptElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *ScriptElement) IfElse(cond bool, then, els htemel.Node) *ScriptElement {
 	if cond {
 		e.Children(then)
@@ -97,22 +104,49 @@ func (e *ScriptElement) IfThen(cond bool, fn func(*ScriptElement)) *ScriptElemen
 
 // AddClass appends a class to the element.
 func (e *ScriptElement) AddClass(classes ...string) *ScriptElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *ScriptElement) ToggleClass(class string, enable bool) *ScriptElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *ScriptElement) Attr(name, value string) *ScriptElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *ScriptElement) AttrUnsafe(name, value string) *ScriptElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *ScriptElement) BoolAttr(name string, on bool) *ScriptElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
@@ -125,28 +159,28 @@ const (
 type ScriptCrossorigin string
 
 const (
-	ScriptCrossoriginUseCredentials ScriptCrossorigin = "use-credentials"
 	ScriptCrossoriginAnonymous      ScriptCrossorigin = "anonymous"
+	ScriptCrossoriginUseCredentials ScriptCrossorigin = "use-credentials"
 	ScriptCrossoriginEmpty          ScriptCrossorigin = ""
 )
 
 type ScriptFetchpriority string
 
 const (
+	ScriptFetchpriorityAuto ScriptFetchpriority = "auto"
 	ScriptFetchpriorityHigh ScriptFetchpriority = "high"
 	ScriptFetchpriorityLow  ScriptFetchpriority = "low"
-	ScriptFetchpriorityAuto ScriptFetchpriority = "auto"
 )
 
 type ScriptAutocapitalize string
 
 const (
-	ScriptAutocapitalizeOn         ScriptAutocapitalize = "on"
-	ScriptAutocapitalizeSentences  ScriptAutocapitalize = "sentences"
-	ScriptAutocapitalizeWords      ScriptAutocapitalize = "words"
 	ScriptAutocapitalizeCharacters ScriptAutocapitalize = "characters"
 	ScriptAutocapitalizeNone       ScriptAutocapitalize = "none"
 	ScriptAutocapitalizeOff        ScriptAutocapitalize = "off"
+	ScriptAutocapitalizeOn         ScriptAutocapitalize = "on"
+	ScriptAutocapitalizeSentences  ScriptAutocapitalize = "sentences"
+	ScriptAutocapitalizeWords      ScriptAutocapitalize = "words"
 )
 
 type ScriptAutocorrect string
@@ -160,9 +194,9 @@ const (
 type ScriptContenteditable string
 
 const (
-	ScriptContenteditableTrue          ScriptContenteditable = "true"
 	ScriptContenteditableFalse         ScriptContenteditable = "false"
 	ScriptContenteditablePlaintextOnly ScriptContenteditable = "plaintext-only"
+	ScriptContenteditableTrue          ScriptContenteditable = "true"
 	ScriptContenteditableEmpty         ScriptContenteditable = ""
 )
 
@@ -184,13 +218,13 @@ const (
 type ScriptEnterkeyhint string
 
 const (
+	ScriptEnterkeyhintDone     ScriptEnterkeyhint = "done"
+	ScriptEnterkeyhintEnter    ScriptEnterkeyhint = "enter"
+	ScriptEnterkeyhintGo       ScriptEnterkeyhint = "go"
 	ScriptEnterkeyhintNext     ScriptEnterkeyhint = "next"
 	ScriptEnterkeyhintPrevious ScriptEnterkeyhint = "previous"
 	ScriptEnterkeyhintSearch   ScriptEnterkeyhint = "search"
 	ScriptEnterkeyhintSend     ScriptEnterkeyhint = "send"
-	ScriptEnterkeyhintDone     ScriptEnterkeyhint = "done"
-	ScriptEnterkeyhintEnter    ScriptEnterkeyhint = "enter"
-	ScriptEnterkeyhintGo       ScriptEnterkeyhint = "go"
 )
 
 type ScriptHidden string
@@ -204,14 +238,14 @@ const (
 type ScriptInputmode string
 
 const (
+	ScriptInputmodeDecimal ScriptInputmode = "decimal"
+	ScriptInputmodeEmail   ScriptInputmode = "email"
+	ScriptInputmodeNone    ScriptInputmode = "none"
 	ScriptInputmodeNumeric ScriptInputmode = "numeric"
 	ScriptInputmodeSearch  ScriptInputmode = "search"
 	ScriptInputmodeTel     ScriptInputmode = "tel"
 	ScriptInputmodeText    ScriptInputmode = "text"
 	ScriptInputmodeUrl     ScriptInputmode = "url"
-	ScriptInputmodeDecimal ScriptInputmode = "decimal"
-	ScriptInputmodeEmail   ScriptInputmode = "email"
-	ScriptInputmodeNone    ScriptInputmode = "none"
 )
 
 type ScriptSpellcheck string
@@ -238,64 +272,68 @@ const (
 	ScriptWritingsuggestionsEmpty ScriptWritingsuggestions = ""
 )
 
-type scriptAttrs map[string]any
-
 func (e *ScriptElement) Type(s string) *ScriptElement {
-	e.attributes["type"] = s
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *ScriptElement) Src(s string) *ScriptElement {
-	e.attributes["src"] = s
+	e.attributes.Set("src", s)
 
 	return e
 }
 
+// Nomodule sets the boolean attribute "nomodule". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Nomodule(b bool) *ScriptElement {
-	e.attributes["nomodule"] = b
+	e.attributes.SetBool("nomodule", b)
 
 	return e
 }
 
+// Async sets the boolean attribute "async". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Async(b bool) *ScriptElement {
-	e.attributes["async"] = b
+	e.attributes.SetBool("async", b)
 
 	return e
 }
 
+// Defer sets the boolean attribute "defer". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Defer(b bool) *ScriptElement {
-	e.attributes["defer"] = b
+	e.attributes.SetBool("defer", b)
 
 	return e
 }
 
 func (e *ScriptElement) Blocking(a ScriptBlocking) *ScriptElement {
-	e.attributes["blocking"] = a
+	e.attributes.Set("blocking", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Crossorigin(a ScriptCrossorigin) *ScriptElement {
-	e.attributes["crossorigin"] = a
+	e.attributes.Set("crossorigin", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Referrerpolicy(s string) *ScriptElement {
-	e.attributes["referrerpolicy"] = s
+	e.attributes.Set("referrerpolicy", s)
 
 	return e
 }
 
 func (e *ScriptElement) Integrity(s string) *ScriptElement {
-	e.attributes["integrity"] = s
+	e.attributes.Set("integrity", s)
 
 	return e
 }
 
 func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
-	e.attributes["fetchpriority"] = a
+	e.attributes.Set("fetchpriority", string(a))
 
 	return e
 }
@@ -303,41 +341,47 @@ func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
 func (e *ScriptElement) AriaUnsafe(name string, s string) *ScriptElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ScriptElement) Aria(name string, s string) *ScriptElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ScriptElement) Autocapitalize(a ScriptAutocapitalize) *ScriptElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Autocorrect(a ScriptAutocorrect) *ScriptElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Autofocus(b bool) *ScriptElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *ScriptElement) Class(s ...string) *ScriptElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ScriptElement) Contenteditable(a ScriptContenteditable) *ScriptElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -345,149 +389,157 @@ func (e *ScriptElement) Contenteditable(a ScriptContenteditable) *ScriptElement 
 func (e *ScriptElement) DataUnsafe(name string, s string) *ScriptElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *ScriptElement) Data(name string, s string) *ScriptElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *ScriptElement) Dir(a ScriptDir) *ScriptElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Draggable(a ScriptDraggable) *ScriptElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Enterkeyhint(a ScriptEnterkeyhint) *ScriptElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Hidden(a ScriptHidden) *ScriptElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Id(s string) *ScriptElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Inert(b bool) *ScriptElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *ScriptElement) Inputmode(a ScriptInputmode) *ScriptElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Itemid(s string) *ScriptElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *ScriptElement) Itemprop(s ...string) *ScriptElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ScriptElement) Itemref(s ...string) *ScriptElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Itemscope(b bool) *ScriptElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *ScriptElement) Itemtype(s ...string) *ScriptElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *ScriptElement) Lang(s string) *ScriptElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *ScriptElement) Nonce(s string) *ScriptElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *ScriptElement) Popover(s string) *ScriptElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *ScriptElement) Role(s string) *ScriptElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *ScriptElement) Slot(s string) *ScriptElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *ScriptElement) Spellcheck(a ScriptSpellcheck) *ScriptElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Style(s string) *ScriptElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *ScriptElement) Tabindex(i int) *ScriptElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *ScriptElement) Title(s string) *ScriptElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *ScriptElement) Translate(a ScriptTranslate) *ScriptElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *ScriptElement) Writingsuggestions(a ScriptWritingsuggestions) *ScriptElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -505,18 +557,7 @@ func (e *ScriptElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<script")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

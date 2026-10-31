@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type NavElement struct {
-	attributes navAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Nav creates a tag <nav> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The nav element represents a section of a page that links to other pages or to parts within the page: a section with navigation links.
 func Nav(children ...htemel.Node) *NavElement {
 	node := &NavElement{
-		children:   children,
-		attributes: make(navAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// NavIf creates a tag <nav> instance that is only rendered when condition is true.
 func NavIf(condition bool, children ...htemel.Node) *NavElement {
 	if condition {
 		return Nav(children...)
@@ -36,16 +38,16 @@ func NavIf(condition bool, children ...htemel.Node) *NavElement {
 
 	return &NavElement{
 		children:   children,
-		attributes: make(navAttrs),
 		skipRender: true,
 	}
 }
 
-func NavTernary(condition bool, true htemel.Node, false htemel.Node) *NavElement {
+// NavTernary creates a tag <nav> containing then when condition is true, otherwise containing otherwise.
+func NavTernary(condition bool, then htemel.Node, otherwise htemel.Node) *NavElement {
 	if condition {
-		return Nav(true)
+		return Nav(then)
 	}
-	return Nav(false)
+	return Nav(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *NavElement) With(fn func(*NavElement)) *NavElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *NavElement) Text(text string) *NavElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *NavElement) Textf(format string, args ...any) *NavElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *NavElement) If(cond bool, child htemel.Node) *NavElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *NavElement) IfElse(cond bool, then, els htemel.Node) *NavElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *NavElement) IfThen(cond bool, fn func(*NavElement)) *NavElement {
 
 // AddClass appends a class to the element.
 func (e *NavElement) AddClass(classes ...string) *NavElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *NavElement) ToggleClass(class string, enable bool) *NavElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *NavElement) Attr(name, value string) *NavElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *NavElement) AttrUnsafe(name, value string) *NavElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *NavElement) BoolAttr(name string, on bool) *NavElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type NavAutocapitalize string
 
 const (
-	NavAutocapitalizeOn         NavAutocapitalize = "on"
-	NavAutocapitalizeSentences  NavAutocapitalize = "sentences"
-	NavAutocapitalizeWords      NavAutocapitalize = "words"
 	NavAutocapitalizeCharacters NavAutocapitalize = "characters"
 	NavAutocapitalizeNone       NavAutocapitalize = "none"
 	NavAutocapitalizeOff        NavAutocapitalize = "off"
+	NavAutocapitalizeOn         NavAutocapitalize = "on"
+	NavAutocapitalizeSentences  NavAutocapitalize = "sentences"
+	NavAutocapitalizeWords      NavAutocapitalize = "words"
 )
 
 type NavAutocorrect string
@@ -147,9 +178,9 @@ const (
 type NavDir string
 
 const (
+	NavDirAuto NavDir = "auto"
 	NavDirLtr  NavDir = "ltr"
 	NavDirRtl  NavDir = "rtl"
-	NavDirAuto NavDir = "auto"
 )
 
 type NavDraggable string
@@ -162,13 +193,13 @@ const (
 type NavEnterkeyhint string
 
 const (
-	NavEnterkeyhintSearch   NavEnterkeyhint = "search"
-	NavEnterkeyhintSend     NavEnterkeyhint = "send"
 	NavEnterkeyhintDone     NavEnterkeyhint = "done"
 	NavEnterkeyhintEnter    NavEnterkeyhint = "enter"
 	NavEnterkeyhintGo       NavEnterkeyhint = "go"
 	NavEnterkeyhintNext     NavEnterkeyhint = "next"
 	NavEnterkeyhintPrevious NavEnterkeyhint = "previous"
+	NavEnterkeyhintSearch   NavEnterkeyhint = "search"
+	NavEnterkeyhintSend     NavEnterkeyhint = "send"
 )
 
 type NavHidden string
@@ -182,6 +213,7 @@ const (
 type NavInputmode string
 
 const (
+	NavInputmodeDecimal NavInputmode = "decimal"
 	NavInputmodeEmail   NavInputmode = "email"
 	NavInputmodeNone    NavInputmode = "none"
 	NavInputmodeNumeric NavInputmode = "numeric"
@@ -189,14 +221,13 @@ const (
 	NavInputmodeTel     NavInputmode = "tel"
 	NavInputmodeText    NavInputmode = "text"
 	NavInputmodeUrl     NavInputmode = "url"
-	NavInputmodeDecimal NavInputmode = "decimal"
 )
 
 type NavSpellcheck string
 
 const (
-	NavSpellcheckTrue  NavSpellcheck = "true"
 	NavSpellcheckFalse NavSpellcheck = "false"
+	NavSpellcheckTrue  NavSpellcheck = "true"
 	NavSpellcheckEmpty NavSpellcheck = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	NavWritingsuggestionsEmpty NavWritingsuggestions = ""
 )
 
-type navAttrs map[string]any
-
 func (e *NavElement) AriaUnsafe(name string, s string) *NavElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *NavElement) Aria(name string, s string) *NavElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *NavElement) Autocapitalize(a NavAutocapitalize) *NavElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *NavElement) Autocorrect(a NavAutocorrect) *NavElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NavElement) Autofocus(b bool) *NavElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *NavElement) Class(s ...string) *NavElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NavElement) Contenteditable(a NavContenteditable) *NavElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -263,149 +298,157 @@ func (e *NavElement) Contenteditable(a NavContenteditable) *NavElement {
 func (e *NavElement) DataUnsafe(name string, s string) *NavElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *NavElement) Data(name string, s string) *NavElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *NavElement) Dir(a NavDir) *NavElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *NavElement) Draggable(a NavDraggable) *NavElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *NavElement) Enterkeyhint(a NavEnterkeyhint) *NavElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *NavElement) Hidden(a NavHidden) *NavElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *NavElement) Id(s string) *NavElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NavElement) Inert(b bool) *NavElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *NavElement) Inputmode(a NavInputmode) *NavElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *NavElement) Itemid(s string) *NavElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *NavElement) Itemprop(s ...string) *NavElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NavElement) Itemref(s ...string) *NavElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *NavElement) Itemscope(b bool) *NavElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *NavElement) Itemtype(s ...string) *NavElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *NavElement) Lang(s string) *NavElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *NavElement) Nonce(s string) *NavElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *NavElement) Popover(s string) *NavElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *NavElement) Role(s string) *NavElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *NavElement) Slot(s string) *NavElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *NavElement) Spellcheck(a NavSpellcheck) *NavElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *NavElement) Style(s string) *NavElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *NavElement) Tabindex(i int) *NavElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *NavElement) Title(s string) *NavElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *NavElement) Translate(a NavTranslate) *NavElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *NavElement) Writingsuggestions(a NavWritingsuggestions) *NavElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -423,18 +466,7 @@ func (e *NavElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<nav")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {

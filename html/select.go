@@ -5,30 +5,32 @@ import (
 	"fmt"
 	"io"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/go-htemel/htemel"
-	"golang.org/x/net/html"
+	"github.com/go-htemel/htemel/internal/render"
 )
 
 type SelectElement struct {
-	attributes selectAttrs
+	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
 }
 
 // Select creates a tag <select> instance and returns it for further modification.
-// Any children passed will be nested within the tag.//
+// Any children passed will be nested within the tag.
+//
 // Spec Description: The select element represents a control for selecting amongst a set of options.
 func Select(children ...htemel.Node) *SelectElement {
 	node := &SelectElement{
-		children:   children,
-		attributes: make(selectAttrs),
+		children: children,
 	}
 
 	return node
 }
 
+// SelectIf creates a tag <select> instance that is only rendered when condition is true.
 func SelectIf(condition bool, children ...htemel.Node) *SelectElement {
 	if condition {
 		return Select(children...)
@@ -36,16 +38,16 @@ func SelectIf(condition bool, children ...htemel.Node) *SelectElement {
 
 	return &SelectElement{
 		children:   children,
-		attributes: make(selectAttrs),
 		skipRender: true,
 	}
 }
 
-func SelectTernary(condition bool, true htemel.Node, false htemel.Node) *SelectElement {
+// SelectTernary creates a tag <select> containing then when condition is true, otherwise containing otherwise.
+func SelectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SelectElement {
 	if condition {
-		return Select(true)
+		return Select(then)
 	}
-	return Select(false)
+	return Select(otherwise)
 }
 
 // Children appends children to this element.
@@ -60,14 +62,15 @@ func (e *SelectElement) With(fn func(*SelectElement)) *SelectElement {
 	return e
 }
 
-// Text adds a text node to the element.
+// Text adds an HTML-escaped text node to the element.
 func (e *SelectElement) Text(text string) *SelectElement {
 	return e.Children(htemel.Text(text))
 }
 
 // Textf adds a text node to the element with the given format string and arguments.
+// It follows the same escaping rules as Text.
 func (e *SelectElement) Textf(format string, args ...any) *SelectElement {
-	return e.Children(htemel.Text(fmt.Sprintf(format, args...)))
+	return e.Text(fmt.Sprintf(format, args...))
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
@@ -78,6 +81,7 @@ func (e *SelectElement) If(cond bool, child htemel.Node) *SelectElement {
 	return e
 }
 
+// IfElse adds then as a child if cond is true, otherwise adds els.
 func (e *SelectElement) IfElse(cond bool, then, els htemel.Node) *SelectElement {
 	if cond {
 		e.Children(then)
@@ -97,34 +101,61 @@ func (e *SelectElement) IfThen(cond bool, fn func(*SelectElement)) *SelectElemen
 
 // AddClass appends a class to the element.
 func (e *SelectElement) AddClass(classes ...string) *SelectElement {
-	current := e.attributes["class"].(string)
+	current, _ := e.attributes.Get("class")
 	all := append(strings.Fields(current), classes...)
-	e.attributes["class"] = strings.Join(all, " ")
+	e.attributes.Set("class", strings.Join(all, " "))
 	return e
 }
 
 // ToggleClass toggles a class on or off.
 func (e *SelectElement) ToggleClass(class string, enable bool) *SelectElement {
-	classes := strings.Fields(e.attributes["class"].(string))
+	current, ok := e.attributes.Get("class")
+	classes := strings.Fields(current)
 	idx := slices.Index(classes, class)
 	if enable && idx == -1 {
 		classes = append(classes, class)
 	} else if !enable && idx >= 0 {
 		classes = slices.Delete(classes, idx, idx+1)
 	}
-	e.attributes["class"] = strings.Join(classes, " ")
+	if len(classes) == 0 {
+		if ok {
+			e.attributes.Remove("class")
+		}
+		return e
+	}
+	e.attributes.Set("class", strings.Join(classes, " "))
+	return e
+}
+
+// Attr sets an arbitrary attribute. The value is HTML-escaped; the name is written as-is and must
+// be a valid attribute name. Useful for attributes not covered by the spec (e.g. htmx/Datastar).
+// Setting an existing attribute updates its value but keeps its original position.
+func (e *SelectElement) Attr(name, value string) *SelectElement {
+	e.attributes.Set(name, value)
+	return e
+}
+
+// AttrUnsafe sets an arbitrary attribute without escaping its value. Never pass untrusted input.
+func (e *SelectElement) AttrUnsafe(name, value string) *SelectElement {
+	e.attributes.SetUnsafe(name, value)
+	return e
+}
+
+// BoolAttr sets an arbitrary boolean attribute: rendered bare when on is true, omitted when false.
+func (e *SelectElement) BoolAttr(name string, on bool) *SelectElement {
+	e.attributes.SetBool(name, on)
 	return e
 }
 
 type SelectAutocapitalize string
 
 const (
-	SelectAutocapitalizeWords      SelectAutocapitalize = "words"
 	SelectAutocapitalizeCharacters SelectAutocapitalize = "characters"
 	SelectAutocapitalizeNone       SelectAutocapitalize = "none"
 	SelectAutocapitalizeOff        SelectAutocapitalize = "off"
 	SelectAutocapitalizeOn         SelectAutocapitalize = "on"
 	SelectAutocapitalizeSentences  SelectAutocapitalize = "sentences"
+	SelectAutocapitalizeWords      SelectAutocapitalize = "words"
 )
 
 type SelectAutocorrect string
@@ -147,16 +178,16 @@ const (
 type SelectDir string
 
 const (
-	SelectDirRtl  SelectDir = "rtl"
 	SelectDirAuto SelectDir = "auto"
 	SelectDirLtr  SelectDir = "ltr"
+	SelectDirRtl  SelectDir = "rtl"
 )
 
 type SelectDraggable string
 
 const (
-	SelectDraggableTrue  SelectDraggable = "true"
 	SelectDraggableFalse SelectDraggable = "false"
+	SelectDraggableTrue  SelectDraggable = "true"
 )
 
 type SelectEnterkeyhint string
@@ -174,22 +205,22 @@ const (
 type SelectHidden string
 
 const (
-	SelectHiddenUntilFound SelectHidden = "until-found"
 	SelectHiddenHidden     SelectHidden = "hidden"
+	SelectHiddenUntilFound SelectHidden = "until-found"
 	SelectHiddenEmpty      SelectHidden = ""
 )
 
 type SelectInputmode string
 
 const (
-	SelectInputmodeSearch  SelectInputmode = "search"
-	SelectInputmodeTel     SelectInputmode = "tel"
-	SelectInputmodeText    SelectInputmode = "text"
-	SelectInputmodeUrl     SelectInputmode = "url"
 	SelectInputmodeDecimal SelectInputmode = "decimal"
 	SelectInputmodeEmail   SelectInputmode = "email"
 	SelectInputmodeNone    SelectInputmode = "none"
 	SelectInputmodeNumeric SelectInputmode = "numeric"
+	SelectInputmodeSearch  SelectInputmode = "search"
+	SelectInputmodeTel     SelectInputmode = "tel"
+	SelectInputmodeText    SelectInputmode = "text"
+	SelectInputmodeUrl     SelectInputmode = "url"
 )
 
 type SelectSpellcheck string
@@ -203,8 +234,8 @@ const (
 type SelectTranslate string
 
 const (
-	SelectTranslateYes   SelectTranslate = "yes"
 	SelectTranslateNo    SelectTranslate = "no"
+	SelectTranslateYes   SelectTranslate = "yes"
 	SelectTranslateEmpty SelectTranslate = ""
 )
 
@@ -216,46 +247,50 @@ const (
 	SelectWritingsuggestionsEmpty SelectWritingsuggestions = ""
 )
 
-type selectAttrs map[string]any
-
 func (e *SelectElement) Autocomplete(s string) *SelectElement {
-	e.attributes["autocomplete"] = s
+	e.attributes.Set("autocomplete", s)
 
 	return e
 }
 
+// Disabled sets the boolean attribute "disabled". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Disabled(b bool) *SelectElement {
-	e.attributes["disabled"] = b
+	e.attributes.SetBool("disabled", b)
 
 	return e
 }
 
 func (e *SelectElement) Form(s string) *SelectElement {
-	e.attributes["form"] = s
+	e.attributes.Set("form", s)
 
 	return e
 }
 
+// Multiple sets the boolean attribute "multiple". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Multiple(b bool) *SelectElement {
-	e.attributes["multiple"] = b
+	e.attributes.SetBool("multiple", b)
 
 	return e
 }
 
 func (e *SelectElement) Name(s string) *SelectElement {
-	e.attributes["name"] = s
+	e.attributes.Set("name", s)
 
 	return e
 }
 
+// Required sets the boolean attribute "required". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Required(b bool) *SelectElement {
-	e.attributes["required"] = b
+	e.attributes.SetBool("required", b)
 
 	return e
 }
 
 func (e *SelectElement) Size(i int) *SelectElement {
-	e.attributes["size"] = i
+	e.attributes.Set("size", strconv.Itoa(i))
 
 	return e
 }
@@ -263,41 +298,47 @@ func (e *SelectElement) Size(i int) *SelectElement {
 func (e *SelectElement) AriaUnsafe(name string, s string) *SelectElement {
 	tag := strings.ToLower("aria-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SelectElement) Aria(name string, s string) *SelectElement {
-	return e.AriaUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SelectElement) Autocapitalize(a SelectAutocapitalize) *SelectElement {
-	e.attributes["autocapitalize"] = a
+	e.attributes.Set("autocapitalize", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Autocorrect(a SelectAutocorrect) *SelectElement {
-	e.attributes["autocorrect"] = a
+	e.attributes.Set("autocorrect", string(a))
 
 	return e
 }
 
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Autofocus(b bool) *SelectElement {
-	e.attributes["autofocus"] = b
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
 func (e *SelectElement) Class(s ...string) *SelectElement {
-	e.attributes["class"] = strings.Join(s, " ")
+	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectElement) Contenteditable(a SelectContenteditable) *SelectElement {
-	e.attributes["contenteditable"] = a
+	e.attributes.Set("contenteditable", string(a))
 
 	return e
 }
@@ -305,149 +346,157 @@ func (e *SelectElement) Contenteditable(a SelectContenteditable) *SelectElement 
 func (e *SelectElement) DataUnsafe(name string, s string) *SelectElement {
 	tag := strings.ToLower("data-" + name)
 
-	e.attributes[tag] = s
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
 func (e *SelectElement) Data(name string, s string) *SelectElement {
-	return e.DataUnsafe(name, html.EscapeString(s))
+	tag := strings.ToLower("data-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
 }
 
 func (e *SelectElement) Dir(a SelectDir) *SelectElement {
-	e.attributes["dir"] = a
+	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Draggable(a SelectDraggable) *SelectElement {
-	e.attributes["draggable"] = a
+	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Enterkeyhint(a SelectEnterkeyhint) *SelectElement {
-	e.attributes["enterkeyhint"] = a
+	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Hidden(a SelectHidden) *SelectElement {
-	e.attributes["hidden"] = a
+	e.attributes.Set("hidden", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Id(s string) *SelectElement {
-	e.attributes["id"] = s
+	e.attributes.Set("id", s)
 
 	return e
 }
 
+// Inert sets the boolean attribute "inert". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Inert(b bool) *SelectElement {
-	e.attributes["inert"] = b
+	e.attributes.SetBool("inert", b)
 
 	return e
 }
 
 func (e *SelectElement) Inputmode(a SelectInputmode) *SelectElement {
-	e.attributes["inputmode"] = a
+	e.attributes.Set("inputmode", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Itemid(s string) *SelectElement {
-	e.attributes["itemid"] = s
+	e.attributes.Set("itemid", s)
 
 	return e
 }
 
 func (e *SelectElement) Itemprop(s ...string) *SelectElement {
-	e.attributes["itemprop"] = strings.Join(s, " ")
+	e.attributes.Set("itemprop", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectElement) Itemref(s ...string) *SelectElement {
-	e.attributes["itemref"] = strings.Join(s, " ")
+	e.attributes.Set("itemref", strings.Join(s, " "))
 
 	return e
 }
 
+// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
 func (e *SelectElement) Itemscope(b bool) *SelectElement {
-	e.attributes["itemscope"] = b
+	e.attributes.SetBool("itemscope", b)
 
 	return e
 }
 
 func (e *SelectElement) Itemtype(s ...string) *SelectElement {
-	e.attributes["itemtype"] = strings.Join(s, " ")
+	e.attributes.Set("itemtype", strings.Join(s, " "))
 
 	return e
 }
 
 func (e *SelectElement) Lang(s string) *SelectElement {
-	e.attributes["lang"] = s
+	e.attributes.Set("lang", s)
 
 	return e
 }
 
 func (e *SelectElement) Nonce(s string) *SelectElement {
-	e.attributes["nonce"] = s
+	e.attributes.Set("nonce", s)
 
 	return e
 }
 
 func (e *SelectElement) Popover(s string) *SelectElement {
-	e.attributes["popover"] = s
+	e.attributes.Set("popover", s)
 
 	return e
 }
 
 func (e *SelectElement) Role(s string) *SelectElement {
-	e.attributes["role"] = s
+	e.attributes.Set("role", s)
 
 	return e
 }
 
 func (e *SelectElement) Slot(s string) *SelectElement {
-	e.attributes["slot"] = s
+	e.attributes.Set("slot", s)
 
 	return e
 }
 
 func (e *SelectElement) Spellcheck(a SelectSpellcheck) *SelectElement {
-	e.attributes["spellcheck"] = a
+	e.attributes.Set("spellcheck", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Style(s string) *SelectElement {
-	e.attributes["style"] = s
+	e.attributes.Set("style", s)
 
 	return e
 }
 
 func (e *SelectElement) Tabindex(i int) *SelectElement {
-	e.attributes["tabindex"] = i
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *SelectElement) Title(s string) *SelectElement {
-	e.attributes["title"] = s
+	e.attributes.Set("title", s)
 
 	return e
 }
 
 func (e *SelectElement) Translate(a SelectTranslate) *SelectElement {
-	e.attributes["translate"] = a
+	e.attributes.Set("translate", string(a))
 
 	return e
 }
 
 func (e *SelectElement) Writingsuggestions(a SelectWritingsuggestions) *SelectElement {
-	e.attributes["writingsuggestions"] = a
+	e.attributes.Set("writingsuggestions", string(a))
 
 	return e
 }
@@ -465,18 +514,7 @@ func (e *SelectElement) Render(w io.Writer) error {
 	var sb strings.Builder
 	sb.WriteString("<select")
 
-	for key, v := range e.attributes {
-		sb.WriteByte(' ')
-		sb.WriteString(key)
-
-		strVal := fmt.Sprintf("%v", v)
-		if strVal != "" {
-			sb.WriteByte('=')
-			sb.WriteByte('"')
-			sb.WriteString(strVal)
-			sb.WriteByte('"')
-		}
-	}
+	e.attributes.WriteTo(&sb)
 
 	sb.WriteByte('>')
 	for _, child := range e.children {
