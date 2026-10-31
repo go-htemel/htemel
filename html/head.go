@@ -14,7 +14,6 @@ import (
 type HeadElement struct {
 	attributes render.Attrs
 	children   []htemel.MetadataContent
-	skipRender bool
 }
 
 // Head creates a tag <head> instance and returns it for further modification.
@@ -31,26 +30,6 @@ func Head(children ...htemel.MetadataContent) *HeadElement {
 	return node
 }
 
-// HeadIf creates a tag <head> instance that is only rendered when condition is true.
-func HeadIf(condition bool, children ...htemel.MetadataContent) *HeadElement {
-	if condition {
-		return Head(children...)
-	}
-
-	return &HeadElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// HeadTernary creates a tag <head> containing then when condition is true, otherwise containing otherwise.
-func HeadTernary(condition bool, then htemel.MetadataContent, otherwise htemel.MetadataContent) *HeadElement {
-	if condition {
-		return Head(then)
-	}
-	return Head(otherwise)
-}
-
 // Children appends children to this element.
 func (e *HeadElement) Children(children ...htemel.MetadataContent) *HeadElement {
 	e.children = append(e.children, children...)
@@ -63,38 +42,33 @@ func (e *HeadElement) With(fn func(*HeadElement)) *HeadElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HeadElement) If(cond bool, child htemel.MetadataContent) *HeadElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HeadElement) IfElse(cond bool, then, els htemel.MetadataContent) *HeadElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *HeadElement) IfThen(cond bool, fn func(*HeadElement)) *HeadElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *HeadElement) AddClass(classes ...string) *HeadElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *HeadElement) Class(classes ...string) *HeadElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *HeadElement) SetClass(classes ...string) *HeadElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *HeadElement) AddClass(classes ...string) *HeadElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -154,14 +128,15 @@ func (e *HeadElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLHtmlChild marks <head> as a permitted child of <html> (HtmlChild).
-func (*HeadElement) HTMLHtmlChild() {}
-
-func (e *HeadElement) Accesskey(r rune) *HeadElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *HeadElement) Globals(g Globals) *HeadElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLHtmlChild marks <head> as a permitted child of <html> (HtmlChild).
+func (*HeadElement) HTMLHtmlChild() {}
 
 func (e *HeadElement) AriaUnsafe(name string, s string) *HeadElement {
 	tag := strings.ToLower("aria-" + name)
@@ -179,46 +154,10 @@ func (e *HeadElement) Aria(name string, s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Autocapitalize(a Autocapitalize) *HeadElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Autocorrect(v ...Autocorrect) *HeadElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *HeadElement) Autofocus(b bool) *HeadElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *HeadElement) Class(s ...string) *HeadElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Contenteditable(v ...Contenteditable) *HeadElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -251,32 +190,6 @@ func (e *HeadElement) Draggable(a Draggable) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Enterkeyhint(a Enterkeyhint) *HeadElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *HeadElement) Exportparts(s string) *HeadElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *HeadElement) Headingoffset(i int) *HeadElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeadElement) Headingreset(b bool) *HeadElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HeadElement) Hidden(v ...Hidden) *HeadElement {
@@ -295,60 +208,6 @@ func (e *HeadElement) Id(s string) *HeadElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeadElement) Inert(b bool) *HeadElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *HeadElement) Inputmode(a Inputmode) *HeadElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *HeadElement) Is(s string) *HeadElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *HeadElement) Itemid(s string) *HeadElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *HeadElement) Itemprop(s ...string) *HeadElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *HeadElement) Itemref(s ...string) *HeadElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeadElement) Itemscope(b bool) *HeadElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *HeadElement) Itemtype(s ...string) *HeadElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *HeadElement) Lang(s string) *HeadElement {
 	e.attributes.Set("lang", s)
 
@@ -357,12 +216,6 @@ func (e *HeadElement) Lang(s string) *HeadElement {
 
 func (e *HeadElement) Nonce(s string) *HeadElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *HeadElement) Part(s ...string) *HeadElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -385,24 +238,6 @@ func (e *HeadElement) Role(s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Slot(s string) *HeadElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Spellcheck(v ...Spellcheck) *HeadElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *HeadElement) Style(s string) *HeadElement {
 	e.attributes.Set("style", s)
 
@@ -421,39 +256,13 @@ func (e *HeadElement) Title(s string) *HeadElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Translate(v ...Translate) *HeadElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Writingsuggestions(v ...Writingsuggestions) *HeadElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *HeadElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<head>"); err != nil {
 			return err

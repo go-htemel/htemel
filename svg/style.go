@@ -15,7 +15,6 @@ import (
 type StyleElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Style creates a tag <style> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Style(children ...Content) *StyleElement {
 	}
 
 	return node
-}
-
-// StyleIf creates a tag <style> instance that is only rendered when condition is true.
-func StyleIf(condition bool, children ...Content) *StyleElement {
-	if condition {
-		return Style(children...)
-	}
-
-	return &StyleElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// StyleTernary creates a tag <style> containing then when condition is true, otherwise containing otherwise.
-func StyleTernary(condition bool, then Content, otherwise Content) *StyleElement {
-	if condition {
-		return Style(then)
-	}
-	return Style(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *StyleElement) Textf(format string, args ...any) *StyleElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) If(cond bool, child Content) *StyleElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StyleElement) IfElse(cond bool, then, els Content) *StyleElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) IfThen(cond bool, fn func(*StyleElement)) *StyleElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *StyleElement) AddClass(classes ...string) *StyleElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *StyleElement) Class(classes ...string) *StyleElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *StyleElement) SetClass(classes ...string) *StyleElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *StyleElement) AddClass(classes ...string) *StyleElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -222,12 +196,6 @@ func (e *StyleElement) Autofocus(b bool) *StyleElement {
 
 func (e *StyleElement) BaselineShift(s string) *StyleElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *StyleElement) Class(s ...string) *StyleElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -668,12 +636,10 @@ func (e *StyleElement) XmlSpace(a XmlSpace) *StyleElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *StyleElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<style>"); err != nil {
 			return err

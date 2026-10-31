@@ -57,16 +57,18 @@ func main() {
     loggedIn := true
     // Or, if you prefer, children can be passed directly to the base element
     page := MainLayout(
-        DivTernary(
-            loggedIn,
-            Group(
-                Navigation(),
-                Div(
-                    P().Text("Welcome back!"),
+        Div(
+            IfElse(
+                loggedIn,
+                Group(
+                    Navigation(),
+                    Div(
+                        P().Text("Welcome back!"),
+                    ),
                 ),
-            ),
-            Div(
-                P().Text("Please log in."),
+                Div(
+                    P().Text("Please log in."),
+                ),
             ),
         ),
     )
@@ -86,7 +88,35 @@ The renderer does not add indentation or newlines.
 
 ### Rendering
 
-Every `Node` has `Render(w io.Writer) error`, which writes directly to `w` with no buffering of its own. When `w` is an unbuffered destination such as an `http.ResponseWriter` or `os.Stdout`, use `htemel.Render(w, node)`, which wraps it in a buffer and flushes once, or `htemel.RenderString` / `htemel.RenderBytes` to get the output in memory. Calling `node.Render(w)` directly is fine when `w` is already a `*bytes.Buffer`, `*strings.Builder` or `*bufio.Writer`.
+Every `Node` has `Render(w io.Writer) error`, which writes directly to `w` with no buffering of its own. When `w` is an unbuffered destination such as `os.Stdout`, use `htemel.Render(w, node)`, which wraps it in a buffer and flushes once, or `htemel.RenderString` / `htemel.RenderBytes` to get the output in memory. Calling `node.Render(w)` directly is fine when `w` is already a `*bytes.Buffer`, `*strings.Builder` or `*bufio.Writer`.
+
+If a component returns an error halfway through the tree, whatever was already written stays in `w`. On an `http.ResponseWriter` that is half a page, sent with a 200 status. Serve pages with `htemel.Handler` or `htemel.Write`, which render the whole page into a buffer and write nothing when rendering fails:
+
+```go
+mux.Handle("GET /{$}", htemel.Handler(func(r *http.Request) htemel.Node {
+    return views.Home(r.URL.Query().Get("q")) // a render error becomes a plain-text 500, logged
+}))
+
+func profile(w http.ResponseWriter, r *http.Request) {
+    if err := htemel.Write(w, r, views.Profile(user)); err != nil {
+        // Nothing has been written yet: send whatever error page you like.
+        http.Error(w, "could not render profile", http.StatusInternalServerError)
+    }
+}
+```
+
+`Write` sets `Content-Type: text/html; charset=utf-8` unless you set one. `htemel.RenderContext(ctx, w, node)` is `Render` with a context, and `Write` and `Handler` pass the request context. A component reaches it with `htemel.ContextOf(w)`, which is handy for request-scoped values such as a CSP nonce or a locale when threading a parameter through every layer is impractical:
+
+```go
+func NoncedScript(src string) htemel.Node {
+    return htemel.NodeFunc(func(w io.Writer) error {
+        nonce, _ := htemel.ContextOf(w).Value(nonceKey{}).(string)
+        return html.Script().Src(src).Nonce(nonce).Render(w)
+    })
+}
+```
+
+Explicit parameters remain the recommended way to pass data into components. `ContextOf` returns `context.Background()` outside `RenderContext`, `Write` and `Handler`.
 
 ### Controlling Element Placement
 
@@ -151,7 +181,7 @@ How the checks are expressed:
 - **Text.** `Text`, `Textf` and `htemel.Text(...)` are accepted wherever text is permitted.
   `Title`, `Script`, `Style`, `Textarea` and `Rp` take only text (`htemel.TextContent`).
 - **No children.** Void elements, and `Iframe` and `Selectedcontent` (which have an end tag but
-  no content), have no children parameter and no `Children`, `If`, `IfElse` or `Text` methods.
+  no content), have no children parameter and no `Children` or `Text` methods.
 
 What is not checked:
 
@@ -223,9 +253,67 @@ checking.
 
 - Use `Group` to return several sibling nodes without a wrapping element. A `Group` is also accepted anywhere and its children are not checked.
 
-- The element-level `If`, `IfElse` and `<Tag>If`/`<Tag>Ternary` constructors are checked: `Ul().If(cond, Li())` compiles, `Ul().If(cond, Div())` does not.
+- For a conditional child that is still checked against the parent, use a plain `if` or `With`: `Ul().With(func(u *UlElement) { if cond { u.Children(Li()) } })`. (The per-element `DivIf`, `DivTernary`, `.If`, `.IfElse` and `.IfThen` were removed in v0.4.0; `htemel.If`/`IfElse` and `With` replace them.)
 
-`With` is still available when you need the typed element itself inside a function. The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `Each`, an inline SVG icon, and a page wrapper that accepts children.
+`With` is also how you get at the typed element itself inside a function. The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `Each`, an inline SVG icon, and a page wrapper that accepts children.
+
+#### Classes
+
+`Class` is additive: it appends to the classes already set, keeps their order and skips any that
+are already present, so a component's base classes survive a caller adding its own. `SetClass`
+replaces the attribute, and `ToggleClass` adds or removes one class:
+
+```go
+func Card(extra ...string) *DivElement {
+    return Div().Class("card rounded").Class(extra...)
+}
+
+Card("shadow", "card")          // <div class="card rounded shadow"></div>
+Card().SetClass("plain")        // <div class="plain"></div>
+Card().ToggleClass("rounded", false) // <div class="card"></div>
+```
+
+Setting `class` through `Attr`, `Attrs` or a helper package such as `datastar` still writes the
+value as given, replacing what was there.
+
+#### Rare Global Attributes
+
+The `html` package keeps the everyday global attributes as methods on every element (`Id`,
+`Class`, `Style`, `Title`, `Lang`, `Dir`, `Hidden`, `Tabindex`, `Role`, `Autofocus`, `Draggable`,
+`Popover`, `Nonce`, `Data`, `Aria`). The rest (microdata, `Inert`, `Slot`, `Part`, `Spellcheck`,
+`Translate`, `Inputmode`, `Enterkeyhint`, `Contenteditable`, `Accesskey`, …) are fields of
+`html.Globals`, applied with one call:
+
+```go
+Div().Globals(Globals{Itemscope: true, Itemtype: []string{"https://schema.org/Person"}})
+Input().Name("q").Globals(Globals{Enterkeyhint: EnterkeyhintSearch, Spellcheck: SpellcheckFalse})
+```
+
+Zero fields are skipped, bool fields render bare, and fields are applied in declaration order.
+SVG and MathML elements keep all their attributes as methods.
+
+#### Composite Components
+
+A component that wraps a real control in presentational markup, such as a styled `<select>`
+inside a `<div>`, usually embeds the outer element (for its content category, `Render` and
+builder methods) and redirects the attribute methods to the control, so attributes and Datastar
+bindings land on the control:
+
+```go
+type SelectElement struct {
+    *html.DivElement                 // markers, Render, Class, Id, ... of the wrapper
+    control *html.SelectElement
+}
+
+func (s *SelectElement) Attrs(a ...htemel.Attribute) *SelectElement { s.control.Attrs(a...); return s }
+func (s *SelectElement) SetAttr(name, value string)                 { s.control.SetAttr(name, value) }
+func (s *SelectElement) SetAttrUnsafe(name, value string)           { s.control.SetAttrUnsafe(name, value) }
+```
+
+Methods declared on the composite win over the promoted ones, so this is three short methods.
+htemel does not ship a helper for it: a generic one cannot be embedded next to the outer element
+(the promoted `Render` and `SetAttr` would be ambiguous) and cannot return the composite's own
+type from `Attrs`, so it would save about two lines (ADR 0013).
 
 #### Forwarding Attributes
 
@@ -361,17 +449,18 @@ The primary goal of **htemel** is to provide a **compile-time safe** method for 
 html.Meta().HttpEquiv(html.MetaHttpEquivContentType)
 ```
 
-Attributes are mutually exclusive per element, with the most recent chain call taking precedence:
+Attributes are mutually exclusive per element, with the most recent chain call taking precedence (`class` is the exception: `Class` adds, `SetClass` replaces):
 
 ```go
-// Space-separated token attributes (e.g., class) accept multiple strings
-html.A().Class("active", "hover:bg-indigo-400").Class("this-takes-precedence")
+html.A().Href("/old").Title("x").Href("/new")
+html.A().Class("active", "hover:bg-indigo-400").Class("active", "ring")
 ```
 
 **Output**:
 
 ```html
-<a class="this-takes-precedence"></a>
+<a href="/new" title="x"></a>
+<a class="active hover:bg-indigo-400 ring"></a>
 ```
 
 ## Why htemel?

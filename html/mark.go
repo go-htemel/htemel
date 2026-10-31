@@ -17,7 +17,6 @@ type MarkElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Mark creates a tag <mark> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Mark(children ...htemel.PhrasingContent) *MarkElement {
 	}
 
 	return node
-}
-
-// MarkIf creates a tag <mark> instance that is only rendered when condition is true.
-func MarkIf(condition bool, children ...htemel.PhrasingContent) *MarkElement {
-	if condition {
-		return Mark(children...)
-	}
-
-	return &MarkElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MarkTernary creates a tag <mark> containing then when condition is true, otherwise containing otherwise.
-func MarkTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *MarkElement {
-	if condition {
-		return Mark(then)
-	}
-	return Mark(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *MarkElement) Textf(format string, args ...any) *MarkElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MarkElement) If(cond bool, child htemel.PhrasingContent) *MarkElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MarkElement) IfElse(cond bool, then, els htemel.PhrasingContent) *MarkElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MarkElement) IfThen(cond bool, fn func(*MarkElement)) *MarkElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MarkElement) AddClass(classes ...string) *MarkElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MarkElement) Class(classes ...string) *MarkElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MarkElement) SetClass(classes ...string) *MarkElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MarkElement) AddClass(classes ...string) *MarkElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *MarkElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *MarkElement) Accesskey(r rune) *MarkElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *MarkElement) Globals(g Globals) *MarkElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *MarkElement) Aria(name string, s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Autocapitalize(a Autocapitalize) *MarkElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Autocorrect(v ...Autocorrect) *MarkElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *MarkElement) Autofocus(b bool) *MarkElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MarkElement) Class(s ...string) *MarkElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Contenteditable(v ...Contenteditable) *MarkElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *MarkElement) Draggable(a Draggable) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Enterkeyhint(a Enterkeyhint) *MarkElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *MarkElement) Exportparts(s string) *MarkElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *MarkElement) Headingoffset(i int) *MarkElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MarkElement) Headingreset(b bool) *MarkElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MarkElement) Hidden(v ...Hidden) *MarkElement {
@@ -306,60 +219,6 @@ func (e *MarkElement) Id(s string) *MarkElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MarkElement) Inert(b bool) *MarkElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *MarkElement) Inputmode(a Inputmode) *MarkElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *MarkElement) Is(s string) *MarkElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *MarkElement) Itemid(s string) *MarkElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *MarkElement) Itemprop(s ...string) *MarkElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *MarkElement) Itemref(s ...string) *MarkElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MarkElement) Itemscope(b bool) *MarkElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *MarkElement) Itemtype(s ...string) *MarkElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *MarkElement) Lang(s string) *MarkElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *MarkElement) Lang(s string) *MarkElement {
 
 func (e *MarkElement) Nonce(s string) *MarkElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *MarkElement) Part(s ...string) *MarkElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *MarkElement) Role(s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Slot(s string) *MarkElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Spellcheck(v ...Spellcheck) *MarkElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *MarkElement) Style(s string) *MarkElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *MarkElement) Title(s string) *MarkElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Translate(v ...Translate) *MarkElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Writingsuggestions(v ...Writingsuggestions) *MarkElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MarkElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<mark>"); err != nil {
 			return err

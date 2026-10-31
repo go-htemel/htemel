@@ -15,7 +15,6 @@ import (
 type TextPathElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // TextPath creates a tag <textPath> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func TextPath(children ...Content) *TextPathElement {
 	}
 
 	return node
-}
-
-// TextPathIf creates a tag <textPath> instance that is only rendered when condition is true.
-func TextPathIf(condition bool, children ...Content) *TextPathElement {
-	if condition {
-		return TextPath(children...)
-	}
-
-	return &TextPathElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// TextPathTernary creates a tag <textPath> containing then when condition is true, otherwise containing otherwise.
-func TextPathTernary(condition bool, then Content, otherwise Content) *TextPathElement {
-	if condition {
-		return TextPath(then)
-	}
-	return TextPath(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *TextPathElement) Textf(format string, args ...any) *TextPathElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TextPathElement) If(cond bool, child Content) *TextPathElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TextPathElement) IfElse(cond bool, then, els Content) *TextPathElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TextPathElement) IfThen(cond bool, fn func(*TextPathElement)) *TextPathElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *TextPathElement) AddClass(classes ...string) *TextPathElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TextPathElement) Class(classes ...string) *TextPathElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TextPathElement) SetClass(classes ...string) *TextPathElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TextPathElement) AddClass(classes ...string) *TextPathElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -261,12 +235,6 @@ func (e *TextPathElement) Autofocus(b bool) *TextPathElement {
 
 func (e *TextPathElement) BaselineShift(s string) *TextPathElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *TextPathElement) Class(s ...string) *TextPathElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -707,12 +675,10 @@ func (e *TextPathElement) XmlSpace(a XmlSpace) *TextPathElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TextPathElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<textPath>"); err != nil {
 			return err

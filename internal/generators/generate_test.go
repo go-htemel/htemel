@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -44,6 +45,7 @@ func TestCheckNamesCollisions(t *testing.T) {
 		"mangled attributes":  {{Tag: "path", Attributes: []spec.Attribute{str("stroke-width"), str("strokeWidth")}}},
 		"built-in method":     {{Tag: "g", Attributes: []spec.Attribute{str("render")}}},
 		"void built-in still": {{Tag: "br", Void: true, Attributes: []spec.Attribute{str("attr")}}},
+		"SetClass built-in":   {{Tag: "div", Attributes: []spec.Attribute{str("set-class")}}},
 	} {
 		if err := CheckNames(elems); err == nil {
 			t.Errorf("%s: expected a collision error", name)
@@ -51,6 +53,82 @@ func TestCheckNamesCollisions(t *testing.T) {
 	}
 	if err := CheckNames([]*spec.Element{{Tag: "br", Void: true, Attributes: []spec.Attribute{str("text")}}}); err != nil {
 		t.Errorf("void element has no Text method, so a text attribute is fine: %v", err)
+	}
+	// The retired per-element conditionals no longer reserve names.
+	if err := CheckNames([]*spec.Element{{Tag: "div", Attributes: []spec.Attribute{str("if"), str("if-else"), str("if-then")}}, {Tag: "divIf"}}); err != nil {
+		t.Errorf("If/IfElse/IfThen/XxxIf are no longer generated: %v", err)
+	}
+	// class is handled by the built-in Class methods, not a generated setter.
+	if err := CheckNames([]*spec.Element{{Tag: "div", Attributes: []spec.Attribute{&spec.AttributeTypeSST{Name: "class"}}}}); err != nil {
+		t.Errorf("class attribute must not collide with the built-in Class: %v", err)
+	}
+}
+
+// TestMoveGlobals checks ADR 0010: only the merged global attributes not in the direct list move
+// into Globals; an element's own attribute of the same name keeps its setter; the Globals
+// method and struct are checked for collisions.
+func TestMoveGlobals(t *testing.T) {
+	slot := &spec.AttributeTypeString{Name: "slot"}
+	id := &spec.AttributeTypeString{Name: "id"}
+	ownSlot := &spec.AttributeTypeString{Name: "slot"}
+	sp := &spec.Spec{Name: "HTML", Attributes: []spec.Attribute{id, slot}, Elements: []*spec.Element{
+		{Tag: "div"},
+		{Tag: "custom", Attributes: []spec.Attribute{ownSlot}},
+	}}
+	mergeGlobals(sp)
+	p, err := NewPlan(sp, "html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.moveGlobals(sp.Attributes, HTMLDirectGlobals); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.Check(); err != nil {
+		t.Fatal(err)
+	}
+	if len(p.Globals) != 1 || p.Globals[0] != spec.Attribute(slot) {
+		t.Fatalf("Globals = %v, want [slot]", p.Globals)
+	}
+	names := func(tag string) (out []string) {
+		for _, a := range p.element(tag).Attributes {
+			out = append(out, a.GetName())
+		}
+		return out
+	}
+	if got := names("div"); !slices.Equal(got, []string{"id"}) {
+		t.Errorf("div attributes = %v, want [id]", got)
+	}
+	if got := names("custom"); !slices.Equal(got, []string{"slot", "id"}) || p.element("custom").Attributes[0] != spec.Attribute(ownSlot) {
+		t.Errorf("custom must keep its own slot setter: %v", got)
+	}
+	if !p.element("div").HasGlobals {
+		t.Error("div must get the Globals method")
+	}
+
+	// A global named "globals" would collide with the Globals method.
+	clash := &spec.Spec{Name: "HTML", Attributes: []spec.Attribute{slot}, Elements: []*spec.Element{
+		{Tag: "div", Attributes: []spec.Attribute{&spec.AttributeTypeString{Name: "globals"}}},
+	}}
+	mergeGlobals(clash)
+	p, err = NewPlan(clash, "html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.moveGlobals(clash.Attributes, HTMLDirectGlobals); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.Check(); err == nil || !strings.Contains(err.Error(), "Globals") {
+		t.Errorf("expected a Globals collision, got %v", err)
+	}
+
+	// Prefixed families cannot become struct fields.
+	fam := &spec.Spec{Name: "HTML", Attributes: []spec.Attribute{&spec.AttributeTypePrefixedCustom{Name: "x"}}, Elements: []*spec.Element{{Tag: "div"}}}
+	mergeGlobals(fam)
+	if p, err = NewPlan(fam, "html"); err != nil {
+		t.Fatal(err)
+	}
+	if err := p.moveGlobals(fam.Attributes, HTMLDirectGlobals); err == nil {
+		t.Error("expected an error for a prefixed global family")
 	}
 }
 
@@ -122,7 +200,8 @@ func TestGenerateSVGFixture(t *testing.T) {
 		"func (e *GElement) XmlSpace(",
 		"func (e *CircleElement) Opacity(f float64)",
 		"func (e *CircleElement) Tabindex(i int)",
-		"func (e *RectElement) Class(s ...string)",
+		"func (e *RectElement) Class(classes ...string)",
+		"func (e *RectElement) SetClass(classes ...string)",
 		`"stroke-width"`,
 		`"stroke-linecap"`,
 		`"viewBox"`,
@@ -313,7 +392,7 @@ func TestGenerateContentModelFixture(t *testing.T) {
 	pkgDir := filepath.Join(dir, "html")
 	slots := filepath.Join(dir, "slots.go.txt")
 
-	if err = GenerateWith(&sp, pkgDir, "html", Options{SlotsFile: slots}); err != nil {
+	if err = GenerateWith(&sp, pkgDir, "html", Options{SlotsFile: slots, DirectGlobals: HTMLDirectGlobals}); err != nil {
 		t.Fatal(err)
 	}
 	read := func(name string) string {
@@ -326,8 +405,8 @@ func TestGenerateContentModelFixture(t *testing.T) {
 	file := func(tag string) string { return read(filepath.Join(pkgDir, tag+".go")) }
 
 	for tag, wants := range map[string][]string{
-		"div":      {"func Div(children ...htemel.FlowContent) *DivElement", "htemel.FlowMarker htemel.PalpableMarker attributes", "func (e *DivElement) Text(", "func DivTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent)", "func (*DivElement) HTMLSelectChild() {}", "func (e *DivElement) Popover(v ...Popover) *DivElement"},
-		"p":        {"func P(children ...htemel.PhrasingContent) *PElement", "func (e *PElement) If(cond bool, child htemel.PhrasingContent)"},
+		"div":      {"func Div(children ...htemel.FlowContent) *DivElement", "htemel.FlowMarker htemel.PalpableMarker attributes", "func (e *DivElement) Text(", "func (e *DivElement) Globals(g Globals) *DivElement", "func (e *DivElement) Class(classes ...string) *DivElement", "func (e *DivElement) SetClass(classes ...string) *DivElement", "func (e *DivElement) Tabindex(i int) *DivElement", "func (*DivElement) HTMLSelectChild() {}", "func (e *DivElement) Popover(v ...Popover) *DivElement"},
+		"p":        {"func P(children ...htemel.PhrasingContent) *PElement"},
 		"span":     {"htemel.PhrasingMarker htemel.PalpableMarker attributes", "func (e *SpanElement) Popover(v ...Popover)"},
 		"ul":       {"type UlChild interface { htemel.Node HTMLUlChild() }", "func Ul(children ...UlChild) *UlElement", "func (e *UlElement) Type(a UlType)", "type UlType string"},
 		"li":       {"func (*LiElement) HTMLUlChild() {}", "func Li(children ...htemel.FlowContent)"},
@@ -335,7 +414,7 @@ func TestGenerateContentModelFixture(t *testing.T) {
 		"tr":       {"func Tr(children ...TrChild)", "func (*TrElement) HTMLTableChild() {}"},
 		"td":       {"func (*TdElement) HTMLTrChild() {}"},
 		"a":        {"func A(children ...htemel.FlowContent)", "htemel.PhrasingMarker htemel.InteractiveMarker htemel.PalpableMarker", "Content model: transparent."},
-		"img":      {"func Img() *ImgElement", "func ImgIf(condition bool) *ImgElement"},
+		"img":      {"func Img() *ImgElement", "func (e *ImgElement) Globals(g Globals) *ImgElement"},
 		"iframe":   {"func Iframe() *IframeElement", `"</iframe>"`, "takes no children"},
 		"script":   {"func Script(children ...htemel.TextContent)", `render.RawText("script", text)`, "type ScriptType string", "ScriptTypeModule ScriptType = \"module\"", "func ScriptTypeCustom(s string) ScriptType"},
 		"title":    {"func Title(children ...htemel.TextContent)"},
@@ -357,7 +436,8 @@ func TestGenerateContentModelFixture(t *testing.T) {
 	}
 	for tag, bads := range map[string][]string{
 		"img":    {"Children(", "Text(", "children []"},
-		"iframe": {"Children(", "Text(", "IframeTernary"},
+		"iframe": {"Children(", "Text("},
+		"div":    {"DivIf", "DivTernary", ") If(", ") IfElse(", ") IfThen(", "skipRender", ") Itemscope(", ") Itemprop(", ") Translate("},
 		"meta":   {"Children("},
 		"ul":     {"func (e *UlElement) Text("},
 		"script": {"HTMLUlChild"}, // promoted from htemel.ScriptSupportingMarker
@@ -377,6 +457,21 @@ func TestGenerateContentModelFixture(t *testing.T) {
 			t.Errorf("enums.go is missing %s", want)
 		}
 	}
+	globalsSrc := read(filepath.Join(pkgDir, "globals.go"))
+	for _, want := range []string{"type Globals struct {", "Itemscope bool", "Itemprop []string", "Translate Translate", "func (g Globals) apply(a *render.Attrs)"} {
+		if !strings.Contains(globalsSrc, want) {
+			t.Errorf("globals.go is missing %s", want)
+		}
+	}
+	for _, bad := range []string{"Popover", "Class", "Tabindex"} {
+		if strings.Contains(globalsSrc, bad) {
+			t.Errorf("globals.go must not contain the direct global %s", bad)
+		}
+	}
+	if i, j := strings.Index(globalsSrc, `"itemscope"`), strings.Index(globalsSrc, `"translate"`); i < 0 || i > j {
+		t.Error("Globals must apply fields in spec order")
+	}
+
 	slotSrc := read(slots)
 	for _, want := range []string{"package htemel", "func (Wildcard) HTMLUlChild() {}", "func (NodeFunc) HTMLUlChild() {}", "func (ScriptSupportingMarker) HTMLUlChild() {}", "func (*TextElement) HTMLOptionChild() {}", "func (PhrasingMarker) HTMLOptionChild() {}"} {
 		if !strings.Contains(slotSrc, want) {
@@ -414,6 +509,7 @@ func main() {
 			html.Ul(html.Li().Text("1"), htemel.Each([]string{"2"}, func(s string) htemel.Node { return html.Li().Text(s) }), html.Script()),
 			html.Table(html.Tr(html.Td().Text("c"))),
 			html.Iframe().Popover(html.PopoverManual),
+			html.Div().Class("a b").Class("b c").Globals(html.Globals{Translate: html.TranslateNo, Itemscope: true, Itemprop: []string{"x", "y"}}).Tabindex(1),
 			html.Select(html.Option(html.Span().Text("o")), html.Div()),
 			html.Template(html.Tr(), html.Li()),
 		),
@@ -434,7 +530,7 @@ func main() {
 	want := `<html><head><title>t</title><meta><script>a < b</script></head><body>` +
 		`<div><p><span>x &amp; y</span><a><img></a></p><h1>h</h1></div>` +
 		`<ul><li>1</li><li>2</li><script></script></ul><table><tr><td>c</td></tr></table>` +
-		`<iframe popover="manual"></iframe><select><option><span>o</span></option><div></div></select>` +
+		`<iframe popover="manual"></iframe><div class="a b c" itemscope itemprop="x y" translate="no" tabindex="1"></div><select><option><span>o</span></option><div></div></select>` +
 		`<template><tr></tr><li></li></template></body></html>`
 	if string(got) != want {
 		t.Errorf("rendered\n%s\nwant\n%s", got, want)

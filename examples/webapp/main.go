@@ -9,8 +9,8 @@ import (
 func main() {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", handlers.GetRoot)
-	mux.HandleFunc("/about", handlers.GetAbout)
+	mux.Handle("/", handlers.GetRoot)
+	mux.Handle("/about", handlers.GetAbout)
 	mux.HandleFunc("/contact", handlers.GetContact)
 
 	if err := http.ListenAndServe(":8080", mux); err != nil {

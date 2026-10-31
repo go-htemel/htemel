@@ -1,6 +1,6 @@
 # 0011 — `RenderContext` and an HTTP handler helper
 
-**Status:** Proposed
+**Status:** Accepted (v0.4.0)
 
 ## Context
 
@@ -22,3 +22,7 @@ output on error with a 200 status already sent.
 
 - The obvious HTTP path becomes the safe path.
 - Components stay plain functions; context is available but not implicit.
+
+## Outcome
+
+Implemented in v0.4.0 as `RenderContext(ctx, w, n)`, `ContextOf(w)`, `Write(w, r, n)` (buffers the whole page; on error writes nothing and returns the error, leaving the response to the caller) and `Handler(func(*http.Request) Node)` (200 on success; on error logs with the standard `log` package and sends a plain-text 500).

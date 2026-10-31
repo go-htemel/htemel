@@ -1,6 +1,6 @@
 # 0010 — Move rare global attributes behind a `Globals` value
 
-**Status:** Proposed — needs the owner's call
+**Status:** Accepted (v0.4.0)
 
 ## Context
 
@@ -30,3 +30,7 @@ Struct fields carry the same enum types; zero values are omitted.
 - Breaking; migration is mechanical but touches generated docs and the `ui` library.
 - Alternative considered and rejected: a sub-accessor (`Div().Global().Itemprop()`) breaks
   the chain's return type.
+
+## Outcome
+
+Implemented in v0.4.0 for the `html` package only (SVG/MathML "globals" are presentation attributes typed constantly, so they stay methods). Final keep-list (`generators.HTMLDirectGlobals`): `id`, `class`, `style`, `title`, `lang`, `dir`, `hidden`, `tabindex`, `role`, `autofocus`, `draggable`, `popover`, `nonce`, `data`, `aria`. The other 21 globals (`accesskey`, `autocapitalize`, `autocorrect`, `contenteditable`, `enterkeyhint`, `exportparts`, `headingoffset`, `headingreset`, `inert`, `inputmode`, `is`, `itemid`, `itemprop`, `itemref`, `itemscope`, `itemtype`, `part`, `slot`, `spellcheck`, `translate`, `writingsuggestions`) are fields of `html.Globals` (shared enum types, `string`, `bool`, `int`, `[]string` for token lists, `string` for the one-character `accesskey`), applied in declaration order with zero values skipped. `*html.DivElement` went from 54 to 32 methods.

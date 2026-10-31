@@ -15,9 +15,9 @@ choice rather than an accident.
 | [0005](0005-shared-enum-types.md) | One enum type per attribute, variadic setters for empty-allowed enums | Accepted |
 | [0006](0006-dot-import-guidance.md) | Dot imports are a convenience, not the contract | Accepted |
 | [0007](0007-no-url-scheme-filtering.md) | URL attributes are escaped, not scheme-filtered | Accepted |
-| [0008](0008-retire-per-element-conditionals.md) | Retire `XxxIf`/`XxxTernary` and the `If*` methods | Proposed |
-| [0009](0009-class-semantics.md) | Make `Class` additive | Proposed |
-| [0010](0010-rare-globals-behind-a-struct.md) | Move rare global attributes behind a `Globals` value | Proposed |
-| [0011](0011-render-context-and-handler.md) | `RenderContext` and an HTTP handler helper | Proposed |
+| [0008](0008-retire-per-element-conditionals.md) | Retire `XxxIf`/`XxxTernary` and the `If*` methods | Accepted |
+| [0009](0009-class-semantics.md) | Make `Class` additive | Accepted |
+| [0010](0010-rare-globals-behind-a-struct.md) | Move rare global attributes behind a `Globals` value | Accepted |
+| [0011](0011-render-context-and-handler.md) | `RenderContext` and an HTTP handler helper | Accepted |
 | [0012](0012-debug-content-model-validator.md) | Runtime content-model validator for tests | Proposed |
-| [0013](0013-delegating-element-helper.md) | A helper for composite elements that wrap a control | Proposed |
+| [0013](0013-delegating-element-helper.md) | A helper for composite elements that wrap a control | Rejected |

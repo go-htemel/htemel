@@ -15,7 +15,6 @@ import (
 type MnElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Mn creates a tag <mn> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Mn(children ...Content) *MnElement {
 	}
 
 	return node
-}
-
-// MnIf creates a tag <mn> instance that is only rendered when condition is true.
-func MnIf(condition bool, children ...Content) *MnElement {
-	if condition {
-		return Mn(children...)
-	}
-
-	return &MnElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MnTernary creates a tag <mn> containing then when condition is true, otherwise containing otherwise.
-func MnTernary(condition bool, then Content, otherwise Content) *MnElement {
-	if condition {
-		return Mn(then)
-	}
-	return Mn(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MnElement) Textf(format string, args ...any) *MnElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MnElement) If(cond bool, child Content) *MnElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MnElement) IfElse(cond bool, then, els Content) *MnElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MnElement) IfThen(cond bool, fn func(*MnElement)) *MnElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MnElement) AddClass(classes ...string) *MnElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MnElement) Class(classes ...string) *MnElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MnElement) SetClass(classes ...string) *MnElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MnElement) AddClass(classes ...string) *MnElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -173,12 +147,6 @@ func (*MnElement) MathMLContent() {}
 // when false the attribute is omitted (and removed if previously set).
 func (e *MnElement) Autofocus(b bool) *MnElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MnElement) Class(s ...string) *MnElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -265,12 +233,10 @@ func (e *MnElement) Tabindex(i int) *MnElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MnElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<mn>"); err != nil {
 			return err

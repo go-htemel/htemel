@@ -17,7 +17,6 @@ type BdoElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Bdo creates a tag <bdo> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Bdo(children ...htemel.PhrasingContent) *BdoElement {
 	}
 
 	return node
-}
-
-// BdoIf creates a tag <bdo> instance that is only rendered when condition is true.
-func BdoIf(condition bool, children ...htemel.PhrasingContent) *BdoElement {
-	if condition {
-		return Bdo(children...)
-	}
-
-	return &BdoElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// BdoTernary creates a tag <bdo> containing then when condition is true, otherwise containing otherwise.
-func BdoTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *BdoElement {
-	if condition {
-		return Bdo(then)
-	}
-	return Bdo(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *BdoElement) Textf(format string, args ...any) *BdoElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BdoElement) If(cond bool, child htemel.PhrasingContent) *BdoElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BdoElement) IfElse(cond bool, then, els htemel.PhrasingContent) *BdoElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *BdoElement) IfThen(cond bool, fn func(*BdoElement)) *BdoElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *BdoElement) AddClass(classes ...string) *BdoElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *BdoElement) Class(classes ...string) *BdoElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *BdoElement) SetClass(classes ...string) *BdoElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *BdoElement) AddClass(classes ...string) *BdoElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *BdoElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *BdoElement) Accesskey(r rune) *BdoElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *BdoElement) Globals(g Globals) *BdoElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *BdoElement) Aria(name string, s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Autocapitalize(a Autocapitalize) *BdoElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Autocorrect(v ...Autocorrect) *BdoElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *BdoElement) Autofocus(b bool) *BdoElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *BdoElement) Class(s ...string) *BdoElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Contenteditable(v ...Contenteditable) *BdoElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *BdoElement) Draggable(a Draggable) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Enterkeyhint(a Enterkeyhint) *BdoElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *BdoElement) Exportparts(s string) *BdoElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *BdoElement) Headingoffset(i int) *BdoElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BdoElement) Headingreset(b bool) *BdoElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BdoElement) Hidden(v ...Hidden) *BdoElement {
@@ -306,60 +219,6 @@ func (e *BdoElement) Id(s string) *BdoElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BdoElement) Inert(b bool) *BdoElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *BdoElement) Inputmode(a Inputmode) *BdoElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *BdoElement) Is(s string) *BdoElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *BdoElement) Itemid(s string) *BdoElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *BdoElement) Itemprop(s ...string) *BdoElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *BdoElement) Itemref(s ...string) *BdoElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BdoElement) Itemscope(b bool) *BdoElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *BdoElement) Itemtype(s ...string) *BdoElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *BdoElement) Lang(s string) *BdoElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *BdoElement) Lang(s string) *BdoElement {
 
 func (e *BdoElement) Nonce(s string) *BdoElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *BdoElement) Part(s ...string) *BdoElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *BdoElement) Role(s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Slot(s string) *BdoElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Spellcheck(v ...Spellcheck) *BdoElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *BdoElement) Style(s string) *BdoElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *BdoElement) Title(s string) *BdoElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Translate(v ...Translate) *BdoElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Writingsuggestions(v ...Writingsuggestions) *BdoElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *BdoElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<bdo>"); err != nil {
 			return err

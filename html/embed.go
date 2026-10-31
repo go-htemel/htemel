@@ -17,8 +17,6 @@ type EmbedElement struct {
 	htemel.InteractiveMarker
 	htemel.PalpableMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Embed creates a tag <embed> instance and returns it for further modification.
@@ -30,38 +28,39 @@ func Embed() *EmbedElement {
 	return node
 }
 
-// EmbedIf creates a tag <embed> instance that is only rendered when condition is true.
-func EmbedIf(condition bool) *EmbedElement {
-	if condition {
-		return Embed()
-	}
-
-	return &EmbedElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *EmbedElement) With(fn func(*EmbedElement)) *EmbedElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *EmbedElement) IfThen(cond bool, fn func(*EmbedElement)) *EmbedElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *EmbedElement) Class(classes ...string) *EmbedElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *EmbedElement) AddClass(classes ...string) *EmbedElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *EmbedElement) SetClass(classes ...string) *EmbedElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *EmbedElement) AddClass(classes ...string) *EmbedElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -121,6 +120,13 @@ func (e *EmbedElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *EmbedElement) Globals(g Globals) *EmbedElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 func (e *EmbedElement) Height(i int) *EmbedElement {
 	e.attributes.Set("height", strconv.Itoa(i))
 
@@ -147,12 +153,6 @@ func (e *EmbedElement) Width(i int) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Accesskey(r rune) *EmbedElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *EmbedElement) AriaUnsafe(name string, s string) *EmbedElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -169,46 +169,10 @@ func (e *EmbedElement) Aria(name string, s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Autocapitalize(a Autocapitalize) *EmbedElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Autocorrect(v ...Autocorrect) *EmbedElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *EmbedElement) Autofocus(b bool) *EmbedElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *EmbedElement) Class(s ...string) *EmbedElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Contenteditable(v ...Contenteditable) *EmbedElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -241,32 +205,6 @@ func (e *EmbedElement) Draggable(a Draggable) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Enterkeyhint(a Enterkeyhint) *EmbedElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *EmbedElement) Exportparts(s string) *EmbedElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *EmbedElement) Headingoffset(i int) *EmbedElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *EmbedElement) Headingreset(b bool) *EmbedElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *EmbedElement) Hidden(v ...Hidden) *EmbedElement {
@@ -285,60 +223,6 @@ func (e *EmbedElement) Id(s string) *EmbedElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *EmbedElement) Inert(b bool) *EmbedElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *EmbedElement) Inputmode(a Inputmode) *EmbedElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *EmbedElement) Is(s string) *EmbedElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *EmbedElement) Itemid(s string) *EmbedElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *EmbedElement) Itemprop(s ...string) *EmbedElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *EmbedElement) Itemref(s ...string) *EmbedElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *EmbedElement) Itemscope(b bool) *EmbedElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *EmbedElement) Itemtype(s ...string) *EmbedElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *EmbedElement) Lang(s string) *EmbedElement {
 	e.attributes.Set("lang", s)
 
@@ -347,12 +231,6 @@ func (e *EmbedElement) Lang(s string) *EmbedElement {
 
 func (e *EmbedElement) Nonce(s string) *EmbedElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *EmbedElement) Part(s ...string) *EmbedElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -375,24 +253,6 @@ func (e *EmbedElement) Role(s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Slot(s string) *EmbedElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Spellcheck(v ...Spellcheck) *EmbedElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *EmbedElement) Style(s string) *EmbedElement {
 	e.attributes.Set("style", s)
 
@@ -411,40 +271,14 @@ func (e *EmbedElement) Title(s string) *EmbedElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Translate(v ...Translate) *EmbedElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Writingsuggestions(v ...Writingsuggestions) *EmbedElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <embed> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *EmbedElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<embed>"); err != nil {
 			return err

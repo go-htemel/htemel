@@ -28,6 +28,11 @@ type Options struct {
 	// element-specific child interfaces of the generated package. It only makes sense when
 	// generating the packages of github.com/go-htemel/htemel itself.
 	SlotsFile string
+	// DirectGlobals, when non-nil, lists the global attributes that stay direct setter methods.
+	// Every other global attribute moves into a generated Globals struct (globals.go), applied
+	// with a Globals method on every element (ADR 0010). The html package uses
+	// HTMLDirectGlobals; nil keeps every global a direct method.
+	DirectGlobals []string
 }
 
 // Generate writes one Go file per element of sp into dir, as package pkg. Global attributes are merged
@@ -44,6 +49,11 @@ func GenerateWith(sp *spec.Spec, dir, pkg string, opts Options) error {
 	p, err := NewPlan(sp, pkg)
 	if err != nil {
 		return err
+	}
+	if opts.DirectGlobals != nil {
+		if err := p.moveGlobals(sp.Attributes, opts.DirectGlobals); err != nil {
+			return err
+		}
 	}
 	if err := p.Check(); err != nil {
 		return err
@@ -65,6 +75,14 @@ func GenerateWith(sp *spec.Spec, dir, pkg string, opts Options) error {
 		if err := os.WriteFile(filepath.Join(dir, contentFile), p.contentSource(), 0o644); err != nil {
 			return err
 		}
+	}
+	globalsPath := filepath.Join(dir, globalsFile)
+	if len(p.Globals) > 0 {
+		if err := os.WriteFile(globalsPath, p.globalsSource(), 0o644); err != nil {
+			return err
+		}
+	} else if err := os.Remove(globalsPath); err != nil && !os.IsNotExist(err) {
+		return err
 	}
 
 	if err := fmtFiles(dir); err != nil {
@@ -100,19 +118,15 @@ func generateElement(dir string, p *Plan, e *ElementPlan) error {
 		SlotInterface,
 		BaseStruct,
 		BaseFunc,
-		BaseCondFunc,
-		BaseTernaryFunc,
 		ChildrenFunc,
 		WithFunc,
 		TextFunc,
 		TextfFunc,
-		IfFunc,
-		IfElseFunc,
-		IfThenFunc,
-		AddClassFunc,
+		ClassFunc,
 		ToggleClassFunc,
 		AttrFunc,
 		AttrsFunc,
+		GlobalsFunc,
 		SlotMethods,
 		BuildAttributes(p, e),
 		RenderFunc,
@@ -248,12 +262,12 @@ func (p *Plan) slotsSource() []byte {
 
 // elementMethods are the methods every generated element has regardless of its attributes; an
 // attribute whose setter name equals one of these would not compile.
-var elementMethods = []string{"With", "AddClass", "ToggleClass", "Attr", "AttrUnsafe", "BoolAttr", "Attrs", "SetAttr", "SetAttrUnsafe", "Render", "IfThen"}
+var elementMethods = []string{"With", "Class", "SetClass", "AddClass", "ToggleClass", "Attr", "AttrUnsafe", "BoolAttr", "Attrs", "SetAttr", "SetAttrUnsafe", "Render"}
 
 // childrenMethods are the extra methods of elements that take children; textMethods those of
 // elements that permit text.
 var (
-	childrenMethods = []string{"Children", "If", "IfElse"}
+	childrenMethods = []string{"Children"}
 	textMethods     = []string{"Text", "Textf"}
 )
 
@@ -280,6 +294,9 @@ func (p *Plan) Check() error {
 	if p.Foreign {
 		files[contentFile] = "the content interface file"
 	}
+	if len(p.Globals) > 0 {
+		files[globalsFile] = "the Globals struct file"
+	}
 
 	declare := func(name, what string) {
 		if prev, ok := pkgNames[name]; ok {
@@ -291,6 +308,18 @@ func (p *Plan) Check() error {
 
 	for _, s := range p.Slots {
 		declare(s.Iface, "child interface "+s.Iface)
+	}
+	if len(p.Globals) > 0 {
+		declare("Globals", "the Globals struct")
+		fields := map[string]string{}
+		for _, a := range p.Globals {
+			f, what := goIdent(a.GetName()), fmt.Sprintf("global attribute %q", a.GetName())
+			if prev, ok := fields[f]; ok {
+				problems = append(problems, fmt.Sprintf("Globals field %s is declared by both %s and %s", f, prev, what))
+				continue
+			}
+			fields[f] = what
+		}
 	}
 	for _, name := range slices.Sorted(maps.Keys(p.SharedEnums)) {
 		s := p.SharedEnums[name]
@@ -310,11 +339,7 @@ func (p *Plan) Check() error {
 		}
 
 		declare(tag, where)
-		declare(tag+"If", where)
 		declare(tag+"Element", where)
-		if e.HasChildren {
-			declare(tag+"Ternary", where)
-		}
 
 		methods := map[string]string{}
 		method := func(name, what string) {
@@ -326,6 +351,9 @@ func (p *Plan) Check() error {
 		}
 		for _, m := range elementMethods {
 			method(m, "the built-in "+m)
+		}
+		if e.HasGlobals {
+			method("Globals", "the built-in Globals")
 		}
 		if e.HasChildren {
 			for _, m := range childrenMethods {
@@ -347,6 +375,9 @@ func (p *Plan) Check() error {
 
 		for _, attr := range e.Attributes {
 			name := attr.GetName()
+			if name == classAttr {
+				continue // Class and SetClass are built-in methods
+			}
 			what := fmt.Sprintf("attribute %q", name)
 			method(goIdent(name), what)
 

@@ -17,7 +17,6 @@ type BlockquoteElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Blockquote creates a tag <blockquote> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Blockquote(children ...htemel.FlowContent) *BlockquoteElement {
 	}
 
 	return node
-}
-
-// BlockquoteIf creates a tag <blockquote> instance that is only rendered when condition is true.
-func BlockquoteIf(condition bool, children ...htemel.FlowContent) *BlockquoteElement {
-	if condition {
-		return Blockquote(children...)
-	}
-
-	return &BlockquoteElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// BlockquoteTernary creates a tag <blockquote> containing then when condition is true, otherwise containing otherwise.
-func BlockquoteTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *BlockquoteElement {
-	if condition {
-		return Blockquote(then)
-	}
-	return Blockquote(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *BlockquoteElement) Textf(format string, args ...any) *BlockquoteElement
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BlockquoteElement) If(cond bool, child htemel.FlowContent) *BlockquoteElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BlockquoteElement) IfElse(cond bool, then, els htemel.FlowContent) *BlockquoteElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *BlockquoteElement) IfThen(cond bool, fn func(*BlockquoteElement)) *BlockquoteElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *BlockquoteElement) AddClass(classes ...string) *BlockquoteElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *BlockquoteElement) Class(classes ...string) *BlockquoteElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *BlockquoteElement) SetClass(classes ...string) *BlockquoteElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *BlockquoteElement) AddClass(classes ...string) *BlockquoteElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,16 +142,17 @@ func (e *BlockquoteElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *BlockquoteElement) Globals(g Globals) *BlockquoteElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *BlockquoteElement) Cite(s string) *BlockquoteElement {
 	e.attributes.Set("cite", s)
-
-	return e
-}
-
-func (e *BlockquoteElement) Accesskey(r rune) *BlockquoteElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -198,46 +173,10 @@ func (e *BlockquoteElement) Aria(name string, s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Autocapitalize(a Autocapitalize) *BlockquoteElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Autocorrect(v ...Autocorrect) *BlockquoteElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *BlockquoteElement) Autofocus(b bool) *BlockquoteElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *BlockquoteElement) Class(s ...string) *BlockquoteElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Contenteditable(v ...Contenteditable) *BlockquoteElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -270,32 +209,6 @@ func (e *BlockquoteElement) Draggable(a Draggable) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Enterkeyhint(a Enterkeyhint) *BlockquoteElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *BlockquoteElement) Exportparts(s string) *BlockquoteElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *BlockquoteElement) Headingoffset(i int) *BlockquoteElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BlockquoteElement) Headingreset(b bool) *BlockquoteElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BlockquoteElement) Hidden(v ...Hidden) *BlockquoteElement {
@@ -314,60 +227,6 @@ func (e *BlockquoteElement) Id(s string) *BlockquoteElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BlockquoteElement) Inert(b bool) *BlockquoteElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *BlockquoteElement) Inputmode(a Inputmode) *BlockquoteElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *BlockquoteElement) Is(s string) *BlockquoteElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *BlockquoteElement) Itemid(s string) *BlockquoteElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *BlockquoteElement) Itemprop(s ...string) *BlockquoteElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *BlockquoteElement) Itemref(s ...string) *BlockquoteElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BlockquoteElement) Itemscope(b bool) *BlockquoteElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *BlockquoteElement) Itemtype(s ...string) *BlockquoteElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *BlockquoteElement) Lang(s string) *BlockquoteElement {
 	e.attributes.Set("lang", s)
 
@@ -376,12 +235,6 @@ func (e *BlockquoteElement) Lang(s string) *BlockquoteElement {
 
 func (e *BlockquoteElement) Nonce(s string) *BlockquoteElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *BlockquoteElement) Part(s ...string) *BlockquoteElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -404,24 +257,6 @@ func (e *BlockquoteElement) Role(s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Slot(s string) *BlockquoteElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Spellcheck(v ...Spellcheck) *BlockquoteElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *BlockquoteElement) Style(s string) *BlockquoteElement {
 	e.attributes.Set("style", s)
 
@@ -440,39 +275,13 @@ func (e *BlockquoteElement) Title(s string) *BlockquoteElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Translate(v ...Translate) *BlockquoteElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Writingsuggestions(v ...Writingsuggestions) *BlockquoteElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *BlockquoteElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<blockquote>"); err != nil {
 			return err

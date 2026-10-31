@@ -15,7 +15,6 @@ import (
 type FeCompositeElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // FeComposite creates a tag <feComposite> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func FeComposite(children ...Content) *FeCompositeElement {
 	}
 
 	return node
-}
-
-// FeCompositeIf creates a tag <feComposite> instance that is only rendered when condition is true.
-func FeCompositeIf(condition bool, children ...Content) *FeCompositeElement {
-	if condition {
-		return FeComposite(children...)
-	}
-
-	return &FeCompositeElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FeCompositeTernary creates a tag <feComposite> containing then when condition is true, otherwise containing otherwise.
-func FeCompositeTernary(condition bool, then Content, otherwise Content) *FeCompositeElement {
-	if condition {
-		return FeComposite(then)
-	}
-	return FeComposite(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *FeCompositeElement) Textf(format string, args ...any) *FeCompositeEleme
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeCompositeElement) If(cond bool, child Content) *FeCompositeElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeCompositeElement) IfElse(cond bool, then, els Content) *FeCompositeElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FeCompositeElement) IfThen(cond bool, fn func(*FeCompositeElement)) *FeCompositeElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FeCompositeElement) AddClass(classes ...string) *FeCompositeElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FeCompositeElement) Class(classes ...string) *FeCompositeElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FeCompositeElement) SetClass(classes ...string) *FeCompositeElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FeCompositeElement) AddClass(classes ...string) *FeCompositeElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -286,12 +260,6 @@ func (e *FeCompositeElement) Autofocus(b bool) *FeCompositeElement {
 
 func (e *FeCompositeElement) BaselineShift(s string) *FeCompositeElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Class(s ...string) *FeCompositeElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -732,12 +700,10 @@ func (e *FeCompositeElement) XmlSpace(a XmlSpace) *FeCompositeElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FeCompositeElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<feComposite>"); err != nil {
 			return err

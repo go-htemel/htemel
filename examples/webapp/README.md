@@ -66,17 +66,23 @@ func Index() FlowContent {
 
 ### Rendering Views
 
-Views are rendered to a buffer and then written to the HTTP response:
+`htemel.Handler` turns a function returning a view into an `http.Handler`. It renders into a
+buffer and only writes the response when rendering succeeded; on an error the client gets a 500
+and no half-rendered page:
 
 ```go
-buf := &bytes.Buffer{}
-if err := view.Render(buf); err != nil {
-    http.Error(w, "Failed to render view", http.StatusInternalServerError)
-    return
-}
+var GetRoot = htemel.Handler(func(r *http.Request) htemel.Node {
+    return views.Layout(views.PageData{Title: "htemel Example WebApp", Request: r}, views.Index())
+})
+```
 
-w.Header().Set("Content-Type", "text/html; charset=utf-8")
-w.Write(buf.Bytes())
+When a handler needs its own error page, `htemel.Write` does the same buffering and returns the
+error without writing anything:
+
+```go
+if err := htemel.Write(w, r, view); err != nil {
+    http.Error(w, "Failed to render view", http.StatusInternalServerError)
+}
 ```
 
 ### Component Composition

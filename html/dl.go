@@ -26,7 +26,6 @@ type DlElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []DlChild
-	skipRender bool
 }
 
 // Dl creates a tag <dl> instance and returns it for further modification.
@@ -43,26 +42,6 @@ func Dl(children ...DlChild) *DlElement {
 	return node
 }
 
-// DlIf creates a tag <dl> instance that is only rendered when condition is true.
-func DlIf(condition bool, children ...DlChild) *DlElement {
-	if condition {
-		return Dl(children...)
-	}
-
-	return &DlElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// DlTernary creates a tag <dl> containing then when condition is true, otherwise containing otherwise.
-func DlTernary(condition bool, then DlChild, otherwise DlChild) *DlElement {
-	if condition {
-		return Dl(then)
-	}
-	return Dl(otherwise)
-}
-
 // Children appends children to this element.
 func (e *DlElement) Children(children ...DlChild) *DlElement {
 	e.children = append(e.children, children...)
@@ -75,38 +54,33 @@ func (e *DlElement) With(fn func(*DlElement)) *DlElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DlElement) If(cond bool, child DlChild) *DlElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DlElement) IfElse(cond bool, then, els DlChild) *DlElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *DlElement) IfThen(cond bool, fn func(*DlElement)) *DlElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *DlElement) AddClass(classes ...string) *DlElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *DlElement) Class(classes ...string) *DlElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *DlElement) SetClass(classes ...string) *DlElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *DlElement) AddClass(classes ...string) *DlElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -166,9 +140,10 @@ func (e *DlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *DlElement) Accesskey(r rune) *DlElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *DlElement) Globals(g Globals) *DlElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -188,46 +163,10 @@ func (e *DlElement) Aria(name string, s string) *DlElement {
 	return e
 }
 
-func (e *DlElement) Autocapitalize(a Autocapitalize) *DlElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Autocorrect(v ...Autocorrect) *DlElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *DlElement) Autofocus(b bool) *DlElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *DlElement) Class(s ...string) *DlElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Contenteditable(v ...Contenteditable) *DlElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -260,32 +199,6 @@ func (e *DlElement) Draggable(a Draggable) *DlElement {
 	return e
 }
 
-func (e *DlElement) Enterkeyhint(a Enterkeyhint) *DlElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *DlElement) Exportparts(s string) *DlElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *DlElement) Headingoffset(i int) *DlElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DlElement) Headingreset(b bool) *DlElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DlElement) Hidden(v ...Hidden) *DlElement {
@@ -304,60 +217,6 @@ func (e *DlElement) Id(s string) *DlElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DlElement) Inert(b bool) *DlElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *DlElement) Inputmode(a Inputmode) *DlElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *DlElement) Is(s string) *DlElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *DlElement) Itemid(s string) *DlElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *DlElement) Itemprop(s ...string) *DlElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *DlElement) Itemref(s ...string) *DlElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DlElement) Itemscope(b bool) *DlElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *DlElement) Itemtype(s ...string) *DlElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *DlElement) Lang(s string) *DlElement {
 	e.attributes.Set("lang", s)
 
@@ -366,12 +225,6 @@ func (e *DlElement) Lang(s string) *DlElement {
 
 func (e *DlElement) Nonce(s string) *DlElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *DlElement) Part(s ...string) *DlElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -394,24 +247,6 @@ func (e *DlElement) Role(s string) *DlElement {
 	return e
 }
 
-func (e *DlElement) Slot(s string) *DlElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Spellcheck(v ...Spellcheck) *DlElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *DlElement) Style(s string) *DlElement {
 	e.attributes.Set("style", s)
 
@@ -430,39 +265,13 @@ func (e *DlElement) Title(s string) *DlElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Translate(v ...Translate) *DlElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Writingsuggestions(v ...Writingsuggestions) *DlElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *DlElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<dl>"); err != nil {
 			return err

@@ -3,6 +3,9 @@
 //	go run ./cmd/genelements -spec specs/html.json            # writes ./html, package html
 //	go run ./cmd/genelements -spec specs/svg.json -out svg    # writes ./svg,  package svg
 //
+// With -globals-struct the rarely used global attributes become fields of a generated Globals
+// struct instead of setter methods on every element (see generators.HTMLDirectGlobals).
+//
 // With -slots FILE it also writes FILE, a file of package htemel that lets the wildcard nodes of
 // package htemel (Group, Each, If, Unchecked, ...) and text satisfy the generated child interfaces
 // (html.UlChild, svg.Content). It is only meaningful inside the htemel module itself.
@@ -26,15 +29,16 @@ func main() {
 	outDir := flag.String("out", "", "output directory for generated files (default: lower-cased spec name, e.g. html)")
 	pkgName := flag.String("pkg", "", "Go package name of the generated files (default: lower-cased spec name, e.g. html)")
 	slots := flag.String("slots", "", "also write the htemel wildcard methods for the generated child interfaces to this file (htemel module only)")
+	globals := flag.Bool("globals-struct", false, "move the global attributes not in generators.HTMLDirectGlobals into a Globals struct (html package)")
 	flag.Parse()
 
-	if err := run(*specPath, *outDir, *pkgName, *slots); err != nil {
+	if err := run(*specPath, *outDir, *pkgName, *slots, *globals); err != nil {
 		fmt.Fprintln(os.Stderr, "genelements:", err)
 		os.Exit(1)
 	}
 }
 
-func run(specPath, out, pkg, slots string) error {
+func run(specPath, out, pkg, slots string, globals bool) error {
 	specFile, err := os.ReadFile(specPath)
 	if err != nil {
 		return err
@@ -55,5 +59,9 @@ func run(specPath, out, pkg, slots string) error {
 		return fmt.Errorf("invalid Go package name %q (set -pkg)", pkg)
 	}
 
-	return generators.GenerateWith(&sp, out, pkg, generators.Options{SlotsFile: slots})
+	opts := generators.Options{SlotsFile: slots}
+	if globals {
+		opts.DirectGlobals = generators.HTMLDirectGlobals
+	}
+	return generators.GenerateWith(&sp, out, pkg, opts)
 }

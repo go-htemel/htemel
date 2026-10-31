@@ -4,13 +4,18 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
 // generatedPackages lists every package produced by cmd/genelements (see the go:generate lines in
 // htemel.go): the spec it is generated from and the committed directory it must match.
-var generatedPackages = []struct{ spec, dir string }{
-	{spec: "html.json", dir: "html"},
+// extra holds the generator flags beyond -spec/-out/-slots that the go:generate line passes.
+var generatedPackages = []struct {
+	spec, dir string
+	extra     []string
+}{
+	{spec: "html.json", dir: "html", extra: []string{"-globals-struct"}},
 	{spec: "svg.json", dir: "svg"},
 	{spec: "mathml.json", dir: "mathml"},
 }
@@ -19,6 +24,21 @@ var generatedPackages = []struct{ spec, dir string }{
 // file-by-file with the committed package directory, and the generated slots_<dir>.go file of
 // package htemel with the committed one.
 func TestGeneratedCodeIsCurrent(t *testing.T) {
+	// The flags here must match the go:generate lines in htemel.go.
+	src, err := os.ReadFile(filepath.Join("..", "htemel.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range generatedPackages {
+		line := "//go:generate go run ./cmd/genelements -spec specs/" + p.spec + " -out " + p.dir + " -slots slots_" + p.dir + ".go"
+		if len(p.extra) > 0 {
+			line += " " + strings.Join(p.extra, " ")
+		}
+		if !strings.Contains(string(src), line+"\n") {
+			t.Errorf("htemel.go has no go:generate line %q", line)
+		}
+	}
+
 	if testing.Short() {
 		t.Skip("skipping generator comparison in -short mode")
 	}
@@ -30,19 +50,20 @@ func TestGeneratedCodeIsCurrent(t *testing.T) {
 
 	for _, p := range generatedPackages {
 		t.Run(p.dir, func(t *testing.T) {
-			checkGenerated(t, root, p.spec, p.dir)
+			checkGenerated(t, root, p.spec, p.dir, p.extra)
 		})
 	}
 }
 
-func checkGenerated(t *testing.T, root, specName, dir string) {
+func checkGenerated(t *testing.T, root, specName, dir string, extra []string) {
 	out := t.TempDir()
 	slots := filepath.Join(t.TempDir(), "slots_"+dir+".go")
-	cmd := exec.Command("go", "run", "./cmd/genelements",
+	args := append([]string{"run", "./cmd/genelements",
 		"-spec", filepath.Join(root, "specs", specName),
 		"-out", out,
 		"-pkg", dir,
-		"-slots", slots)
+		"-slots", slots}, extra...)
+	cmd := exec.Command("go", args...)
 	cmd.Dir = root
 	if b, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("generator failed: %v\n%s", err, b)

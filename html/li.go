@@ -15,7 +15,6 @@ import (
 type LiElement struct {
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Li creates a tag <li> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Li(children ...htemel.FlowContent) *LiElement {
 	}
 
 	return node
-}
-
-// LiIf creates a tag <li> instance that is only rendered when condition is true.
-func LiIf(condition bool, children ...htemel.FlowContent) *LiElement {
-	if condition {
-		return Li(children...)
-	}
-
-	return &LiElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// LiTernary creates a tag <li> containing then when condition is true, otherwise containing otherwise.
-func LiTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *LiElement {
-	if condition {
-		return Li(then)
-	}
-	return Li(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *LiElement) Textf(format string, args ...any) *LiElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LiElement) If(cond bool, child htemel.FlowContent) *LiElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LiElement) IfElse(cond bool, then, els htemel.FlowContent) *LiElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *LiElement) IfThen(cond bool, fn func(*LiElement)) *LiElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *LiElement) AddClass(classes ...string) *LiElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *LiElement) Class(classes ...string) *LiElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *LiElement) SetClass(classes ...string) *LiElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *LiElement) AddClass(classes ...string) *LiElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -166,6 +140,13 @@ func (e *LiElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *LiElement) Globals(g Globals) *LiElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLMenuChild marks <li> as a permitted child of <menu> (MenuChild).
 func (*LiElement) HTMLMenuChild() {}
 
@@ -177,12 +158,6 @@ func (*LiElement) HTMLUlChild() {}
 
 func (e *LiElement) Value(i int) *LiElement {
 	e.attributes.Set("value", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *LiElement) Accesskey(r rune) *LiElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -203,46 +178,10 @@ func (e *LiElement) Aria(name string, s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Autocapitalize(a Autocapitalize) *LiElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Autocorrect(v ...Autocorrect) *LiElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *LiElement) Autofocus(b bool) *LiElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *LiElement) Class(s ...string) *LiElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Contenteditable(v ...Contenteditable) *LiElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -275,32 +214,6 @@ func (e *LiElement) Draggable(a Draggable) *LiElement {
 	return e
 }
 
-func (e *LiElement) Enterkeyhint(a Enterkeyhint) *LiElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *LiElement) Exportparts(s string) *LiElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *LiElement) Headingoffset(i int) *LiElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LiElement) Headingreset(b bool) *LiElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *LiElement) Hidden(v ...Hidden) *LiElement {
@@ -319,60 +232,6 @@ func (e *LiElement) Id(s string) *LiElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LiElement) Inert(b bool) *LiElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *LiElement) Inputmode(a Inputmode) *LiElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *LiElement) Is(s string) *LiElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *LiElement) Itemid(s string) *LiElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *LiElement) Itemprop(s ...string) *LiElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *LiElement) Itemref(s ...string) *LiElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LiElement) Itemscope(b bool) *LiElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *LiElement) Itemtype(s ...string) *LiElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *LiElement) Lang(s string) *LiElement {
 	e.attributes.Set("lang", s)
 
@@ -381,12 +240,6 @@ func (e *LiElement) Lang(s string) *LiElement {
 
 func (e *LiElement) Nonce(s string) *LiElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *LiElement) Part(s ...string) *LiElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -409,24 +262,6 @@ func (e *LiElement) Role(s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Slot(s string) *LiElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Spellcheck(v ...Spellcheck) *LiElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *LiElement) Style(s string) *LiElement {
 	e.attributes.Set("style", s)
 
@@ -445,39 +280,13 @@ func (e *LiElement) Title(s string) *LiElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Translate(v ...Translate) *LiElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Writingsuggestions(v ...Writingsuggestions) *LiElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *LiElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<li>"); err != nil {
 			return err

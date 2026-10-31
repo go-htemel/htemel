@@ -385,6 +385,32 @@
       "name": "class",
       "description": "",
       "attribute_type": "AttributeTypeSST"
+    },
+    {
+      "name": "itemscope",
+      "description": "",
+      "attribute_type": "AttributeTypeBool"
+    },
+    {
+      "name": "itemprop",
+      "description": "",
+      "attribute_type": "AttributeTypeSST"
+    },
+    {
+      "name": "translate",
+      "description": "",
+      "allowed": {
+        "yes": {},
+        "no": {}
+      },
+      "allow_empty": true,
+      "allow_custom": false,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "tabindex",
+      "description": "",
+      "attribute_type": "AttributeTypeNumber"
     }
   ]
 }

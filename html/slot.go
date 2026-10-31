@@ -16,7 +16,6 @@ type SlotElement struct {
 	htemel.PhrasingMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Slot creates a tag <slot> instance and returns it for further modification.
@@ -33,26 +32,6 @@ func Slot(children ...htemel.FlowContent) *SlotElement {
 	}
 
 	return node
-}
-
-// SlotIf creates a tag <slot> instance that is only rendered when condition is true.
-func SlotIf(condition bool, children ...htemel.FlowContent) *SlotElement {
-	if condition {
-		return Slot(children...)
-	}
-
-	return &SlotElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// SlotTernary creates a tag <slot> containing then when condition is true, otherwise containing otherwise.
-func SlotTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *SlotElement {
-	if condition {
-		return Slot(then)
-	}
-	return Slot(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *SlotElement) Textf(format string, args ...any) *SlotElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SlotElement) If(cond bool, child htemel.FlowContent) *SlotElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SlotElement) IfElse(cond bool, then, els htemel.FlowContent) *SlotElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *SlotElement) IfThen(cond bool, fn func(*SlotElement)) *SlotElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *SlotElement) AddClass(classes ...string) *SlotElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *SlotElement) Class(classes ...string) *SlotElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *SlotElement) SetClass(classes ...string) *SlotElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *SlotElement) AddClass(classes ...string) *SlotElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -169,14 +143,15 @@ func (e *SlotElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *SlotElement) Name(s string) *SlotElement {
-	e.attributes.Set("name", s)
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *SlotElement) Globals(g Globals) *SlotElement {
+	g.apply(&e.attributes)
 	return e
 }
 
-func (e *SlotElement) Accesskey(r rune) *SlotElement {
-	e.attributes.Set("accesskey", string(r))
+func (e *SlotElement) Name(s string) *SlotElement {
+	e.attributes.Set("name", s)
 
 	return e
 }
@@ -197,46 +172,10 @@ func (e *SlotElement) Aria(name string, s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Autocapitalize(a Autocapitalize) *SlotElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Autocorrect(v ...Autocorrect) *SlotElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *SlotElement) Autofocus(b bool) *SlotElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *SlotElement) Class(s ...string) *SlotElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Contenteditable(v ...Contenteditable) *SlotElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -269,32 +208,6 @@ func (e *SlotElement) Draggable(a Draggable) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Enterkeyhint(a Enterkeyhint) *SlotElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *SlotElement) Exportparts(s string) *SlotElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *SlotElement) Headingoffset(i int) *SlotElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SlotElement) Headingreset(b bool) *SlotElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SlotElement) Hidden(v ...Hidden) *SlotElement {
@@ -313,60 +226,6 @@ func (e *SlotElement) Id(s string) *SlotElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SlotElement) Inert(b bool) *SlotElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *SlotElement) Inputmode(a Inputmode) *SlotElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *SlotElement) Is(s string) *SlotElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *SlotElement) Itemid(s string) *SlotElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *SlotElement) Itemprop(s ...string) *SlotElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *SlotElement) Itemref(s ...string) *SlotElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SlotElement) Itemscope(b bool) *SlotElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *SlotElement) Itemtype(s ...string) *SlotElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *SlotElement) Lang(s string) *SlotElement {
 	e.attributes.Set("lang", s)
 
@@ -375,12 +234,6 @@ func (e *SlotElement) Lang(s string) *SlotElement {
 
 func (e *SlotElement) Nonce(s string) *SlotElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *SlotElement) Part(s ...string) *SlotElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -403,24 +256,6 @@ func (e *SlotElement) Role(s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Slot(s string) *SlotElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Spellcheck(v ...Spellcheck) *SlotElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *SlotElement) Style(s string) *SlotElement {
 	e.attributes.Set("style", s)
 
@@ -439,39 +274,13 @@ func (e *SlotElement) Title(s string) *SlotElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Translate(v ...Translate) *SlotElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Writingsuggestions(v ...Writingsuggestions) *SlotElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *SlotElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<slot>"); err != nil {
 			return err

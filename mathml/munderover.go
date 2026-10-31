@@ -15,7 +15,6 @@ import (
 type MunderoverElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Munderover creates a tag <munderover> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Munderover(children ...Content) *MunderoverElement {
 	}
 
 	return node
-}
-
-// MunderoverIf creates a tag <munderover> instance that is only rendered when condition is true.
-func MunderoverIf(condition bool, children ...Content) *MunderoverElement {
-	if condition {
-		return Munderover(children...)
-	}
-
-	return &MunderoverElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MunderoverTernary creates a tag <munderover> containing then when condition is true, otherwise containing otherwise.
-func MunderoverTernary(condition bool, then Content, otherwise Content) *MunderoverElement {
-	if condition {
-		return Munderover(then)
-	}
-	return Munderover(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MunderoverElement) Textf(format string, args ...any) *MunderoverElement
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MunderoverElement) If(cond bool, child Content) *MunderoverElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MunderoverElement) IfElse(cond bool, then, els Content) *MunderoverElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MunderoverElement) IfThen(cond bool, fn func(*MunderoverElement)) *MunderoverElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MunderoverElement) AddClass(classes ...string) *MunderoverElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MunderoverElement) Class(classes ...string) *MunderoverElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MunderoverElement) SetClass(classes ...string) *MunderoverElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MunderoverElement) AddClass(classes ...string) *MunderoverElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -185,12 +159,6 @@ func (e *MunderoverElement) Accentunder(a Accentunder) *MunderoverElement {
 // when false the attribute is omitted (and removed if previously set).
 func (e *MunderoverElement) Autofocus(b bool) *MunderoverElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MunderoverElement) Class(s ...string) *MunderoverElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -277,12 +245,10 @@ func (e *MunderoverElement) Tabindex(i int) *MunderoverElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MunderoverElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<munderover>"); err != nil {
 			return err

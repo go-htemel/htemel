@@ -17,7 +17,6 @@ type DelElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Del creates a tag <del> instance and returns it for further modification.
@@ -34,26 +33,6 @@ func Del(children ...htemel.FlowContent) *DelElement {
 	}
 
 	return node
-}
-
-// DelIf creates a tag <del> instance that is only rendered when condition is true.
-func DelIf(condition bool, children ...htemel.FlowContent) *DelElement {
-	if condition {
-		return Del(children...)
-	}
-
-	return &DelElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// DelTernary creates a tag <del> containing then when condition is true, otherwise containing otherwise.
-func DelTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *DelElement {
-	if condition {
-		return Del(then)
-	}
-	return Del(otherwise)
 }
 
 // Children appends children to this element.
@@ -79,38 +58,33 @@ func (e *DelElement) Textf(format string, args ...any) *DelElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DelElement) If(cond bool, child htemel.FlowContent) *DelElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DelElement) IfElse(cond bool, then, els htemel.FlowContent) *DelElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *DelElement) IfThen(cond bool, fn func(*DelElement)) *DelElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *DelElement) AddClass(classes ...string) *DelElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *DelElement) Class(classes ...string) *DelElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *DelElement) SetClass(classes ...string) *DelElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *DelElement) AddClass(classes ...string) *DelElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -170,6 +144,13 @@ func (e *DelElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *DelElement) Globals(g Globals) *DelElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *DelElement) Cite(s string) *DelElement {
@@ -180,12 +161,6 @@ func (e *DelElement) Cite(s string) *DelElement {
 
 func (e *DelElement) Datetime(s string) *DelElement {
 	e.attributes.Set("datetime", s)
-
-	return e
-}
-
-func (e *DelElement) Accesskey(r rune) *DelElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -206,46 +181,10 @@ func (e *DelElement) Aria(name string, s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Autocapitalize(a Autocapitalize) *DelElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Autocorrect(v ...Autocorrect) *DelElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *DelElement) Autofocus(b bool) *DelElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *DelElement) Class(s ...string) *DelElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Contenteditable(v ...Contenteditable) *DelElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -278,32 +217,6 @@ func (e *DelElement) Draggable(a Draggable) *DelElement {
 	return e
 }
 
-func (e *DelElement) Enterkeyhint(a Enterkeyhint) *DelElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *DelElement) Exportparts(s string) *DelElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *DelElement) Headingoffset(i int) *DelElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DelElement) Headingreset(b bool) *DelElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DelElement) Hidden(v ...Hidden) *DelElement {
@@ -322,60 +235,6 @@ func (e *DelElement) Id(s string) *DelElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DelElement) Inert(b bool) *DelElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *DelElement) Inputmode(a Inputmode) *DelElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *DelElement) Is(s string) *DelElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *DelElement) Itemid(s string) *DelElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *DelElement) Itemprop(s ...string) *DelElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *DelElement) Itemref(s ...string) *DelElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DelElement) Itemscope(b bool) *DelElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *DelElement) Itemtype(s ...string) *DelElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *DelElement) Lang(s string) *DelElement {
 	e.attributes.Set("lang", s)
 
@@ -384,12 +243,6 @@ func (e *DelElement) Lang(s string) *DelElement {
 
 func (e *DelElement) Nonce(s string) *DelElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *DelElement) Part(s ...string) *DelElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -412,24 +265,6 @@ func (e *DelElement) Role(s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Slot(s string) *DelElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Spellcheck(v ...Spellcheck) *DelElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *DelElement) Style(s string) *DelElement {
 	e.attributes.Set("style", s)
 
@@ -448,39 +283,13 @@ func (e *DelElement) Title(s string) *DelElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Translate(v ...Translate) *DelElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Writingsuggestions(v ...Writingsuggestions) *DelElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *DelElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<del>"); err != nil {
 			return err

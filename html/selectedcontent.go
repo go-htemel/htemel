@@ -13,8 +13,6 @@ import (
 
 type SelectedcontentElement struct {
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Selectedcontent creates a tag <selectedcontent> instance and returns it for further modification.
@@ -29,38 +27,39 @@ func Selectedcontent() *SelectedcontentElement {
 	return node
 }
 
-// SelectedcontentIf creates a tag <selectedcontent> instance that is only rendered when condition is true.
-func SelectedcontentIf(condition bool) *SelectedcontentElement {
-	if condition {
-		return Selectedcontent()
-	}
-
-	return &SelectedcontentElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *SelectedcontentElement) With(fn func(*SelectedcontentElement)) *SelectedcontentElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *SelectedcontentElement) IfThen(cond bool, fn func(*SelectedcontentElement)) *SelectedcontentElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *SelectedcontentElement) Class(classes ...string) *SelectedcontentElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *SelectedcontentElement) AddClass(classes ...string) *SelectedcontentElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *SelectedcontentElement) SetClass(classes ...string) *SelectedcontentElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *SelectedcontentElement) AddClass(classes ...string) *SelectedcontentElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -120,9 +119,10 @@ func (e *SelectedcontentElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *SelectedcontentElement) Accesskey(r rune) *SelectedcontentElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *SelectedcontentElement) Globals(g Globals) *SelectedcontentElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -142,46 +142,10 @@ func (e *SelectedcontentElement) Aria(name string, s string) *SelectedcontentEle
 	return e
 }
 
-func (e *SelectedcontentElement) Autocapitalize(a Autocapitalize) *SelectedcontentElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Autocorrect(v ...Autocorrect) *SelectedcontentElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *SelectedcontentElement) Autofocus(b bool) *SelectedcontentElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Class(s ...string) *SelectedcontentElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Contenteditable(v ...Contenteditable) *SelectedcontentElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -214,32 +178,6 @@ func (e *SelectedcontentElement) Draggable(a Draggable) *SelectedcontentElement 
 	return e
 }
 
-func (e *SelectedcontentElement) Enterkeyhint(a Enterkeyhint) *SelectedcontentElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *SelectedcontentElement) Exportparts(s string) *SelectedcontentElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Headingoffset(i int) *SelectedcontentElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SelectedcontentElement) Headingreset(b bool) *SelectedcontentElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SelectedcontentElement) Hidden(v ...Hidden) *SelectedcontentElement {
@@ -258,60 +196,6 @@ func (e *SelectedcontentElement) Id(s string) *SelectedcontentElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SelectedcontentElement) Inert(b bool) *SelectedcontentElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Inputmode(a Inputmode) *SelectedcontentElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *SelectedcontentElement) Is(s string) *SelectedcontentElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *SelectedcontentElement) Itemid(s string) *SelectedcontentElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Itemprop(s ...string) *SelectedcontentElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *SelectedcontentElement) Itemref(s ...string) *SelectedcontentElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SelectedcontentElement) Itemscope(b bool) *SelectedcontentElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Itemtype(s ...string) *SelectedcontentElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *SelectedcontentElement) Lang(s string) *SelectedcontentElement {
 	e.attributes.Set("lang", s)
 
@@ -320,12 +204,6 @@ func (e *SelectedcontentElement) Lang(s string) *SelectedcontentElement {
 
 func (e *SelectedcontentElement) Nonce(s string) *SelectedcontentElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *SelectedcontentElement) Part(s ...string) *SelectedcontentElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -348,24 +226,6 @@ func (e *SelectedcontentElement) Role(s string) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Slot(s string) *SelectedcontentElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Spellcheck(v ...Spellcheck) *SelectedcontentElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *SelectedcontentElement) Style(s string) *SelectedcontentElement {
 	e.attributes.Set("style", s)
 
@@ -384,39 +244,13 @@ func (e *SelectedcontentElement) Title(s string) *SelectedcontentElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Translate(v ...Translate) *SelectedcontentElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Writingsuggestions(v ...Writingsuggestions) *SelectedcontentElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then writes the closing tag: <selectedcontent> has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *SelectedcontentElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<selectedcontent>"); err != nil {
 			return err

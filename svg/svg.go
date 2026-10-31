@@ -18,7 +18,6 @@ type SvgElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Svg creates a tag <svg> instance and returns it for further modification.
@@ -33,26 +32,6 @@ func Svg(children ...Content) *SvgElement {
 	}
 
 	return node
-}
-
-// SvgIf creates a tag <svg> instance that is only rendered when condition is true.
-func SvgIf(condition bool, children ...Content) *SvgElement {
-	if condition {
-		return Svg(children...)
-	}
-
-	return &SvgElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// SvgTernary creates a tag <svg> containing then when condition is true, otherwise containing otherwise.
-func SvgTernary(condition bool, then Content, otherwise Content) *SvgElement {
-	if condition {
-		return Svg(then)
-	}
-	return Svg(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *SvgElement) Textf(format string, args ...any) *SvgElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SvgElement) If(cond bool, child Content) *SvgElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SvgElement) IfElse(cond bool, then, els Content) *SvgElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *SvgElement) IfThen(cond bool, fn func(*SvgElement)) *SvgElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *SvgElement) AddClass(classes ...string) *SvgElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *SvgElement) Class(classes ...string) *SvgElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *SvgElement) SetClass(classes ...string) *SvgElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *SvgElement) AddClass(classes ...string) *SvgElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -273,12 +247,6 @@ func (e *SvgElement) Autofocus(b bool) *SvgElement {
 
 func (e *SvgElement) BaselineShift(s string) *SvgElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *SvgElement) Class(s ...string) *SvgElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -719,12 +687,10 @@ func (e *SvgElement) XmlSpace(a XmlSpace) *SvgElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *SvgElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<svg>"); err != nil {
 			return err

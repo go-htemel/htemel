@@ -15,7 +15,6 @@ import (
 type MarkerElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Marker creates a tag <marker> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Marker(children ...Content) *MarkerElement {
 	}
 
 	return node
-}
-
-// MarkerIf creates a tag <marker> instance that is only rendered when condition is true.
-func MarkerIf(condition bool, children ...Content) *MarkerElement {
-	if condition {
-		return Marker(children...)
-	}
-
-	return &MarkerElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MarkerTernary creates a tag <marker> containing then when condition is true, otherwise containing otherwise.
-func MarkerTernary(condition bool, then Content, otherwise Content) *MarkerElement {
-	if condition {
-		return Marker(then)
-	}
-	return Marker(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MarkerElement) Textf(format string, args ...any) *MarkerElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MarkerElement) If(cond bool, child Content) *MarkerElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MarkerElement) IfElse(cond bool, then, els Content) *MarkerElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MarkerElement) IfThen(cond bool, fn func(*MarkerElement)) *MarkerElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MarkerElement) AddClass(classes ...string) *MarkerElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MarkerElement) Class(classes ...string) *MarkerElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MarkerElement) SetClass(classes ...string) *MarkerElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MarkerElement) AddClass(classes ...string) *MarkerElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -249,12 +223,6 @@ func (e *MarkerElement) Autofocus(b bool) *MarkerElement {
 
 func (e *MarkerElement) BaselineShift(s string) *MarkerElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *MarkerElement) Class(s ...string) *MarkerElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -695,12 +663,10 @@ func (e *MarkerElement) XmlSpace(a XmlSpace) *MarkerElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MarkerElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<marker>"); err != nil {
 			return err

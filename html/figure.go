@@ -34,7 +34,6 @@ type FigureElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []FigureChild
-	skipRender bool
 }
 
 // Figure creates a tag <figure> instance and returns it for further modification.
@@ -49,26 +48,6 @@ func Figure(children ...FigureChild) *FigureElement {
 	}
 
 	return node
-}
-
-// FigureIf creates a tag <figure> instance that is only rendered when condition is true.
-func FigureIf(condition bool, children ...FigureChild) *FigureElement {
-	if condition {
-		return Figure(children...)
-	}
-
-	return &FigureElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FigureTernary creates a tag <figure> containing then when condition is true, otherwise containing otherwise.
-func FigureTernary(condition bool, then FigureChild, otherwise FigureChild) *FigureElement {
-	if condition {
-		return Figure(then)
-	}
-	return Figure(otherwise)
 }
 
 // Children appends children to this element.
@@ -94,38 +73,33 @@ func (e *FigureElement) Textf(format string, args ...any) *FigureElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FigureElement) If(cond bool, child FigureChild) *FigureElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FigureElement) IfElse(cond bool, then, els FigureChild) *FigureElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FigureElement) IfThen(cond bool, fn func(*FigureElement)) *FigureElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FigureElement) AddClass(classes ...string) *FigureElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FigureElement) Class(classes ...string) *FigureElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FigureElement) SetClass(classes ...string) *FigureElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FigureElement) AddClass(classes ...string) *FigureElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -185,9 +159,10 @@ func (e *FigureElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *FigureElement) Accesskey(r rune) *FigureElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *FigureElement) Globals(g Globals) *FigureElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -207,46 +182,10 @@ func (e *FigureElement) Aria(name string, s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Autocapitalize(a Autocapitalize) *FigureElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Autocorrect(v ...Autocorrect) *FigureElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *FigureElement) Autofocus(b bool) *FigureElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *FigureElement) Class(s ...string) *FigureElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Contenteditable(v ...Contenteditable) *FigureElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -279,32 +218,6 @@ func (e *FigureElement) Draggable(a Draggable) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Enterkeyhint(a Enterkeyhint) *FigureElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *FigureElement) Exportparts(s string) *FigureElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *FigureElement) Headingoffset(i int) *FigureElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FigureElement) Headingreset(b bool) *FigureElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FigureElement) Hidden(v ...Hidden) *FigureElement {
@@ -323,60 +236,6 @@ func (e *FigureElement) Id(s string) *FigureElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FigureElement) Inert(b bool) *FigureElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *FigureElement) Inputmode(a Inputmode) *FigureElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *FigureElement) Is(s string) *FigureElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *FigureElement) Itemid(s string) *FigureElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *FigureElement) Itemprop(s ...string) *FigureElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *FigureElement) Itemref(s ...string) *FigureElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FigureElement) Itemscope(b bool) *FigureElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *FigureElement) Itemtype(s ...string) *FigureElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *FigureElement) Lang(s string) *FigureElement {
 	e.attributes.Set("lang", s)
 
@@ -385,12 +244,6 @@ func (e *FigureElement) Lang(s string) *FigureElement {
 
 func (e *FigureElement) Nonce(s string) *FigureElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *FigureElement) Part(s ...string) *FigureElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -413,24 +266,6 @@ func (e *FigureElement) Role(s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Slot(s string) *FigureElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Spellcheck(v ...Spellcheck) *FigureElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *FigureElement) Style(s string) *FigureElement {
 	e.attributes.Set("style", s)
 
@@ -449,39 +284,13 @@ func (e *FigureElement) Title(s string) *FigureElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Translate(v ...Translate) *FigureElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Writingsuggestions(v ...Writingsuggestions) *FigureElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FigureElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<figure>"); err != nil {
 			return err

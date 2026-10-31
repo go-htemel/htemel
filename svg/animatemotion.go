@@ -15,7 +15,6 @@ import (
 type AnimateMotionElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // AnimateMotion creates a tag <animateMotion> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func AnimateMotion(children ...Content) *AnimateMotionElement {
 	}
 
 	return node
-}
-
-// AnimateMotionIf creates a tag <animateMotion> instance that is only rendered when condition is true.
-func AnimateMotionIf(condition bool, children ...Content) *AnimateMotionElement {
-	if condition {
-		return AnimateMotion(children...)
-	}
-
-	return &AnimateMotionElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AnimateMotionTernary creates a tag <animateMotion> containing then when condition is true, otherwise containing otherwise.
-func AnimateMotionTernary(condition bool, then Content, otherwise Content) *AnimateMotionElement {
-	if condition {
-		return AnimateMotion(then)
-	}
-	return AnimateMotion(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *AnimateMotionElement) Textf(format string, args ...any) *AnimateMotionE
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AnimateMotionElement) If(cond bool, child Content) *AnimateMotionElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AnimateMotionElement) IfElse(cond bool, then, els Content) *AnimateMotionElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AnimateMotionElement) IfThen(cond bool, fn func(*AnimateMotionElement)) *AnimateMotionElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AnimateMotionElement) AddClass(classes ...string) *AnimateMotionElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AnimateMotionElement) Class(classes ...string) *AnimateMotionElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AnimateMotionElement) SetClass(classes ...string) *AnimateMotionElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AnimateMotionElement) AddClass(classes ...string) *AnimateMotionElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -347,12 +321,6 @@ func (e *AnimateMotionElement) Autofocus(b bool) *AnimateMotionElement {
 
 func (e *AnimateMotionElement) BaselineShift(s string) *AnimateMotionElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Class(s ...string) *AnimateMotionElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -787,12 +755,10 @@ func (e *AnimateMotionElement) XmlSpace(a XmlSpace) *AnimateMotionElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AnimateMotionElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<animateMotion>"); err != nil {
 			return err

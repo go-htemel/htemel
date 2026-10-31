@@ -14,8 +14,6 @@ import (
 type HrElement struct {
 	htemel.FlowMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Hr creates a tag <hr> instance and returns it for further modification.
@@ -27,38 +25,39 @@ func Hr() *HrElement {
 	return node
 }
 
-// HrIf creates a tag <hr> instance that is only rendered when condition is true.
-func HrIf(condition bool) *HrElement {
-	if condition {
-		return Hr()
-	}
-
-	return &HrElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *HrElement) With(fn func(*HrElement)) *HrElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *HrElement) IfThen(cond bool, fn func(*HrElement)) *HrElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *HrElement) Class(classes ...string) *HrElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *HrElement) AddClass(classes ...string) *HrElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *HrElement) SetClass(classes ...string) *HrElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *HrElement) AddClass(classes ...string) *HrElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -118,14 +117,15 @@ func (e *HrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLSelectChild marks <hr> as a permitted child of <select> (SelectChild).
-func (*HrElement) HTMLSelectChild() {}
-
-func (e *HrElement) Accesskey(r rune) *HrElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *HrElement) Globals(g Globals) *HrElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLSelectChild marks <hr> as a permitted child of <select> (SelectChild).
+func (*HrElement) HTMLSelectChild() {}
 
 func (e *HrElement) AriaUnsafe(name string, s string) *HrElement {
 	tag := strings.ToLower("aria-" + name)
@@ -143,46 +143,10 @@ func (e *HrElement) Aria(name string, s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Autocapitalize(a Autocapitalize) *HrElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Autocorrect(v ...Autocorrect) *HrElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *HrElement) Autofocus(b bool) *HrElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *HrElement) Class(s ...string) *HrElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Contenteditable(v ...Contenteditable) *HrElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -215,32 +179,6 @@ func (e *HrElement) Draggable(a Draggable) *HrElement {
 	return e
 }
 
-func (e *HrElement) Enterkeyhint(a Enterkeyhint) *HrElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *HrElement) Exportparts(s string) *HrElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *HrElement) Headingoffset(i int) *HrElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HrElement) Headingreset(b bool) *HrElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HrElement) Hidden(v ...Hidden) *HrElement {
@@ -259,60 +197,6 @@ func (e *HrElement) Id(s string) *HrElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HrElement) Inert(b bool) *HrElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *HrElement) Inputmode(a Inputmode) *HrElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *HrElement) Is(s string) *HrElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *HrElement) Itemid(s string) *HrElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *HrElement) Itemprop(s ...string) *HrElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *HrElement) Itemref(s ...string) *HrElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HrElement) Itemscope(b bool) *HrElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *HrElement) Itemtype(s ...string) *HrElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *HrElement) Lang(s string) *HrElement {
 	e.attributes.Set("lang", s)
 
@@ -321,12 +205,6 @@ func (e *HrElement) Lang(s string) *HrElement {
 
 func (e *HrElement) Nonce(s string) *HrElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *HrElement) Part(s ...string) *HrElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -349,24 +227,6 @@ func (e *HrElement) Role(s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Slot(s string) *HrElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Spellcheck(v ...Spellcheck) *HrElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *HrElement) Style(s string) *HrElement {
 	e.attributes.Set("style", s)
 
@@ -385,40 +245,14 @@ func (e *HrElement) Title(s string) *HrElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Translate(v ...Translate) *HrElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Writingsuggestions(v ...Writingsuggestions) *HrElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <hr> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *HrElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<hr>"); err != nil {
 			return err

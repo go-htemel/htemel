@@ -15,7 +15,6 @@ import (
 type MrootElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Mroot creates a tag <mroot> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Mroot(children ...Content) *MrootElement {
 	}
 
 	return node
-}
-
-// MrootIf creates a tag <mroot> instance that is only rendered when condition is true.
-func MrootIf(condition bool, children ...Content) *MrootElement {
-	if condition {
-		return Mroot(children...)
-	}
-
-	return &MrootElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MrootTernary creates a tag <mroot> containing then when condition is true, otherwise containing otherwise.
-func MrootTernary(condition bool, then Content, otherwise Content) *MrootElement {
-	if condition {
-		return Mroot(then)
-	}
-	return Mroot(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MrootElement) Textf(format string, args ...any) *MrootElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MrootElement) If(cond bool, child Content) *MrootElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MrootElement) IfElse(cond bool, then, els Content) *MrootElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MrootElement) IfThen(cond bool, fn func(*MrootElement)) *MrootElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MrootElement) AddClass(classes ...string) *MrootElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MrootElement) Class(classes ...string) *MrootElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MrootElement) SetClass(classes ...string) *MrootElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MrootElement) AddClass(classes ...string) *MrootElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -173,12 +147,6 @@ func (*MrootElement) MathMLContent() {}
 // when false the attribute is omitted (and removed if previously set).
 func (e *MrootElement) Autofocus(b bool) *MrootElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MrootElement) Class(s ...string) *MrootElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -265,12 +233,10 @@ func (e *MrootElement) Tabindex(i int) *MrootElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MrootElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<mroot>"); err != nil {
 			return err

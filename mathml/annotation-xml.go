@@ -15,7 +15,6 @@ import (
 type AnnotationXmlElement struct {
 	attributes render.Attrs
 	children   []htemel.Node
-	skipRender bool
 }
 
 // AnnotationXml creates a tag <annotation-xml> instance and returns it for further modification.
@@ -28,26 +27,6 @@ func AnnotationXml(children ...htemel.Node) *AnnotationXmlElement {
 	}
 
 	return node
-}
-
-// AnnotationXmlIf creates a tag <annotation-xml> instance that is only rendered when condition is true.
-func AnnotationXmlIf(condition bool, children ...htemel.Node) *AnnotationXmlElement {
-	if condition {
-		return AnnotationXml(children...)
-	}
-
-	return &AnnotationXmlElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AnnotationXmlTernary creates a tag <annotation-xml> containing then when condition is true, otherwise containing otherwise.
-func AnnotationXmlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AnnotationXmlElement {
-	if condition {
-		return AnnotationXml(then)
-	}
-	return AnnotationXml(otherwise)
 }
 
 // Children appends children to this element.
@@ -73,38 +52,33 @@ func (e *AnnotationXmlElement) Textf(format string, args ...any) *AnnotationXmlE
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AnnotationXmlElement) If(cond bool, child htemel.Node) *AnnotationXmlElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AnnotationXmlElement) IfElse(cond bool, then, els htemel.Node) *AnnotationXmlElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AnnotationXmlElement) IfThen(cond bool, fn func(*AnnotationXmlElement)) *AnnotationXmlElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AnnotationXmlElement) AddClass(classes ...string) *AnnotationXmlElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AnnotationXmlElement) Class(classes ...string) *AnnotationXmlElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AnnotationXmlElement) SetClass(classes ...string) *AnnotationXmlElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AnnotationXmlElement) AddClass(classes ...string) *AnnotationXmlElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -171,12 +145,6 @@ func (*AnnotationXmlElement) MathMLContent() {}
 // when false the attribute is omitted (and removed if previously set).
 func (e *AnnotationXmlElement) Autofocus(b bool) *AnnotationXmlElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *AnnotationXmlElement) Class(s ...string) *AnnotationXmlElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -263,12 +231,10 @@ func (e *AnnotationXmlElement) Tabindex(i int) *AnnotationXmlElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AnnotationXmlElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<annotation-xml>"); err != nil {
 			return err

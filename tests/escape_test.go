@@ -64,11 +64,37 @@ func TestBooleanAttributes(t *testing.T) {
 }
 
 func TestClassHelpers(t *testing.T) {
-	expect(t, html.Div().AddClass("a", "b"), `<div class="a b"></div>`)
+	expect(t, html.Div().AddClass("a", "b"), `<div class="a b"></div>`) //nolint:staticcheck // deprecated alias still works
 	expect(t, html.Div().ToggleClass("a", true), `<div class="a"></div>`)
 	expect(t, html.Div().ToggleClass("a", false), `<div></div>`)
-	expect(t, html.Div().Class("a", "b").ToggleClass("a", false).AddClass("c"), `<div class="b c"></div>`)
+	expect(t, html.Div().Class("a", "b").ToggleClass("a", false).Class("c"), `<div class="b c"></div>`)
 	expect(t, html.Div().Class("a").ToggleClass("a", false), `<div></div>`)
+}
+
+// Class is additive (ADR 0009): it appends, keeps order and never repeats a class.
+func TestClassIsAdditive(t *testing.T) {
+	expect(t, html.Div().Class("a").Class("b"), `<div class="a b"></div>`)
+	expect(t, html.Div().Class("a b", "c").Class("d"), `<div class="a b c d"></div>`)
+	// Duplicates, within one call and across calls, are dropped; first position wins.
+	expect(t, html.Div().Class("a b a").Class("b c", "a"), `<div class="a b c"></div>`)
+	// Whitespace is normalised; empty arguments add nothing.
+	expect(t, html.Div().Class("  a\tb  ", "", " "), `<div class="a b"></div>`)
+	expect(t, html.Div().Class(), `<div></div>`)
+	expect(t, html.Div().Class(""), `<div></div>`)
+	// The class attribute keeps the position of its first set.
+	expect(t, html.Div().Class("a").Id("x").Class("b"), `<div class="a b" id="x"></div>`)
+	// Deprecated AddClass is an alias.
+	expect(t, html.Div().Class("a").AddClass("a", "b"), `<div class="a b"></div>`) //nolint:staticcheck // deprecated alias
+	// Works on void and SVG elements too.
+	expect(t, html.Br().Class("a").Class("a", "b"), `<br class="a b">`)
+}
+
+// SetClass replaces the class attribute.
+func TestSetClassReplaces(t *testing.T) {
+	expect(t, html.Div().Class("a b").SetClass("c"), `<div class="c"></div>`)
+	expect(t, html.Div().Class("a").SetClass("c d", "c").Class("e"), `<div class="c d e"></div>`)
+	expect(t, html.Div().Class("a").SetClass(), `<div></div>`)
+	expect(t, html.Div().Id("x").Class("a").SetClass("b"), `<div id="x" class="b"></div>`)
 }
 
 func TestRawTextElements(t *testing.T) {
@@ -79,11 +105,6 @@ func TestRawTextElements(t *testing.T) {
 	// Non raw-text elements keep escaping.
 	expect(t, html.P().Text("a < b"), `<p>a &lt; b</p>`)
 	expect(t, html.Textarea().Text("</textarea>"), `<textarea>&lt;/textarea&gt;</textarea>`)
-}
-
-func TestTernary(t *testing.T) {
-	expect(t, html.DivTernary(true, htemel.Text("yes"), htemel.Text("no")), `<div>yes</div>`)
-	expect(t, html.DivTernary(false, htemel.Text("yes"), htemel.Text("no")), `<div>no</div>`)
 }
 
 func TestAttrEscapeHatch(t *testing.T) {

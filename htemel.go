@@ -1,6 +1,6 @@
 package htemel
 
-//go:generate go run ./cmd/genelements -spec specs/html.json -out html -slots slots_html.go
+//go:generate go run ./cmd/genelements -spec specs/html.json -out html -slots slots_html.go -globals-struct
 //go:generate go run ./cmd/genelements -spec specs/svg.json -out svg -slots slots_svg.go
 //go:generate go run ./cmd/genelements -spec specs/mathml.json -out mathml -slots slots_mathml.go
 
@@ -28,7 +28,10 @@ import (
 // Callers who care should use the package-level Render (which buffers and flushes), RenderString
 // or RenderBytes, or pass their own buffered writer (for example a *bufio.Writer they flush).
 //
-// If Render returns an error, part of the output may already have been written to w.
+// If Render returns an error, part of the output may already have been written to w. On an
+// http.ResponseWriter that means half a page sent with a 200 status: serve pages with Write or
+// Handler instead, which render into a buffer and write nothing when rendering fails. Use
+// RenderContext to make a context.Context available to components (see ContextOf).
 type Node interface {
 	Render(w io.Writer) error
 }
@@ -53,10 +56,14 @@ var (
 // them again would only add a copy.
 //
 // If rendering fails, output still held in the buffer is discarded rather than flushed, and the
-// error is returned; output from earlier flushes may already have reached w.
+// error is returned; output from earlier flushes may already have reached w. For HTTP responses
+// prefer Write or Handler, which never send a partial page. Render behaves as RenderContext with
+// context.Background(), except that when it is called from inside a RenderContext or Write tree
+// (w is the writer they passed down) it renders straight into that writer, keeping its context.
 func Render(w io.Writer, n Node) error {
 	switch w.(type) {
-	case *bytes.Buffer, *strings.Builder:
+	case *bytes.Buffer, *strings.Builder, *ctxWriter:
+		// In memory, or already buffered by RenderContext/Write (keep its context visible).
 		return n.Render(w)
 	}
 

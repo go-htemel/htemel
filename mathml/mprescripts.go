@@ -15,7 +15,6 @@ import (
 type MprescriptsElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Mprescripts creates a tag <mprescripts> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Mprescripts(children ...Content) *MprescriptsElement {
 	}
 
 	return node
-}
-
-// MprescriptsIf creates a tag <mprescripts> instance that is only rendered when condition is true.
-func MprescriptsIf(condition bool, children ...Content) *MprescriptsElement {
-	if condition {
-		return Mprescripts(children...)
-	}
-
-	return &MprescriptsElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MprescriptsTernary creates a tag <mprescripts> containing then when condition is true, otherwise containing otherwise.
-func MprescriptsTernary(condition bool, then Content, otherwise Content) *MprescriptsElement {
-	if condition {
-		return Mprescripts(then)
-	}
-	return Mprescripts(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MprescriptsElement) Textf(format string, args ...any) *MprescriptsEleme
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MprescriptsElement) If(cond bool, child Content) *MprescriptsElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MprescriptsElement) IfElse(cond bool, then, els Content) *MprescriptsElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MprescriptsElement) IfThen(cond bool, fn func(*MprescriptsElement)) *MprescriptsElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MprescriptsElement) AddClass(classes ...string) *MprescriptsElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MprescriptsElement) Class(classes ...string) *MprescriptsElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MprescriptsElement) SetClass(classes ...string) *MprescriptsElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MprescriptsElement) AddClass(classes ...string) *MprescriptsElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -173,12 +147,6 @@ func (*MprescriptsElement) MathMLContent() {}
 // when false the attribute is omitted (and removed if previously set).
 func (e *MprescriptsElement) Autofocus(b bool) *MprescriptsElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MprescriptsElement) Class(s ...string) *MprescriptsElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -265,12 +233,10 @@ func (e *MprescriptsElement) Tabindex(i int) *MprescriptsElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MprescriptsElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<mprescripts>"); err != nil {
 			return err

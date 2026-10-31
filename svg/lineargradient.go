@@ -15,7 +15,6 @@ import (
 type LinearGradientElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // LinearGradient creates a tag <linearGradient> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func LinearGradient(children ...Content) *LinearGradientElement {
 	}
 
 	return node
-}
-
-// LinearGradientIf creates a tag <linearGradient> instance that is only rendered when condition is true.
-func LinearGradientIf(condition bool, children ...Content) *LinearGradientElement {
-	if condition {
-		return LinearGradient(children...)
-	}
-
-	return &LinearGradientElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// LinearGradientTernary creates a tag <linearGradient> containing then when condition is true, otherwise containing otherwise.
-func LinearGradientTernary(condition bool, then Content, otherwise Content) *LinearGradientElement {
-	if condition {
-		return LinearGradient(then)
-	}
-	return LinearGradient(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *LinearGradientElement) Textf(format string, args ...any) *LinearGradien
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LinearGradientElement) If(cond bool, child Content) *LinearGradientElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LinearGradientElement) IfElse(cond bool, then, els Content) *LinearGradientElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *LinearGradientElement) IfThen(cond bool, fn func(*LinearGradientElement)) *LinearGradientElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *LinearGradientElement) AddClass(classes ...string) *LinearGradientElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *LinearGradientElement) Class(classes ...string) *LinearGradientElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *LinearGradientElement) SetClass(classes ...string) *LinearGradientElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *LinearGradientElement) AddClass(classes ...string) *LinearGradientElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -261,12 +235,6 @@ func (e *LinearGradientElement) Autofocus(b bool) *LinearGradientElement {
 
 func (e *LinearGradientElement) BaselineShift(s string) *LinearGradientElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *LinearGradientElement) Class(s ...string) *LinearGradientElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -707,12 +675,10 @@ func (e *LinearGradientElement) XmlSpace(a XmlSpace) *LinearGradientElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *LinearGradientElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<linearGradient>"); err != nil {
 			return err

@@ -17,7 +17,6 @@ type PElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // P creates a tag <p> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func P(children ...htemel.PhrasingContent) *PElement {
 	}
 
 	return node
-}
-
-// PIf creates a tag <p> instance that is only rendered when condition is true.
-func PIf(condition bool, children ...htemel.PhrasingContent) *PElement {
-	if condition {
-		return P(children...)
-	}
-
-	return &PElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// PTernary creates a tag <p> containing then when condition is true, otherwise containing otherwise.
-func PTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *PElement {
-	if condition {
-		return P(then)
-	}
-	return P(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *PElement) Textf(format string, args ...any) *PElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PElement) If(cond bool, child htemel.PhrasingContent) *PElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PElement) IfElse(cond bool, then, els htemel.PhrasingContent) *PElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *PElement) IfThen(cond bool, fn func(*PElement)) *PElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *PElement) AddClass(classes ...string) *PElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *PElement) Class(classes ...string) *PElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *PElement) SetClass(classes ...string) *PElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *PElement) AddClass(classes ...string) *PElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,14 +142,15 @@ func (e *PElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLHgroupChild marks <p> as a permitted child of <hgroup> (HgroupChild).
-func (*PElement) HTMLHgroupChild() {}
-
-func (e *PElement) Accesskey(r rune) *PElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *PElement) Globals(g Globals) *PElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLHgroupChild marks <p> as a permitted child of <hgroup> (HgroupChild).
+func (*PElement) HTMLHgroupChild() {}
 
 func (e *PElement) AriaUnsafe(name string, s string) *PElement {
 	tag := strings.ToLower("aria-" + name)
@@ -193,46 +168,10 @@ func (e *PElement) Aria(name string, s string) *PElement {
 	return e
 }
 
-func (e *PElement) Autocapitalize(a Autocapitalize) *PElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Autocorrect(v ...Autocorrect) *PElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *PElement) Autofocus(b bool) *PElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *PElement) Class(s ...string) *PElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Contenteditable(v ...Contenteditable) *PElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -265,32 +204,6 @@ func (e *PElement) Draggable(a Draggable) *PElement {
 	return e
 }
 
-func (e *PElement) Enterkeyhint(a Enterkeyhint) *PElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *PElement) Exportparts(s string) *PElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *PElement) Headingoffset(i int) *PElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PElement) Headingreset(b bool) *PElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *PElement) Hidden(v ...Hidden) *PElement {
@@ -309,60 +222,6 @@ func (e *PElement) Id(s string) *PElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PElement) Inert(b bool) *PElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *PElement) Inputmode(a Inputmode) *PElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *PElement) Is(s string) *PElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *PElement) Itemid(s string) *PElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *PElement) Itemprop(s ...string) *PElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *PElement) Itemref(s ...string) *PElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PElement) Itemscope(b bool) *PElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *PElement) Itemtype(s ...string) *PElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *PElement) Lang(s string) *PElement {
 	e.attributes.Set("lang", s)
 
@@ -371,12 +230,6 @@ func (e *PElement) Lang(s string) *PElement {
 
 func (e *PElement) Nonce(s string) *PElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *PElement) Part(s ...string) *PElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -399,24 +252,6 @@ func (e *PElement) Role(s string) *PElement {
 	return e
 }
 
-func (e *PElement) Slot(s string) *PElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Spellcheck(v ...Spellcheck) *PElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *PElement) Style(s string) *PElement {
 	e.attributes.Set("style", s)
 
@@ -435,39 +270,13 @@ func (e *PElement) Title(s string) *PElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Translate(v ...Translate) *PElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Writingsuggestions(v ...Writingsuggestions) *PElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *PElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<p>"); err != nil {
 			return err

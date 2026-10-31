@@ -16,8 +16,6 @@ type InputElement struct {
 	htemel.InteractiveMarker
 	htemel.PalpableMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Input creates a tag <input> instance and returns it for further modification.
@@ -29,38 +27,39 @@ func Input() *InputElement {
 	return node
 }
 
-// InputIf creates a tag <input> instance that is only rendered when condition is true.
-func InputIf(condition bool) *InputElement {
-	if condition {
-		return Input()
-	}
-
-	return &InputElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *InputElement) With(fn func(*InputElement)) *InputElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *InputElement) IfThen(cond bool, fn func(*InputElement)) *InputElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *InputElement) Class(classes ...string) *InputElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *InputElement) AddClass(classes ...string) *InputElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *InputElement) SetClass(classes ...string) *InputElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *InputElement) AddClass(classes ...string) *InputElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -118,6 +117,13 @@ func (e *InputElement) SetAttr(name, value string) {
 // SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
 func (e *InputElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
+}
+
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *InputElement) Globals(g Globals) *InputElement {
+	g.apply(&e.attributes)
+	return e
 }
 
 // InputType is a value of the "type" attribute of <input>.
@@ -390,12 +396,6 @@ func (e *InputElement) Width(i int) *InputElement {
 	return e
 }
 
-func (e *InputElement) Accesskey(r rune) *InputElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *InputElement) AriaUnsafe(name string, s string) *InputElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -412,46 +412,10 @@ func (e *InputElement) Aria(name string, s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Autocapitalize(a Autocapitalize) *InputElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Autocorrect(v ...Autocorrect) *InputElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Autofocus(b bool) *InputElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *InputElement) Class(s ...string) *InputElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Contenteditable(v ...Contenteditable) *InputElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -484,32 +448,6 @@ func (e *InputElement) Draggable(a Draggable) *InputElement {
 	return e
 }
 
-func (e *InputElement) Enterkeyhint(a Enterkeyhint) *InputElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *InputElement) Exportparts(s string) *InputElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *InputElement) Headingoffset(i int) *InputElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *InputElement) Headingreset(b bool) *InputElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *InputElement) Hidden(v ...Hidden) *InputElement {
@@ -528,60 +466,6 @@ func (e *InputElement) Id(s string) *InputElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *InputElement) Inert(b bool) *InputElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *InputElement) Inputmode(a Inputmode) *InputElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *InputElement) Is(s string) *InputElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *InputElement) Itemid(s string) *InputElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *InputElement) Itemprop(s ...string) *InputElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *InputElement) Itemref(s ...string) *InputElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *InputElement) Itemscope(b bool) *InputElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *InputElement) Itemtype(s ...string) *InputElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *InputElement) Lang(s string) *InputElement {
 	e.attributes.Set("lang", s)
 
@@ -590,12 +474,6 @@ func (e *InputElement) Lang(s string) *InputElement {
 
 func (e *InputElement) Nonce(s string) *InputElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *InputElement) Part(s ...string) *InputElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -618,24 +496,6 @@ func (e *InputElement) Role(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Slot(s string) *InputElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Spellcheck(v ...Spellcheck) *InputElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *InputElement) Style(s string) *InputElement {
 	e.attributes.Set("style", s)
 
@@ -654,40 +514,14 @@ func (e *InputElement) Title(s string) *InputElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Translate(v ...Translate) *InputElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Writingsuggestions(v ...Writingsuggestions) *InputElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <input> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *InputElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<input>"); err != nil {
 			return err

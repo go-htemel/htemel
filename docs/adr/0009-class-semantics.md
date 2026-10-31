@@ -1,6 +1,6 @@
 # 0009 — Make `Class` additive
 
-**Status:** Proposed
+**Status:** Accepted (v0.4.0)
 
 ## Context
 
@@ -18,3 +18,7 @@ Make `Class(...)` append (de-duplicating tokens) and add `SetClass(...)` for rep
 - The common intent ("also give it these classes") becomes the default.
 - Breaking in behaviour, not signature: code that relied on replacement must switch to
   `SetClass`. A go vet-style check is not possible; document loudly in the CHANGELOG.
+
+## Outcome
+
+Implemented in v0.4.0: `Class` appends with token de-duplication and preserved order, `SetClass` replaces, `AddClass` is a deprecated alias, `ToggleClass` is unchanged. `Attr`/`Attrs`/datastar writes of `class` still replace.

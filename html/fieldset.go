@@ -34,7 +34,6 @@ type FieldsetElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []FieldsetChild
-	skipRender bool
 }
 
 // Fieldset creates a tag <fieldset> instance and returns it for further modification.
@@ -49,26 +48,6 @@ func Fieldset(children ...FieldsetChild) *FieldsetElement {
 	}
 
 	return node
-}
-
-// FieldsetIf creates a tag <fieldset> instance that is only rendered when condition is true.
-func FieldsetIf(condition bool, children ...FieldsetChild) *FieldsetElement {
-	if condition {
-		return Fieldset(children...)
-	}
-
-	return &FieldsetElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FieldsetTernary creates a tag <fieldset> containing then when condition is true, otherwise containing otherwise.
-func FieldsetTernary(condition bool, then FieldsetChild, otherwise FieldsetChild) *FieldsetElement {
-	if condition {
-		return Fieldset(then)
-	}
-	return Fieldset(otherwise)
 }
 
 // Children appends children to this element.
@@ -94,38 +73,33 @@ func (e *FieldsetElement) Textf(format string, args ...any) *FieldsetElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FieldsetElement) If(cond bool, child FieldsetChild) *FieldsetElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FieldsetElement) IfElse(cond bool, then, els FieldsetChild) *FieldsetElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FieldsetElement) IfThen(cond bool, fn func(*FieldsetElement)) *FieldsetElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FieldsetElement) AddClass(classes ...string) *FieldsetElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FieldsetElement) Class(classes ...string) *FieldsetElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FieldsetElement) SetClass(classes ...string) *FieldsetElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FieldsetElement) AddClass(classes ...string) *FieldsetElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -185,6 +159,13 @@ func (e *FieldsetElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *FieldsetElement) Globals(g Globals) *FieldsetElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // Disabled sets the boolean attribute "disabled". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *FieldsetElement) Disabled(b bool) *FieldsetElement {
@@ -205,12 +186,6 @@ func (e *FieldsetElement) Name(s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Accesskey(r rune) *FieldsetElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *FieldsetElement) AriaUnsafe(name string, s string) *FieldsetElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -227,46 +202,10 @@ func (e *FieldsetElement) Aria(name string, s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Autocapitalize(a Autocapitalize) *FieldsetElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Autocorrect(v ...Autocorrect) *FieldsetElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *FieldsetElement) Autofocus(b bool) *FieldsetElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *FieldsetElement) Class(s ...string) *FieldsetElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Contenteditable(v ...Contenteditable) *FieldsetElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -299,32 +238,6 @@ func (e *FieldsetElement) Draggable(a Draggable) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Enterkeyhint(a Enterkeyhint) *FieldsetElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *FieldsetElement) Exportparts(s string) *FieldsetElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *FieldsetElement) Headingoffset(i int) *FieldsetElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FieldsetElement) Headingreset(b bool) *FieldsetElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FieldsetElement) Hidden(v ...Hidden) *FieldsetElement {
@@ -343,60 +256,6 @@ func (e *FieldsetElement) Id(s string) *FieldsetElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FieldsetElement) Inert(b bool) *FieldsetElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *FieldsetElement) Inputmode(a Inputmode) *FieldsetElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *FieldsetElement) Is(s string) *FieldsetElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *FieldsetElement) Itemid(s string) *FieldsetElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *FieldsetElement) Itemprop(s ...string) *FieldsetElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *FieldsetElement) Itemref(s ...string) *FieldsetElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FieldsetElement) Itemscope(b bool) *FieldsetElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *FieldsetElement) Itemtype(s ...string) *FieldsetElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *FieldsetElement) Lang(s string) *FieldsetElement {
 	e.attributes.Set("lang", s)
 
@@ -405,12 +264,6 @@ func (e *FieldsetElement) Lang(s string) *FieldsetElement {
 
 func (e *FieldsetElement) Nonce(s string) *FieldsetElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *FieldsetElement) Part(s ...string) *FieldsetElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -433,24 +286,6 @@ func (e *FieldsetElement) Role(s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Slot(s string) *FieldsetElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Spellcheck(v ...Spellcheck) *FieldsetElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *FieldsetElement) Style(s string) *FieldsetElement {
 	e.attributes.Set("style", s)
 
@@ -469,39 +304,13 @@ func (e *FieldsetElement) Title(s string) *FieldsetElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Translate(v ...Translate) *FieldsetElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Writingsuggestions(v ...Writingsuggestions) *FieldsetElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FieldsetElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<fieldset>"); err != nil {
 			return err

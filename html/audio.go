@@ -37,7 +37,6 @@ type AudioElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []AudioChild
-	skipRender bool
 }
 
 // Audio creates a tag <audio> instance and returns it for further modification.
@@ -54,26 +53,6 @@ func Audio(children ...AudioChild) *AudioElement {
 	}
 
 	return node
-}
-
-// AudioIf creates a tag <audio> instance that is only rendered when condition is true.
-func AudioIf(condition bool, children ...AudioChild) *AudioElement {
-	if condition {
-		return Audio(children...)
-	}
-
-	return &AudioElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AudioTernary creates a tag <audio> containing then when condition is true, otherwise containing otherwise.
-func AudioTernary(condition bool, then AudioChild, otherwise AudioChild) *AudioElement {
-	if condition {
-		return Audio(then)
-	}
-	return Audio(otherwise)
 }
 
 // Children appends children to this element.
@@ -99,38 +78,33 @@ func (e *AudioElement) Textf(format string, args ...any) *AudioElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AudioElement) If(cond bool, child AudioChild) *AudioElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AudioElement) IfElse(cond bool, then, els AudioChild) *AudioElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AudioElement) IfThen(cond bool, fn func(*AudioElement)) *AudioElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AudioElement) AddClass(classes ...string) *AudioElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AudioElement) Class(classes ...string) *AudioElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AudioElement) SetClass(classes ...string) *AudioElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AudioElement) AddClass(classes ...string) *AudioElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -188,6 +162,13 @@ func (e *AudioElement) SetAttr(name, value string) {
 // SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
 func (e *AudioElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
+}
+
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *AudioElement) Globals(g Globals) *AudioElement {
+	g.apply(&e.attributes)
+	return e
 }
 
 // Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
@@ -274,12 +255,6 @@ func (e *AudioElement) Src(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Accesskey(r rune) *AudioElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *AudioElement) AriaUnsafe(name string, s string) *AudioElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -296,46 +271,10 @@ func (e *AudioElement) Aria(name string, s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Autocapitalize(a Autocapitalize) *AudioElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Autocorrect(v ...Autocorrect) *AudioElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Autofocus(b bool) *AudioElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *AudioElement) Class(s ...string) *AudioElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Contenteditable(v ...Contenteditable) *AudioElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -368,32 +307,6 @@ func (e *AudioElement) Draggable(a Draggable) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Enterkeyhint(a Enterkeyhint) *AudioElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *AudioElement) Exportparts(s string) *AudioElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *AudioElement) Headingoffset(i int) *AudioElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Headingreset(b bool) *AudioElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AudioElement) Hidden(v ...Hidden) *AudioElement {
@@ -412,60 +325,6 @@ func (e *AudioElement) Id(s string) *AudioElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Inert(b bool) *AudioElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *AudioElement) Inputmode(a Inputmode) *AudioElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *AudioElement) Is(s string) *AudioElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *AudioElement) Itemid(s string) *AudioElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *AudioElement) Itemprop(s ...string) *AudioElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *AudioElement) Itemref(s ...string) *AudioElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Itemscope(b bool) *AudioElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *AudioElement) Itemtype(s ...string) *AudioElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *AudioElement) Lang(s string) *AudioElement {
 	e.attributes.Set("lang", s)
 
@@ -474,12 +333,6 @@ func (e *AudioElement) Lang(s string) *AudioElement {
 
 func (e *AudioElement) Nonce(s string) *AudioElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *AudioElement) Part(s ...string) *AudioElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -502,24 +355,6 @@ func (e *AudioElement) Role(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Slot(s string) *AudioElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Spellcheck(v ...Spellcheck) *AudioElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *AudioElement) Style(s string) *AudioElement {
 	e.attributes.Set("style", s)
 
@@ -538,39 +373,13 @@ func (e *AudioElement) Title(s string) *AudioElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Translate(v ...Translate) *AudioElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Writingsuggestions(v ...Writingsuggestions) *AudioElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AudioElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<audio>"); err != nil {
 			return err

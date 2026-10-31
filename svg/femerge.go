@@ -15,7 +15,6 @@ import (
 type FeMergeElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // FeMerge creates a tag <feMerge> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func FeMerge(children ...Content) *FeMergeElement {
 	}
 
 	return node
-}
-
-// FeMergeIf creates a tag <feMerge> instance that is only rendered when condition is true.
-func FeMergeIf(condition bool, children ...Content) *FeMergeElement {
-	if condition {
-		return FeMerge(children...)
-	}
-
-	return &FeMergeElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FeMergeTernary creates a tag <feMerge> containing then when condition is true, otherwise containing otherwise.
-func FeMergeTernary(condition bool, then Content, otherwise Content) *FeMergeElement {
-	if condition {
-		return FeMerge(then)
-	}
-	return FeMerge(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *FeMergeElement) Textf(format string, args ...any) *FeMergeElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeMergeElement) If(cond bool, child Content) *FeMergeElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeMergeElement) IfElse(cond bool, then, els Content) *FeMergeElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FeMergeElement) IfThen(cond bool, fn func(*FeMergeElement)) *FeMergeElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FeMergeElement) AddClass(classes ...string) *FeMergeElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FeMergeElement) Class(classes ...string) *FeMergeElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FeMergeElement) SetClass(classes ...string) *FeMergeElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FeMergeElement) AddClass(classes ...string) *FeMergeElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -231,12 +205,6 @@ func (e *FeMergeElement) Autofocus(b bool) *FeMergeElement {
 
 func (e *FeMergeElement) BaselineShift(s string) *FeMergeElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *FeMergeElement) Class(s ...string) *FeMergeElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -677,12 +645,10 @@ func (e *FeMergeElement) XmlSpace(a XmlSpace) *FeMergeElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FeMergeElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<feMerge>"); err != nil {
 			return err

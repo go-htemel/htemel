@@ -15,7 +15,6 @@ import (
 type CaptionElement struct {
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Caption creates a tag <caption> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Caption(children ...htemel.FlowContent) *CaptionElement {
 	}
 
 	return node
-}
-
-// CaptionIf creates a tag <caption> instance that is only rendered when condition is true.
-func CaptionIf(condition bool, children ...htemel.FlowContent) *CaptionElement {
-	if condition {
-		return Caption(children...)
-	}
-
-	return &CaptionElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// CaptionTernary creates a tag <caption> containing then when condition is true, otherwise containing otherwise.
-func CaptionTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *CaptionElement {
-	if condition {
-		return Caption(then)
-	}
-	return Caption(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *CaptionElement) Textf(format string, args ...any) *CaptionElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *CaptionElement) If(cond bool, child htemel.FlowContent) *CaptionElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *CaptionElement) IfElse(cond bool, then, els htemel.FlowContent) *CaptionElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *CaptionElement) IfThen(cond bool, fn func(*CaptionElement)) *CaptionElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *CaptionElement) AddClass(classes ...string) *CaptionElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *CaptionElement) Class(classes ...string) *CaptionElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *CaptionElement) SetClass(classes ...string) *CaptionElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *CaptionElement) AddClass(classes ...string) *CaptionElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -166,14 +140,15 @@ func (e *CaptionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLTableChild marks <caption> as a permitted child of <table> (TableChild).
-func (*CaptionElement) HTMLTableChild() {}
-
-func (e *CaptionElement) Accesskey(r rune) *CaptionElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *CaptionElement) Globals(g Globals) *CaptionElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLTableChild marks <caption> as a permitted child of <table> (TableChild).
+func (*CaptionElement) HTMLTableChild() {}
 
 func (e *CaptionElement) AriaUnsafe(name string, s string) *CaptionElement {
 	tag := strings.ToLower("aria-" + name)
@@ -191,46 +166,10 @@ func (e *CaptionElement) Aria(name string, s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Autocapitalize(a Autocapitalize) *CaptionElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Autocorrect(v ...Autocorrect) *CaptionElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *CaptionElement) Autofocus(b bool) *CaptionElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *CaptionElement) Class(s ...string) *CaptionElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Contenteditable(v ...Contenteditable) *CaptionElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -263,32 +202,6 @@ func (e *CaptionElement) Draggable(a Draggable) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Enterkeyhint(a Enterkeyhint) *CaptionElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *CaptionElement) Exportparts(s string) *CaptionElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *CaptionElement) Headingoffset(i int) *CaptionElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *CaptionElement) Headingreset(b bool) *CaptionElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *CaptionElement) Hidden(v ...Hidden) *CaptionElement {
@@ -307,60 +220,6 @@ func (e *CaptionElement) Id(s string) *CaptionElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *CaptionElement) Inert(b bool) *CaptionElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *CaptionElement) Inputmode(a Inputmode) *CaptionElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *CaptionElement) Is(s string) *CaptionElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *CaptionElement) Itemid(s string) *CaptionElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *CaptionElement) Itemprop(s ...string) *CaptionElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *CaptionElement) Itemref(s ...string) *CaptionElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *CaptionElement) Itemscope(b bool) *CaptionElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *CaptionElement) Itemtype(s ...string) *CaptionElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *CaptionElement) Lang(s string) *CaptionElement {
 	e.attributes.Set("lang", s)
 
@@ -369,12 +228,6 @@ func (e *CaptionElement) Lang(s string) *CaptionElement {
 
 func (e *CaptionElement) Nonce(s string) *CaptionElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *CaptionElement) Part(s ...string) *CaptionElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -397,24 +250,6 @@ func (e *CaptionElement) Role(s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Slot(s string) *CaptionElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Spellcheck(v ...Spellcheck) *CaptionElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *CaptionElement) Style(s string) *CaptionElement {
 	e.attributes.Set("style", s)
 
@@ -433,39 +268,13 @@ func (e *CaptionElement) Title(s string) *CaptionElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Translate(v ...Translate) *CaptionElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Writingsuggestions(v ...Writingsuggestions) *CaptionElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *CaptionElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<caption>"); err != nil {
 			return err

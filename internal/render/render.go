@@ -3,6 +3,7 @@ package render
 
 import (
 	"io"
+	"slices"
 	"strings"
 )
 
@@ -188,4 +189,20 @@ func RawText(tag, text string) string {
 	}
 	sb.WriteString(text[last:])
 	return sb.String()
+}
+
+// AppendClasses returns current with classes appended. Each element of classes may hold several
+// space-separated class names. A name already present (in current or earlier in classes) is
+// skipped, so order is preserved and no appended name repeats. Whitespace is normalised to single
+// spaces.
+func AppendClasses(current string, classes []string) string {
+	names := strings.Fields(current)
+	for _, c := range classes {
+		for _, name := range strings.Fields(c) {
+			if !slices.Contains(names, name) {
+				names = append(names, name)
+			}
+		}
+	}
+	return strings.Join(names, " ")
 }

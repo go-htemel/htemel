@@ -17,7 +17,6 @@ type StrongElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Strong creates a tag <strong> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Strong(children ...htemel.PhrasingContent) *StrongElement {
 	}
 
 	return node
-}
-
-// StrongIf creates a tag <strong> instance that is only rendered when condition is true.
-func StrongIf(condition bool, children ...htemel.PhrasingContent) *StrongElement {
-	if condition {
-		return Strong(children...)
-	}
-
-	return &StrongElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// StrongTernary creates a tag <strong> containing then when condition is true, otherwise containing otherwise.
-func StrongTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *StrongElement {
-	if condition {
-		return Strong(then)
-	}
-	return Strong(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *StrongElement) Textf(format string, args ...any) *StrongElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StrongElement) If(cond bool, child htemel.PhrasingContent) *StrongElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StrongElement) IfElse(cond bool, then, els htemel.PhrasingContent) *StrongElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *StrongElement) IfThen(cond bool, fn func(*StrongElement)) *StrongElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *StrongElement) AddClass(classes ...string) *StrongElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *StrongElement) Class(classes ...string) *StrongElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *StrongElement) SetClass(classes ...string) *StrongElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *StrongElement) AddClass(classes ...string) *StrongElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *StrongElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *StrongElement) Accesskey(r rune) *StrongElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *StrongElement) Globals(g Globals) *StrongElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *StrongElement) Aria(name string, s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Autocapitalize(a Autocapitalize) *StrongElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Autocorrect(v ...Autocorrect) *StrongElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *StrongElement) Autofocus(b bool) *StrongElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *StrongElement) Class(s ...string) *StrongElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Contenteditable(v ...Contenteditable) *StrongElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *StrongElement) Draggable(a Draggable) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Enterkeyhint(a Enterkeyhint) *StrongElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *StrongElement) Exportparts(s string) *StrongElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *StrongElement) Headingoffset(i int) *StrongElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StrongElement) Headingreset(b bool) *StrongElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *StrongElement) Hidden(v ...Hidden) *StrongElement {
@@ -306,60 +219,6 @@ func (e *StrongElement) Id(s string) *StrongElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StrongElement) Inert(b bool) *StrongElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *StrongElement) Inputmode(a Inputmode) *StrongElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *StrongElement) Is(s string) *StrongElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *StrongElement) Itemid(s string) *StrongElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *StrongElement) Itemprop(s ...string) *StrongElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *StrongElement) Itemref(s ...string) *StrongElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StrongElement) Itemscope(b bool) *StrongElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *StrongElement) Itemtype(s ...string) *StrongElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *StrongElement) Lang(s string) *StrongElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *StrongElement) Lang(s string) *StrongElement {
 
 func (e *StrongElement) Nonce(s string) *StrongElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *StrongElement) Part(s ...string) *StrongElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *StrongElement) Role(s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Slot(s string) *StrongElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Spellcheck(v ...Spellcheck) *StrongElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *StrongElement) Style(s string) *StrongElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *StrongElement) Title(s string) *StrongElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Translate(v ...Translate) *StrongElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Writingsuggestions(v ...Writingsuggestions) *StrongElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *StrongElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<strong>"); err != nil {
 			return err

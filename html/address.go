@@ -17,7 +17,6 @@ type AddressElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Address creates a tag <address> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Address(children ...htemel.FlowContent) *AddressElement {
 	}
 
 	return node
-}
-
-// AddressIf creates a tag <address> instance that is only rendered when condition is true.
-func AddressIf(condition bool, children ...htemel.FlowContent) *AddressElement {
-	if condition {
-		return Address(children...)
-	}
-
-	return &AddressElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AddressTernary creates a tag <address> containing then when condition is true, otherwise containing otherwise.
-func AddressTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *AddressElement {
-	if condition {
-		return Address(then)
-	}
-	return Address(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *AddressElement) Textf(format string, args ...any) *AddressElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AddressElement) If(cond bool, child htemel.FlowContent) *AddressElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AddressElement) IfElse(cond bool, then, els htemel.FlowContent) *AddressElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AddressElement) IfThen(cond bool, fn func(*AddressElement)) *AddressElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AddressElement) AddClass(classes ...string) *AddressElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AddressElement) Class(classes ...string) *AddressElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AddressElement) SetClass(classes ...string) *AddressElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AddressElement) AddClass(classes ...string) *AddressElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *AddressElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *AddressElement) Accesskey(r rune) *AddressElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *AddressElement) Globals(g Globals) *AddressElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *AddressElement) Aria(name string, s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Autocapitalize(a Autocapitalize) *AddressElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Autocorrect(v ...Autocorrect) *AddressElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *AddressElement) Autofocus(b bool) *AddressElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *AddressElement) Class(s ...string) *AddressElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Contenteditable(v ...Contenteditable) *AddressElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *AddressElement) Draggable(a Draggable) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Enterkeyhint(a Enterkeyhint) *AddressElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *AddressElement) Exportparts(s string) *AddressElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *AddressElement) Headingoffset(i int) *AddressElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AddressElement) Headingreset(b bool) *AddressElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AddressElement) Hidden(v ...Hidden) *AddressElement {
@@ -306,60 +219,6 @@ func (e *AddressElement) Id(s string) *AddressElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AddressElement) Inert(b bool) *AddressElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *AddressElement) Inputmode(a Inputmode) *AddressElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *AddressElement) Is(s string) *AddressElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *AddressElement) Itemid(s string) *AddressElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *AddressElement) Itemprop(s ...string) *AddressElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *AddressElement) Itemref(s ...string) *AddressElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AddressElement) Itemscope(b bool) *AddressElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *AddressElement) Itemtype(s ...string) *AddressElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *AddressElement) Lang(s string) *AddressElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *AddressElement) Lang(s string) *AddressElement {
 
 func (e *AddressElement) Nonce(s string) *AddressElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *AddressElement) Part(s ...string) *AddressElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *AddressElement) Role(s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Slot(s string) *AddressElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Spellcheck(v ...Spellcheck) *AddressElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *AddressElement) Style(s string) *AddressElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *AddressElement) Title(s string) *AddressElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Translate(v ...Translate) *AddressElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Writingsuggestions(v ...Writingsuggestions) *AddressElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AddressElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<address>"); err != nil {
 			return err

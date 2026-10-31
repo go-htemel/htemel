@@ -17,7 +17,6 @@ type HeaderElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Header creates a tag <header> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Header(children ...htemel.FlowContent) *HeaderElement {
 	}
 
 	return node
-}
-
-// HeaderIf creates a tag <header> instance that is only rendered when condition is true.
-func HeaderIf(condition bool, children ...htemel.FlowContent) *HeaderElement {
-	if condition {
-		return Header(children...)
-	}
-
-	return &HeaderElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// HeaderTernary creates a tag <header> containing then when condition is true, otherwise containing otherwise.
-func HeaderTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *HeaderElement {
-	if condition {
-		return Header(then)
-	}
-	return Header(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *HeaderElement) Textf(format string, args ...any) *HeaderElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HeaderElement) If(cond bool, child htemel.FlowContent) *HeaderElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HeaderElement) IfElse(cond bool, then, els htemel.FlowContent) *HeaderElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *HeaderElement) IfThen(cond bool, fn func(*HeaderElement)) *HeaderElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *HeaderElement) AddClass(classes ...string) *HeaderElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *HeaderElement) Class(classes ...string) *HeaderElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *HeaderElement) SetClass(classes ...string) *HeaderElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *HeaderElement) AddClass(classes ...string) *HeaderElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *HeaderElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *HeaderElement) Accesskey(r rune) *HeaderElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *HeaderElement) Globals(g Globals) *HeaderElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *HeaderElement) Aria(name string, s string) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Autocapitalize(a Autocapitalize) *HeaderElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Autocorrect(v ...Autocorrect) *HeaderElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *HeaderElement) Autofocus(b bool) *HeaderElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *HeaderElement) Class(s ...string) *HeaderElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Contenteditable(v ...Contenteditable) *HeaderElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *HeaderElement) Draggable(a Draggable) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Enterkeyhint(a Enterkeyhint) *HeaderElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *HeaderElement) Exportparts(s string) *HeaderElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *HeaderElement) Headingoffset(i int) *HeaderElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeaderElement) Headingreset(b bool) *HeaderElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HeaderElement) Hidden(v ...Hidden) *HeaderElement {
@@ -306,60 +219,6 @@ func (e *HeaderElement) Id(s string) *HeaderElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeaderElement) Inert(b bool) *HeaderElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *HeaderElement) Inputmode(a Inputmode) *HeaderElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *HeaderElement) Is(s string) *HeaderElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *HeaderElement) Itemid(s string) *HeaderElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *HeaderElement) Itemprop(s ...string) *HeaderElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *HeaderElement) Itemref(s ...string) *HeaderElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HeaderElement) Itemscope(b bool) *HeaderElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *HeaderElement) Itemtype(s ...string) *HeaderElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *HeaderElement) Lang(s string) *HeaderElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *HeaderElement) Lang(s string) *HeaderElement {
 
 func (e *HeaderElement) Nonce(s string) *HeaderElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *HeaderElement) Part(s ...string) *HeaderElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *HeaderElement) Role(s string) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Slot(s string) *HeaderElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Spellcheck(v ...Spellcheck) *HeaderElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *HeaderElement) Style(s string) *HeaderElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *HeaderElement) Title(s string) *HeaderElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Translate(v ...Translate) *HeaderElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Writingsuggestions(v ...Writingsuggestions) *HeaderElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *HeaderElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<header>"); err != nil {
 			return err

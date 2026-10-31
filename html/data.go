@@ -17,7 +17,6 @@ type DataElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Data creates a tag <data> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Data(children ...htemel.PhrasingContent) *DataElement {
 	}
 
 	return node
-}
-
-// DataIf creates a tag <data> instance that is only rendered when condition is true.
-func DataIf(condition bool, children ...htemel.PhrasingContent) *DataElement {
-	if condition {
-		return Data(children...)
-	}
-
-	return &DataElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// DataTernary creates a tag <data> containing then when condition is true, otherwise containing otherwise.
-func DataTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *DataElement {
-	if condition {
-		return Data(then)
-	}
-	return Data(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *DataElement) Textf(format string, args ...any) *DataElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DataElement) If(cond bool, child htemel.PhrasingContent) *DataElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DataElement) IfElse(cond bool, then, els htemel.PhrasingContent) *DataElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *DataElement) IfThen(cond bool, fn func(*DataElement)) *DataElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *DataElement) AddClass(classes ...string) *DataElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *DataElement) Class(classes ...string) *DataElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *DataElement) SetClass(classes ...string) *DataElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *DataElement) AddClass(classes ...string) *DataElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,14 +142,15 @@ func (e *DataElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *DataElement) Value(s string) *DataElement {
-	e.attributes.Set("value", s)
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *DataElement) Globals(g Globals) *DataElement {
+	g.apply(&e.attributes)
 	return e
 }
 
-func (e *DataElement) Accesskey(r rune) *DataElement {
-	e.attributes.Set("accesskey", string(r))
+func (e *DataElement) Value(s string) *DataElement {
+	e.attributes.Set("value", s)
 
 	return e
 }
@@ -196,46 +171,10 @@ func (e *DataElement) Aria(name string, s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Autocapitalize(a Autocapitalize) *DataElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Autocorrect(v ...Autocorrect) *DataElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *DataElement) Autofocus(b bool) *DataElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *DataElement) Class(s ...string) *DataElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Contenteditable(v ...Contenteditable) *DataElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -268,32 +207,6 @@ func (e *DataElement) Draggable(a Draggable) *DataElement {
 	return e
 }
 
-func (e *DataElement) Enterkeyhint(a Enterkeyhint) *DataElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *DataElement) Exportparts(s string) *DataElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *DataElement) Headingoffset(i int) *DataElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DataElement) Headingreset(b bool) *DataElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DataElement) Hidden(v ...Hidden) *DataElement {
@@ -312,60 +225,6 @@ func (e *DataElement) Id(s string) *DataElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DataElement) Inert(b bool) *DataElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *DataElement) Inputmode(a Inputmode) *DataElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *DataElement) Is(s string) *DataElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *DataElement) Itemid(s string) *DataElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *DataElement) Itemprop(s ...string) *DataElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *DataElement) Itemref(s ...string) *DataElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DataElement) Itemscope(b bool) *DataElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *DataElement) Itemtype(s ...string) *DataElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *DataElement) Lang(s string) *DataElement {
 	e.attributes.Set("lang", s)
 
@@ -374,12 +233,6 @@ func (e *DataElement) Lang(s string) *DataElement {
 
 func (e *DataElement) Nonce(s string) *DataElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *DataElement) Part(s ...string) *DataElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -402,24 +255,6 @@ func (e *DataElement) Role(s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Slot(s string) *DataElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Spellcheck(v ...Spellcheck) *DataElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *DataElement) Style(s string) *DataElement {
 	e.attributes.Set("style", s)
 
@@ -438,39 +273,13 @@ func (e *DataElement) Title(s string) *DataElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Translate(v ...Translate) *DataElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Writingsuggestions(v ...Writingsuggestions) *DataElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *DataElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<data>"); err != nil {
 			return err

@@ -15,7 +15,6 @@ import (
 type ClipPathElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // ClipPath creates a tag <clipPath> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func ClipPath(children ...Content) *ClipPathElement {
 	}
 
 	return node
-}
-
-// ClipPathIf creates a tag <clipPath> instance that is only rendered when condition is true.
-func ClipPathIf(condition bool, children ...Content) *ClipPathElement {
-	if condition {
-		return ClipPath(children...)
-	}
-
-	return &ClipPathElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// ClipPathTernary creates a tag <clipPath> containing then when condition is true, otherwise containing otherwise.
-func ClipPathTernary(condition bool, then Content, otherwise Content) *ClipPathElement {
-	if condition {
-		return ClipPath(then)
-	}
-	return ClipPath(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *ClipPathElement) Textf(format string, args ...any) *ClipPathElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ClipPathElement) If(cond bool, child Content) *ClipPathElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ClipPathElement) IfElse(cond bool, then, els Content) *ClipPathElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *ClipPathElement) IfThen(cond bool, fn func(*ClipPathElement)) *ClipPathElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *ClipPathElement) AddClass(classes ...string) *ClipPathElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *ClipPathElement) Class(classes ...string) *ClipPathElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *ClipPathElement) SetClass(classes ...string) *ClipPathElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *ClipPathElement) AddClass(classes ...string) *ClipPathElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -213,12 +187,6 @@ func (e *ClipPathElement) Autofocus(b bool) *ClipPathElement {
 
 func (e *ClipPathElement) BaselineShift(s string) *ClipPathElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *ClipPathElement) Class(s ...string) *ClipPathElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -659,12 +627,10 @@ func (e *ClipPathElement) XmlSpace(a XmlSpace) *ClipPathElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *ClipPathElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<clipPath>"); err != nil {
 			return err

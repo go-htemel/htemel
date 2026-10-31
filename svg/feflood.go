@@ -15,7 +15,6 @@ import (
 type FeFloodElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // FeFlood creates a tag <feFlood> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func FeFlood(children ...Content) *FeFloodElement {
 	}
 
 	return node
-}
-
-// FeFloodIf creates a tag <feFlood> instance that is only rendered when condition is true.
-func FeFloodIf(condition bool, children ...Content) *FeFloodElement {
-	if condition {
-		return FeFlood(children...)
-	}
-
-	return &FeFloodElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FeFloodTernary creates a tag <feFlood> containing then when condition is true, otherwise containing otherwise.
-func FeFloodTernary(condition bool, then Content, otherwise Content) *FeFloodElement {
-	if condition {
-		return FeFlood(then)
-	}
-	return FeFlood(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *FeFloodElement) Textf(format string, args ...any) *FeFloodElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeFloodElement) If(cond bool, child Content) *FeFloodElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeFloodElement) IfElse(cond bool, then, els Content) *FeFloodElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FeFloodElement) IfThen(cond bool, fn func(*FeFloodElement)) *FeFloodElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FeFloodElement) AddClass(classes ...string) *FeFloodElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FeFloodElement) Class(classes ...string) *FeFloodElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FeFloodElement) SetClass(classes ...string) *FeFloodElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FeFloodElement) AddClass(classes ...string) *FeFloodElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -231,12 +205,6 @@ func (e *FeFloodElement) Autofocus(b bool) *FeFloodElement {
 
 func (e *FeFloodElement) BaselineShift(s string) *FeFloodElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *FeFloodElement) Class(s ...string) *FeFloodElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -677,12 +645,10 @@ func (e *FeFloodElement) XmlSpace(a XmlSpace) *FeFloodElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FeFloodElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<feFlood>"); err != nil {
 			return err

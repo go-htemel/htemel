@@ -17,7 +17,6 @@ type DfnElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Dfn creates a tag <dfn> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Dfn(children ...htemel.PhrasingContent) *DfnElement {
 	}
 
 	return node
-}
-
-// DfnIf creates a tag <dfn> instance that is only rendered when condition is true.
-func DfnIf(condition bool, children ...htemel.PhrasingContent) *DfnElement {
-	if condition {
-		return Dfn(children...)
-	}
-
-	return &DfnElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// DfnTernary creates a tag <dfn> containing then when condition is true, otherwise containing otherwise.
-func DfnTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *DfnElement {
-	if condition {
-		return Dfn(then)
-	}
-	return Dfn(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *DfnElement) Textf(format string, args ...any) *DfnElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DfnElement) If(cond bool, child htemel.PhrasingContent) *DfnElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DfnElement) IfElse(cond bool, then, els htemel.PhrasingContent) *DfnElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *DfnElement) IfThen(cond bool, fn func(*DfnElement)) *DfnElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *DfnElement) AddClass(classes ...string) *DfnElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *DfnElement) Class(classes ...string) *DfnElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *DfnElement) SetClass(classes ...string) *DfnElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *DfnElement) AddClass(classes ...string) *DfnElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *DfnElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *DfnElement) Accesskey(r rune) *DfnElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *DfnElement) Globals(g Globals) *DfnElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *DfnElement) Aria(name string, s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Autocapitalize(a Autocapitalize) *DfnElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Autocorrect(v ...Autocorrect) *DfnElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *DfnElement) Autofocus(b bool) *DfnElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *DfnElement) Class(s ...string) *DfnElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Contenteditable(v ...Contenteditable) *DfnElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *DfnElement) Draggable(a Draggable) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Enterkeyhint(a Enterkeyhint) *DfnElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *DfnElement) Exportparts(s string) *DfnElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *DfnElement) Headingoffset(i int) *DfnElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DfnElement) Headingreset(b bool) *DfnElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DfnElement) Hidden(v ...Hidden) *DfnElement {
@@ -306,60 +219,6 @@ func (e *DfnElement) Id(s string) *DfnElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DfnElement) Inert(b bool) *DfnElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *DfnElement) Inputmode(a Inputmode) *DfnElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *DfnElement) Is(s string) *DfnElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *DfnElement) Itemid(s string) *DfnElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *DfnElement) Itemprop(s ...string) *DfnElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *DfnElement) Itemref(s ...string) *DfnElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DfnElement) Itemscope(b bool) *DfnElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *DfnElement) Itemtype(s ...string) *DfnElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *DfnElement) Lang(s string) *DfnElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *DfnElement) Lang(s string) *DfnElement {
 
 func (e *DfnElement) Nonce(s string) *DfnElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *DfnElement) Part(s ...string) *DfnElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *DfnElement) Role(s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Slot(s string) *DfnElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Spellcheck(v ...Spellcheck) *DfnElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *DfnElement) Style(s string) *DfnElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *DfnElement) Title(s string) *DfnElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Translate(v ...Translate) *DfnElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Writingsuggestions(v ...Writingsuggestions) *DfnElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *DfnElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<dfn>"); err != nil {
 			return err

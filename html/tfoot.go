@@ -24,7 +24,6 @@ type TfootChild interface {
 type TfootElement struct {
 	attributes render.Attrs
 	children   []TfootChild
-	skipRender bool
 }
 
 // Tfoot creates a tag <tfoot> instance and returns it for further modification.
@@ -41,26 +40,6 @@ func Tfoot(children ...TfootChild) *TfootElement {
 	return node
 }
 
-// TfootIf creates a tag <tfoot> instance that is only rendered when condition is true.
-func TfootIf(condition bool, children ...TfootChild) *TfootElement {
-	if condition {
-		return Tfoot(children...)
-	}
-
-	return &TfootElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// TfootTernary creates a tag <tfoot> containing then when condition is true, otherwise containing otherwise.
-func TfootTernary(condition bool, then TfootChild, otherwise TfootChild) *TfootElement {
-	if condition {
-		return Tfoot(then)
-	}
-	return Tfoot(otherwise)
-}
-
 // Children appends children to this element.
 func (e *TfootElement) Children(children ...TfootChild) *TfootElement {
 	e.children = append(e.children, children...)
@@ -73,38 +52,33 @@ func (e *TfootElement) With(fn func(*TfootElement)) *TfootElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TfootElement) If(cond bool, child TfootChild) *TfootElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TfootElement) IfElse(cond bool, then, els TfootChild) *TfootElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TfootElement) IfThen(cond bool, fn func(*TfootElement)) *TfootElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *TfootElement) AddClass(classes ...string) *TfootElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TfootElement) Class(classes ...string) *TfootElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TfootElement) SetClass(classes ...string) *TfootElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TfootElement) AddClass(classes ...string) *TfootElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -164,14 +138,15 @@ func (e *TfootElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLTableChild marks <tfoot> as a permitted child of <table> (TableChild).
-func (*TfootElement) HTMLTableChild() {}
-
-func (e *TfootElement) Accesskey(r rune) *TfootElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *TfootElement) Globals(g Globals) *TfootElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLTableChild marks <tfoot> as a permitted child of <table> (TableChild).
+func (*TfootElement) HTMLTableChild() {}
 
 func (e *TfootElement) AriaUnsafe(name string, s string) *TfootElement {
 	tag := strings.ToLower("aria-" + name)
@@ -189,46 +164,10 @@ func (e *TfootElement) Aria(name string, s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Autocapitalize(a Autocapitalize) *TfootElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Autocorrect(v ...Autocorrect) *TfootElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *TfootElement) Autofocus(b bool) *TfootElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *TfootElement) Class(s ...string) *TfootElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Contenteditable(v ...Contenteditable) *TfootElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -261,32 +200,6 @@ func (e *TfootElement) Draggable(a Draggable) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Enterkeyhint(a Enterkeyhint) *TfootElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *TfootElement) Exportparts(s string) *TfootElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *TfootElement) Headingoffset(i int) *TfootElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TfootElement) Headingreset(b bool) *TfootElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TfootElement) Hidden(v ...Hidden) *TfootElement {
@@ -305,60 +218,6 @@ func (e *TfootElement) Id(s string) *TfootElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TfootElement) Inert(b bool) *TfootElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *TfootElement) Inputmode(a Inputmode) *TfootElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *TfootElement) Is(s string) *TfootElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *TfootElement) Itemid(s string) *TfootElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *TfootElement) Itemprop(s ...string) *TfootElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *TfootElement) Itemref(s ...string) *TfootElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TfootElement) Itemscope(b bool) *TfootElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *TfootElement) Itemtype(s ...string) *TfootElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *TfootElement) Lang(s string) *TfootElement {
 	e.attributes.Set("lang", s)
 
@@ -367,12 +226,6 @@ func (e *TfootElement) Lang(s string) *TfootElement {
 
 func (e *TfootElement) Nonce(s string) *TfootElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *TfootElement) Part(s ...string) *TfootElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -395,24 +248,6 @@ func (e *TfootElement) Role(s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Slot(s string) *TfootElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Spellcheck(v ...Spellcheck) *TfootElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *TfootElement) Style(s string) *TfootElement {
 	e.attributes.Set("style", s)
 
@@ -431,39 +266,13 @@ func (e *TfootElement) Title(s string) *TfootElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Translate(v ...Translate) *TfootElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Writingsuggestions(v ...Writingsuggestions) *TfootElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TfootElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<tfoot>"); err != nil {
 			return err

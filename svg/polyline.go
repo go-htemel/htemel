@@ -15,7 +15,6 @@ import (
 type PolylineElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Polyline creates a tag <polyline> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Polyline(children ...Content) *PolylineElement {
 	}
 
 	return node
-}
-
-// PolylineIf creates a tag <polyline> instance that is only rendered when condition is true.
-func PolylineIf(condition bool, children ...Content) *PolylineElement {
-	if condition {
-		return Polyline(children...)
-	}
-
-	return &PolylineElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// PolylineTernary creates a tag <polyline> containing then when condition is true, otherwise containing otherwise.
-func PolylineTernary(condition bool, then Content, otherwise Content) *PolylineElement {
-	if condition {
-		return Polyline(then)
-	}
-	return Polyline(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *PolylineElement) Textf(format string, args ...any) *PolylineElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PolylineElement) If(cond bool, child Content) *PolylineElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PolylineElement) IfElse(cond bool, then, els Content) *PolylineElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *PolylineElement) IfThen(cond bool, fn func(*PolylineElement)) *PolylineElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *PolylineElement) AddClass(classes ...string) *PolylineElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *PolylineElement) Class(classes ...string) *PolylineElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *PolylineElement) SetClass(classes ...string) *PolylineElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *PolylineElement) AddClass(classes ...string) *PolylineElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -219,12 +193,6 @@ func (e *PolylineElement) Autofocus(b bool) *PolylineElement {
 
 func (e *PolylineElement) BaselineShift(s string) *PolylineElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *PolylineElement) Class(s ...string) *PolylineElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -665,12 +633,10 @@ func (e *PolylineElement) XmlSpace(a XmlSpace) *PolylineElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *PolylineElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<polyline>"); err != nil {
 			return err

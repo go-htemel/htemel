@@ -1,6 +1,6 @@
 # 0013 — A helper for composite elements that wrap a control
 
-**Status:** Proposed
+**Status:** Rejected
 
 ## Context
 
@@ -21,3 +21,7 @@ interface over it.
 - Composites shrink to "build the markup, name the control".
 - Generics on method return types (`Attrs(...) *Self`) need care; worst case the helper
   returns the interface and composites keep one typed `Attrs` each.
+
+## Outcome
+
+Prototyped for v0.4.0 and not shipped. Go cannot embed a type parameter, so a generic wrapper cannot promote the outer element's markers. A `Composite{Outer Node; Inner Element}` helper cannot sit beside an embedded `*html.DivElement` (the promoted `Render`/`SetAttr` are ambiguous, so the type no longer implements `htemel.Element`). Used instead of the outer element, it drops the wrapper's builder methods and still needs a typed `Attrs` and `Control` per composite. It saves about two lines per composite, below the bar, so the README documents the three-method pattern instead.

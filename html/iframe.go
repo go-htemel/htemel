@@ -17,8 +17,6 @@ type IframeElement struct {
 	htemel.InteractiveMarker
 	htemel.PalpableMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Iframe creates a tag <iframe> instance and returns it for further modification.
@@ -33,38 +31,39 @@ func Iframe() *IframeElement {
 	return node
 }
 
-// IframeIf creates a tag <iframe> instance that is only rendered when condition is true.
-func IframeIf(condition bool) *IframeElement {
-	if condition {
-		return Iframe()
-	}
-
-	return &IframeElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *IframeElement) With(fn func(*IframeElement)) *IframeElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *IframeElement) IfThen(cond bool, fn func(*IframeElement)) *IframeElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *IframeElement) Class(classes ...string) *IframeElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *IframeElement) AddClass(classes ...string) *IframeElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *IframeElement) SetClass(classes ...string) *IframeElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *IframeElement) AddClass(classes ...string) *IframeElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -122,6 +121,13 @@ func (e *IframeElement) SetAttr(name, value string) {
 // SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
 func (e *IframeElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
+}
+
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *IframeElement) Globals(g Globals) *IframeElement {
+	g.apply(&e.attributes)
+	return e
 }
 
 func (e *IframeElement) Allow(s string) *IframeElement {
@@ -194,12 +200,6 @@ func (e *IframeElement) Width(i int) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Accesskey(r rune) *IframeElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *IframeElement) AriaUnsafe(name string, s string) *IframeElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -216,46 +216,10 @@ func (e *IframeElement) Aria(name string, s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Autocapitalize(a Autocapitalize) *IframeElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Autocorrect(v ...Autocorrect) *IframeElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *IframeElement) Autofocus(b bool) *IframeElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *IframeElement) Class(s ...string) *IframeElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Contenteditable(v ...Contenteditable) *IframeElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -288,32 +252,6 @@ func (e *IframeElement) Draggable(a Draggable) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Enterkeyhint(a Enterkeyhint) *IframeElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *IframeElement) Exportparts(s string) *IframeElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *IframeElement) Headingoffset(i int) *IframeElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *IframeElement) Headingreset(b bool) *IframeElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *IframeElement) Hidden(v ...Hidden) *IframeElement {
@@ -332,60 +270,6 @@ func (e *IframeElement) Id(s string) *IframeElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *IframeElement) Inert(b bool) *IframeElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *IframeElement) Inputmode(a Inputmode) *IframeElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *IframeElement) Is(s string) *IframeElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *IframeElement) Itemid(s string) *IframeElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *IframeElement) Itemprop(s ...string) *IframeElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *IframeElement) Itemref(s ...string) *IframeElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *IframeElement) Itemscope(b bool) *IframeElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *IframeElement) Itemtype(s ...string) *IframeElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *IframeElement) Lang(s string) *IframeElement {
 	e.attributes.Set("lang", s)
 
@@ -394,12 +278,6 @@ func (e *IframeElement) Lang(s string) *IframeElement {
 
 func (e *IframeElement) Nonce(s string) *IframeElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *IframeElement) Part(s ...string) *IframeElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -422,24 +300,6 @@ func (e *IframeElement) Role(s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Slot(s string) *IframeElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Spellcheck(v ...Spellcheck) *IframeElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *IframeElement) Style(s string) *IframeElement {
 	e.attributes.Set("style", s)
 
@@ -458,39 +318,13 @@ func (e *IframeElement) Title(s string) *IframeElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Translate(v ...Translate) *IframeElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Writingsuggestions(v ...Writingsuggestions) *IframeElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then writes the closing tag: <iframe> has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *IframeElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<iframe>"); err != nil {
 			return err

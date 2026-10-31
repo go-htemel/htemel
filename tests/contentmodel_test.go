@@ -192,7 +192,7 @@ func main() {
 func TestSharedEnums(t *testing.T) {
 	expect(t, html.Div().Popover(html.PopoverManual), `<div popover="manual"></div>`)
 	expect(t, html.Span().Popover(), `<span popover></span>`)
-	expect(t, html.Button().Dir(html.DirRtl).Translate(html.TranslateNo), `<button dir="rtl" translate="no"></button>`)
+	expect(t, html.Button().Dir(html.DirRtl).Globals(html.Globals{Translate: html.TranslateNo}), `<button dir="rtl" translate="no"></button>`)
 	expect(t, html.Img().Loading(html.LoadingLazy).Crossorigin(html.CrossoriginAnonymous), `<img loading="lazy" crossorigin="anonymous">`)
 
 	// The same type on different elements.

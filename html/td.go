@@ -15,7 +15,6 @@ import (
 type TdElement struct {
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Td creates a tag <td> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Td(children ...htemel.FlowContent) *TdElement {
 	}
 
 	return node
-}
-
-// TdIf creates a tag <td> instance that is only rendered when condition is true.
-func TdIf(condition bool, children ...htemel.FlowContent) *TdElement {
-	if condition {
-		return Td(children...)
-	}
-
-	return &TdElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// TdTernary creates a tag <td> containing then when condition is true, otherwise containing otherwise.
-func TdTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *TdElement {
-	if condition {
-		return Td(then)
-	}
-	return Td(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *TdElement) Textf(format string, args ...any) *TdElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TdElement) If(cond bool, child htemel.FlowContent) *TdElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TdElement) IfElse(cond bool, then, els htemel.FlowContent) *TdElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TdElement) IfThen(cond bool, fn func(*TdElement)) *TdElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *TdElement) AddClass(classes ...string) *TdElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TdElement) Class(classes ...string) *TdElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TdElement) SetClass(classes ...string) *TdElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TdElement) AddClass(classes ...string) *TdElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -166,6 +140,13 @@ func (e *TdElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *TdElement) Globals(g Globals) *TdElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLTrChild marks <td> as a permitted child of <tr> (TrChild).
 func (*TdElement) HTMLTrChild() {}
 
@@ -187,12 +168,6 @@ func (e *TdElement) Rowspan(i int) *TdElement {
 	return e
 }
 
-func (e *TdElement) Accesskey(r rune) *TdElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *TdElement) AriaUnsafe(name string, s string) *TdElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -209,46 +184,10 @@ func (e *TdElement) Aria(name string, s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Autocapitalize(a Autocapitalize) *TdElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Autocorrect(v ...Autocorrect) *TdElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *TdElement) Autofocus(b bool) *TdElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *TdElement) Class(s ...string) *TdElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Contenteditable(v ...Contenteditable) *TdElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -281,32 +220,6 @@ func (e *TdElement) Draggable(a Draggable) *TdElement {
 	return e
 }
 
-func (e *TdElement) Enterkeyhint(a Enterkeyhint) *TdElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *TdElement) Exportparts(s string) *TdElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *TdElement) Headingoffset(i int) *TdElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TdElement) Headingreset(b bool) *TdElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TdElement) Hidden(v ...Hidden) *TdElement {
@@ -325,60 +238,6 @@ func (e *TdElement) Id(s string) *TdElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TdElement) Inert(b bool) *TdElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *TdElement) Inputmode(a Inputmode) *TdElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *TdElement) Is(s string) *TdElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *TdElement) Itemid(s string) *TdElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *TdElement) Itemprop(s ...string) *TdElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *TdElement) Itemref(s ...string) *TdElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TdElement) Itemscope(b bool) *TdElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *TdElement) Itemtype(s ...string) *TdElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *TdElement) Lang(s string) *TdElement {
 	e.attributes.Set("lang", s)
 
@@ -387,12 +246,6 @@ func (e *TdElement) Lang(s string) *TdElement {
 
 func (e *TdElement) Nonce(s string) *TdElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *TdElement) Part(s ...string) *TdElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -415,24 +268,6 @@ func (e *TdElement) Role(s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Slot(s string) *TdElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Spellcheck(v ...Spellcheck) *TdElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *TdElement) Style(s string) *TdElement {
 	e.attributes.Set("style", s)
 
@@ -451,39 +286,13 @@ func (e *TdElement) Title(s string) *TdElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Translate(v ...Translate) *TdElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Writingsuggestions(v ...Writingsuggestions) *TdElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TdElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<td>"); err != nil {
 			return err

@@ -15,7 +15,6 @@ import (
 type RpElement struct {
 	attributes render.Attrs
 	children   []htemel.TextContent
-	skipRender bool
 }
 
 // Rp creates a tag <rp> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Rp(children ...htemel.TextContent) *RpElement {
 	}
 
 	return node
-}
-
-// RpIf creates a tag <rp> instance that is only rendered when condition is true.
-func RpIf(condition bool, children ...htemel.TextContent) *RpElement {
-	if condition {
-		return Rp(children...)
-	}
-
-	return &RpElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// RpTernary creates a tag <rp> containing then when condition is true, otherwise containing otherwise.
-func RpTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *RpElement {
-	if condition {
-		return Rp(then)
-	}
-	return Rp(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *RpElement) Textf(format string, args ...any) *RpElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *RpElement) If(cond bool, child htemel.TextContent) *RpElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *RpElement) IfElse(cond bool, then, els htemel.TextContent) *RpElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *RpElement) IfThen(cond bool, fn func(*RpElement)) *RpElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *RpElement) AddClass(classes ...string) *RpElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *RpElement) Class(classes ...string) *RpElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *RpElement) SetClass(classes ...string) *RpElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *RpElement) AddClass(classes ...string) *RpElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -166,14 +140,15 @@ func (e *RpElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLRubyChild marks <rp> as a permitted child of <ruby> (RubyChild).
-func (*RpElement) HTMLRubyChild() {}
-
-func (e *RpElement) Accesskey(r rune) *RpElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *RpElement) Globals(g Globals) *RpElement {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLRubyChild marks <rp> as a permitted child of <ruby> (RubyChild).
+func (*RpElement) HTMLRubyChild() {}
 
 func (e *RpElement) AriaUnsafe(name string, s string) *RpElement {
 	tag := strings.ToLower("aria-" + name)
@@ -191,46 +166,10 @@ func (e *RpElement) Aria(name string, s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Autocapitalize(a Autocapitalize) *RpElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Autocorrect(v ...Autocorrect) *RpElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *RpElement) Autofocus(b bool) *RpElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *RpElement) Class(s ...string) *RpElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Contenteditable(v ...Contenteditable) *RpElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -263,32 +202,6 @@ func (e *RpElement) Draggable(a Draggable) *RpElement {
 	return e
 }
 
-func (e *RpElement) Enterkeyhint(a Enterkeyhint) *RpElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *RpElement) Exportparts(s string) *RpElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *RpElement) Headingoffset(i int) *RpElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *RpElement) Headingreset(b bool) *RpElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *RpElement) Hidden(v ...Hidden) *RpElement {
@@ -307,60 +220,6 @@ func (e *RpElement) Id(s string) *RpElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *RpElement) Inert(b bool) *RpElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *RpElement) Inputmode(a Inputmode) *RpElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *RpElement) Is(s string) *RpElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *RpElement) Itemid(s string) *RpElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *RpElement) Itemprop(s ...string) *RpElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *RpElement) Itemref(s ...string) *RpElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *RpElement) Itemscope(b bool) *RpElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *RpElement) Itemtype(s ...string) *RpElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *RpElement) Lang(s string) *RpElement {
 	e.attributes.Set("lang", s)
 
@@ -369,12 +228,6 @@ func (e *RpElement) Lang(s string) *RpElement {
 
 func (e *RpElement) Nonce(s string) *RpElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *RpElement) Part(s ...string) *RpElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -397,24 +250,6 @@ func (e *RpElement) Role(s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Slot(s string) *RpElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Spellcheck(v ...Spellcheck) *RpElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *RpElement) Style(s string) *RpElement {
 	e.attributes.Set("style", s)
 
@@ -433,39 +268,13 @@ func (e *RpElement) Title(s string) *RpElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Translate(v ...Translate) *RpElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Writingsuggestions(v ...Writingsuggestions) *RpElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *RpElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<rp>"); err != nil {
 			return err

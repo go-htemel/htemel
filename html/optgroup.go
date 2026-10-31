@@ -25,7 +25,6 @@ type OptgroupChild interface {
 type OptgroupElement struct {
 	attributes render.Attrs
 	children   []OptgroupChild
-	skipRender bool
 }
 
 // Optgroup creates a tag <optgroup> instance and returns it for further modification.
@@ -42,26 +41,6 @@ func Optgroup(children ...OptgroupChild) *OptgroupElement {
 	return node
 }
 
-// OptgroupIf creates a tag <optgroup> instance that is only rendered when condition is true.
-func OptgroupIf(condition bool, children ...OptgroupChild) *OptgroupElement {
-	if condition {
-		return Optgroup(children...)
-	}
-
-	return &OptgroupElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// OptgroupTernary creates a tag <optgroup> containing then when condition is true, otherwise containing otherwise.
-func OptgroupTernary(condition bool, then OptgroupChild, otherwise OptgroupChild) *OptgroupElement {
-	if condition {
-		return Optgroup(then)
-	}
-	return Optgroup(otherwise)
-}
-
 // Children appends children to this element.
 func (e *OptgroupElement) Children(children ...OptgroupChild) *OptgroupElement {
 	e.children = append(e.children, children...)
@@ -74,38 +53,33 @@ func (e *OptgroupElement) With(fn func(*OptgroupElement)) *OptgroupElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OptgroupElement) If(cond bool, child OptgroupChild) *OptgroupElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OptgroupElement) IfElse(cond bool, then, els OptgroupChild) *OptgroupElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *OptgroupElement) IfThen(cond bool, fn func(*OptgroupElement)) *OptgroupElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *OptgroupElement) AddClass(classes ...string) *OptgroupElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *OptgroupElement) Class(classes ...string) *OptgroupElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *OptgroupElement) SetClass(classes ...string) *OptgroupElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *OptgroupElement) AddClass(classes ...string) *OptgroupElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -165,6 +139,13 @@ func (e *OptgroupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *OptgroupElement) Globals(g Globals) *OptgroupElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLSelectChild marks <optgroup> as a permitted child of <select> (SelectChild).
 func (*OptgroupElement) HTMLSelectChild() {}
 
@@ -178,12 +159,6 @@ func (e *OptgroupElement) Disabled(b bool) *OptgroupElement {
 
 func (e *OptgroupElement) Label(s string) *OptgroupElement {
 	e.attributes.Set("label", s)
-
-	return e
-}
-
-func (e *OptgroupElement) Accesskey(r rune) *OptgroupElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -204,46 +179,10 @@ func (e *OptgroupElement) Aria(name string, s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Autocapitalize(a Autocapitalize) *OptgroupElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Autocorrect(v ...Autocorrect) *OptgroupElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *OptgroupElement) Autofocus(b bool) *OptgroupElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *OptgroupElement) Class(s ...string) *OptgroupElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Contenteditable(v ...Contenteditable) *OptgroupElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -276,32 +215,6 @@ func (e *OptgroupElement) Draggable(a Draggable) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Enterkeyhint(a Enterkeyhint) *OptgroupElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *OptgroupElement) Exportparts(s string) *OptgroupElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *OptgroupElement) Headingoffset(i int) *OptgroupElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptgroupElement) Headingreset(b bool) *OptgroupElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OptgroupElement) Hidden(v ...Hidden) *OptgroupElement {
@@ -320,60 +233,6 @@ func (e *OptgroupElement) Id(s string) *OptgroupElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptgroupElement) Inert(b bool) *OptgroupElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *OptgroupElement) Inputmode(a Inputmode) *OptgroupElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *OptgroupElement) Is(s string) *OptgroupElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *OptgroupElement) Itemid(s string) *OptgroupElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *OptgroupElement) Itemprop(s ...string) *OptgroupElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *OptgroupElement) Itemref(s ...string) *OptgroupElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptgroupElement) Itemscope(b bool) *OptgroupElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *OptgroupElement) Itemtype(s ...string) *OptgroupElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *OptgroupElement) Lang(s string) *OptgroupElement {
 	e.attributes.Set("lang", s)
 
@@ -382,12 +241,6 @@ func (e *OptgroupElement) Lang(s string) *OptgroupElement {
 
 func (e *OptgroupElement) Nonce(s string) *OptgroupElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *OptgroupElement) Part(s ...string) *OptgroupElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -410,24 +263,6 @@ func (e *OptgroupElement) Role(s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Slot(s string) *OptgroupElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Spellcheck(v ...Spellcheck) *OptgroupElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *OptgroupElement) Style(s string) *OptgroupElement {
 	e.attributes.Set("style", s)
 
@@ -446,39 +281,13 @@ func (e *OptgroupElement) Title(s string) *OptgroupElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Translate(v ...Translate) *OptgroupElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Writingsuggestions(v ...Writingsuggestions) *OptgroupElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *OptgroupElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<optgroup>"); err != nil {
 			return err

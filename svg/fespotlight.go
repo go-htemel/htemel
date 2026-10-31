@@ -15,7 +15,6 @@ import (
 type FeSpotLightElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // FeSpotLight creates a tag <feSpotLight> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func FeSpotLight(children ...Content) *FeSpotLightElement {
 	}
 
 	return node
-}
-
-// FeSpotLightIf creates a tag <feSpotLight> instance that is only rendered when condition is true.
-func FeSpotLightIf(condition bool, children ...Content) *FeSpotLightElement {
-	if condition {
-		return FeSpotLight(children...)
-	}
-
-	return &FeSpotLightElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FeSpotLightTernary creates a tag <feSpotLight> containing then when condition is true, otherwise containing otherwise.
-func FeSpotLightTernary(condition bool, then Content, otherwise Content) *FeSpotLightElement {
-	if condition {
-		return FeSpotLight(then)
-	}
-	return FeSpotLight(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *FeSpotLightElement) Textf(format string, args ...any) *FeSpotLightEleme
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeSpotLightElement) If(cond bool, child Content) *FeSpotLightElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeSpotLightElement) IfElse(cond bool, then, els Content) *FeSpotLightElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FeSpotLightElement) IfThen(cond bool, fn func(*FeSpotLightElement)) *FeSpotLightElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FeSpotLightElement) AddClass(classes ...string) *FeSpotLightElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FeSpotLightElement) Class(classes ...string) *FeSpotLightElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FeSpotLightElement) SetClass(classes ...string) *FeSpotLightElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FeSpotLightElement) AddClass(classes ...string) *FeSpotLightElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -249,12 +223,6 @@ func (e *FeSpotLightElement) Autofocus(b bool) *FeSpotLightElement {
 
 func (e *FeSpotLightElement) BaselineShift(s string) *FeSpotLightElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) Class(s ...string) *FeSpotLightElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -695,12 +663,10 @@ func (e *FeSpotLightElement) XmlSpace(a XmlSpace) *FeSpotLightElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FeSpotLightElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<feSpotLight>"); err != nil {
 			return err

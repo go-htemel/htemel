@@ -18,7 +18,6 @@ type AsideElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Aside creates a tag <aside> instance and returns it for further modification.
@@ -33,26 +32,6 @@ func Aside(children ...htemel.FlowContent) *AsideElement {
 	}
 
 	return node
-}
-
-// AsideIf creates a tag <aside> instance that is only rendered when condition is true.
-func AsideIf(condition bool, children ...htemel.FlowContent) *AsideElement {
-	if condition {
-		return Aside(children...)
-	}
-
-	return &AsideElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AsideTernary creates a tag <aside> containing then when condition is true, otherwise containing otherwise.
-func AsideTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *AsideElement {
-	if condition {
-		return Aside(then)
-	}
-	return Aside(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *AsideElement) Textf(format string, args ...any) *AsideElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AsideElement) If(cond bool, child htemel.FlowContent) *AsideElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AsideElement) IfElse(cond bool, then, els htemel.FlowContent) *AsideElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AsideElement) IfThen(cond bool, fn func(*AsideElement)) *AsideElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AsideElement) AddClass(classes ...string) *AsideElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AsideElement) Class(classes ...string) *AsideElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AsideElement) SetClass(classes ...string) *AsideElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AsideElement) AddClass(classes ...string) *AsideElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -169,9 +143,10 @@ func (e *AsideElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *AsideElement) Accesskey(r rune) *AsideElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *AsideElement) Globals(g Globals) *AsideElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -191,46 +166,10 @@ func (e *AsideElement) Aria(name string, s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Autocapitalize(a Autocapitalize) *AsideElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Autocorrect(v ...Autocorrect) *AsideElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *AsideElement) Autofocus(b bool) *AsideElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *AsideElement) Class(s ...string) *AsideElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Contenteditable(v ...Contenteditable) *AsideElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -263,32 +202,6 @@ func (e *AsideElement) Draggable(a Draggable) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Enterkeyhint(a Enterkeyhint) *AsideElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *AsideElement) Exportparts(s string) *AsideElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *AsideElement) Headingoffset(i int) *AsideElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AsideElement) Headingreset(b bool) *AsideElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AsideElement) Hidden(v ...Hidden) *AsideElement {
@@ -307,60 +220,6 @@ func (e *AsideElement) Id(s string) *AsideElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AsideElement) Inert(b bool) *AsideElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *AsideElement) Inputmode(a Inputmode) *AsideElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *AsideElement) Is(s string) *AsideElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *AsideElement) Itemid(s string) *AsideElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *AsideElement) Itemprop(s ...string) *AsideElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *AsideElement) Itemref(s ...string) *AsideElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AsideElement) Itemscope(b bool) *AsideElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *AsideElement) Itemtype(s ...string) *AsideElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *AsideElement) Lang(s string) *AsideElement {
 	e.attributes.Set("lang", s)
 
@@ -369,12 +228,6 @@ func (e *AsideElement) Lang(s string) *AsideElement {
 
 func (e *AsideElement) Nonce(s string) *AsideElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *AsideElement) Part(s ...string) *AsideElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -397,24 +250,6 @@ func (e *AsideElement) Role(s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Slot(s string) *AsideElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Spellcheck(v ...Spellcheck) *AsideElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *AsideElement) Style(s string) *AsideElement {
 	e.attributes.Set("style", s)
 
@@ -433,39 +268,13 @@ func (e *AsideElement) Title(s string) *AsideElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Translate(v ...Translate) *AsideElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Writingsuggestions(v ...Writingsuggestions) *AsideElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AsideElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<aside>"); err != nil {
 			return err

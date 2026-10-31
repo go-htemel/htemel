@@ -17,7 +17,6 @@ type OutputElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Output creates a tag <output> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Output(children ...htemel.PhrasingContent) *OutputElement {
 	}
 
 	return node
-}
-
-// OutputIf creates a tag <output> instance that is only rendered when condition is true.
-func OutputIf(condition bool, children ...htemel.PhrasingContent) *OutputElement {
-	if condition {
-		return Output(children...)
-	}
-
-	return &OutputElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// OutputTernary creates a tag <output> containing then when condition is true, otherwise containing otherwise.
-func OutputTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *OutputElement {
-	if condition {
-		return Output(then)
-	}
-	return Output(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *OutputElement) Textf(format string, args ...any) *OutputElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OutputElement) If(cond bool, child htemel.PhrasingContent) *OutputElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OutputElement) IfElse(cond bool, then, els htemel.PhrasingContent) *OutputElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *OutputElement) IfThen(cond bool, fn func(*OutputElement)) *OutputElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *OutputElement) AddClass(classes ...string) *OutputElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *OutputElement) Class(classes ...string) *OutputElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *OutputElement) SetClass(classes ...string) *OutputElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *OutputElement) AddClass(classes ...string) *OutputElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,6 +142,13 @@ func (e *OutputElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *OutputElement) Globals(g Globals) *OutputElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 func (e *OutputElement) For(s ...string) *OutputElement {
 	e.attributes.Set("for", strings.Join(s, " "))
 
@@ -182,12 +163,6 @@ func (e *OutputElement) Form(s string) *OutputElement {
 
 func (e *OutputElement) Name(s string) *OutputElement {
 	e.attributes.Set("name", s)
-
-	return e
-}
-
-func (e *OutputElement) Accesskey(r rune) *OutputElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -208,46 +183,10 @@ func (e *OutputElement) Aria(name string, s string) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Autocapitalize(a Autocapitalize) *OutputElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Autocorrect(v ...Autocorrect) *OutputElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *OutputElement) Autofocus(b bool) *OutputElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *OutputElement) Class(s ...string) *OutputElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Contenteditable(v ...Contenteditable) *OutputElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -280,32 +219,6 @@ func (e *OutputElement) Draggable(a Draggable) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Enterkeyhint(a Enterkeyhint) *OutputElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *OutputElement) Exportparts(s string) *OutputElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *OutputElement) Headingoffset(i int) *OutputElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OutputElement) Headingreset(b bool) *OutputElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OutputElement) Hidden(v ...Hidden) *OutputElement {
@@ -324,60 +237,6 @@ func (e *OutputElement) Id(s string) *OutputElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OutputElement) Inert(b bool) *OutputElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *OutputElement) Inputmode(a Inputmode) *OutputElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *OutputElement) Is(s string) *OutputElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *OutputElement) Itemid(s string) *OutputElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *OutputElement) Itemprop(s ...string) *OutputElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *OutputElement) Itemref(s ...string) *OutputElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OutputElement) Itemscope(b bool) *OutputElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *OutputElement) Itemtype(s ...string) *OutputElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *OutputElement) Lang(s string) *OutputElement {
 	e.attributes.Set("lang", s)
 
@@ -386,12 +245,6 @@ func (e *OutputElement) Lang(s string) *OutputElement {
 
 func (e *OutputElement) Nonce(s string) *OutputElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *OutputElement) Part(s ...string) *OutputElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -414,24 +267,6 @@ func (e *OutputElement) Role(s string) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Slot(s string) *OutputElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Spellcheck(v ...Spellcheck) *OutputElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *OutputElement) Style(s string) *OutputElement {
 	e.attributes.Set("style", s)
 
@@ -450,39 +285,13 @@ func (e *OutputElement) Title(s string) *OutputElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Translate(v ...Translate) *OutputElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Writingsuggestions(v ...Writingsuggestions) *OutputElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *OutputElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<output>"); err != nil {
 			return err

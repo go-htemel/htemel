@@ -15,7 +15,6 @@ import (
 type FeOffsetElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // FeOffset creates a tag <feOffset> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func FeOffset(children ...Content) *FeOffsetElement {
 	}
 
 	return node
-}
-
-// FeOffsetIf creates a tag <feOffset> instance that is only rendered when condition is true.
-func FeOffsetIf(condition bool, children ...Content) *FeOffsetElement {
-	if condition {
-		return FeOffset(children...)
-	}
-
-	return &FeOffsetElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// FeOffsetTernary creates a tag <feOffset> containing then when condition is true, otherwise containing otherwise.
-func FeOffsetTernary(condition bool, then Content, otherwise Content) *FeOffsetElement {
-	if condition {
-		return FeOffset(then)
-	}
-	return FeOffset(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *FeOffsetElement) Textf(format string, args ...any) *FeOffsetElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeOffsetElement) If(cond bool, child Content) *FeOffsetElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeOffsetElement) IfElse(cond bool, then, els Content) *FeOffsetElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *FeOffsetElement) IfThen(cond bool, fn func(*FeOffsetElement)) *FeOffsetElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *FeOffsetElement) AddClass(classes ...string) *FeOffsetElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *FeOffsetElement) Class(classes ...string) *FeOffsetElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *FeOffsetElement) SetClass(classes ...string) *FeOffsetElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *FeOffsetElement) AddClass(classes ...string) *FeOffsetElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -249,12 +223,6 @@ func (e *FeOffsetElement) Autofocus(b bool) *FeOffsetElement {
 
 func (e *FeOffsetElement) BaselineShift(s string) *FeOffsetElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *FeOffsetElement) Class(s ...string) *FeOffsetElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -695,12 +663,10 @@ func (e *FeOffsetElement) XmlSpace(a XmlSpace) *FeOffsetElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *FeOffsetElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<feOffset>"); err != nil {
 			return err

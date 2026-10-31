@@ -15,7 +15,6 @@ import (
 type MoElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Mo creates a tag <mo> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Mo(children ...Content) *MoElement {
 	}
 
 	return node
-}
-
-// MoIf creates a tag <mo> instance that is only rendered when condition is true.
-func MoIf(condition bool, children ...Content) *MoElement {
-	if condition {
-		return Mo(children...)
-	}
-
-	return &MoElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MoTernary creates a tag <mo> containing then when condition is true, otherwise containing otherwise.
-func MoTernary(condition bool, then Content, otherwise Content) *MoElement {
-	if condition {
-		return Mo(then)
-	}
-	return Mo(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *MoElement) Textf(format string, args ...any) *MoElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MoElement) If(cond bool, child Content) *MoElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MoElement) IfElse(cond bool, then, els Content) *MoElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MoElement) IfThen(cond bool, fn func(*MoElement)) *MoElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MoElement) AddClass(classes ...string) *MoElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MoElement) Class(classes ...string) *MoElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MoElement) SetClass(classes ...string) *MoElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MoElement) AddClass(classes ...string) *MoElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -231,12 +205,6 @@ func (e *MoElement) Autofocus(b bool) *MoElement {
 	return e
 }
 
-func (e *MoElement) Class(s ...string) *MoElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *MoElement) DataUnsafe(name string, s string) *MoElement {
 	tag := strings.ToLower("data-" + name)
 
@@ -319,12 +287,10 @@ func (e *MoElement) Tabindex(i int) *MoElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MoElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<mo>"); err != nil {
 			return err

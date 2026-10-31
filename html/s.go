@@ -17,7 +17,6 @@ type SElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // S creates a tag <s> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func S(children ...htemel.PhrasingContent) *SElement {
 	}
 
 	return node
-}
-
-// SIf creates a tag <s> instance that is only rendered when condition is true.
-func SIf(condition bool, children ...htemel.PhrasingContent) *SElement {
-	if condition {
-		return S(children...)
-	}
-
-	return &SElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// STernary creates a tag <s> containing then when condition is true, otherwise containing otherwise.
-func STernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SElement {
-	if condition {
-		return S(then)
-	}
-	return S(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *SElement) Textf(format string, args ...any) *SElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SElement) If(cond bool, child htemel.PhrasingContent) *SElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *SElement) IfThen(cond bool, fn func(*SElement)) *SElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *SElement) AddClass(classes ...string) *SElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *SElement) Class(classes ...string) *SElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *SElement) SetClass(classes ...string) *SElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *SElement) AddClass(classes ...string) *SElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *SElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *SElement) Accesskey(r rune) *SElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *SElement) Globals(g Globals) *SElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *SElement) Aria(name string, s string) *SElement {
 	return e
 }
 
-func (e *SElement) Autocapitalize(a Autocapitalize) *SElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Autocorrect(v ...Autocorrect) *SElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *SElement) Autofocus(b bool) *SElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *SElement) Class(s ...string) *SElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Contenteditable(v ...Contenteditable) *SElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *SElement) Draggable(a Draggable) *SElement {
 	return e
 }
 
-func (e *SElement) Enterkeyhint(a Enterkeyhint) *SElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *SElement) Exportparts(s string) *SElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *SElement) Headingoffset(i int) *SElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SElement) Headingreset(b bool) *SElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SElement) Hidden(v ...Hidden) *SElement {
@@ -306,60 +219,6 @@ func (e *SElement) Id(s string) *SElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SElement) Inert(b bool) *SElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *SElement) Inputmode(a Inputmode) *SElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *SElement) Is(s string) *SElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *SElement) Itemid(s string) *SElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *SElement) Itemprop(s ...string) *SElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *SElement) Itemref(s ...string) *SElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SElement) Itemscope(b bool) *SElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *SElement) Itemtype(s ...string) *SElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *SElement) Lang(s string) *SElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *SElement) Lang(s string) *SElement {
 
 func (e *SElement) Nonce(s string) *SElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *SElement) Part(s ...string) *SElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *SElement) Role(s string) *SElement {
 	return e
 }
 
-func (e *SElement) Slot(s string) *SElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Spellcheck(v ...Spellcheck) *SElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *SElement) Style(s string) *SElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *SElement) Title(s string) *SElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Translate(v ...Translate) *SElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Writingsuggestions(v ...Writingsuggestions) *SElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *SElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<s>"); err != nil {
 			return err

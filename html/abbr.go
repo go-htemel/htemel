@@ -17,7 +17,6 @@ type AbbrElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Abbr creates a tag <abbr> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Abbr(children ...htemel.PhrasingContent) *AbbrElement {
 	}
 
 	return node
-}
-
-// AbbrIf creates a tag <abbr> instance that is only rendered when condition is true.
-func AbbrIf(condition bool, children ...htemel.PhrasingContent) *AbbrElement {
-	if condition {
-		return Abbr(children...)
-	}
-
-	return &AbbrElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// AbbrTernary creates a tag <abbr> containing then when condition is true, otherwise containing otherwise.
-func AbbrTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *AbbrElement {
-	if condition {
-		return Abbr(then)
-	}
-	return Abbr(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *AbbrElement) Textf(format string, args ...any) *AbbrElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AbbrElement) If(cond bool, child htemel.PhrasingContent) *AbbrElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AbbrElement) IfElse(cond bool, then, els htemel.PhrasingContent) *AbbrElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *AbbrElement) IfThen(cond bool, fn func(*AbbrElement)) *AbbrElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *AbbrElement) AddClass(classes ...string) *AbbrElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *AbbrElement) Class(classes ...string) *AbbrElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *AbbrElement) SetClass(classes ...string) *AbbrElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *AbbrElement) AddClass(classes ...string) *AbbrElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *AbbrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *AbbrElement) Accesskey(r rune) *AbbrElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *AbbrElement) Globals(g Globals) *AbbrElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *AbbrElement) Aria(name string, s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Autocapitalize(a Autocapitalize) *AbbrElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Autocorrect(v ...Autocorrect) *AbbrElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *AbbrElement) Autofocus(b bool) *AbbrElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *AbbrElement) Class(s ...string) *AbbrElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Contenteditable(v ...Contenteditable) *AbbrElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *AbbrElement) Draggable(a Draggable) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Enterkeyhint(a Enterkeyhint) *AbbrElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *AbbrElement) Exportparts(s string) *AbbrElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *AbbrElement) Headingoffset(i int) *AbbrElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AbbrElement) Headingreset(b bool) *AbbrElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AbbrElement) Hidden(v ...Hidden) *AbbrElement {
@@ -306,60 +219,6 @@ func (e *AbbrElement) Id(s string) *AbbrElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AbbrElement) Inert(b bool) *AbbrElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *AbbrElement) Inputmode(a Inputmode) *AbbrElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *AbbrElement) Is(s string) *AbbrElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *AbbrElement) Itemid(s string) *AbbrElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *AbbrElement) Itemprop(s ...string) *AbbrElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *AbbrElement) Itemref(s ...string) *AbbrElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AbbrElement) Itemscope(b bool) *AbbrElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *AbbrElement) Itemtype(s ...string) *AbbrElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *AbbrElement) Lang(s string) *AbbrElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *AbbrElement) Lang(s string) *AbbrElement {
 
 func (e *AbbrElement) Nonce(s string) *AbbrElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *AbbrElement) Part(s ...string) *AbbrElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *AbbrElement) Role(s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Slot(s string) *AbbrElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Spellcheck(v ...Spellcheck) *AbbrElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *AbbrElement) Style(s string) *AbbrElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *AbbrElement) Title(s string) *AbbrElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Translate(v ...Translate) *AbbrElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Writingsuggestions(v ...Writingsuggestions) *AbbrElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *AbbrElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<abbr>"); err != nil {
 			return err

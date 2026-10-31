@@ -17,7 +17,6 @@ type MainElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Main creates a tag <main> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Main(children ...htemel.FlowContent) *MainElement {
 	}
 
 	return node
-}
-
-// MainIf creates a tag <main> instance that is only rendered when condition is true.
-func MainIf(condition bool, children ...htemel.FlowContent) *MainElement {
-	if condition {
-		return Main(children...)
-	}
-
-	return &MainElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// MainTernary creates a tag <main> containing then when condition is true, otherwise containing otherwise.
-func MainTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *MainElement {
-	if condition {
-		return Main(then)
-	}
-	return Main(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *MainElement) Textf(format string, args ...any) *MainElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MainElement) If(cond bool, child htemel.FlowContent) *MainElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MainElement) IfElse(cond bool, then, els htemel.FlowContent) *MainElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MainElement) IfThen(cond bool, fn func(*MainElement)) *MainElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *MainElement) AddClass(classes ...string) *MainElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MainElement) Class(classes ...string) *MainElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MainElement) SetClass(classes ...string) *MainElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MainElement) AddClass(classes ...string) *MainElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *MainElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *MainElement) Accesskey(r rune) *MainElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *MainElement) Globals(g Globals) *MainElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *MainElement) Aria(name string, s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Autocapitalize(a Autocapitalize) *MainElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Autocorrect(v ...Autocorrect) *MainElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *MainElement) Autofocus(b bool) *MainElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MainElement) Class(s ...string) *MainElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Contenteditable(v ...Contenteditable) *MainElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *MainElement) Draggable(a Draggable) *MainElement {
 	return e
 }
 
-func (e *MainElement) Enterkeyhint(a Enterkeyhint) *MainElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *MainElement) Exportparts(s string) *MainElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *MainElement) Headingoffset(i int) *MainElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MainElement) Headingreset(b bool) *MainElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MainElement) Hidden(v ...Hidden) *MainElement {
@@ -306,60 +219,6 @@ func (e *MainElement) Id(s string) *MainElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MainElement) Inert(b bool) *MainElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *MainElement) Inputmode(a Inputmode) *MainElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *MainElement) Is(s string) *MainElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *MainElement) Itemid(s string) *MainElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *MainElement) Itemprop(s ...string) *MainElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *MainElement) Itemref(s ...string) *MainElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MainElement) Itemscope(b bool) *MainElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *MainElement) Itemtype(s ...string) *MainElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *MainElement) Lang(s string) *MainElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *MainElement) Lang(s string) *MainElement {
 
 func (e *MainElement) Nonce(s string) *MainElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *MainElement) Part(s ...string) *MainElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *MainElement) Role(s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Slot(s string) *MainElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Spellcheck(v ...Spellcheck) *MainElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *MainElement) Style(s string) *MainElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *MainElement) Title(s string) *MainElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Translate(v ...Translate) *MainElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Writingsuggestions(v ...Writingsuggestions) *MainElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MainElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<main>"); err != nil {
 			return err

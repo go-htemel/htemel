@@ -72,6 +72,9 @@ type Plan struct {
 	SharedEnums map[string]*SharedEnum
 	// EnumReport lists enum attributes that could not be shared, and why.
 	EnumReport []string
+	// Globals are the global attributes moved into the generated Globals struct (ADR 0010), in
+	// spec order; empty when every global is a direct method.
+	Globals []spec.Attribute
 
 	cats map[string]map[string]bool // tag -> effective categories
 }
@@ -82,13 +85,15 @@ type ElementPlan struct {
 
 	// Markers are the htemel marker structs embedded in the element struct.
 	Markers []string
-	// HasChildren reports whether the element takes children (constructor parameter, Children,
-	// If, IfElse, Ternary).
+	// HasChildren reports whether the element takes children (constructor parameter and
+	// Children).
 	HasChildren bool
 	// ChildType is the Go type of a child, e.g. htemel.FlowContent or UlChild.
 	ChildType string
 	// Text reports whether the element has Text and Textf methods.
 	Text bool
+	// HasGlobals reports whether the element has the Globals method.
+	HasGlobals bool
 	// Slot is the child interface declared in this element's file, if any.
 	Slot *Slot
 	// SlotMethods are the child interfaces whose marker method is generated on this element;
@@ -466,11 +471,7 @@ func (p *Plan) baseNames() map[string]string {
 		where := "<" + ep.Tag + ">"
 		tag := goIdent(ep.Tag)
 		out[tag] = where
-		out[tag+"If"] = where
 		out[tag+"Element"] = where
-		if ep.HasChildren {
-			out[tag+"Ternary"] = where
-		}
 	}
 	for _, s := range p.Slots {
 		out[s.Iface] = "child interface " + s.Iface

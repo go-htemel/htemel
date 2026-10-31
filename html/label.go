@@ -18,7 +18,6 @@ type LabelElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Label creates a tag <label> instance and returns it for further modification.
@@ -33,26 +32,6 @@ func Label(children ...htemel.PhrasingContent) *LabelElement {
 	}
 
 	return node
-}
-
-// LabelIf creates a tag <label> instance that is only rendered when condition is true.
-func LabelIf(condition bool, children ...htemel.PhrasingContent) *LabelElement {
-	if condition {
-		return Label(children...)
-	}
-
-	return &LabelElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// LabelTernary creates a tag <label> containing then when condition is true, otherwise containing otherwise.
-func LabelTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *LabelElement {
-	if condition {
-		return Label(then)
-	}
-	return Label(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *LabelElement) Textf(format string, args ...any) *LabelElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LabelElement) If(cond bool, child htemel.PhrasingContent) *LabelElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LabelElement) IfElse(cond bool, then, els htemel.PhrasingContent) *LabelElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *LabelElement) IfThen(cond bool, fn func(*LabelElement)) *LabelElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *LabelElement) AddClass(classes ...string) *LabelElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *LabelElement) Class(classes ...string) *LabelElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *LabelElement) SetClass(classes ...string) *LabelElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *LabelElement) AddClass(classes ...string) *LabelElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -169,14 +143,15 @@ func (e *LabelElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *LabelElement) For(s string) *LabelElement {
-	e.attributes.Set("for", s)
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *LabelElement) Globals(g Globals) *LabelElement {
+	g.apply(&e.attributes)
 	return e
 }
 
-func (e *LabelElement) Accesskey(r rune) *LabelElement {
-	e.attributes.Set("accesskey", string(r))
+func (e *LabelElement) For(s string) *LabelElement {
+	e.attributes.Set("for", s)
 
 	return e
 }
@@ -197,46 +172,10 @@ func (e *LabelElement) Aria(name string, s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Autocapitalize(a Autocapitalize) *LabelElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Autocorrect(v ...Autocorrect) *LabelElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *LabelElement) Autofocus(b bool) *LabelElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *LabelElement) Class(s ...string) *LabelElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Contenteditable(v ...Contenteditable) *LabelElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -269,32 +208,6 @@ func (e *LabelElement) Draggable(a Draggable) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Enterkeyhint(a Enterkeyhint) *LabelElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *LabelElement) Exportparts(s string) *LabelElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *LabelElement) Headingoffset(i int) *LabelElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LabelElement) Headingreset(b bool) *LabelElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *LabelElement) Hidden(v ...Hidden) *LabelElement {
@@ -313,60 +226,6 @@ func (e *LabelElement) Id(s string) *LabelElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LabelElement) Inert(b bool) *LabelElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *LabelElement) Inputmode(a Inputmode) *LabelElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *LabelElement) Is(s string) *LabelElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *LabelElement) Itemid(s string) *LabelElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *LabelElement) Itemprop(s ...string) *LabelElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *LabelElement) Itemref(s ...string) *LabelElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LabelElement) Itemscope(b bool) *LabelElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *LabelElement) Itemtype(s ...string) *LabelElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *LabelElement) Lang(s string) *LabelElement {
 	e.attributes.Set("lang", s)
 
@@ -375,12 +234,6 @@ func (e *LabelElement) Lang(s string) *LabelElement {
 
 func (e *LabelElement) Nonce(s string) *LabelElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *LabelElement) Part(s ...string) *LabelElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -403,24 +256,6 @@ func (e *LabelElement) Role(s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Slot(s string) *LabelElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Spellcheck(v ...Spellcheck) *LabelElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *LabelElement) Style(s string) *LabelElement {
 	e.attributes.Set("style", s)
 
@@ -439,39 +274,13 @@ func (e *LabelElement) Title(s string) *LabelElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Translate(v ...Translate) *LabelElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Writingsuggestions(v ...Writingsuggestions) *LabelElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *LabelElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<label>"); err != nil {
 			return err

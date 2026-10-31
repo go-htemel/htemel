@@ -15,8 +15,6 @@ type MetaElement struct {
 	htemel.PhrasingMarker
 	htemel.MetadataMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Meta creates a tag <meta> instance and returns it for further modification.
@@ -28,38 +26,39 @@ func Meta() *MetaElement {
 	return node
 }
 
-// MetaIf creates a tag <meta> instance that is only rendered when condition is true.
-func MetaIf(condition bool) *MetaElement {
-	if condition {
-		return Meta()
-	}
-
-	return &MetaElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *MetaElement) With(fn func(*MetaElement)) *MetaElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *MetaElement) IfThen(cond bool, fn func(*MetaElement)) *MetaElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *MetaElement) Class(classes ...string) *MetaElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *MetaElement) AddClass(classes ...string) *MetaElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *MetaElement) SetClass(classes ...string) *MetaElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *MetaElement) AddClass(classes ...string) *MetaElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -119,6 +118,13 @@ func (e *MetaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *MetaElement) Globals(g Globals) *MetaElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 func (e *MetaElement) Charset(a Charset) *MetaElement {
 	e.attributes.Set("charset", string(a))
 
@@ -149,12 +155,6 @@ func (e *MetaElement) Name(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Accesskey(r rune) *MetaElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *MetaElement) AriaUnsafe(name string, s string) *MetaElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -171,46 +171,10 @@ func (e *MetaElement) Aria(name string, s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Autocapitalize(a Autocapitalize) *MetaElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Autocorrect(v ...Autocorrect) *MetaElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *MetaElement) Autofocus(b bool) *MetaElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *MetaElement) Class(s ...string) *MetaElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Contenteditable(v ...Contenteditable) *MetaElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -243,32 +207,6 @@ func (e *MetaElement) Draggable(a Draggable) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Enterkeyhint(a Enterkeyhint) *MetaElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *MetaElement) Exportparts(s string) *MetaElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *MetaElement) Headingoffset(i int) *MetaElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MetaElement) Headingreset(b bool) *MetaElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MetaElement) Hidden(v ...Hidden) *MetaElement {
@@ -287,60 +225,6 @@ func (e *MetaElement) Id(s string) *MetaElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MetaElement) Inert(b bool) *MetaElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *MetaElement) Inputmode(a Inputmode) *MetaElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *MetaElement) Is(s string) *MetaElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *MetaElement) Itemid(s string) *MetaElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *MetaElement) Itemprop(s ...string) *MetaElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *MetaElement) Itemref(s ...string) *MetaElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MetaElement) Itemscope(b bool) *MetaElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *MetaElement) Itemtype(s ...string) *MetaElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *MetaElement) Lang(s string) *MetaElement {
 	e.attributes.Set("lang", s)
 
@@ -349,12 +233,6 @@ func (e *MetaElement) Lang(s string) *MetaElement {
 
 func (e *MetaElement) Nonce(s string) *MetaElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *MetaElement) Part(s ...string) *MetaElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -377,24 +255,6 @@ func (e *MetaElement) Role(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Slot(s string) *MetaElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Spellcheck(v ...Spellcheck) *MetaElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *MetaElement) Style(s string) *MetaElement {
 	e.attributes.Set("style", s)
 
@@ -413,40 +273,14 @@ func (e *MetaElement) Title(s string) *MetaElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Translate(v ...Translate) *MetaElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Writingsuggestions(v ...Writingsuggestions) *MetaElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <meta> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *MetaElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<meta>"); err != nil {
 			return err

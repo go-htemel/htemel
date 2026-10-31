@@ -17,7 +17,6 @@ type KbdElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // Kbd creates a tag <kbd> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Kbd(children ...htemel.PhrasingContent) *KbdElement {
 	}
 
 	return node
-}
-
-// KbdIf creates a tag <kbd> instance that is only rendered when condition is true.
-func KbdIf(condition bool, children ...htemel.PhrasingContent) *KbdElement {
-	if condition {
-		return Kbd(children...)
-	}
-
-	return &KbdElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// KbdTernary creates a tag <kbd> containing then when condition is true, otherwise containing otherwise.
-func KbdTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *KbdElement {
-	if condition {
-		return Kbd(then)
-	}
-	return Kbd(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *KbdElement) Textf(format string, args ...any) *KbdElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *KbdElement) If(cond bool, child htemel.PhrasingContent) *KbdElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *KbdElement) IfElse(cond bool, then, els htemel.PhrasingContent) *KbdElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *KbdElement) IfThen(cond bool, fn func(*KbdElement)) *KbdElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *KbdElement) AddClass(classes ...string) *KbdElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *KbdElement) Class(classes ...string) *KbdElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *KbdElement) SetClass(classes ...string) *KbdElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *KbdElement) AddClass(classes ...string) *KbdElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *KbdElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *KbdElement) Accesskey(r rune) *KbdElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *KbdElement) Globals(g Globals) *KbdElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *KbdElement) Aria(name string, s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Autocapitalize(a Autocapitalize) *KbdElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Autocorrect(v ...Autocorrect) *KbdElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *KbdElement) Autofocus(b bool) *KbdElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *KbdElement) Class(s ...string) *KbdElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Contenteditable(v ...Contenteditable) *KbdElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *KbdElement) Draggable(a Draggable) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Enterkeyhint(a Enterkeyhint) *KbdElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *KbdElement) Exportparts(s string) *KbdElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *KbdElement) Headingoffset(i int) *KbdElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *KbdElement) Headingreset(b bool) *KbdElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *KbdElement) Hidden(v ...Hidden) *KbdElement {
@@ -306,60 +219,6 @@ func (e *KbdElement) Id(s string) *KbdElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *KbdElement) Inert(b bool) *KbdElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *KbdElement) Inputmode(a Inputmode) *KbdElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *KbdElement) Is(s string) *KbdElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *KbdElement) Itemid(s string) *KbdElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *KbdElement) Itemprop(s ...string) *KbdElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *KbdElement) Itemref(s ...string) *KbdElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *KbdElement) Itemscope(b bool) *KbdElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *KbdElement) Itemtype(s ...string) *KbdElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *KbdElement) Lang(s string) *KbdElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *KbdElement) Lang(s string) *KbdElement {
 
 func (e *KbdElement) Nonce(s string) *KbdElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *KbdElement) Part(s ...string) *KbdElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *KbdElement) Role(s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Slot(s string) *KbdElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Spellcheck(v ...Spellcheck) *KbdElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *KbdElement) Style(s string) *KbdElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *KbdElement) Title(s string) *KbdElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Translate(v ...Translate) *KbdElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Writingsuggestions(v ...Writingsuggestions) *KbdElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *KbdElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<kbd>"); err != nil {
 			return err

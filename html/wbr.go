@@ -14,8 +14,6 @@ import (
 type WbrElement struct {
 	htemel.PhrasingMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Wbr creates a tag <wbr> instance and returns it for further modification.
@@ -27,38 +25,39 @@ func Wbr() *WbrElement {
 	return node
 }
 
-// WbrIf creates a tag <wbr> instance that is only rendered when condition is true.
-func WbrIf(condition bool) *WbrElement {
-	if condition {
-		return Wbr()
-	}
-
-	return &WbrElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *WbrElement) With(fn func(*WbrElement)) *WbrElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *WbrElement) IfThen(cond bool, fn func(*WbrElement)) *WbrElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *WbrElement) Class(classes ...string) *WbrElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *WbrElement) AddClass(classes ...string) *WbrElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *WbrElement) SetClass(classes ...string) *WbrElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *WbrElement) AddClass(classes ...string) *WbrElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -118,9 +117,10 @@ func (e *WbrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *WbrElement) Accesskey(r rune) *WbrElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *WbrElement) Globals(g Globals) *WbrElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -140,46 +140,10 @@ func (e *WbrElement) Aria(name string, s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Autocapitalize(a Autocapitalize) *WbrElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Autocorrect(v ...Autocorrect) *WbrElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *WbrElement) Autofocus(b bool) *WbrElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *WbrElement) Class(s ...string) *WbrElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Contenteditable(v ...Contenteditable) *WbrElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -212,32 +176,6 @@ func (e *WbrElement) Draggable(a Draggable) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Enterkeyhint(a Enterkeyhint) *WbrElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *WbrElement) Exportparts(s string) *WbrElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *WbrElement) Headingoffset(i int) *WbrElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *WbrElement) Headingreset(b bool) *WbrElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *WbrElement) Hidden(v ...Hidden) *WbrElement {
@@ -256,60 +194,6 @@ func (e *WbrElement) Id(s string) *WbrElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *WbrElement) Inert(b bool) *WbrElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *WbrElement) Inputmode(a Inputmode) *WbrElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *WbrElement) Is(s string) *WbrElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *WbrElement) Itemid(s string) *WbrElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *WbrElement) Itemprop(s ...string) *WbrElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *WbrElement) Itemref(s ...string) *WbrElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *WbrElement) Itemscope(b bool) *WbrElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *WbrElement) Itemtype(s ...string) *WbrElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *WbrElement) Lang(s string) *WbrElement {
 	e.attributes.Set("lang", s)
 
@@ -318,12 +202,6 @@ func (e *WbrElement) Lang(s string) *WbrElement {
 
 func (e *WbrElement) Nonce(s string) *WbrElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *WbrElement) Part(s ...string) *WbrElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -346,24 +224,6 @@ func (e *WbrElement) Role(s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Slot(s string) *WbrElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Spellcheck(v ...Spellcheck) *WbrElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *WbrElement) Style(s string) *WbrElement {
 	e.attributes.Set("style", s)
 
@@ -382,40 +242,14 @@ func (e *WbrElement) Title(s string) *WbrElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Translate(v ...Translate) *WbrElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Writingsuggestions(v ...Writingsuggestions) *WbrElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <wbr> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *WbrElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<wbr>"); err != nil {
 			return err

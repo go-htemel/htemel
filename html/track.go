@@ -13,8 +13,6 @@ import (
 
 type TrackElement struct {
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Track creates a tag <track> instance and returns it for further modification.
@@ -26,38 +24,39 @@ func Track() *TrackElement {
 	return node
 }
 
-// TrackIf creates a tag <track> instance that is only rendered when condition is true.
-func TrackIf(condition bool) *TrackElement {
-	if condition {
-		return Track()
-	}
-
-	return &TrackElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *TrackElement) With(fn func(*TrackElement)) *TrackElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TrackElement) IfThen(cond bool, fn func(*TrackElement)) *TrackElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TrackElement) Class(classes ...string) *TrackElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *TrackElement) AddClass(classes ...string) *TrackElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TrackElement) SetClass(classes ...string) *TrackElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TrackElement) AddClass(classes ...string) *TrackElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -117,6 +116,13 @@ func (e *TrackElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *TrackElement) Globals(g Globals) *TrackElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLAudioChild marks <track> as a permitted child of <audio> (AudioChild).
 func (*TrackElement) HTMLAudioChild() {}
 
@@ -157,12 +163,6 @@ func (e *TrackElement) Srclang(s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Accesskey(r rune) *TrackElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *TrackElement) AriaUnsafe(name string, s string) *TrackElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -179,46 +179,10 @@ func (e *TrackElement) Aria(name string, s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Autocapitalize(a Autocapitalize) *TrackElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Autocorrect(v ...Autocorrect) *TrackElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *TrackElement) Autofocus(b bool) *TrackElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *TrackElement) Class(s ...string) *TrackElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Contenteditable(v ...Contenteditable) *TrackElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -251,32 +215,6 @@ func (e *TrackElement) Draggable(a Draggable) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Enterkeyhint(a Enterkeyhint) *TrackElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *TrackElement) Exportparts(s string) *TrackElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *TrackElement) Headingoffset(i int) *TrackElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrackElement) Headingreset(b bool) *TrackElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TrackElement) Hidden(v ...Hidden) *TrackElement {
@@ -295,60 +233,6 @@ func (e *TrackElement) Id(s string) *TrackElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrackElement) Inert(b bool) *TrackElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *TrackElement) Inputmode(a Inputmode) *TrackElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *TrackElement) Is(s string) *TrackElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *TrackElement) Itemid(s string) *TrackElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *TrackElement) Itemprop(s ...string) *TrackElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *TrackElement) Itemref(s ...string) *TrackElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrackElement) Itemscope(b bool) *TrackElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *TrackElement) Itemtype(s ...string) *TrackElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *TrackElement) Lang(s string) *TrackElement {
 	e.attributes.Set("lang", s)
 
@@ -357,12 +241,6 @@ func (e *TrackElement) Lang(s string) *TrackElement {
 
 func (e *TrackElement) Nonce(s string) *TrackElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *TrackElement) Part(s ...string) *TrackElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -385,24 +263,6 @@ func (e *TrackElement) Role(s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Slot(s string) *TrackElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Spellcheck(v ...Spellcheck) *TrackElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *TrackElement) Style(s string) *TrackElement {
 	e.attributes.Set("style", s)
 
@@ -421,40 +281,14 @@ func (e *TrackElement) Title(s string) *TrackElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Translate(v ...Translate) *TrackElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Writingsuggestions(v ...Writingsuggestions) *TrackElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <track> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TrackElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<track>"); err != nil {
 			return err

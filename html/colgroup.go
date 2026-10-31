@@ -23,7 +23,6 @@ type ColgroupChild interface {
 type ColgroupElement struct {
 	attributes render.Attrs
 	children   []ColgroupChild
-	skipRender bool
 }
 
 // Colgroup creates a tag <colgroup> instance and returns it for further modification.
@@ -40,26 +39,6 @@ func Colgroup(children ...ColgroupChild) *ColgroupElement {
 	return node
 }
 
-// ColgroupIf creates a tag <colgroup> instance that is only rendered when condition is true.
-func ColgroupIf(condition bool, children ...ColgroupChild) *ColgroupElement {
-	if condition {
-		return Colgroup(children...)
-	}
-
-	return &ColgroupElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// ColgroupTernary creates a tag <colgroup> containing then when condition is true, otherwise containing otherwise.
-func ColgroupTernary(condition bool, then ColgroupChild, otherwise ColgroupChild) *ColgroupElement {
-	if condition {
-		return Colgroup(then)
-	}
-	return Colgroup(otherwise)
-}
-
 // Children appends children to this element.
 func (e *ColgroupElement) Children(children ...ColgroupChild) *ColgroupElement {
 	e.children = append(e.children, children...)
@@ -72,38 +51,33 @@ func (e *ColgroupElement) With(fn func(*ColgroupElement)) *ColgroupElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ColgroupElement) If(cond bool, child ColgroupChild) *ColgroupElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ColgroupElement) IfElse(cond bool, then, els ColgroupChild) *ColgroupElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *ColgroupElement) IfThen(cond bool, fn func(*ColgroupElement)) *ColgroupElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *ColgroupElement) AddClass(classes ...string) *ColgroupElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *ColgroupElement) Class(classes ...string) *ColgroupElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *ColgroupElement) SetClass(classes ...string) *ColgroupElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *ColgroupElement) AddClass(classes ...string) *ColgroupElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -163,17 +137,18 @@ func (e *ColgroupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *ColgroupElement) Globals(g Globals) *ColgroupElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLTableChild marks <colgroup> as a permitted child of <table> (TableChild).
 func (*ColgroupElement) HTMLTableChild() {}
 
 func (e *ColgroupElement) Span(i int) *ColgroupElement {
 	e.attributes.Set("span", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *ColgroupElement) Accesskey(r rune) *ColgroupElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -194,46 +169,10 @@ func (e *ColgroupElement) Aria(name string, s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Autocapitalize(a Autocapitalize) *ColgroupElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Autocorrect(v ...Autocorrect) *ColgroupElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *ColgroupElement) Autofocus(b bool) *ColgroupElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *ColgroupElement) Class(s ...string) *ColgroupElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Contenteditable(v ...Contenteditable) *ColgroupElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -266,32 +205,6 @@ func (e *ColgroupElement) Draggable(a Draggable) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Enterkeyhint(a Enterkeyhint) *ColgroupElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *ColgroupElement) Exportparts(s string) *ColgroupElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *ColgroupElement) Headingoffset(i int) *ColgroupElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ColgroupElement) Headingreset(b bool) *ColgroupElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ColgroupElement) Hidden(v ...Hidden) *ColgroupElement {
@@ -310,60 +223,6 @@ func (e *ColgroupElement) Id(s string) *ColgroupElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ColgroupElement) Inert(b bool) *ColgroupElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *ColgroupElement) Inputmode(a Inputmode) *ColgroupElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *ColgroupElement) Is(s string) *ColgroupElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *ColgroupElement) Itemid(s string) *ColgroupElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *ColgroupElement) Itemprop(s ...string) *ColgroupElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *ColgroupElement) Itemref(s ...string) *ColgroupElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ColgroupElement) Itemscope(b bool) *ColgroupElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *ColgroupElement) Itemtype(s ...string) *ColgroupElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *ColgroupElement) Lang(s string) *ColgroupElement {
 	e.attributes.Set("lang", s)
 
@@ -372,12 +231,6 @@ func (e *ColgroupElement) Lang(s string) *ColgroupElement {
 
 func (e *ColgroupElement) Nonce(s string) *ColgroupElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *ColgroupElement) Part(s ...string) *ColgroupElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -400,24 +253,6 @@ func (e *ColgroupElement) Role(s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Slot(s string) *ColgroupElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Spellcheck(v ...Spellcheck) *ColgroupElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *ColgroupElement) Style(s string) *ColgroupElement {
 	e.attributes.Set("style", s)
 
@@ -436,39 +271,13 @@ func (e *ColgroupElement) Title(s string) *ColgroupElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Translate(v ...Translate) *ColgroupElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Writingsuggestions(v ...Writingsuggestions) *ColgroupElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *ColgroupElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<colgroup>"); err != nil {
 			return err

@@ -7,38 +7,31 @@ import (
 	"github.com/go-htemel/htemel/html"
 )
 
-func TestXxxIfFalseRendersNothing(t *testing.T) {
-	expect(t, html.DivIf(false, html.P().Text("x")), "")
-	expect(t, html.SpanIf(false), "")
-	expect(t, html.BrIf(false), "")
-	expect(t, html.InputIf(false).Id("x"), "")
-	expect(t, html.Div(html.PIf(false), html.BrIf(false)), "<div></div>")
+// The per-element conditionals (DivIf, DivTernary, .If, .IfElse, .IfThen) were removed in v0.4.0
+// (ADR 0008). These are their replacements.
+
+func TestPackageIfReplacesXxxIf(t *testing.T) {
+	expect(t, htemel.If(false, html.Div(html.P().Text("x"))), "")
+	expect(t, htemel.If(true, html.Div(html.P().Text("x"))), "<div><p>x</p></div>")
+	expect(t, html.Div(htemel.If(false, html.P()), htemel.If(false, html.Br())), "<div></div>")
+	expect(t, html.Div().Children(htemel.If(true, html.Br())), "<div><br></div>")
 }
 
-func TestXxxIfTrueRenders(t *testing.T) {
-	expect(t, html.DivIf(true, html.P().Text("x")), "<div><p>x</p></div>")
-	expect(t, html.BrIf(true), "<br>")
+func TestPackageIfElseReplacesTernary(t *testing.T) {
+	expect(t, html.Div(htemel.IfElse(true, html.B().Text("a"), html.I().Text("b"))), "<div><b>a</b></div>")
+	expect(t, html.Div(htemel.IfElse(false, html.B().Text("a"), html.I().Text("b"))), "<div><i>b</i></div>")
 }
 
-func TestDivTernary(t *testing.T) {
-	expect(t, html.DivTernary(true, html.B().Text("a"), html.I().Text("b")), "<div><b>a</b></div>")
-	expect(t, html.DivTernary(false, html.B().Text("a"), html.I().Text("b")), "<div><i>b</i></div>")
-}
-
-func TestIf(t *testing.T) {
-	expect(t, html.Div().If(true, html.Br()), "<div><br></div>")
-	expect(t, html.Div().If(false, html.Br()), "<div></div>")
-}
-
-func TestIfElse(t *testing.T) {
-	expect(t, html.Div().IfElse(true, html.B(), html.I()), "<div><b></b></div>")
-	expect(t, html.Div().IfElse(false, html.B(), html.I()), "<div><i></i></div>")
-}
-
-func TestIfThen(t *testing.T) {
-	add := func(d *html.DivElement) { d.Id("x").Text("hi") }
-	expect(t, html.Div().IfThen(true, add), `<div id="x">hi</div>`)
-	expect(t, html.Div().IfThen(false, add), "<div></div>")
+func TestWithReplacesIfThen(t *testing.T) {
+	add := func(cond bool) func(*html.DivElement) {
+		return func(d *html.DivElement) {
+			if cond {
+				d.Id("x").Text("hi")
+			}
+		}
+	}
+	expect(t, html.Div().With(add(true)), `<div id="x">hi</div>`)
+	expect(t, html.Div().With(add(false)), "<div></div>")
 }
 
 func TestWith(t *testing.T) {

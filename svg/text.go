@@ -15,7 +15,6 @@ import (
 type TextElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Text creates a tag <text> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Text(children ...Content) *TextElement {
 	}
 
 	return node
-}
-
-// TextIf creates a tag <text> instance that is only rendered when condition is true.
-func TextIf(condition bool, children ...Content) *TextElement {
-	if condition {
-		return Text(children...)
-	}
-
-	return &TextElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// TextTernary creates a tag <text> containing then when condition is true, otherwise containing otherwise.
-func TextTernary(condition bool, then Content, otherwise Content) *TextElement {
-	if condition {
-		return Text(then)
-	}
-	return Text(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *TextElement) Textf(format string, args ...any) *TextElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TextElement) If(cond bool, child Content) *TextElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TextElement) IfElse(cond bool, then, els Content) *TextElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TextElement) IfThen(cond bool, fn func(*TextElement)) *TextElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *TextElement) AddClass(classes ...string) *TextElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TextElement) Class(classes ...string) *TextElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TextElement) SetClass(classes ...string) *TextElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TextElement) AddClass(classes ...string) *TextElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -249,12 +223,6 @@ func (e *TextElement) Autofocus(b bool) *TextElement {
 
 func (e *TextElement) BaselineShift(s string) *TextElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *TextElement) Class(s ...string) *TextElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -695,12 +663,10 @@ func (e *TextElement) XmlSpace(a XmlSpace) *TextElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TextElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<text>"); err != nil {
 			return err

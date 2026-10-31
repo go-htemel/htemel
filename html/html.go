@@ -23,7 +23,6 @@ type HtmlChild interface {
 type HtmlElement struct {
 	attributes render.Attrs
 	children   []HtmlChild
-	skipRender bool
 }
 
 // Html creates a tag <html> instance and returns it for further modification.
@@ -40,26 +39,6 @@ func Html(children ...HtmlChild) *HtmlElement {
 	return node
 }
 
-// HtmlIf creates a tag <html> instance that is only rendered when condition is true.
-func HtmlIf(condition bool, children ...HtmlChild) *HtmlElement {
-	if condition {
-		return Html(children...)
-	}
-
-	return &HtmlElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// HtmlTernary creates a tag <html> containing then when condition is true, otherwise containing otherwise.
-func HtmlTernary(condition bool, then HtmlChild, otherwise HtmlChild) *HtmlElement {
-	if condition {
-		return Html(then)
-	}
-	return Html(otherwise)
-}
-
 // Children appends children to this element.
 func (e *HtmlElement) Children(children ...HtmlChild) *HtmlElement {
 	e.children = append(e.children, children...)
@@ -72,38 +51,33 @@ func (e *HtmlElement) With(fn func(*HtmlElement)) *HtmlElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HtmlElement) If(cond bool, child HtmlChild) *HtmlElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HtmlElement) IfElse(cond bool, then, els HtmlChild) *HtmlElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *HtmlElement) IfThen(cond bool, fn func(*HtmlElement)) *HtmlElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *HtmlElement) AddClass(classes ...string) *HtmlElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *HtmlElement) Class(classes ...string) *HtmlElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *HtmlElement) SetClass(classes ...string) *HtmlElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *HtmlElement) AddClass(classes ...string) *HtmlElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -163,9 +137,10 @@ func (e *HtmlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *HtmlElement) Accesskey(r rune) *HtmlElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *HtmlElement) Globals(g Globals) *HtmlElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -185,46 +160,10 @@ func (e *HtmlElement) Aria(name string, s string) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Autocapitalize(a Autocapitalize) *HtmlElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Autocorrect(v ...Autocorrect) *HtmlElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *HtmlElement) Autofocus(b bool) *HtmlElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *HtmlElement) Class(s ...string) *HtmlElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Contenteditable(v ...Contenteditable) *HtmlElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -257,32 +196,6 @@ func (e *HtmlElement) Draggable(a Draggable) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Enterkeyhint(a Enterkeyhint) *HtmlElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *HtmlElement) Exportparts(s string) *HtmlElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *HtmlElement) Headingoffset(i int) *HtmlElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HtmlElement) Headingreset(b bool) *HtmlElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HtmlElement) Hidden(v ...Hidden) *HtmlElement {
@@ -301,60 +214,6 @@ func (e *HtmlElement) Id(s string) *HtmlElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HtmlElement) Inert(b bool) *HtmlElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *HtmlElement) Inputmode(a Inputmode) *HtmlElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *HtmlElement) Is(s string) *HtmlElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *HtmlElement) Itemid(s string) *HtmlElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *HtmlElement) Itemprop(s ...string) *HtmlElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *HtmlElement) Itemref(s ...string) *HtmlElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *HtmlElement) Itemscope(b bool) *HtmlElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *HtmlElement) Itemtype(s ...string) *HtmlElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *HtmlElement) Lang(s string) *HtmlElement {
 	e.attributes.Set("lang", s)
 
@@ -363,12 +222,6 @@ func (e *HtmlElement) Lang(s string) *HtmlElement {
 
 func (e *HtmlElement) Nonce(s string) *HtmlElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *HtmlElement) Part(s ...string) *HtmlElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -391,24 +244,6 @@ func (e *HtmlElement) Role(s string) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Slot(s string) *HtmlElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Spellcheck(v ...Spellcheck) *HtmlElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *HtmlElement) Style(s string) *HtmlElement {
 	e.attributes.Set("style", s)
 
@@ -427,39 +262,13 @@ func (e *HtmlElement) Title(s string) *HtmlElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Translate(v ...Translate) *HtmlElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Writingsuggestions(v ...Writingsuggestions) *HtmlElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *HtmlElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<html>"); err != nil {
 			return err

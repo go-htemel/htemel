@@ -29,7 +29,6 @@ type OptionChild interface {
 type OptionElement struct {
 	attributes render.Attrs
 	children   []OptionChild
-	skipRender bool
 }
 
 // Option creates a tag <option> instance and returns it for further modification.
@@ -44,26 +43,6 @@ func Option(children ...OptionChild) *OptionElement {
 	}
 
 	return node
-}
-
-// OptionIf creates a tag <option> instance that is only rendered when condition is true.
-func OptionIf(condition bool, children ...OptionChild) *OptionElement {
-	if condition {
-		return Option(children...)
-	}
-
-	return &OptionElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// OptionTernary creates a tag <option> containing then when condition is true, otherwise containing otherwise.
-func OptionTernary(condition bool, then OptionChild, otherwise OptionChild) *OptionElement {
-	if condition {
-		return Option(then)
-	}
-	return Option(otherwise)
 }
 
 // Children appends children to this element.
@@ -89,38 +68,33 @@ func (e *OptionElement) Textf(format string, args ...any) *OptionElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OptionElement) If(cond bool, child OptionChild) *OptionElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OptionElement) IfElse(cond bool, then, els OptionChild) *OptionElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *OptionElement) IfThen(cond bool, fn func(*OptionElement)) *OptionElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *OptionElement) AddClass(classes ...string) *OptionElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *OptionElement) Class(classes ...string) *OptionElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *OptionElement) SetClass(classes ...string) *OptionElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *OptionElement) AddClass(classes ...string) *OptionElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -180,6 +154,13 @@ func (e *OptionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *OptionElement) Globals(g Globals) *OptionElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLDatalistChild marks <option> as a permitted child of <datalist> (DatalistChild).
 func (*OptionElement) HTMLDatalistChild() {}
 
@@ -217,12 +198,6 @@ func (e *OptionElement) Value(s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Accesskey(r rune) *OptionElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
-
 func (e *OptionElement) AriaUnsafe(name string, s string) *OptionElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -239,46 +214,10 @@ func (e *OptionElement) Aria(name string, s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Autocapitalize(a Autocapitalize) *OptionElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Autocorrect(v ...Autocorrect) *OptionElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *OptionElement) Autofocus(b bool) *OptionElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *OptionElement) Class(s ...string) *OptionElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Contenteditable(v ...Contenteditable) *OptionElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -311,32 +250,6 @@ func (e *OptionElement) Draggable(a Draggable) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Enterkeyhint(a Enterkeyhint) *OptionElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *OptionElement) Exportparts(s string) *OptionElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *OptionElement) Headingoffset(i int) *OptionElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptionElement) Headingreset(b bool) *OptionElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OptionElement) Hidden(v ...Hidden) *OptionElement {
@@ -355,60 +268,6 @@ func (e *OptionElement) Id(s string) *OptionElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptionElement) Inert(b bool) *OptionElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *OptionElement) Inputmode(a Inputmode) *OptionElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *OptionElement) Is(s string) *OptionElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *OptionElement) Itemid(s string) *OptionElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *OptionElement) Itemprop(s ...string) *OptionElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *OptionElement) Itemref(s ...string) *OptionElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *OptionElement) Itemscope(b bool) *OptionElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *OptionElement) Itemtype(s ...string) *OptionElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *OptionElement) Lang(s string) *OptionElement {
 	e.attributes.Set("lang", s)
 
@@ -417,12 +276,6 @@ func (e *OptionElement) Lang(s string) *OptionElement {
 
 func (e *OptionElement) Nonce(s string) *OptionElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *OptionElement) Part(s ...string) *OptionElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -445,24 +298,6 @@ func (e *OptionElement) Role(s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Slot(s string) *OptionElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Spellcheck(v ...Spellcheck) *OptionElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *OptionElement) Style(s string) *OptionElement {
 	e.attributes.Set("style", s)
 
@@ -481,39 +316,13 @@ func (e *OptionElement) Title(s string) *OptionElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Translate(v ...Translate) *OptionElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Writingsuggestions(v ...Writingsuggestions) *OptionElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *OptionElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<option>"); err != nil {
 			return err

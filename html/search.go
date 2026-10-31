@@ -17,7 +17,6 @@ type SearchElement struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.FlowContent
-	skipRender bool
 }
 
 // Search creates a tag <search> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Search(children ...htemel.FlowContent) *SearchElement {
 	}
 
 	return node
-}
-
-// SearchIf creates a tag <search> instance that is only rendered when condition is true.
-func SearchIf(condition bool, children ...htemel.FlowContent) *SearchElement {
-	if condition {
-		return Search(children...)
-	}
-
-	return &SearchElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// SearchTernary creates a tag <search> containing then when condition is true, otherwise containing otherwise.
-func SearchTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *SearchElement {
-	if condition {
-		return Search(then)
-	}
-	return Search(otherwise)
 }
 
 // Children appends children to this element.
@@ -77,38 +56,33 @@ func (e *SearchElement) Textf(format string, args ...any) *SearchElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SearchElement) If(cond bool, child htemel.FlowContent) *SearchElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SearchElement) IfElse(cond bool, then, els htemel.FlowContent) *SearchElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *SearchElement) IfThen(cond bool, fn func(*SearchElement)) *SearchElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *SearchElement) AddClass(classes ...string) *SearchElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *SearchElement) Class(classes ...string) *SearchElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *SearchElement) SetClass(classes ...string) *SearchElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *SearchElement) AddClass(classes ...string) *SearchElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -168,9 +142,10 @@ func (e *SearchElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-func (e *SearchElement) Accesskey(r rune) *SearchElement {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *SearchElement) Globals(g Globals) *SearchElement {
+	g.apply(&e.attributes)
 	return e
 }
 
@@ -190,46 +165,10 @@ func (e *SearchElement) Aria(name string, s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Autocapitalize(a Autocapitalize) *SearchElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Autocorrect(v ...Autocorrect) *SearchElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *SearchElement) Autofocus(b bool) *SearchElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *SearchElement) Class(s ...string) *SearchElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Contenteditable(v ...Contenteditable) *SearchElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -262,32 +201,6 @@ func (e *SearchElement) Draggable(a Draggable) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Enterkeyhint(a Enterkeyhint) *SearchElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *SearchElement) Exportparts(s string) *SearchElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *SearchElement) Headingoffset(i int) *SearchElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SearchElement) Headingreset(b bool) *SearchElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SearchElement) Hidden(v ...Hidden) *SearchElement {
@@ -306,60 +219,6 @@ func (e *SearchElement) Id(s string) *SearchElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SearchElement) Inert(b bool) *SearchElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *SearchElement) Inputmode(a Inputmode) *SearchElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *SearchElement) Is(s string) *SearchElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *SearchElement) Itemid(s string) *SearchElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *SearchElement) Itemprop(s ...string) *SearchElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *SearchElement) Itemref(s ...string) *SearchElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SearchElement) Itemscope(b bool) *SearchElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *SearchElement) Itemtype(s ...string) *SearchElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *SearchElement) Lang(s string) *SearchElement {
 	e.attributes.Set("lang", s)
 
@@ -368,12 +227,6 @@ func (e *SearchElement) Lang(s string) *SearchElement {
 
 func (e *SearchElement) Nonce(s string) *SearchElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *SearchElement) Part(s ...string) *SearchElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -396,24 +249,6 @@ func (e *SearchElement) Role(s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Slot(s string) *SearchElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Spellcheck(v ...Spellcheck) *SearchElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *SearchElement) Style(s string) *SearchElement {
 	e.attributes.Set("style", s)
 
@@ -432,39 +267,13 @@ func (e *SearchElement) Title(s string) *SearchElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Translate(v ...Translate) *SearchElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Writingsuggestions(v ...Writingsuggestions) *SearchElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *SearchElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<search>"); err != nil {
 			return err

@@ -14,8 +14,6 @@ import (
 type BaseElement struct {
 	htemel.MetadataMarker
 	attributes render.Attrs
-
-	skipRender bool
 }
 
 // Base creates a tag <base> instance and returns it for further modification.
@@ -27,38 +25,39 @@ func Base() *BaseElement {
 	return node
 }
 
-// BaseIf creates a tag <base> instance that is only rendered when condition is true.
-func BaseIf(condition bool) *BaseElement {
-	if condition {
-		return Base()
-	}
-
-	return &BaseElement{
-
-		skipRender: true,
-	}
-}
-
 // With allows passing a function to modify the element via a closure.
 func (e *BaseElement) With(fn func(*BaseElement)) *BaseElement {
 	fn(e)
 	return e
 }
 
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *BaseElement) IfThen(cond bool, fn func(*BaseElement)) *BaseElement {
-	if cond {
-		fn(e)
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *BaseElement) Class(classes ...string) *BaseElement {
+	current, _ := e.attributes.Get("class")
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
 	}
 	return e
 }
 
-// AddClass appends a class to the element.
-func (e *BaseElement) AddClass(classes ...string) *BaseElement {
-	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *BaseElement) SetClass(classes ...string) *BaseElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
 	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *BaseElement) AddClass(classes ...string) *BaseElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -118,6 +117,13 @@ func (e *BaseElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *BaseElement) Globals(g Globals) *BaseElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // Href sets the "href" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *BaseElement) Href(s string) *BaseElement {
@@ -128,12 +134,6 @@ func (e *BaseElement) Href(s string) *BaseElement {
 
 func (e *BaseElement) Target(s string) *BaseElement {
 	e.attributes.Set("target", s)
-
-	return e
-}
-
-func (e *BaseElement) Accesskey(r rune) *BaseElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -154,46 +154,10 @@ func (e *BaseElement) Aria(name string, s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Autocapitalize(a Autocapitalize) *BaseElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Autocorrect(v ...Autocorrect) *BaseElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *BaseElement) Autofocus(b bool) *BaseElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *BaseElement) Class(s ...string) *BaseElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Contenteditable(v ...Contenteditable) *BaseElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -226,32 +190,6 @@ func (e *BaseElement) Draggable(a Draggable) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Enterkeyhint(a Enterkeyhint) *BaseElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *BaseElement) Exportparts(s string) *BaseElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *BaseElement) Headingoffset(i int) *BaseElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BaseElement) Headingreset(b bool) *BaseElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BaseElement) Hidden(v ...Hidden) *BaseElement {
@@ -270,60 +208,6 @@ func (e *BaseElement) Id(s string) *BaseElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BaseElement) Inert(b bool) *BaseElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *BaseElement) Inputmode(a Inputmode) *BaseElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *BaseElement) Is(s string) *BaseElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *BaseElement) Itemid(s string) *BaseElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *BaseElement) Itemprop(s ...string) *BaseElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *BaseElement) Itemref(s ...string) *BaseElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *BaseElement) Itemscope(b bool) *BaseElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *BaseElement) Itemtype(s ...string) *BaseElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *BaseElement) Lang(s string) *BaseElement {
 	e.attributes.Set("lang", s)
 
@@ -332,12 +216,6 @@ func (e *BaseElement) Lang(s string) *BaseElement {
 
 func (e *BaseElement) Nonce(s string) *BaseElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *BaseElement) Part(s ...string) *BaseElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -360,24 +238,6 @@ func (e *BaseElement) Role(s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Slot(s string) *BaseElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Spellcheck(v ...Spellcheck) *BaseElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *BaseElement) Style(s string) *BaseElement {
 	e.attributes.Set("style", s)
 
@@ -396,40 +256,14 @@ func (e *BaseElement) Title(s string) *BaseElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Translate(v ...Translate) *BaseElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Writingsuggestions(v ...Writingsuggestions) *BaseElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then returns: <base> is a void element,
 // so it is self closing and has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *BaseElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<base>"); err != nil {
 			return err

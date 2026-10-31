@@ -18,7 +18,6 @@ type H2Element struct {
 	htemel.PalpableMarker
 	attributes render.Attrs
 	children   []htemel.PhrasingContent
-	skipRender bool
 }
 
 // H2 creates a tag <h2> instance and returns it for further modification.
@@ -33,26 +32,6 @@ func H2(children ...htemel.PhrasingContent) *H2Element {
 	}
 
 	return node
-}
-
-// H2If creates a tag <h2> instance that is only rendered when condition is true.
-func H2If(condition bool, children ...htemel.PhrasingContent) *H2Element {
-	if condition {
-		return H2(children...)
-	}
-
-	return &H2Element{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// H2Ternary creates a tag <h2> containing then when condition is true, otherwise containing otherwise.
-func H2Ternary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *H2Element {
-	if condition {
-		return H2(then)
-	}
-	return H2(otherwise)
 }
 
 // Children appends children to this element.
@@ -78,38 +57,33 @@ func (e *H2Element) Textf(format string, args ...any) *H2Element {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *H2Element) If(cond bool, child htemel.PhrasingContent) *H2Element {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *H2Element) IfElse(cond bool, then, els htemel.PhrasingContent) *H2Element {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *H2Element) IfThen(cond bool, fn func(*H2Element)) *H2Element {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *H2Element) AddClass(classes ...string) *H2Element {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *H2Element) Class(classes ...string) *H2Element {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *H2Element) SetClass(classes ...string) *H2Element {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *H2Element) AddClass(classes ...string) *H2Element {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -169,14 +143,15 @@ func (e *H2Element) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-// HTMLHgroupChild marks <h2> as a permitted child of <hgroup> (HgroupChild).
-func (*H2Element) HTMLHgroupChild() {}
-
-func (e *H2Element) Accesskey(r rune) *H2Element {
-	e.attributes.Set("accesskey", string(r))
-
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *H2Element) Globals(g Globals) *H2Element {
+	g.apply(&e.attributes)
 	return e
 }
+
+// HTMLHgroupChild marks <h2> as a permitted child of <hgroup> (HgroupChild).
+func (*H2Element) HTMLHgroupChild() {}
 
 func (e *H2Element) AriaUnsafe(name string, s string) *H2Element {
 	tag := strings.ToLower("aria-" + name)
@@ -194,46 +169,10 @@ func (e *H2Element) Aria(name string, s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Autocapitalize(a Autocapitalize) *H2Element {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Autocorrect(v ...Autocorrect) *H2Element {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *H2Element) Autofocus(b bool) *H2Element {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *H2Element) Class(s ...string) *H2Element {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Contenteditable(v ...Contenteditable) *H2Element {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -266,32 +205,6 @@ func (e *H2Element) Draggable(a Draggable) *H2Element {
 	return e
 }
 
-func (e *H2Element) Enterkeyhint(a Enterkeyhint) *H2Element {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *H2Element) Exportparts(s string) *H2Element {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *H2Element) Headingoffset(i int) *H2Element {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *H2Element) Headingreset(b bool) *H2Element {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *H2Element) Hidden(v ...Hidden) *H2Element {
@@ -310,60 +223,6 @@ func (e *H2Element) Id(s string) *H2Element {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *H2Element) Inert(b bool) *H2Element {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *H2Element) Inputmode(a Inputmode) *H2Element {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *H2Element) Is(s string) *H2Element {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *H2Element) Itemid(s string) *H2Element {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *H2Element) Itemprop(s ...string) *H2Element {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *H2Element) Itemref(s ...string) *H2Element {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *H2Element) Itemscope(b bool) *H2Element {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *H2Element) Itemtype(s ...string) *H2Element {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *H2Element) Lang(s string) *H2Element {
 	e.attributes.Set("lang", s)
 
@@ -372,12 +231,6 @@ func (e *H2Element) Lang(s string) *H2Element {
 
 func (e *H2Element) Nonce(s string) *H2Element {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *H2Element) Part(s ...string) *H2Element {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -400,24 +253,6 @@ func (e *H2Element) Role(s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Slot(s string) *H2Element {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Spellcheck(v ...Spellcheck) *H2Element {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *H2Element) Style(s string) *H2Element {
 	e.attributes.Set("style", s)
 
@@ -436,39 +271,13 @@ func (e *H2Element) Title(s string) *H2Element {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Translate(v ...Translate) *H2Element {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Writingsuggestions(v ...Writingsuggestions) *H2Element {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *H2Element) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<h2>"); err != nil {
 			return err

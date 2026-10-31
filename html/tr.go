@@ -24,7 +24,6 @@ type TrChild interface {
 type TrElement struct {
 	attributes render.Attrs
 	children   []TrChild
-	skipRender bool
 }
 
 // Tr creates a tag <tr> instance and returns it for further modification.
@@ -41,26 +40,6 @@ func Tr(children ...TrChild) *TrElement {
 	return node
 }
 
-// TrIf creates a tag <tr> instance that is only rendered when condition is true.
-func TrIf(condition bool, children ...TrChild) *TrElement {
-	if condition {
-		return Tr(children...)
-	}
-
-	return &TrElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// TrTernary creates a tag <tr> containing then when condition is true, otherwise containing otherwise.
-func TrTernary(condition bool, then TrChild, otherwise TrChild) *TrElement {
-	if condition {
-		return Tr(then)
-	}
-	return Tr(otherwise)
-}
-
 // Children appends children to this element.
 func (e *TrElement) Children(children ...TrChild) *TrElement {
 	e.children = append(e.children, children...)
@@ -73,38 +52,33 @@ func (e *TrElement) With(fn func(*TrElement)) *TrElement {
 	return e
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TrElement) If(cond bool, child TrChild) *TrElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TrElement) IfElse(cond bool, then, els TrChild) *TrElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *TrElement) IfThen(cond bool, fn func(*TrElement)) *TrElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *TrElement) AddClass(classes ...string) *TrElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *TrElement) Class(classes ...string) *TrElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *TrElement) SetClass(classes ...string) *TrElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *TrElement) AddClass(classes ...string) *TrElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -164,6 +138,13 @@ func (e *TrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *TrElement) Globals(g Globals) *TrElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 // HTMLTableChild marks <tr> as a permitted child of <table> (TableChild).
 func (*TrElement) HTMLTableChild() {}
 
@@ -175,12 +156,6 @@ func (*TrElement) HTMLTfootChild() {}
 
 // HTMLTheadChild marks <tr> as a permitted child of <thead> (TheadChild).
 func (*TrElement) HTMLTheadChild() {}
-
-func (e *TrElement) Accesskey(r rune) *TrElement {
-	e.attributes.Set("accesskey", string(r))
-
-	return e
-}
 
 func (e *TrElement) AriaUnsafe(name string, s string) *TrElement {
 	tag := strings.ToLower("aria-" + name)
@@ -198,46 +173,10 @@ func (e *TrElement) Aria(name string, s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Autocapitalize(a Autocapitalize) *TrElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Autocorrect(v ...Autocorrect) *TrElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *TrElement) Autofocus(b bool) *TrElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *TrElement) Class(s ...string) *TrElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Contenteditable(v ...Contenteditable) *TrElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -270,32 +209,6 @@ func (e *TrElement) Draggable(a Draggable) *TrElement {
 	return e
 }
 
-func (e *TrElement) Enterkeyhint(a Enterkeyhint) *TrElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *TrElement) Exportparts(s string) *TrElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *TrElement) Headingoffset(i int) *TrElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrElement) Headingreset(b bool) *TrElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TrElement) Hidden(v ...Hidden) *TrElement {
@@ -314,60 +227,6 @@ func (e *TrElement) Id(s string) *TrElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrElement) Inert(b bool) *TrElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *TrElement) Inputmode(a Inputmode) *TrElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *TrElement) Is(s string) *TrElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *TrElement) Itemid(s string) *TrElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *TrElement) Itemprop(s ...string) *TrElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *TrElement) Itemref(s ...string) *TrElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrElement) Itemscope(b bool) *TrElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *TrElement) Itemtype(s ...string) *TrElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *TrElement) Lang(s string) *TrElement {
 	e.attributes.Set("lang", s)
 
@@ -376,12 +235,6 @@ func (e *TrElement) Lang(s string) *TrElement {
 
 func (e *TrElement) Nonce(s string) *TrElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *TrElement) Part(s ...string) *TrElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -404,24 +257,6 @@ func (e *TrElement) Role(s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Slot(s string) *TrElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Spellcheck(v ...Spellcheck) *TrElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *TrElement) Style(s string) *TrElement {
 	e.attributes.Set("style", s)
 
@@ -440,39 +275,13 @@ func (e *TrElement) Title(s string) *TrElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Translate(v ...Translate) *TrElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Writingsuggestions(v ...Writingsuggestions) *TrElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *TrElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<tr>"); err != nil {
 			return err

@@ -17,7 +17,6 @@ type StyleElement struct {
 	htemel.MetadataMarker
 	attributes render.Attrs
 	children   []htemel.TextContent
-	skipRender bool
 }
 
 // Style creates a tag <style> instance and returns it for further modification.
@@ -32,26 +31,6 @@ func Style(children ...htemel.TextContent) *StyleElement {
 	}
 
 	return node
-}
-
-// StyleIf creates a tag <style> instance that is only rendered when condition is true.
-func StyleIf(condition bool, children ...htemel.TextContent) *StyleElement {
-	if condition {
-		return Style(children...)
-	}
-
-	return &StyleElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// StyleTernary creates a tag <style> containing then when condition is true, otherwise containing otherwise.
-func StyleTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *StyleElement {
-	if condition {
-		return Style(then)
-	}
-	return Style(otherwise)
 }
 
 // Children appends children to this element.
@@ -80,38 +59,33 @@ func (e *StyleElement) Textf(format string, args ...any) *StyleElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) If(cond bool, child htemel.TextContent) *StyleElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StyleElement) IfElse(cond bool, then, els htemel.TextContent) *StyleElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) IfThen(cond bool, fn func(*StyleElement)) *StyleElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *StyleElement) AddClass(classes ...string) *StyleElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *StyleElement) Class(classes ...string) *StyleElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *StyleElement) SetClass(classes ...string) *StyleElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *StyleElement) AddClass(classes ...string) *StyleElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -171,6 +145,13 @@ func (e *StyleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// Globals sets the less common global attributes held in g (see Globals). Zero fields are
+// skipped; the others are set in the order Globals declares them.
+func (e *StyleElement) Globals(g Globals) *StyleElement {
+	g.apply(&e.attributes)
+	return e
+}
+
 func (e *StyleElement) Blocking(s ...string) *StyleElement {
 	e.attributes.Set("blocking", strings.Join(s, " "))
 
@@ -179,12 +160,6 @@ func (e *StyleElement) Blocking(s ...string) *StyleElement {
 
 func (e *StyleElement) Media(s string) *StyleElement {
 	e.attributes.Set("media", s)
-
-	return e
-}
-
-func (e *StyleElement) Accesskey(r rune) *StyleElement {
-	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -205,46 +180,10 @@ func (e *StyleElement) Aria(name string, s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Autocapitalize(a Autocapitalize) *StyleElement {
-	e.attributes.Set("autocapitalize", string(a))
-
-	return e
-}
-
-// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Autocorrect(v ...Autocorrect) *StyleElement {
-	var val Autocorrect
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("autocorrect", string(val))
-
-	return e
-}
-
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *StyleElement) Autofocus(b bool) *StyleElement {
 	e.attributes.SetBool("autofocus", b)
-
-	return e
-}
-
-func (e *StyleElement) Class(s ...string) *StyleElement {
-	e.attributes.Set("class", strings.Join(s, " "))
-
-	return e
-}
-
-// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Contenteditable(v ...Contenteditable) *StyleElement {
-	var val Contenteditable
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -277,32 +216,6 @@ func (e *StyleElement) Draggable(a Draggable) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Enterkeyhint(a Enterkeyhint) *StyleElement {
-	e.attributes.Set("enterkeyhint", string(a))
-
-	return e
-}
-
-func (e *StyleElement) Exportparts(s string) *StyleElement {
-	e.attributes.Set("exportparts", s)
-
-	return e
-}
-
-func (e *StyleElement) Headingoffset(i int) *StyleElement {
-	e.attributes.Set("headingoffset", strconv.Itoa(i))
-
-	return e
-}
-
-// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StyleElement) Headingreset(b bool) *StyleElement {
-	e.attributes.SetBool("headingreset", b)
-
-	return e
-}
-
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *StyleElement) Hidden(v ...Hidden) *StyleElement {
@@ -321,60 +234,6 @@ func (e *StyleElement) Id(s string) *StyleElement {
 	return e
 }
 
-// Inert sets the boolean attribute "inert". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StyleElement) Inert(b bool) *StyleElement {
-	e.attributes.SetBool("inert", b)
-
-	return e
-}
-
-func (e *StyleElement) Inputmode(a Inputmode) *StyleElement {
-	e.attributes.Set("inputmode", string(a))
-
-	return e
-}
-
-func (e *StyleElement) Is(s string) *StyleElement {
-	e.attributes.Set("is", s)
-
-	return e
-}
-
-// Itemid sets the "itemid" attribute.
-// Value is a URL; validate untrusted input with htemel.URL.
-func (e *StyleElement) Itemid(s string) *StyleElement {
-	e.attributes.Set("itemid", s)
-
-	return e
-}
-
-func (e *StyleElement) Itemprop(s ...string) *StyleElement {
-	e.attributes.Set("itemprop", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *StyleElement) Itemref(s ...string) *StyleElement {
-	e.attributes.Set("itemref", strings.Join(s, " "))
-
-	return e
-}
-
-// Itemscope sets the boolean attribute "itemscope". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StyleElement) Itemscope(b bool) *StyleElement {
-	e.attributes.SetBool("itemscope", b)
-
-	return e
-}
-
-func (e *StyleElement) Itemtype(s ...string) *StyleElement {
-	e.attributes.Set("itemtype", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *StyleElement) Lang(s string) *StyleElement {
 	e.attributes.Set("lang", s)
 
@@ -383,12 +242,6 @@ func (e *StyleElement) Lang(s string) *StyleElement {
 
 func (e *StyleElement) Nonce(s string) *StyleElement {
 	e.attributes.Set("nonce", s)
-
-	return e
-}
-
-func (e *StyleElement) Part(s ...string) *StyleElement {
-	e.attributes.Set("part", strings.Join(s, " "))
 
 	return e
 }
@@ -411,24 +264,6 @@ func (e *StyleElement) Role(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Slot(s string) *StyleElement {
-	e.attributes.Set("slot", s)
-
-	return e
-}
-
-// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Spellcheck(v ...Spellcheck) *StyleElement {
-	var val Spellcheck
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("spellcheck", string(val))
-
-	return e
-}
-
 func (e *StyleElement) Style(s string) *StyleElement {
 	e.attributes.Set("style", s)
 
@@ -447,39 +282,13 @@ func (e *StyleElement) Title(s string) *StyleElement {
 	return e
 }
 
-// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Translate(v ...Translate) *StyleElement {
-	var val Translate
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("translate", string(val))
-
-	return e
-}
-
-// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Writingsuggestions(v ...Writingsuggestions) *StyleElement {
-	var val Writingsuggestions
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("writingsuggestions", string(val))
-
-	return e
-}
-
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *StyleElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<style>"); err != nil {
 			return err

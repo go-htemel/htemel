@@ -15,7 +15,6 @@ import (
 type PolygonElement struct {
 	attributes render.Attrs
 	children   []Content
-	skipRender bool
 }
 
 // Polygon creates a tag <polygon> instance and returns it for further modification.
@@ -30,26 +29,6 @@ func Polygon(children ...Content) *PolygonElement {
 	}
 
 	return node
-}
-
-// PolygonIf creates a tag <polygon> instance that is only rendered when condition is true.
-func PolygonIf(condition bool, children ...Content) *PolygonElement {
-	if condition {
-		return Polygon(children...)
-	}
-
-	return &PolygonElement{
-		children:   children,
-		skipRender: true,
-	}
-}
-
-// PolygonTernary creates a tag <polygon> containing then when condition is true, otherwise containing otherwise.
-func PolygonTernary(condition bool, then Content, otherwise Content) *PolygonElement {
-	if condition {
-		return Polygon(then)
-	}
-	return Polygon(otherwise)
 }
 
 // Children appends children to this element.
@@ -75,38 +54,33 @@ func (e *PolygonElement) Textf(format string, args ...any) *PolygonElement {
 	return e.Text(fmt.Sprintf(format, args...))
 }
 
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PolygonElement) If(cond bool, child Content) *PolygonElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PolygonElement) IfElse(cond bool, then, els Content) *PolygonElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
-	return e
-}
-
-// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
-func (e *PolygonElement) IfThen(cond bool, fn func(*PolygonElement)) *PolygonElement {
-	if cond {
-		fn(e)
-	}
-	return e
-}
-
-// AddClass appends a class to the element.
-func (e *PolygonElement) AddClass(classes ...string) *PolygonElement {
+// Class adds classes to the element's class attribute. It is additive: each argument may hold
+// several space-separated classes, which are appended in order after the classes already set;
+// a class that is already present is not repeated. Use SetClass to replace the attribute.
+func (e *PolygonElement) Class(classes ...string) *PolygonElement {
 	current, _ := e.attributes.Get("class")
-	all := append(strings.Fields(current), classes...)
-	e.attributes.Set("class", strings.Join(all, " "))
+	if v := render.AppendClasses(current, classes); v != current {
+		e.attributes.Set("class", v)
+	}
 	return e
+}
+
+// SetClass replaces the element's class attribute with the given classes, joined by spaces.
+// Duplicate classes are removed; with no non-empty classes the attribute is removed.
+func (e *PolygonElement) SetClass(classes ...string) *PolygonElement {
+	if v := render.AppendClasses("", classes); v != "" {
+		e.attributes.Set("class", v)
+	} else {
+		e.attributes.Remove("class")
+	}
+	return e
+}
+
+// AddClass appends classes to the element. It is the same as Class.
+//
+// Deprecated: Class is additive; use Class.
+func (e *PolygonElement) AddClass(classes ...string) *PolygonElement {
+	return e.Class(classes...)
 }
 
 // ToggleClass toggles a class on or off.
@@ -219,12 +193,6 @@ func (e *PolygonElement) Autofocus(b bool) *PolygonElement {
 
 func (e *PolygonElement) BaselineShift(s string) *PolygonElement {
 	e.attributes.Set("baseline-shift", s)
-
-	return e
-}
-
-func (e *PolygonElement) Class(s ...string) *PolygonElement {
-	e.attributes.Set("class", strings.Join(s, " "))
 
 	return e
 }
@@ -665,12 +633,10 @@ func (e *PolygonElement) XmlSpace(a XmlSpace) *PolygonElement {
 // Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
-// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to. If Render
+// fails, part of the output may already be in w; to serve HTTP use htemel.Write or
+// htemel.Handler, which write nothing when rendering fails.
 func (e *PolygonElement) Render(w io.Writer) error {
-	if e.skipRender {
-		return nil
-	}
-
 	if e.attributes.Len() == 0 {
 		if _, err := io.WriteString(w, "<polygon>"); err != nil {
 			return err
