@@ -185,6 +185,15 @@ const (
 	WbrInputmodeUrl     WbrInputmode = "url"
 )
 
+type WbrPopover string
+
+const (
+	WbrPopoverAuto   WbrPopover = "auto"
+	WbrPopoverHint   WbrPopover = "hint"
+	WbrPopoverManual WbrPopover = "manual"
+	WbrPopoverEmpty  WbrPopover = ""
+)
+
 type WbrSpellcheck string
 
 const (
@@ -309,6 +318,26 @@ func (e *WbrElement) Enterkeyhint(a WbrEnterkeyhint) *WbrElement {
 	return e
 }
 
+func (e *WbrElement) Exportparts(s string) *WbrElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *WbrElement) Headingoffset(i int) *WbrElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *WbrElement) Headingreset(b bool) *WbrElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *WbrElement) Hidden(v ...WbrHidden) *WbrElement {
@@ -341,6 +370,14 @@ func (e *WbrElement) Inputmode(a WbrInputmode) *WbrElement {
 	return e
 }
 
+func (e *WbrElement) Is(s string) *WbrElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *WbrElement) Itemid(s string) *WbrElement {
 	e.attributes.Set("itemid", s)
 
@@ -385,8 +422,20 @@ func (e *WbrElement) Nonce(s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Popover(s string) *WbrElement {
-	e.attributes.Set("popover", s)
+func (e *WbrElement) Part(s ...string) *WbrElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Popover(v ...WbrPopover) *WbrElement {
+	var val WbrPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

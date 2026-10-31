@@ -240,6 +240,15 @@ const (
 	SearchInputmodeUrl     SearchInputmode = "url"
 )
 
+type SearchPopover string
+
+const (
+	SearchPopoverAuto   SearchPopover = "auto"
+	SearchPopoverHint   SearchPopover = "hint"
+	SearchPopoverManual SearchPopover = "manual"
+	SearchPopoverEmpty  SearchPopover = ""
+)
+
 type SearchSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SearchElement) Enterkeyhint(a SearchEnterkeyhint) *SearchElement {
 	return e
 }
 
+func (e *SearchElement) Exportparts(s string) *SearchElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SearchElement) Headingoffset(i int) *SearchElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SearchElement) Headingreset(b bool) *SearchElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SearchElement) Hidden(v ...SearchHidden) *SearchElement {
@@ -396,6 +425,14 @@ func (e *SearchElement) Inputmode(a SearchInputmode) *SearchElement {
 	return e
 }
 
+func (e *SearchElement) Is(s string) *SearchElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SearchElement) Itemid(s string) *SearchElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SearchElement) Nonce(s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Popover(s string) *SearchElement {
-	e.attributes.Set("popover", s)
+func (e *SearchElement) Part(s ...string) *SearchElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Popover(v ...SearchPopover) *SearchElement {
+	var val SearchPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

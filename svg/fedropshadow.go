@@ -164,134 +164,6 @@ func (e *FeDropShadowElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeDropShadowXmlSpace string
-
-const (
-	FeDropShadowXmlSpaceDefault  FeDropShadowXmlSpace = "default"
-	FeDropShadowXmlSpacePreserve FeDropShadowXmlSpace = "preserve"
-)
-
-type FeDropShadowFillRule string
-
-const (
-	FeDropShadowFillRuleEvenodd FeDropShadowFillRule = "evenodd"
-	FeDropShadowFillRuleNonzero FeDropShadowFillRule = "nonzero"
-)
-
-type FeDropShadowStrokeLinecap string
-
-const (
-	FeDropShadowStrokeLinecapButt   FeDropShadowStrokeLinecap = "butt"
-	FeDropShadowStrokeLinecapRound  FeDropShadowStrokeLinecap = "round"
-	FeDropShadowStrokeLinecapSquare FeDropShadowStrokeLinecap = "square"
-)
-
-type FeDropShadowStrokeLinejoin string
-
-const (
-	FeDropShadowStrokeLinejoinArcs      FeDropShadowStrokeLinejoin = "arcs"
-	FeDropShadowStrokeLinejoinBevel     FeDropShadowStrokeLinejoin = "bevel"
-	FeDropShadowStrokeLinejoinMiter     FeDropShadowStrokeLinejoin = "miter"
-	FeDropShadowStrokeLinejoinMiterClip FeDropShadowStrokeLinejoin = "miter-clip"
-	FeDropShadowStrokeLinejoinRound     FeDropShadowStrokeLinejoin = "round"
-)
-
-type FeDropShadowVisibility string
-
-const (
-	FeDropShadowVisibilityCollapse FeDropShadowVisibility = "collapse"
-	FeDropShadowVisibilityHidden   FeDropShadowVisibility = "hidden"
-	FeDropShadowVisibilityVisible  FeDropShadowVisibility = "visible"
-)
-
-type FeDropShadowClipRule string
-
-const (
-	FeDropShadowClipRuleEvenodd FeDropShadowClipRule = "evenodd"
-	FeDropShadowClipRuleNonzero FeDropShadowClipRule = "nonzero"
-)
-
-type FeDropShadowPointerEvents string
-
-const (
-	FeDropShadowPointerEventsAll            FeDropShadowPointerEvents = "all"
-	FeDropShadowPointerEventsAuto           FeDropShadowPointerEvents = "auto"
-	FeDropShadowPointerEventsBoundingBox    FeDropShadowPointerEvents = "bounding-box"
-	FeDropShadowPointerEventsFill           FeDropShadowPointerEvents = "fill"
-	FeDropShadowPointerEventsNone           FeDropShadowPointerEvents = "none"
-	FeDropShadowPointerEventsPainted        FeDropShadowPointerEvents = "painted"
-	FeDropShadowPointerEventsStroke         FeDropShadowPointerEvents = "stroke"
-	FeDropShadowPointerEventsVisible        FeDropShadowPointerEvents = "visible"
-	FeDropShadowPointerEventsVisibleFill    FeDropShadowPointerEvents = "visibleFill"
-	FeDropShadowPointerEventsVisiblePainted FeDropShadowPointerEvents = "visiblePainted"
-	FeDropShadowPointerEventsVisibleStroke  FeDropShadowPointerEvents = "visibleStroke"
-)
-
-type FeDropShadowVectorEffect string
-
-const (
-	FeDropShadowVectorEffectFixedPosition    FeDropShadowVectorEffect = "fixed-position"
-	FeDropShadowVectorEffectNonRotation      FeDropShadowVectorEffect = "non-rotation"
-	FeDropShadowVectorEffectNonScalingSize   FeDropShadowVectorEffect = "non-scaling-size"
-	FeDropShadowVectorEffectNonScalingStroke FeDropShadowVectorEffect = "non-scaling-stroke"
-	FeDropShadowVectorEffectNone             FeDropShadowVectorEffect = "none"
-)
-
-type FeDropShadowShapeRendering string
-
-const (
-	FeDropShadowShapeRenderingAuto               FeDropShadowShapeRendering = "auto"
-	FeDropShadowShapeRenderingCrispEdges         FeDropShadowShapeRendering = "crispEdges"
-	FeDropShadowShapeRenderingGeometricPrecision FeDropShadowShapeRendering = "geometricPrecision"
-	FeDropShadowShapeRenderingOptimizeSpeed      FeDropShadowShapeRendering = "optimizeSpeed"
-)
-
-type FeDropShadowColorInterpolation string
-
-const (
-	FeDropShadowColorInterpolationAuto      FeDropShadowColorInterpolation = "auto"
-	FeDropShadowColorInterpolationLinearRGB FeDropShadowColorInterpolation = "linearRGB"
-	FeDropShadowColorInterpolationSRGB      FeDropShadowColorInterpolation = "sRGB"
-)
-
-type FeDropShadowColorInterpolationFilters string
-
-const (
-	FeDropShadowColorInterpolationFiltersAuto      FeDropShadowColorInterpolationFilters = "auto"
-	FeDropShadowColorInterpolationFiltersLinearRGB FeDropShadowColorInterpolationFilters = "linearRGB"
-	FeDropShadowColorInterpolationFiltersSRGB      FeDropShadowColorInterpolationFilters = "sRGB"
-)
-
-type FeDropShadowFontStyle string
-
-const (
-	FeDropShadowFontStyleItalic  FeDropShadowFontStyle = "italic"
-	FeDropShadowFontStyleNormal  FeDropShadowFontStyle = "normal"
-	FeDropShadowFontStyleOblique FeDropShadowFontStyle = "oblique"
-)
-
-type FeDropShadowTextAnchor string
-
-const (
-	FeDropShadowTextAnchorEnd    FeDropShadowTextAnchor = "end"
-	FeDropShadowTextAnchorMiddle FeDropShadowTextAnchor = "middle"
-	FeDropShadowTextAnchorStart  FeDropShadowTextAnchor = "start"
-)
-
-type FeDropShadowDominantBaseline string
-
-const (
-	FeDropShadowDominantBaselineAlphabetic   FeDropShadowDominantBaseline = "alphabetic"
-	FeDropShadowDominantBaselineAuto         FeDropShadowDominantBaseline = "auto"
-	FeDropShadowDominantBaselineCentral      FeDropShadowDominantBaseline = "central"
-	FeDropShadowDominantBaselineHanging      FeDropShadowDominantBaseline = "hanging"
-	FeDropShadowDominantBaselineIdeographic  FeDropShadowDominantBaseline = "ideographic"
-	FeDropShadowDominantBaselineMathematical FeDropShadowDominantBaseline = "mathematical"
-	FeDropShadowDominantBaselineMiddle       FeDropShadowDominantBaseline = "middle"
-	FeDropShadowDominantBaselineTextBottom   FeDropShadowDominantBaseline = "text-bottom"
-	FeDropShadowDominantBaselineTextTop      FeDropShadowDominantBaseline = "text-top"
-)
-
 type FeDropShadowAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	FeDropShadowAlignmentBaselineTop            FeDropShadowAlignmentBaseline = "top"
 )
 
-type FeDropShadowTextRendering string
+type FeDropShadowClipRule string
 
 const (
-	FeDropShadowTextRenderingAuto               FeDropShadowTextRendering = "auto"
-	FeDropShadowTextRenderingGeometricPrecision FeDropShadowTextRendering = "geometricPrecision"
-	FeDropShadowTextRenderingOptimizeLegibility FeDropShadowTextRendering = "optimizeLegibility"
-	FeDropShadowTextRenderingOptimizeSpeed      FeDropShadowTextRendering = "optimizeSpeed"
+	FeDropShadowClipRuleEvenodd FeDropShadowClipRule = "evenodd"
+	FeDropShadowClipRuleNonzero FeDropShadowClipRule = "nonzero"
+)
+
+type FeDropShadowColorInterpolation string
+
+const (
+	FeDropShadowColorInterpolationAuto      FeDropShadowColorInterpolation = "auto"
+	FeDropShadowColorInterpolationLinearRGB FeDropShadowColorInterpolation = "linearRGB"
+	FeDropShadowColorInterpolationSRGB      FeDropShadowColorInterpolation = "sRGB"
+)
+
+type FeDropShadowColorInterpolationFilters string
+
+const (
+	FeDropShadowColorInterpolationFiltersAuto      FeDropShadowColorInterpolationFilters = "auto"
+	FeDropShadowColorInterpolationFiltersLinearRGB FeDropShadowColorInterpolationFilters = "linearRGB"
+	FeDropShadowColorInterpolationFiltersSRGB      FeDropShadowColorInterpolationFilters = "sRGB"
+)
+
+type FeDropShadowDirection string
+
+const (
+	FeDropShadowDirectionLtr FeDropShadowDirection = "ltr"
+	FeDropShadowDirectionRtl FeDropShadowDirection = "rtl"
+)
+
+type FeDropShadowDominantBaseline string
+
+const (
+	FeDropShadowDominantBaselineAlphabetic   FeDropShadowDominantBaseline = "alphabetic"
+	FeDropShadowDominantBaselineAuto         FeDropShadowDominantBaseline = "auto"
+	FeDropShadowDominantBaselineCentral      FeDropShadowDominantBaseline = "central"
+	FeDropShadowDominantBaselineHanging      FeDropShadowDominantBaseline = "hanging"
+	FeDropShadowDominantBaselineIdeographic  FeDropShadowDominantBaseline = "ideographic"
+	FeDropShadowDominantBaselineMathematical FeDropShadowDominantBaseline = "mathematical"
+	FeDropShadowDominantBaselineMiddle       FeDropShadowDominantBaseline = "middle"
+	FeDropShadowDominantBaselineTextBottom   FeDropShadowDominantBaseline = "text-bottom"
+	FeDropShadowDominantBaselineTextTop      FeDropShadowDominantBaseline = "text-top"
+)
+
+type FeDropShadowFillRule string
+
+const (
+	FeDropShadowFillRuleEvenodd FeDropShadowFillRule = "evenodd"
+	FeDropShadowFillRuleNonzero FeDropShadowFillRule = "nonzero"
+)
+
+type FeDropShadowFontStyle string
+
+const (
+	FeDropShadowFontStyleItalic  FeDropShadowFontStyle = "italic"
+	FeDropShadowFontStyleNormal  FeDropShadowFontStyle = "normal"
+	FeDropShadowFontStyleOblique FeDropShadowFontStyle = "oblique"
 )
 
 type FeDropShadowImageRendering string
@@ -345,6 +267,66 @@ const (
 	FeDropShadowOverflowVisible FeDropShadowOverflow = "visible"
 )
 
+type FeDropShadowPointerEvents string
+
+const (
+	FeDropShadowPointerEventsAll            FeDropShadowPointerEvents = "all"
+	FeDropShadowPointerEventsAuto           FeDropShadowPointerEvents = "auto"
+	FeDropShadowPointerEventsBoundingBox    FeDropShadowPointerEvents = "bounding-box"
+	FeDropShadowPointerEventsFill           FeDropShadowPointerEvents = "fill"
+	FeDropShadowPointerEventsNone           FeDropShadowPointerEvents = "none"
+	FeDropShadowPointerEventsPainted        FeDropShadowPointerEvents = "painted"
+	FeDropShadowPointerEventsStroke         FeDropShadowPointerEvents = "stroke"
+	FeDropShadowPointerEventsVisible        FeDropShadowPointerEvents = "visible"
+	FeDropShadowPointerEventsVisibleFill    FeDropShadowPointerEvents = "visibleFill"
+	FeDropShadowPointerEventsVisiblePainted FeDropShadowPointerEvents = "visiblePainted"
+	FeDropShadowPointerEventsVisibleStroke  FeDropShadowPointerEvents = "visibleStroke"
+)
+
+type FeDropShadowShapeRendering string
+
+const (
+	FeDropShadowShapeRenderingAuto               FeDropShadowShapeRendering = "auto"
+	FeDropShadowShapeRenderingCrispEdges         FeDropShadowShapeRendering = "crispEdges"
+	FeDropShadowShapeRenderingGeometricPrecision FeDropShadowShapeRendering = "geometricPrecision"
+	FeDropShadowShapeRenderingOptimizeSpeed      FeDropShadowShapeRendering = "optimizeSpeed"
+)
+
+type FeDropShadowStrokeLinecap string
+
+const (
+	FeDropShadowStrokeLinecapButt   FeDropShadowStrokeLinecap = "butt"
+	FeDropShadowStrokeLinecapRound  FeDropShadowStrokeLinecap = "round"
+	FeDropShadowStrokeLinecapSquare FeDropShadowStrokeLinecap = "square"
+)
+
+type FeDropShadowStrokeLinejoin string
+
+const (
+	FeDropShadowStrokeLinejoinArcs      FeDropShadowStrokeLinejoin = "arcs"
+	FeDropShadowStrokeLinejoinBevel     FeDropShadowStrokeLinejoin = "bevel"
+	FeDropShadowStrokeLinejoinMiter     FeDropShadowStrokeLinejoin = "miter"
+	FeDropShadowStrokeLinejoinMiterClip FeDropShadowStrokeLinejoin = "miter-clip"
+	FeDropShadowStrokeLinejoinRound     FeDropShadowStrokeLinejoin = "round"
+)
+
+type FeDropShadowTextAnchor string
+
+const (
+	FeDropShadowTextAnchorEnd    FeDropShadowTextAnchor = "end"
+	FeDropShadowTextAnchorMiddle FeDropShadowTextAnchor = "middle"
+	FeDropShadowTextAnchorStart  FeDropShadowTextAnchor = "start"
+)
+
+type FeDropShadowTextRendering string
+
+const (
+	FeDropShadowTextRenderingAuto               FeDropShadowTextRendering = "auto"
+	FeDropShadowTextRenderingGeometricPrecision FeDropShadowTextRendering = "geometricPrecision"
+	FeDropShadowTextRenderingOptimizeLegibility FeDropShadowTextRendering = "optimizeLegibility"
+	FeDropShadowTextRenderingOptimizeSpeed      FeDropShadowTextRendering = "optimizeSpeed"
+)
+
 type FeDropShadowTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	FeDropShadowTransformBoxViewBox    FeDropShadowTransformBox = "view-box"
 )
 
-type FeDropShadowDirection string
+type FeDropShadowVectorEffect string
 
 const (
-	FeDropShadowDirectionLtr FeDropShadowDirection = "ltr"
-	FeDropShadowDirectionRtl FeDropShadowDirection = "rtl"
+	FeDropShadowVectorEffectFixedPosition    FeDropShadowVectorEffect = "fixed-position"
+	FeDropShadowVectorEffectNonRotation      FeDropShadowVectorEffect = "non-rotation"
+	FeDropShadowVectorEffectNonScalingSize   FeDropShadowVectorEffect = "non-scaling-size"
+	FeDropShadowVectorEffectNonScalingStroke FeDropShadowVectorEffect = "non-scaling-stroke"
+	FeDropShadowVectorEffectNone             FeDropShadowVectorEffect = "none"
+)
+
+type FeDropShadowVisibility string
+
+const (
+	FeDropShadowVisibilityCollapse FeDropShadowVisibility = "collapse"
+	FeDropShadowVisibilityHidden   FeDropShadowVisibility = "hidden"
+	FeDropShadowVisibilityVisible  FeDropShadowVisibility = "visible"
 )
 
 type FeDropShadowWritingMode string
@@ -378,6 +371,55 @@ const (
 	FeDropShadowWritingModeVerticalRl   FeDropShadowWritingMode = "vertical-rl"
 )
 
+type FeDropShadowXmlSpace string
+
+const (
+	FeDropShadowXmlSpaceDefault  FeDropShadowXmlSpace = "default"
+	FeDropShadowXmlSpacePreserve FeDropShadowXmlSpace = "preserve"
+)
+
+func (e *FeDropShadowElement) Dx(f float64) *FeDropShadowElement {
+	e.attributes.Set("dx", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDropShadowElement) Dy(f float64) *FeDropShadowElement {
+	e.attributes.Set("dy", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDropShadowElement) Height(s string) *FeDropShadowElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) In(s string) *FeDropShadowElement {
+	e.attributes.Set("in", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) Result(s string) *FeDropShadowElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) StdDeviation(s string) *FeDropShadowElement {
+	e.attributes.Set("stdDeviation", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) Width(s string) *FeDropShadowElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *FeDropShadowElement) X(s string) *FeDropShadowElement {
 	e.attributes.Set("x", s)
 
@@ -390,50 +432,42 @@ func (e *FeDropShadowElement) Y(s string) *FeDropShadowElement {
 	return e
 }
 
-func (e *FeDropShadowElement) Width(s string) *FeDropShadowElement {
-	e.attributes.Set("width", s)
+func (e *FeDropShadowElement) AlignmentBaseline(a FeDropShadowAlignmentBaseline) *FeDropShadowElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *FeDropShadowElement) Height(s string) *FeDropShadowElement {
-	e.attributes.Set("height", s)
+func FeDropShadowAlignmentBaselineCustom(s string) FeDropShadowAlignmentBaseline {
+	return FeDropShadowAlignmentBaseline(s)
+}
+
+func (e *FeDropShadowElement) AriaUnsafe(name string, s string) *FeDropShadowElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Result(s string) *FeDropShadowElement {
-	e.attributes.Set("result", s)
+func (e *FeDropShadowElement) Aria(name string, s string) *FeDropShadowElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) In(s string) *FeDropShadowElement {
-	e.attributes.Set("in", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeDropShadowElement) Autofocus(b bool) *FeDropShadowElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Dx(s string) *FeDropShadowElement {
-	e.attributes.Set("dx", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) Dy(s string) *FeDropShadowElement {
-	e.attributes.Set("dy", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) StdDeviation(s string) *FeDropShadowElement {
-	e.attributes.Set("stdDeviation", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) Id(s string) *FeDropShadowElement {
-	e.attributes.Set("id", s)
+func (e *FeDropShadowElement) BaselineShift(s string) *FeDropShadowElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -444,40 +478,59 @@ func (e *FeDropShadowElement) Class(s ...string) *FeDropShadowElement {
 	return e
 }
 
-func (e *FeDropShadowElement) Style(s string) *FeDropShadowElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeDropShadowElement) Clip(s string) *FeDropShadowElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Tabindex(i int) *FeDropShadowElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeDropShadowElement) ClipPath(s string) *FeDropShadowElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Lang(s string) *FeDropShadowElement {
-	e.attributes.Set("lang", s)
+func (e *FeDropShadowElement) ClipRule(a FeDropShadowClipRule) *FeDropShadowElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeDropShadowElement) XmlLang(s string) *FeDropShadowElement {
-	e.attributes.Set("xml:lang", s)
+func FeDropShadowClipRuleCustom(s string) FeDropShadowClipRule {
+	return FeDropShadowClipRule(s)
+}
+
+func (e *FeDropShadowElement) Color(s string) *FeDropShadowElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) XmlSpace(a FeDropShadowXmlSpace) *FeDropShadowElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeDropShadowElement) ColorInterpolation(a FeDropShadowColorInterpolation) *FeDropShadowElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeDropShadowElement) Autofocus(b bool) *FeDropShadowElement {
-	e.attributes.SetBool("autofocus", b)
+func FeDropShadowColorInterpolationCustom(s string) FeDropShadowColorInterpolation {
+	return FeDropShadowColorInterpolation(s)
+}
+
+func (e *FeDropShadowElement) ColorInterpolationFilters(a FeDropShadowColorInterpolationFilters) *FeDropShadowElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeDropShadowColorInterpolationFiltersCustom(s string) FeDropShadowColorInterpolationFilters {
+	return FeDropShadowColorInterpolationFilters(s)
+}
+
+func (e *FeDropShadowElement) Cursor(s string) *FeDropShadowElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -498,20 +551,30 @@ func (e *FeDropShadowElement) Data(name string, s string) *FeDropShadowElement {
 	return e
 }
 
-func (e *FeDropShadowElement) AriaUnsafe(name string, s string) *FeDropShadowElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeDropShadowElement) Direction(a FeDropShadowDirection) *FeDropShadowElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeDropShadowElement) Aria(name string, s string) *FeDropShadowElement {
-	tag := strings.ToLower("aria-" + name)
+func FeDropShadowDirectionCustom(s string) FeDropShadowDirection {
+	return FeDropShadowDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeDropShadowElement) Display(s string) *FeDropShadowElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeDropShadowElement) DominantBaseline(a FeDropShadowDominantBaseline) *FeDropShadowElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeDropShadowDominantBaselineCustom(s string) FeDropShadowDominantBaseline {
+	return FeDropShadowDominantBaseline(s)
 }
 
 func (e *FeDropShadowElement) Fill(s string) *FeDropShadowElement {
@@ -536,20 +599,220 @@ func FeDropShadowFillRuleCustom(s string) FeDropShadowFillRule {
 	return FeDropShadowFillRule(s)
 }
 
+func (e *FeDropShadowElement) Filter(s string) *FeDropShadowElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FloodColor(s string) *FeDropShadowElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FloodOpacity(f float64) *FeDropShadowElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontFamily(s string) *FeDropShadowElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontSize(s string) *FeDropShadowElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontSizeAdjust(s string) *FeDropShadowElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontStretch(s string) *FeDropShadowElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontStyle(a FeDropShadowFontStyle) *FeDropShadowElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeDropShadowFontStyleCustom(s string) FeDropShadowFontStyle {
+	return FeDropShadowFontStyle(s)
+}
+
+func (e *FeDropShadowElement) FontVariant(s string) *FeDropShadowElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) FontWeight(s string) *FeDropShadowElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeDropShadowElement) GlyphOrientationHorizontal(s string) *FeDropShadowElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeDropShadowElement) GlyphOrientationVertical(s string) *FeDropShadowElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) Id(s string) *FeDropShadowElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) ImageRendering(a FeDropShadowImageRendering) *FeDropShadowElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeDropShadowImageRenderingCustom(s string) FeDropShadowImageRendering {
+	return FeDropShadowImageRendering(s)
+}
+
+func (e *FeDropShadowElement) Lang(s string) *FeDropShadowElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) LetterSpacing(s string) *FeDropShadowElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) LightingColor(s string) *FeDropShadowElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) MarkerEnd(s string) *FeDropShadowElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) MarkerMid(s string) *FeDropShadowElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) MarkerStart(s string) *FeDropShadowElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) Mask(s string) *FeDropShadowElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) Opacity(f float64) *FeDropShadowElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDropShadowElement) Overflow(a FeDropShadowOverflow) *FeDropShadowElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeDropShadowOverflowCustom(s string) FeDropShadowOverflow {
+	return FeDropShadowOverflow(s)
+}
+
+func (e *FeDropShadowElement) PaintOrder(s string) *FeDropShadowElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) PointerEvents(a FeDropShadowPointerEvents) *FeDropShadowElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeDropShadowPointerEventsCustom(s string) FeDropShadowPointerEvents {
+	return FeDropShadowPointerEvents(s)
+}
+
+func (e *FeDropShadowElement) RequiredExtensions(s string) *FeDropShadowElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) ShapeRendering(a FeDropShadowShapeRendering) *FeDropShadowElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeDropShadowShapeRenderingCustom(s string) FeDropShadowShapeRendering {
+	return FeDropShadowShapeRendering(s)
+}
+
+func (e *FeDropShadowElement) StopColor(s string) *FeDropShadowElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) StopOpacity(f float64) *FeDropShadowElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeDropShadowElement) Stroke(s string) *FeDropShadowElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) StrokeWidth(s string) *FeDropShadowElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeDropShadowElement) StrokeDasharray(s string) *FeDropShadowElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) StrokeOpacity(f float64) *FeDropShadowElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDropShadowElement) StrokeDashoffset(s string) *FeDropShadowElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -580,210 +843,28 @@ func (e *FeDropShadowElement) StrokeMiterlimit(f float64) *FeDropShadowElement {
 	return e
 }
 
-func (e *FeDropShadowElement) StrokeDasharray(s string) *FeDropShadowElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeDropShadowElement) StrokeOpacity(f float64) *FeDropShadowElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeDropShadowElement) StrokeDashoffset(s string) *FeDropShadowElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeDropShadowElement) StrokeWidth(s string) *FeDropShadowElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Opacity(f float64) *FeDropShadowElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDropShadowElement) Style(s string) *FeDropShadowElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeDropShadowElement) Color(s string) *FeDropShadowElement {
-	e.attributes.Set("color", s)
+func (e *FeDropShadowElement) Tabindex(i int) *FeDropShadowElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeDropShadowElement) Display(s string) *FeDropShadowElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) Visibility(a FeDropShadowVisibility) *FeDropShadowElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeDropShadowVisibilityCustom(s string) FeDropShadowVisibility {
-	return FeDropShadowVisibility(s)
-}
-
-func (e *FeDropShadowElement) ClipPath(s string) *FeDropShadowElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) ClipRule(a FeDropShadowClipRule) *FeDropShadowElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeDropShadowClipRuleCustom(s string) FeDropShadowClipRule {
-	return FeDropShadowClipRule(s)
-}
-
-func (e *FeDropShadowElement) Mask(s string) *FeDropShadowElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) Filter(s string) *FeDropShadowElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) Cursor(s string) *FeDropShadowElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) PointerEvents(a FeDropShadowPointerEvents) *FeDropShadowElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeDropShadowPointerEventsCustom(s string) FeDropShadowPointerEvents {
-	return FeDropShadowPointerEvents(s)
-}
-
-func (e *FeDropShadowElement) VectorEffect(a FeDropShadowVectorEffect) *FeDropShadowElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeDropShadowVectorEffectCustom(s string) FeDropShadowVectorEffect {
-	return FeDropShadowVectorEffect(s)
-}
-
-func (e *FeDropShadowElement) PaintOrder(s string) *FeDropShadowElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) ShapeRendering(a FeDropShadowShapeRendering) *FeDropShadowElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeDropShadowShapeRenderingCustom(s string) FeDropShadowShapeRendering {
-	return FeDropShadowShapeRendering(s)
-}
-
-func (e *FeDropShadowElement) ColorInterpolation(a FeDropShadowColorInterpolation) *FeDropShadowElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeDropShadowColorInterpolationCustom(s string) FeDropShadowColorInterpolation {
-	return FeDropShadowColorInterpolation(s)
-}
-
-func (e *FeDropShadowElement) ColorInterpolationFilters(a FeDropShadowColorInterpolationFilters) *FeDropShadowElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeDropShadowColorInterpolationFiltersCustom(s string) FeDropShadowColorInterpolationFilters {
-	return FeDropShadowColorInterpolationFilters(s)
-}
-
-func (e *FeDropShadowElement) FloodColor(s string) *FeDropShadowElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) FloodOpacity(f float64) *FeDropShadowElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDropShadowElement) LightingColor(s string) *FeDropShadowElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) StopColor(s string) *FeDropShadowElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) StopOpacity(f float64) *FeDropShadowElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDropShadowElement) MarkerStart(s string) *FeDropShadowElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) MarkerMid(s string) *FeDropShadowElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) MarkerEnd(s string) *FeDropShadowElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) FontFamily(s string) *FeDropShadowElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) FontSize(s string) *FeDropShadowElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) FontWeight(s string) *FeDropShadowElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) FontStyle(a FeDropShadowFontStyle) *FeDropShadowElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeDropShadowFontStyleCustom(s string) FeDropShadowFontStyle {
-	return FeDropShadowFontStyle(s)
 }
 
 func (e *FeDropShadowElement) TextAnchor(a FeDropShadowTextAnchor) *FeDropShadowElement {
@@ -796,40 +877,14 @@ func FeDropShadowTextAnchorCustom(s string) FeDropShadowTextAnchor {
 	return FeDropShadowTextAnchor(s)
 }
 
-func (e *FeDropShadowElement) DominantBaseline(a FeDropShadowDominantBaseline) *FeDropShadowElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeDropShadowDominantBaselineCustom(s string) FeDropShadowDominantBaseline {
-	return FeDropShadowDominantBaseline(s)
-}
-
-func (e *FeDropShadowElement) AlignmentBaseline(a FeDropShadowAlignmentBaseline) *FeDropShadowElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeDropShadowAlignmentBaselineCustom(s string) FeDropShadowAlignmentBaseline {
-	return FeDropShadowAlignmentBaseline(s)
-}
-
-func (e *FeDropShadowElement) LetterSpacing(s string) *FeDropShadowElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeDropShadowElement) WordSpacing(s string) *FeDropShadowElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeDropShadowElement) TextDecoration(s string) *FeDropShadowElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) TextOverflow(s string) *FeDropShadowElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -844,24 +899,10 @@ func FeDropShadowTextRenderingCustom(s string) FeDropShadowTextRendering {
 	return FeDropShadowTextRendering(s)
 }
 
-func (e *FeDropShadowElement) ImageRendering(a FeDropShadowImageRendering) *FeDropShadowElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeDropShadowElement) Transform(s string) *FeDropShadowElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeDropShadowImageRenderingCustom(s string) FeDropShadowImageRendering {
-	return FeDropShadowImageRendering(s)
-}
-
-func (e *FeDropShadowElement) Overflow(a FeDropShadowOverflow) *FeDropShadowElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeDropShadowOverflowCustom(s string) FeDropShadowOverflow {
-	return FeDropShadowOverflow(s)
 }
 
 func (e *FeDropShadowElement) TransformBox(a FeDropShadowTransformBox) *FeDropShadowElement {
@@ -874,18 +915,46 @@ func FeDropShadowTransformBoxCustom(s string) FeDropShadowTransformBox {
 	return FeDropShadowTransformBox(s)
 }
 
-func (e *FeDropShadowElement) Direction(a FeDropShadowDirection) *FeDropShadowElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeDropShadowElement) TransformOrigin(s string) *FeDropShadowElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeDropShadowDirectionCustom(s string) FeDropShadowDirection {
-	return FeDropShadowDirection(s)
-}
-
 func (e *FeDropShadowElement) UnicodeBidi(s string) *FeDropShadowElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) VectorEffect(a FeDropShadowVectorEffect) *FeDropShadowElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeDropShadowVectorEffectCustom(s string) FeDropShadowVectorEffect {
+	return FeDropShadowVectorEffect(s)
+}
+
+func (e *FeDropShadowElement) Visibility(a FeDropShadowVisibility) *FeDropShadowElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeDropShadowVisibilityCustom(s string) FeDropShadowVisibility {
+	return FeDropShadowVisibility(s)
+}
+
+func (e *FeDropShadowElement) WhiteSpace(s string) *FeDropShadowElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeDropShadowElement) WordSpacing(s string) *FeDropShadowElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -900,8 +969,20 @@ func FeDropShadowWritingModeCustom(s string) FeDropShadowWritingMode {
 	return FeDropShadowWritingMode(s)
 }
 
-func (e *FeDropShadowElement) WhiteSpace(s string) *FeDropShadowElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeDropShadowElement) XmlLang(s string) *FeDropShadowElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeDropShadowElement) XmlSpace(a FeDropShadowXmlSpace) *FeDropShadowElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

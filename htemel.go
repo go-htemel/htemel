@@ -2,6 +2,7 @@ package htemel
 
 //go:generate go run ./cmd/genelements -spec specs/html.json -out html
 //go:generate go run ./cmd/genelements -spec specs/svg.json -out svg
+//go:generate go run ./cmd/genelements -spec specs/mathml.json -out mathml
 
 import (
 	"bufio"

@@ -164,134 +164,6 @@ func (e *CircleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type CircleXmlSpace string
-
-const (
-	CircleXmlSpaceDefault  CircleXmlSpace = "default"
-	CircleXmlSpacePreserve CircleXmlSpace = "preserve"
-)
-
-type CircleFillRule string
-
-const (
-	CircleFillRuleEvenodd CircleFillRule = "evenodd"
-	CircleFillRuleNonzero CircleFillRule = "nonzero"
-)
-
-type CircleStrokeLinecap string
-
-const (
-	CircleStrokeLinecapButt   CircleStrokeLinecap = "butt"
-	CircleStrokeLinecapRound  CircleStrokeLinecap = "round"
-	CircleStrokeLinecapSquare CircleStrokeLinecap = "square"
-)
-
-type CircleStrokeLinejoin string
-
-const (
-	CircleStrokeLinejoinArcs      CircleStrokeLinejoin = "arcs"
-	CircleStrokeLinejoinBevel     CircleStrokeLinejoin = "bevel"
-	CircleStrokeLinejoinMiter     CircleStrokeLinejoin = "miter"
-	CircleStrokeLinejoinMiterClip CircleStrokeLinejoin = "miter-clip"
-	CircleStrokeLinejoinRound     CircleStrokeLinejoin = "round"
-)
-
-type CircleVisibility string
-
-const (
-	CircleVisibilityCollapse CircleVisibility = "collapse"
-	CircleVisibilityHidden   CircleVisibility = "hidden"
-	CircleVisibilityVisible  CircleVisibility = "visible"
-)
-
-type CircleClipRule string
-
-const (
-	CircleClipRuleEvenodd CircleClipRule = "evenodd"
-	CircleClipRuleNonzero CircleClipRule = "nonzero"
-)
-
-type CirclePointerEvents string
-
-const (
-	CirclePointerEventsAll            CirclePointerEvents = "all"
-	CirclePointerEventsAuto           CirclePointerEvents = "auto"
-	CirclePointerEventsBoundingBox    CirclePointerEvents = "bounding-box"
-	CirclePointerEventsFill           CirclePointerEvents = "fill"
-	CirclePointerEventsNone           CirclePointerEvents = "none"
-	CirclePointerEventsPainted        CirclePointerEvents = "painted"
-	CirclePointerEventsStroke         CirclePointerEvents = "stroke"
-	CirclePointerEventsVisible        CirclePointerEvents = "visible"
-	CirclePointerEventsVisibleFill    CirclePointerEvents = "visibleFill"
-	CirclePointerEventsVisiblePainted CirclePointerEvents = "visiblePainted"
-	CirclePointerEventsVisibleStroke  CirclePointerEvents = "visibleStroke"
-)
-
-type CircleVectorEffect string
-
-const (
-	CircleVectorEffectFixedPosition    CircleVectorEffect = "fixed-position"
-	CircleVectorEffectNonRotation      CircleVectorEffect = "non-rotation"
-	CircleVectorEffectNonScalingSize   CircleVectorEffect = "non-scaling-size"
-	CircleVectorEffectNonScalingStroke CircleVectorEffect = "non-scaling-stroke"
-	CircleVectorEffectNone             CircleVectorEffect = "none"
-)
-
-type CircleShapeRendering string
-
-const (
-	CircleShapeRenderingAuto               CircleShapeRendering = "auto"
-	CircleShapeRenderingCrispEdges         CircleShapeRendering = "crispEdges"
-	CircleShapeRenderingGeometricPrecision CircleShapeRendering = "geometricPrecision"
-	CircleShapeRenderingOptimizeSpeed      CircleShapeRendering = "optimizeSpeed"
-)
-
-type CircleColorInterpolation string
-
-const (
-	CircleColorInterpolationAuto      CircleColorInterpolation = "auto"
-	CircleColorInterpolationLinearRGB CircleColorInterpolation = "linearRGB"
-	CircleColorInterpolationSRGB      CircleColorInterpolation = "sRGB"
-)
-
-type CircleColorInterpolationFilters string
-
-const (
-	CircleColorInterpolationFiltersAuto      CircleColorInterpolationFilters = "auto"
-	CircleColorInterpolationFiltersLinearRGB CircleColorInterpolationFilters = "linearRGB"
-	CircleColorInterpolationFiltersSRGB      CircleColorInterpolationFilters = "sRGB"
-)
-
-type CircleFontStyle string
-
-const (
-	CircleFontStyleItalic  CircleFontStyle = "italic"
-	CircleFontStyleNormal  CircleFontStyle = "normal"
-	CircleFontStyleOblique CircleFontStyle = "oblique"
-)
-
-type CircleTextAnchor string
-
-const (
-	CircleTextAnchorEnd    CircleTextAnchor = "end"
-	CircleTextAnchorMiddle CircleTextAnchor = "middle"
-	CircleTextAnchorStart  CircleTextAnchor = "start"
-)
-
-type CircleDominantBaseline string
-
-const (
-	CircleDominantBaselineAlphabetic   CircleDominantBaseline = "alphabetic"
-	CircleDominantBaselineAuto         CircleDominantBaseline = "auto"
-	CircleDominantBaselineCentral      CircleDominantBaseline = "central"
-	CircleDominantBaselineHanging      CircleDominantBaseline = "hanging"
-	CircleDominantBaselineIdeographic  CircleDominantBaseline = "ideographic"
-	CircleDominantBaselineMathematical CircleDominantBaseline = "mathematical"
-	CircleDominantBaselineMiddle       CircleDominantBaseline = "middle"
-	CircleDominantBaselineTextBottom   CircleDominantBaseline = "text-bottom"
-	CircleDominantBaselineTextTop      CircleDominantBaseline = "text-top"
-)
-
 type CircleAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	CircleAlignmentBaselineTop            CircleAlignmentBaseline = "top"
 )
 
-type CircleTextRendering string
+type CircleClipRule string
 
 const (
-	CircleTextRenderingAuto               CircleTextRendering = "auto"
-	CircleTextRenderingGeometricPrecision CircleTextRendering = "geometricPrecision"
-	CircleTextRenderingOptimizeLegibility CircleTextRendering = "optimizeLegibility"
-	CircleTextRenderingOptimizeSpeed      CircleTextRendering = "optimizeSpeed"
+	CircleClipRuleEvenodd CircleClipRule = "evenodd"
+	CircleClipRuleNonzero CircleClipRule = "nonzero"
+)
+
+type CircleColorInterpolation string
+
+const (
+	CircleColorInterpolationAuto      CircleColorInterpolation = "auto"
+	CircleColorInterpolationLinearRGB CircleColorInterpolation = "linearRGB"
+	CircleColorInterpolationSRGB      CircleColorInterpolation = "sRGB"
+)
+
+type CircleColorInterpolationFilters string
+
+const (
+	CircleColorInterpolationFiltersAuto      CircleColorInterpolationFilters = "auto"
+	CircleColorInterpolationFiltersLinearRGB CircleColorInterpolationFilters = "linearRGB"
+	CircleColorInterpolationFiltersSRGB      CircleColorInterpolationFilters = "sRGB"
+)
+
+type CircleDirection string
+
+const (
+	CircleDirectionLtr CircleDirection = "ltr"
+	CircleDirectionRtl CircleDirection = "rtl"
+)
+
+type CircleDominantBaseline string
+
+const (
+	CircleDominantBaselineAlphabetic   CircleDominantBaseline = "alphabetic"
+	CircleDominantBaselineAuto         CircleDominantBaseline = "auto"
+	CircleDominantBaselineCentral      CircleDominantBaseline = "central"
+	CircleDominantBaselineHanging      CircleDominantBaseline = "hanging"
+	CircleDominantBaselineIdeographic  CircleDominantBaseline = "ideographic"
+	CircleDominantBaselineMathematical CircleDominantBaseline = "mathematical"
+	CircleDominantBaselineMiddle       CircleDominantBaseline = "middle"
+	CircleDominantBaselineTextBottom   CircleDominantBaseline = "text-bottom"
+	CircleDominantBaselineTextTop      CircleDominantBaseline = "text-top"
+)
+
+type CircleFillRule string
+
+const (
+	CircleFillRuleEvenodd CircleFillRule = "evenodd"
+	CircleFillRuleNonzero CircleFillRule = "nonzero"
+)
+
+type CircleFontStyle string
+
+const (
+	CircleFontStyleItalic  CircleFontStyle = "italic"
+	CircleFontStyleNormal  CircleFontStyle = "normal"
+	CircleFontStyleOblique CircleFontStyle = "oblique"
 )
 
 type CircleImageRendering string
@@ -345,6 +267,66 @@ const (
 	CircleOverflowVisible CircleOverflow = "visible"
 )
 
+type CirclePointerEvents string
+
+const (
+	CirclePointerEventsAll            CirclePointerEvents = "all"
+	CirclePointerEventsAuto           CirclePointerEvents = "auto"
+	CirclePointerEventsBoundingBox    CirclePointerEvents = "bounding-box"
+	CirclePointerEventsFill           CirclePointerEvents = "fill"
+	CirclePointerEventsNone           CirclePointerEvents = "none"
+	CirclePointerEventsPainted        CirclePointerEvents = "painted"
+	CirclePointerEventsStroke         CirclePointerEvents = "stroke"
+	CirclePointerEventsVisible        CirclePointerEvents = "visible"
+	CirclePointerEventsVisibleFill    CirclePointerEvents = "visibleFill"
+	CirclePointerEventsVisiblePainted CirclePointerEvents = "visiblePainted"
+	CirclePointerEventsVisibleStroke  CirclePointerEvents = "visibleStroke"
+)
+
+type CircleShapeRendering string
+
+const (
+	CircleShapeRenderingAuto               CircleShapeRendering = "auto"
+	CircleShapeRenderingCrispEdges         CircleShapeRendering = "crispEdges"
+	CircleShapeRenderingGeometricPrecision CircleShapeRendering = "geometricPrecision"
+	CircleShapeRenderingOptimizeSpeed      CircleShapeRendering = "optimizeSpeed"
+)
+
+type CircleStrokeLinecap string
+
+const (
+	CircleStrokeLinecapButt   CircleStrokeLinecap = "butt"
+	CircleStrokeLinecapRound  CircleStrokeLinecap = "round"
+	CircleStrokeLinecapSquare CircleStrokeLinecap = "square"
+)
+
+type CircleStrokeLinejoin string
+
+const (
+	CircleStrokeLinejoinArcs      CircleStrokeLinejoin = "arcs"
+	CircleStrokeLinejoinBevel     CircleStrokeLinejoin = "bevel"
+	CircleStrokeLinejoinMiter     CircleStrokeLinejoin = "miter"
+	CircleStrokeLinejoinMiterClip CircleStrokeLinejoin = "miter-clip"
+	CircleStrokeLinejoinRound     CircleStrokeLinejoin = "round"
+)
+
+type CircleTextAnchor string
+
+const (
+	CircleTextAnchorEnd    CircleTextAnchor = "end"
+	CircleTextAnchorMiddle CircleTextAnchor = "middle"
+	CircleTextAnchorStart  CircleTextAnchor = "start"
+)
+
+type CircleTextRendering string
+
+const (
+	CircleTextRenderingAuto               CircleTextRendering = "auto"
+	CircleTextRenderingGeometricPrecision CircleTextRendering = "geometricPrecision"
+	CircleTextRenderingOptimizeLegibility CircleTextRendering = "optimizeLegibility"
+	CircleTextRenderingOptimizeSpeed      CircleTextRendering = "optimizeSpeed"
+)
+
 type CircleTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	CircleTransformBoxViewBox    CircleTransformBox = "view-box"
 )
 
-type CircleDirection string
+type CircleVectorEffect string
 
 const (
-	CircleDirectionLtr CircleDirection = "ltr"
-	CircleDirectionRtl CircleDirection = "rtl"
+	CircleVectorEffectFixedPosition    CircleVectorEffect = "fixed-position"
+	CircleVectorEffectNonRotation      CircleVectorEffect = "non-rotation"
+	CircleVectorEffectNonScalingSize   CircleVectorEffect = "non-scaling-size"
+	CircleVectorEffectNonScalingStroke CircleVectorEffect = "non-scaling-stroke"
+	CircleVectorEffectNone             CircleVectorEffect = "none"
+)
+
+type CircleVisibility string
+
+const (
+	CircleVisibilityCollapse CircleVisibility = "collapse"
+	CircleVisibilityHidden   CircleVisibility = "hidden"
+	CircleVisibilityVisible  CircleVisibility = "visible"
 )
 
 type CircleWritingMode string
@@ -378,6 +371,13 @@ const (
 	CircleWritingModeVerticalRl   CircleWritingMode = "vertical-rl"
 )
 
+type CircleXmlSpace string
+
+const (
+	CircleXmlSpaceDefault  CircleXmlSpace = "default"
+	CircleXmlSpacePreserve CircleXmlSpace = "preserve"
+)
+
 func (e *CircleElement) Cx(s string) *CircleElement {
 	e.attributes.Set("cx", s)
 
@@ -390,32 +390,60 @@ func (e *CircleElement) Cy(s string) *CircleElement {
 	return e
 }
 
+func (e *CircleElement) PathLength(f float64) *CircleElement {
+	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *CircleElement) R(s string) *CircleElement {
 	e.attributes.Set("r", s)
 
 	return e
 }
 
-func (e *CircleElement) PathLength(s string) *CircleElement {
-	e.attributes.Set("pathLength", s)
+func (e *CircleElement) SystemLanguage(s string) *CircleElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *CircleElement) Transform(s string) *CircleElement {
-	e.attributes.Set("transform", s)
+func (e *CircleElement) AlignmentBaseline(a CircleAlignmentBaseline) *CircleElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *CircleElement) TransformOrigin(s string) *CircleElement {
-	e.attributes.Set("transform-origin", s)
+func CircleAlignmentBaselineCustom(s string) CircleAlignmentBaseline {
+	return CircleAlignmentBaseline(s)
+}
+
+func (e *CircleElement) AriaUnsafe(name string, s string) *CircleElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *CircleElement) Id(s string) *CircleElement {
-	e.attributes.Set("id", s)
+func (e *CircleElement) Aria(name string, s string) *CircleElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *CircleElement) Autofocus(b bool) *CircleElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *CircleElement) BaselineShift(s string) *CircleElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -426,40 +454,59 @@ func (e *CircleElement) Class(s ...string) *CircleElement {
 	return e
 }
 
-func (e *CircleElement) Style(s string) *CircleElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *CircleElement) Clip(s string) *CircleElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *CircleElement) Tabindex(i int) *CircleElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *CircleElement) ClipPath(s string) *CircleElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *CircleElement) Lang(s string) *CircleElement {
-	e.attributes.Set("lang", s)
+func (e *CircleElement) ClipRule(a CircleClipRule) *CircleElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *CircleElement) XmlLang(s string) *CircleElement {
-	e.attributes.Set("xml:lang", s)
+func CircleClipRuleCustom(s string) CircleClipRule {
+	return CircleClipRule(s)
+}
+
+func (e *CircleElement) Color(s string) *CircleElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *CircleElement) XmlSpace(a CircleXmlSpace) *CircleElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *CircleElement) ColorInterpolation(a CircleColorInterpolation) *CircleElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *CircleElement) Autofocus(b bool) *CircleElement {
-	e.attributes.SetBool("autofocus", b)
+func CircleColorInterpolationCustom(s string) CircleColorInterpolation {
+	return CircleColorInterpolation(s)
+}
+
+func (e *CircleElement) ColorInterpolationFilters(a CircleColorInterpolationFilters) *CircleElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func CircleColorInterpolationFiltersCustom(s string) CircleColorInterpolationFilters {
+	return CircleColorInterpolationFilters(s)
+}
+
+func (e *CircleElement) Cursor(s string) *CircleElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -480,20 +527,30 @@ func (e *CircleElement) Data(name string, s string) *CircleElement {
 	return e
 }
 
-func (e *CircleElement) AriaUnsafe(name string, s string) *CircleElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *CircleElement) Direction(a CircleDirection) *CircleElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *CircleElement) Aria(name string, s string) *CircleElement {
-	tag := strings.ToLower("aria-" + name)
+func CircleDirectionCustom(s string) CircleDirection {
+	return CircleDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *CircleElement) Display(s string) *CircleElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *CircleElement) DominantBaseline(a CircleDominantBaseline) *CircleElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func CircleDominantBaselineCustom(s string) CircleDominantBaseline {
+	return CircleDominantBaseline(s)
 }
 
 func (e *CircleElement) Fill(s string) *CircleElement {
@@ -518,20 +575,220 @@ func CircleFillRuleCustom(s string) CircleFillRule {
 	return CircleFillRule(s)
 }
 
+func (e *CircleElement) Filter(s string) *CircleElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *CircleElement) FloodColor(s string) *CircleElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *CircleElement) FloodOpacity(f float64) *CircleElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *CircleElement) FontFamily(s string) *CircleElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *CircleElement) FontSize(s string) *CircleElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *CircleElement) FontSizeAdjust(s string) *CircleElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *CircleElement) FontStretch(s string) *CircleElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *CircleElement) FontStyle(a CircleFontStyle) *CircleElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func CircleFontStyleCustom(s string) CircleFontStyle {
+	return CircleFontStyle(s)
+}
+
+func (e *CircleElement) FontVariant(s string) *CircleElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *CircleElement) FontWeight(s string) *CircleElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *CircleElement) GlyphOrientationHorizontal(s string) *CircleElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *CircleElement) GlyphOrientationVertical(s string) *CircleElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *CircleElement) Id(s string) *CircleElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *CircleElement) ImageRendering(a CircleImageRendering) *CircleElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func CircleImageRenderingCustom(s string) CircleImageRendering {
+	return CircleImageRendering(s)
+}
+
+func (e *CircleElement) Lang(s string) *CircleElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *CircleElement) LetterSpacing(s string) *CircleElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *CircleElement) LightingColor(s string) *CircleElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *CircleElement) MarkerEnd(s string) *CircleElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *CircleElement) MarkerMid(s string) *CircleElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *CircleElement) MarkerStart(s string) *CircleElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *CircleElement) Mask(s string) *CircleElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *CircleElement) Opacity(f float64) *CircleElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *CircleElement) Overflow(a CircleOverflow) *CircleElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func CircleOverflowCustom(s string) CircleOverflow {
+	return CircleOverflow(s)
+}
+
+func (e *CircleElement) PaintOrder(s string) *CircleElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *CircleElement) PointerEvents(a CirclePointerEvents) *CircleElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func CirclePointerEventsCustom(s string) CirclePointerEvents {
+	return CirclePointerEvents(s)
+}
+
+func (e *CircleElement) RequiredExtensions(s string) *CircleElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *CircleElement) ShapeRendering(a CircleShapeRendering) *CircleElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func CircleShapeRenderingCustom(s string) CircleShapeRendering {
+	return CircleShapeRendering(s)
+}
+
+func (e *CircleElement) StopColor(s string) *CircleElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *CircleElement) StopOpacity(f float64) *CircleElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *CircleElement) Stroke(s string) *CircleElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *CircleElement) StrokeWidth(s string) *CircleElement {
-	e.attributes.Set("stroke-width", s)
+func (e *CircleElement) StrokeDasharray(s string) *CircleElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *CircleElement) StrokeOpacity(f float64) *CircleElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *CircleElement) StrokeDashoffset(s string) *CircleElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -562,210 +819,28 @@ func (e *CircleElement) StrokeMiterlimit(f float64) *CircleElement {
 	return e
 }
 
-func (e *CircleElement) StrokeDasharray(s string) *CircleElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *CircleElement) StrokeOpacity(f float64) *CircleElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *CircleElement) StrokeDashoffset(s string) *CircleElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *CircleElement) StrokeWidth(s string) *CircleElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *CircleElement) Opacity(f float64) *CircleElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *CircleElement) Style(s string) *CircleElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *CircleElement) Color(s string) *CircleElement {
-	e.attributes.Set("color", s)
+func (e *CircleElement) Tabindex(i int) *CircleElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *CircleElement) Display(s string) *CircleElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *CircleElement) Visibility(a CircleVisibility) *CircleElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func CircleVisibilityCustom(s string) CircleVisibility {
-	return CircleVisibility(s)
-}
-
-func (e *CircleElement) ClipPath(s string) *CircleElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *CircleElement) ClipRule(a CircleClipRule) *CircleElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func CircleClipRuleCustom(s string) CircleClipRule {
-	return CircleClipRule(s)
-}
-
-func (e *CircleElement) Mask(s string) *CircleElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *CircleElement) Filter(s string) *CircleElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *CircleElement) Cursor(s string) *CircleElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *CircleElement) PointerEvents(a CirclePointerEvents) *CircleElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func CirclePointerEventsCustom(s string) CirclePointerEvents {
-	return CirclePointerEvents(s)
-}
-
-func (e *CircleElement) VectorEffect(a CircleVectorEffect) *CircleElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func CircleVectorEffectCustom(s string) CircleVectorEffect {
-	return CircleVectorEffect(s)
-}
-
-func (e *CircleElement) PaintOrder(s string) *CircleElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *CircleElement) ShapeRendering(a CircleShapeRendering) *CircleElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func CircleShapeRenderingCustom(s string) CircleShapeRendering {
-	return CircleShapeRendering(s)
-}
-
-func (e *CircleElement) ColorInterpolation(a CircleColorInterpolation) *CircleElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func CircleColorInterpolationCustom(s string) CircleColorInterpolation {
-	return CircleColorInterpolation(s)
-}
-
-func (e *CircleElement) ColorInterpolationFilters(a CircleColorInterpolationFilters) *CircleElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func CircleColorInterpolationFiltersCustom(s string) CircleColorInterpolationFilters {
-	return CircleColorInterpolationFilters(s)
-}
-
-func (e *CircleElement) FloodColor(s string) *CircleElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *CircleElement) FloodOpacity(f float64) *CircleElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *CircleElement) LightingColor(s string) *CircleElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *CircleElement) StopColor(s string) *CircleElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *CircleElement) StopOpacity(f float64) *CircleElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *CircleElement) MarkerStart(s string) *CircleElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *CircleElement) MarkerMid(s string) *CircleElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *CircleElement) MarkerEnd(s string) *CircleElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *CircleElement) FontFamily(s string) *CircleElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *CircleElement) FontSize(s string) *CircleElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *CircleElement) FontWeight(s string) *CircleElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *CircleElement) FontStyle(a CircleFontStyle) *CircleElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func CircleFontStyleCustom(s string) CircleFontStyle {
-	return CircleFontStyle(s)
 }
 
 func (e *CircleElement) TextAnchor(a CircleTextAnchor) *CircleElement {
@@ -778,40 +853,14 @@ func CircleTextAnchorCustom(s string) CircleTextAnchor {
 	return CircleTextAnchor(s)
 }
 
-func (e *CircleElement) DominantBaseline(a CircleDominantBaseline) *CircleElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func CircleDominantBaselineCustom(s string) CircleDominantBaseline {
-	return CircleDominantBaseline(s)
-}
-
-func (e *CircleElement) AlignmentBaseline(a CircleAlignmentBaseline) *CircleElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func CircleAlignmentBaselineCustom(s string) CircleAlignmentBaseline {
-	return CircleAlignmentBaseline(s)
-}
-
-func (e *CircleElement) LetterSpacing(s string) *CircleElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *CircleElement) WordSpacing(s string) *CircleElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *CircleElement) TextDecoration(s string) *CircleElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *CircleElement) TextOverflow(s string) *CircleElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -826,24 +875,10 @@ func CircleTextRenderingCustom(s string) CircleTextRendering {
 	return CircleTextRendering(s)
 }
 
-func (e *CircleElement) ImageRendering(a CircleImageRendering) *CircleElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *CircleElement) Transform(s string) *CircleElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func CircleImageRenderingCustom(s string) CircleImageRendering {
-	return CircleImageRendering(s)
-}
-
-func (e *CircleElement) Overflow(a CircleOverflow) *CircleElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func CircleOverflowCustom(s string) CircleOverflow {
-	return CircleOverflow(s)
 }
 
 func (e *CircleElement) TransformBox(a CircleTransformBox) *CircleElement {
@@ -856,18 +891,46 @@ func CircleTransformBoxCustom(s string) CircleTransformBox {
 	return CircleTransformBox(s)
 }
 
-func (e *CircleElement) Direction(a CircleDirection) *CircleElement {
-	e.attributes.Set("direction", string(a))
+func (e *CircleElement) TransformOrigin(s string) *CircleElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func CircleDirectionCustom(s string) CircleDirection {
-	return CircleDirection(s)
-}
-
 func (e *CircleElement) UnicodeBidi(s string) *CircleElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *CircleElement) VectorEffect(a CircleVectorEffect) *CircleElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func CircleVectorEffectCustom(s string) CircleVectorEffect {
+	return CircleVectorEffect(s)
+}
+
+func (e *CircleElement) Visibility(a CircleVisibility) *CircleElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func CircleVisibilityCustom(s string) CircleVisibility {
+	return CircleVisibility(s)
+}
+
+func (e *CircleElement) WhiteSpace(s string) *CircleElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *CircleElement) WordSpacing(s string) *CircleElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -882,8 +945,20 @@ func CircleWritingModeCustom(s string) CircleWritingMode {
 	return CircleWritingMode(s)
 }
 
-func (e *CircleElement) WhiteSpace(s string) *CircleElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *CircleElement) XmlLang(s string) *CircleElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *CircleElement) XmlSpace(a CircleXmlSpace) *CircleElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

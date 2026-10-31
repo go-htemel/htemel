@@ -185,3 +185,62 @@ func main() {
 		t.Errorf("rendered\n%s\nwant\n%s", got, want)
 	}
 }
+
+// TestGenerateSpecFlags checks the doc comments and raw-text handling driven by the spec's
+// deprecated, url and raw_text fields.
+func TestGenerateSpecFlags(t *testing.T) {
+	sp := spec.Spec{
+		Name: "Flags",
+		Elements: []*spec.Element{
+			{Tag: "old", Description: "old", Deprecated: true},
+			{Tag: "raw", Description: "raw", RawText: true},
+			{Tag: "script", Description: "legacy spec without flag"},
+			{Tag: "plain", Description: "plain", Attributes: []spec.Attribute{
+				&spec.AttributeTypeString{Name: "href", URL: true},
+				&spec.AttributeTypeString{Name: "title"},
+				&spec.AttributeTypeNumber{Name: "size", Deprecated: true},
+				&spec.AttributeTypeBool{Name: "hidden", Deprecated: true},
+			}},
+		},
+	}
+	dir := t.TempDir()
+	if err := Generate(&sp, dir, "flags"); err != nil {
+		t.Fatal(err)
+	}
+	read := func(name string) string {
+		b, err := os.ReadFile(filepath.Join(dir, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(b)
+	}
+
+	if old := read("old.go"); !strings.Contains(old, "// Deprecated: <old>") {
+		t.Errorf("deprecated element missing Deprecated doc:\n%s", old)
+	}
+	if plain := read("plain.go"); strings.Contains(plain, "// Deprecated: <plain>") {
+		t.Error("non-deprecated element must not carry a Deprecated doc")
+	}
+	for _, tag := range []string{"raw", "script"} {
+		if src := read(tag + ".go"); !strings.Contains(src, "render.RawText(\""+tag+"\"") {
+			t.Errorf("<%s> should be a raw text element", tag)
+		}
+	}
+	if old := read("old.go"); strings.Contains(old, "render.RawText") {
+		t.Error("<old> must not be raw text")
+	}
+
+	plain := read("plain.go")
+	for _, want := range []string{
+		"// Value is a URL; validate untrusted input with htemel.URL.\nfunc (e *PlainElement) Href(",
+		"// Deprecated: the \"size\" attribute",
+		"// Deprecated: the \"hidden\" attribute",
+	} {
+		if !strings.Contains(plain, want) {
+			t.Errorf("plain.go missing %q:\n%s", want, plain)
+		}
+	}
+	if i := strings.Index(plain, "func (e *PlainElement) Title("); i < 0 || strings.Contains(plain[:i][strings.LastIndex(plain[:i], "}"):], "URL") {
+		t.Error("non-URL string attribute must not get the URL doc")
+	}
+}

@@ -164,134 +164,6 @@ func (e *FePointLightElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FePointLightXmlSpace string
-
-const (
-	FePointLightXmlSpaceDefault  FePointLightXmlSpace = "default"
-	FePointLightXmlSpacePreserve FePointLightXmlSpace = "preserve"
-)
-
-type FePointLightFillRule string
-
-const (
-	FePointLightFillRuleEvenodd FePointLightFillRule = "evenodd"
-	FePointLightFillRuleNonzero FePointLightFillRule = "nonzero"
-)
-
-type FePointLightStrokeLinecap string
-
-const (
-	FePointLightStrokeLinecapButt   FePointLightStrokeLinecap = "butt"
-	FePointLightStrokeLinecapRound  FePointLightStrokeLinecap = "round"
-	FePointLightStrokeLinecapSquare FePointLightStrokeLinecap = "square"
-)
-
-type FePointLightStrokeLinejoin string
-
-const (
-	FePointLightStrokeLinejoinArcs      FePointLightStrokeLinejoin = "arcs"
-	FePointLightStrokeLinejoinBevel     FePointLightStrokeLinejoin = "bevel"
-	FePointLightStrokeLinejoinMiter     FePointLightStrokeLinejoin = "miter"
-	FePointLightStrokeLinejoinMiterClip FePointLightStrokeLinejoin = "miter-clip"
-	FePointLightStrokeLinejoinRound     FePointLightStrokeLinejoin = "round"
-)
-
-type FePointLightVisibility string
-
-const (
-	FePointLightVisibilityCollapse FePointLightVisibility = "collapse"
-	FePointLightVisibilityHidden   FePointLightVisibility = "hidden"
-	FePointLightVisibilityVisible  FePointLightVisibility = "visible"
-)
-
-type FePointLightClipRule string
-
-const (
-	FePointLightClipRuleEvenodd FePointLightClipRule = "evenodd"
-	FePointLightClipRuleNonzero FePointLightClipRule = "nonzero"
-)
-
-type FePointLightPointerEvents string
-
-const (
-	FePointLightPointerEventsAll            FePointLightPointerEvents = "all"
-	FePointLightPointerEventsAuto           FePointLightPointerEvents = "auto"
-	FePointLightPointerEventsBoundingBox    FePointLightPointerEvents = "bounding-box"
-	FePointLightPointerEventsFill           FePointLightPointerEvents = "fill"
-	FePointLightPointerEventsNone           FePointLightPointerEvents = "none"
-	FePointLightPointerEventsPainted        FePointLightPointerEvents = "painted"
-	FePointLightPointerEventsStroke         FePointLightPointerEvents = "stroke"
-	FePointLightPointerEventsVisible        FePointLightPointerEvents = "visible"
-	FePointLightPointerEventsVisibleFill    FePointLightPointerEvents = "visibleFill"
-	FePointLightPointerEventsVisiblePainted FePointLightPointerEvents = "visiblePainted"
-	FePointLightPointerEventsVisibleStroke  FePointLightPointerEvents = "visibleStroke"
-)
-
-type FePointLightVectorEffect string
-
-const (
-	FePointLightVectorEffectFixedPosition    FePointLightVectorEffect = "fixed-position"
-	FePointLightVectorEffectNonRotation      FePointLightVectorEffect = "non-rotation"
-	FePointLightVectorEffectNonScalingSize   FePointLightVectorEffect = "non-scaling-size"
-	FePointLightVectorEffectNonScalingStroke FePointLightVectorEffect = "non-scaling-stroke"
-	FePointLightVectorEffectNone             FePointLightVectorEffect = "none"
-)
-
-type FePointLightShapeRendering string
-
-const (
-	FePointLightShapeRenderingAuto               FePointLightShapeRendering = "auto"
-	FePointLightShapeRenderingCrispEdges         FePointLightShapeRendering = "crispEdges"
-	FePointLightShapeRenderingGeometricPrecision FePointLightShapeRendering = "geometricPrecision"
-	FePointLightShapeRenderingOptimizeSpeed      FePointLightShapeRendering = "optimizeSpeed"
-)
-
-type FePointLightColorInterpolation string
-
-const (
-	FePointLightColorInterpolationAuto      FePointLightColorInterpolation = "auto"
-	FePointLightColorInterpolationLinearRGB FePointLightColorInterpolation = "linearRGB"
-	FePointLightColorInterpolationSRGB      FePointLightColorInterpolation = "sRGB"
-)
-
-type FePointLightColorInterpolationFilters string
-
-const (
-	FePointLightColorInterpolationFiltersAuto      FePointLightColorInterpolationFilters = "auto"
-	FePointLightColorInterpolationFiltersLinearRGB FePointLightColorInterpolationFilters = "linearRGB"
-	FePointLightColorInterpolationFiltersSRGB      FePointLightColorInterpolationFilters = "sRGB"
-)
-
-type FePointLightFontStyle string
-
-const (
-	FePointLightFontStyleItalic  FePointLightFontStyle = "italic"
-	FePointLightFontStyleNormal  FePointLightFontStyle = "normal"
-	FePointLightFontStyleOblique FePointLightFontStyle = "oblique"
-)
-
-type FePointLightTextAnchor string
-
-const (
-	FePointLightTextAnchorEnd    FePointLightTextAnchor = "end"
-	FePointLightTextAnchorMiddle FePointLightTextAnchor = "middle"
-	FePointLightTextAnchorStart  FePointLightTextAnchor = "start"
-)
-
-type FePointLightDominantBaseline string
-
-const (
-	FePointLightDominantBaselineAlphabetic   FePointLightDominantBaseline = "alphabetic"
-	FePointLightDominantBaselineAuto         FePointLightDominantBaseline = "auto"
-	FePointLightDominantBaselineCentral      FePointLightDominantBaseline = "central"
-	FePointLightDominantBaselineHanging      FePointLightDominantBaseline = "hanging"
-	FePointLightDominantBaselineIdeographic  FePointLightDominantBaseline = "ideographic"
-	FePointLightDominantBaselineMathematical FePointLightDominantBaseline = "mathematical"
-	FePointLightDominantBaselineMiddle       FePointLightDominantBaseline = "middle"
-	FePointLightDominantBaselineTextBottom   FePointLightDominantBaseline = "text-bottom"
-	FePointLightDominantBaselineTextTop      FePointLightDominantBaseline = "text-top"
-)
-
 type FePointLightAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	FePointLightAlignmentBaselineTop            FePointLightAlignmentBaseline = "top"
 )
 
-type FePointLightTextRendering string
+type FePointLightClipRule string
 
 const (
-	FePointLightTextRenderingAuto               FePointLightTextRendering = "auto"
-	FePointLightTextRenderingGeometricPrecision FePointLightTextRendering = "geometricPrecision"
-	FePointLightTextRenderingOptimizeLegibility FePointLightTextRendering = "optimizeLegibility"
-	FePointLightTextRenderingOptimizeSpeed      FePointLightTextRendering = "optimizeSpeed"
+	FePointLightClipRuleEvenodd FePointLightClipRule = "evenodd"
+	FePointLightClipRuleNonzero FePointLightClipRule = "nonzero"
+)
+
+type FePointLightColorInterpolation string
+
+const (
+	FePointLightColorInterpolationAuto      FePointLightColorInterpolation = "auto"
+	FePointLightColorInterpolationLinearRGB FePointLightColorInterpolation = "linearRGB"
+	FePointLightColorInterpolationSRGB      FePointLightColorInterpolation = "sRGB"
+)
+
+type FePointLightColorInterpolationFilters string
+
+const (
+	FePointLightColorInterpolationFiltersAuto      FePointLightColorInterpolationFilters = "auto"
+	FePointLightColorInterpolationFiltersLinearRGB FePointLightColorInterpolationFilters = "linearRGB"
+	FePointLightColorInterpolationFiltersSRGB      FePointLightColorInterpolationFilters = "sRGB"
+)
+
+type FePointLightDirection string
+
+const (
+	FePointLightDirectionLtr FePointLightDirection = "ltr"
+	FePointLightDirectionRtl FePointLightDirection = "rtl"
+)
+
+type FePointLightDominantBaseline string
+
+const (
+	FePointLightDominantBaselineAlphabetic   FePointLightDominantBaseline = "alphabetic"
+	FePointLightDominantBaselineAuto         FePointLightDominantBaseline = "auto"
+	FePointLightDominantBaselineCentral      FePointLightDominantBaseline = "central"
+	FePointLightDominantBaselineHanging      FePointLightDominantBaseline = "hanging"
+	FePointLightDominantBaselineIdeographic  FePointLightDominantBaseline = "ideographic"
+	FePointLightDominantBaselineMathematical FePointLightDominantBaseline = "mathematical"
+	FePointLightDominantBaselineMiddle       FePointLightDominantBaseline = "middle"
+	FePointLightDominantBaselineTextBottom   FePointLightDominantBaseline = "text-bottom"
+	FePointLightDominantBaselineTextTop      FePointLightDominantBaseline = "text-top"
+)
+
+type FePointLightFillRule string
+
+const (
+	FePointLightFillRuleEvenodd FePointLightFillRule = "evenodd"
+	FePointLightFillRuleNonzero FePointLightFillRule = "nonzero"
+)
+
+type FePointLightFontStyle string
+
+const (
+	FePointLightFontStyleItalic  FePointLightFontStyle = "italic"
+	FePointLightFontStyleNormal  FePointLightFontStyle = "normal"
+	FePointLightFontStyleOblique FePointLightFontStyle = "oblique"
 )
 
 type FePointLightImageRendering string
@@ -345,6 +267,66 @@ const (
 	FePointLightOverflowVisible FePointLightOverflow = "visible"
 )
 
+type FePointLightPointerEvents string
+
+const (
+	FePointLightPointerEventsAll            FePointLightPointerEvents = "all"
+	FePointLightPointerEventsAuto           FePointLightPointerEvents = "auto"
+	FePointLightPointerEventsBoundingBox    FePointLightPointerEvents = "bounding-box"
+	FePointLightPointerEventsFill           FePointLightPointerEvents = "fill"
+	FePointLightPointerEventsNone           FePointLightPointerEvents = "none"
+	FePointLightPointerEventsPainted        FePointLightPointerEvents = "painted"
+	FePointLightPointerEventsStroke         FePointLightPointerEvents = "stroke"
+	FePointLightPointerEventsVisible        FePointLightPointerEvents = "visible"
+	FePointLightPointerEventsVisibleFill    FePointLightPointerEvents = "visibleFill"
+	FePointLightPointerEventsVisiblePainted FePointLightPointerEvents = "visiblePainted"
+	FePointLightPointerEventsVisibleStroke  FePointLightPointerEvents = "visibleStroke"
+)
+
+type FePointLightShapeRendering string
+
+const (
+	FePointLightShapeRenderingAuto               FePointLightShapeRendering = "auto"
+	FePointLightShapeRenderingCrispEdges         FePointLightShapeRendering = "crispEdges"
+	FePointLightShapeRenderingGeometricPrecision FePointLightShapeRendering = "geometricPrecision"
+	FePointLightShapeRenderingOptimizeSpeed      FePointLightShapeRendering = "optimizeSpeed"
+)
+
+type FePointLightStrokeLinecap string
+
+const (
+	FePointLightStrokeLinecapButt   FePointLightStrokeLinecap = "butt"
+	FePointLightStrokeLinecapRound  FePointLightStrokeLinecap = "round"
+	FePointLightStrokeLinecapSquare FePointLightStrokeLinecap = "square"
+)
+
+type FePointLightStrokeLinejoin string
+
+const (
+	FePointLightStrokeLinejoinArcs      FePointLightStrokeLinejoin = "arcs"
+	FePointLightStrokeLinejoinBevel     FePointLightStrokeLinejoin = "bevel"
+	FePointLightStrokeLinejoinMiter     FePointLightStrokeLinejoin = "miter"
+	FePointLightStrokeLinejoinMiterClip FePointLightStrokeLinejoin = "miter-clip"
+	FePointLightStrokeLinejoinRound     FePointLightStrokeLinejoin = "round"
+)
+
+type FePointLightTextAnchor string
+
+const (
+	FePointLightTextAnchorEnd    FePointLightTextAnchor = "end"
+	FePointLightTextAnchorMiddle FePointLightTextAnchor = "middle"
+	FePointLightTextAnchorStart  FePointLightTextAnchor = "start"
+)
+
+type FePointLightTextRendering string
+
+const (
+	FePointLightTextRenderingAuto               FePointLightTextRendering = "auto"
+	FePointLightTextRenderingGeometricPrecision FePointLightTextRendering = "geometricPrecision"
+	FePointLightTextRenderingOptimizeLegibility FePointLightTextRendering = "optimizeLegibility"
+	FePointLightTextRenderingOptimizeSpeed      FePointLightTextRendering = "optimizeSpeed"
+)
+
 type FePointLightTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	FePointLightTransformBoxViewBox    FePointLightTransformBox = "view-box"
 )
 
-type FePointLightDirection string
+type FePointLightVectorEffect string
 
 const (
-	FePointLightDirectionLtr FePointLightDirection = "ltr"
-	FePointLightDirectionRtl FePointLightDirection = "rtl"
+	FePointLightVectorEffectFixedPosition    FePointLightVectorEffect = "fixed-position"
+	FePointLightVectorEffectNonRotation      FePointLightVectorEffect = "non-rotation"
+	FePointLightVectorEffectNonScalingSize   FePointLightVectorEffect = "non-scaling-size"
+	FePointLightVectorEffectNonScalingStroke FePointLightVectorEffect = "non-scaling-stroke"
+	FePointLightVectorEffectNone             FePointLightVectorEffect = "none"
+)
+
+type FePointLightVisibility string
+
+const (
+	FePointLightVisibilityCollapse FePointLightVisibility = "collapse"
+	FePointLightVisibilityHidden   FePointLightVisibility = "hidden"
+	FePointLightVisibilityVisible  FePointLightVisibility = "visible"
 )
 
 type FePointLightWritingMode string
@@ -376,6 +369,13 @@ const (
 	FePointLightWritingModeTbRl         FePointLightWritingMode = "tb-rl"
 	FePointLightWritingModeVerticalLr   FePointLightWritingMode = "vertical-lr"
 	FePointLightWritingModeVerticalRl   FePointLightWritingMode = "vertical-rl"
+)
+
+type FePointLightXmlSpace string
+
+const (
+	FePointLightXmlSpaceDefault  FePointLightXmlSpace = "default"
+	FePointLightXmlSpacePreserve FePointLightXmlSpace = "preserve"
 )
 
 func (e *FePointLightElement) X(f float64) *FePointLightElement {
@@ -396,8 +396,42 @@ func (e *FePointLightElement) Z(f float64) *FePointLightElement {
 	return e
 }
 
-func (e *FePointLightElement) Id(s string) *FePointLightElement {
-	e.attributes.Set("id", s)
+func (e *FePointLightElement) AlignmentBaseline(a FePointLightAlignmentBaseline) *FePointLightElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FePointLightAlignmentBaselineCustom(s string) FePointLightAlignmentBaseline {
+	return FePointLightAlignmentBaseline(s)
+}
+
+func (e *FePointLightElement) AriaUnsafe(name string, s string) *FePointLightElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FePointLightElement) Aria(name string, s string) *FePointLightElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FePointLightElement) Autofocus(b bool) *FePointLightElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FePointLightElement) BaselineShift(s string) *FePointLightElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -408,40 +442,59 @@ func (e *FePointLightElement) Class(s ...string) *FePointLightElement {
 	return e
 }
 
-func (e *FePointLightElement) Style(s string) *FePointLightElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FePointLightElement) Clip(s string) *FePointLightElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FePointLightElement) Tabindex(i int) *FePointLightElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FePointLightElement) ClipPath(s string) *FePointLightElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FePointLightElement) Lang(s string) *FePointLightElement {
-	e.attributes.Set("lang", s)
+func (e *FePointLightElement) ClipRule(a FePointLightClipRule) *FePointLightElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FePointLightElement) XmlLang(s string) *FePointLightElement {
-	e.attributes.Set("xml:lang", s)
+func FePointLightClipRuleCustom(s string) FePointLightClipRule {
+	return FePointLightClipRule(s)
+}
+
+func (e *FePointLightElement) Color(s string) *FePointLightElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FePointLightElement) XmlSpace(a FePointLightXmlSpace) *FePointLightElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FePointLightElement) ColorInterpolation(a FePointLightColorInterpolation) *FePointLightElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FePointLightElement) Autofocus(b bool) *FePointLightElement {
-	e.attributes.SetBool("autofocus", b)
+func FePointLightColorInterpolationCustom(s string) FePointLightColorInterpolation {
+	return FePointLightColorInterpolation(s)
+}
+
+func (e *FePointLightElement) ColorInterpolationFilters(a FePointLightColorInterpolationFilters) *FePointLightElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FePointLightColorInterpolationFiltersCustom(s string) FePointLightColorInterpolationFilters {
+	return FePointLightColorInterpolationFilters(s)
+}
+
+func (e *FePointLightElement) Cursor(s string) *FePointLightElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -462,20 +515,30 @@ func (e *FePointLightElement) Data(name string, s string) *FePointLightElement {
 	return e
 }
 
-func (e *FePointLightElement) AriaUnsafe(name string, s string) *FePointLightElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FePointLightElement) Direction(a FePointLightDirection) *FePointLightElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FePointLightElement) Aria(name string, s string) *FePointLightElement {
-	tag := strings.ToLower("aria-" + name)
+func FePointLightDirectionCustom(s string) FePointLightDirection {
+	return FePointLightDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FePointLightElement) Display(s string) *FePointLightElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FePointLightElement) DominantBaseline(a FePointLightDominantBaseline) *FePointLightElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FePointLightDominantBaselineCustom(s string) FePointLightDominantBaseline {
+	return FePointLightDominantBaseline(s)
 }
 
 func (e *FePointLightElement) Fill(s string) *FePointLightElement {
@@ -500,20 +563,220 @@ func FePointLightFillRuleCustom(s string) FePointLightFillRule {
 	return FePointLightFillRule(s)
 }
 
+func (e *FePointLightElement) Filter(s string) *FePointLightElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FloodColor(s string) *FePointLightElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FloodOpacity(f float64) *FePointLightElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FePointLightElement) FontFamily(s string) *FePointLightElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FontSize(s string) *FePointLightElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FontSizeAdjust(s string) *FePointLightElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FontStretch(s string) *FePointLightElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FontStyle(a FePointLightFontStyle) *FePointLightElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FePointLightFontStyleCustom(s string) FePointLightFontStyle {
+	return FePointLightFontStyle(s)
+}
+
+func (e *FePointLightElement) FontVariant(s string) *FePointLightElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FePointLightElement) FontWeight(s string) *FePointLightElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FePointLightElement) GlyphOrientationHorizontal(s string) *FePointLightElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FePointLightElement) GlyphOrientationVertical(s string) *FePointLightElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FePointLightElement) Id(s string) *FePointLightElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FePointLightElement) ImageRendering(a FePointLightImageRendering) *FePointLightElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FePointLightImageRenderingCustom(s string) FePointLightImageRendering {
+	return FePointLightImageRendering(s)
+}
+
+func (e *FePointLightElement) Lang(s string) *FePointLightElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FePointLightElement) LetterSpacing(s string) *FePointLightElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FePointLightElement) LightingColor(s string) *FePointLightElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FePointLightElement) MarkerEnd(s string) *FePointLightElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FePointLightElement) MarkerMid(s string) *FePointLightElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FePointLightElement) MarkerStart(s string) *FePointLightElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FePointLightElement) Mask(s string) *FePointLightElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FePointLightElement) Opacity(f float64) *FePointLightElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FePointLightElement) Overflow(a FePointLightOverflow) *FePointLightElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FePointLightOverflowCustom(s string) FePointLightOverflow {
+	return FePointLightOverflow(s)
+}
+
+func (e *FePointLightElement) PaintOrder(s string) *FePointLightElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FePointLightElement) PointerEvents(a FePointLightPointerEvents) *FePointLightElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FePointLightPointerEventsCustom(s string) FePointLightPointerEvents {
+	return FePointLightPointerEvents(s)
+}
+
+func (e *FePointLightElement) RequiredExtensions(s string) *FePointLightElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FePointLightElement) ShapeRendering(a FePointLightShapeRendering) *FePointLightElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FePointLightShapeRenderingCustom(s string) FePointLightShapeRendering {
+	return FePointLightShapeRendering(s)
+}
+
+func (e *FePointLightElement) StopColor(s string) *FePointLightElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FePointLightElement) StopOpacity(f float64) *FePointLightElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FePointLightElement) Stroke(s string) *FePointLightElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FePointLightElement) StrokeWidth(s string) *FePointLightElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FePointLightElement) StrokeDasharray(s string) *FePointLightElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FePointLightElement) StrokeOpacity(f float64) *FePointLightElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FePointLightElement) StrokeDashoffset(s string) *FePointLightElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -544,210 +807,28 @@ func (e *FePointLightElement) StrokeMiterlimit(f float64) *FePointLightElement {
 	return e
 }
 
-func (e *FePointLightElement) StrokeDasharray(s string) *FePointLightElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FePointLightElement) StrokeOpacity(f float64) *FePointLightElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FePointLightElement) StrokeDashoffset(s string) *FePointLightElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FePointLightElement) StrokeWidth(s string) *FePointLightElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FePointLightElement) Opacity(f float64) *FePointLightElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FePointLightElement) Style(s string) *FePointLightElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FePointLightElement) Color(s string) *FePointLightElement {
-	e.attributes.Set("color", s)
+func (e *FePointLightElement) Tabindex(i int) *FePointLightElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FePointLightElement) Display(s string) *FePointLightElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FePointLightElement) Visibility(a FePointLightVisibility) *FePointLightElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FePointLightVisibilityCustom(s string) FePointLightVisibility {
-	return FePointLightVisibility(s)
-}
-
-func (e *FePointLightElement) ClipPath(s string) *FePointLightElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FePointLightElement) ClipRule(a FePointLightClipRule) *FePointLightElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FePointLightClipRuleCustom(s string) FePointLightClipRule {
-	return FePointLightClipRule(s)
-}
-
-func (e *FePointLightElement) Mask(s string) *FePointLightElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FePointLightElement) Filter(s string) *FePointLightElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FePointLightElement) Cursor(s string) *FePointLightElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FePointLightElement) PointerEvents(a FePointLightPointerEvents) *FePointLightElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FePointLightPointerEventsCustom(s string) FePointLightPointerEvents {
-	return FePointLightPointerEvents(s)
-}
-
-func (e *FePointLightElement) VectorEffect(a FePointLightVectorEffect) *FePointLightElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FePointLightVectorEffectCustom(s string) FePointLightVectorEffect {
-	return FePointLightVectorEffect(s)
-}
-
-func (e *FePointLightElement) PaintOrder(s string) *FePointLightElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FePointLightElement) ShapeRendering(a FePointLightShapeRendering) *FePointLightElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FePointLightShapeRenderingCustom(s string) FePointLightShapeRendering {
-	return FePointLightShapeRendering(s)
-}
-
-func (e *FePointLightElement) ColorInterpolation(a FePointLightColorInterpolation) *FePointLightElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FePointLightColorInterpolationCustom(s string) FePointLightColorInterpolation {
-	return FePointLightColorInterpolation(s)
-}
-
-func (e *FePointLightElement) ColorInterpolationFilters(a FePointLightColorInterpolationFilters) *FePointLightElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FePointLightColorInterpolationFiltersCustom(s string) FePointLightColorInterpolationFilters {
-	return FePointLightColorInterpolationFilters(s)
-}
-
-func (e *FePointLightElement) FloodColor(s string) *FePointLightElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FePointLightElement) FloodOpacity(f float64) *FePointLightElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FePointLightElement) LightingColor(s string) *FePointLightElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FePointLightElement) StopColor(s string) *FePointLightElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FePointLightElement) StopOpacity(f float64) *FePointLightElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FePointLightElement) MarkerStart(s string) *FePointLightElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FePointLightElement) MarkerMid(s string) *FePointLightElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FePointLightElement) MarkerEnd(s string) *FePointLightElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FePointLightElement) FontFamily(s string) *FePointLightElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FePointLightElement) FontSize(s string) *FePointLightElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FePointLightElement) FontWeight(s string) *FePointLightElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FePointLightElement) FontStyle(a FePointLightFontStyle) *FePointLightElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FePointLightFontStyleCustom(s string) FePointLightFontStyle {
-	return FePointLightFontStyle(s)
 }
 
 func (e *FePointLightElement) TextAnchor(a FePointLightTextAnchor) *FePointLightElement {
@@ -760,40 +841,14 @@ func FePointLightTextAnchorCustom(s string) FePointLightTextAnchor {
 	return FePointLightTextAnchor(s)
 }
 
-func (e *FePointLightElement) DominantBaseline(a FePointLightDominantBaseline) *FePointLightElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FePointLightDominantBaselineCustom(s string) FePointLightDominantBaseline {
-	return FePointLightDominantBaseline(s)
-}
-
-func (e *FePointLightElement) AlignmentBaseline(a FePointLightAlignmentBaseline) *FePointLightElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FePointLightAlignmentBaselineCustom(s string) FePointLightAlignmentBaseline {
-	return FePointLightAlignmentBaseline(s)
-}
-
-func (e *FePointLightElement) LetterSpacing(s string) *FePointLightElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FePointLightElement) WordSpacing(s string) *FePointLightElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FePointLightElement) TextDecoration(s string) *FePointLightElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FePointLightElement) TextOverflow(s string) *FePointLightElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -808,24 +863,10 @@ func FePointLightTextRenderingCustom(s string) FePointLightTextRendering {
 	return FePointLightTextRendering(s)
 }
 
-func (e *FePointLightElement) ImageRendering(a FePointLightImageRendering) *FePointLightElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FePointLightElement) Transform(s string) *FePointLightElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FePointLightImageRenderingCustom(s string) FePointLightImageRendering {
-	return FePointLightImageRendering(s)
-}
-
-func (e *FePointLightElement) Overflow(a FePointLightOverflow) *FePointLightElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FePointLightOverflowCustom(s string) FePointLightOverflow {
-	return FePointLightOverflow(s)
 }
 
 func (e *FePointLightElement) TransformBox(a FePointLightTransformBox) *FePointLightElement {
@@ -838,18 +879,46 @@ func FePointLightTransformBoxCustom(s string) FePointLightTransformBox {
 	return FePointLightTransformBox(s)
 }
 
-func (e *FePointLightElement) Direction(a FePointLightDirection) *FePointLightElement {
-	e.attributes.Set("direction", string(a))
+func (e *FePointLightElement) TransformOrigin(s string) *FePointLightElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FePointLightDirectionCustom(s string) FePointLightDirection {
-	return FePointLightDirection(s)
-}
-
 func (e *FePointLightElement) UnicodeBidi(s string) *FePointLightElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FePointLightElement) VectorEffect(a FePointLightVectorEffect) *FePointLightElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FePointLightVectorEffectCustom(s string) FePointLightVectorEffect {
+	return FePointLightVectorEffect(s)
+}
+
+func (e *FePointLightElement) Visibility(a FePointLightVisibility) *FePointLightElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FePointLightVisibilityCustom(s string) FePointLightVisibility {
+	return FePointLightVisibility(s)
+}
+
+func (e *FePointLightElement) WhiteSpace(s string) *FePointLightElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FePointLightElement) WordSpacing(s string) *FePointLightElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -864,8 +933,20 @@ func FePointLightWritingModeCustom(s string) FePointLightWritingMode {
 	return FePointLightWritingMode(s)
 }
 
-func (e *FePointLightElement) WhiteSpace(s string) *FePointLightElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FePointLightElement) XmlLang(s string) *FePointLightElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FePointLightElement) XmlSpace(a FePointLightXmlSpace) *FePointLightElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

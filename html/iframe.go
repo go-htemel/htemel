@@ -171,6 +171,20 @@ const (
 	IframeLoadingLazy  IframeLoading = "lazy"
 )
 
+type IframeReferrerpolicy string
+
+const (
+	IframeReferrerpolicyNoReferrer                  IframeReferrerpolicy = "no-referrer"
+	IframeReferrerpolicyNoReferrerWhenDowngrade     IframeReferrerpolicy = "no-referrer-when-downgrade"
+	IframeReferrerpolicyOrigin                      IframeReferrerpolicy = "origin"
+	IframeReferrerpolicyOriginWhenCrossOrigin       IframeReferrerpolicy = "origin-when-cross-origin"
+	IframeReferrerpolicySameOrigin                  IframeReferrerpolicy = "same-origin"
+	IframeReferrerpolicyStrictOrigin                IframeReferrerpolicy = "strict-origin"
+	IframeReferrerpolicyStrictOriginWhenCrossOrigin IframeReferrerpolicy = "strict-origin-when-cross-origin"
+	IframeReferrerpolicyUnsafeUrl                   IframeReferrerpolicy = "unsafe-url"
+	IframeReferrerpolicyEmpty                       IframeReferrerpolicy = ""
+)
+
 type IframeAutocapitalize string
 
 const (
@@ -247,6 +261,15 @@ const (
 	IframeInputmodeUrl     IframeInputmode = "url"
 )
 
+type IframePopover string
+
+const (
+	IframePopoverAuto   IframePopover = "auto"
+	IframePopoverHint   IframePopover = "hint"
+	IframePopoverManual IframePopover = "manual"
+	IframePopoverEmpty  IframePopover = ""
+)
+
 type IframeSpellcheck string
 
 const (
@@ -271,30 +294,6 @@ const (
 	IframeWritingsuggestionsEmpty IframeWritingsuggestions = ""
 )
 
-func (e *IframeElement) Src(s string) *IframeElement {
-	e.attributes.Set("src", s)
-
-	return e
-}
-
-func (e *IframeElement) Srcdoc(s string) *IframeElement {
-	e.attributes.Set("srcdoc", s)
-
-	return e
-}
-
-func (e *IframeElement) Name(s string) *IframeElement {
-	e.attributes.Set("name", s)
-
-	return e
-}
-
-func (e *IframeElement) Sandbox(s ...string) *IframeElement {
-	e.attributes.Set("sandbox", strings.Join(s, " "))
-
-	return e
-}
-
 func (e *IframeElement) Allow(s string) *IframeElement {
 	e.attributes.Set("allow", s)
 
@@ -309,26 +308,58 @@ func (e *IframeElement) Allowfullscreen(b bool) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Width(i int) *IframeElement {
-	e.attributes.Set("width", strconv.Itoa(i))
-
-	return e
-}
-
 func (e *IframeElement) Height(i int) *IframeElement {
 	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
 
-func (e *IframeElement) Referrerpolicy(s string) *IframeElement {
-	e.attributes.Set("referrerpolicy", s)
+func (e *IframeElement) Loading(a IframeLoading) *IframeElement {
+	e.attributes.Set("loading", string(a))
 
 	return e
 }
 
-func (e *IframeElement) Loading(a IframeLoading) *IframeElement {
-	e.attributes.Set("loading", string(a))
+func (e *IframeElement) Name(s string) *IframeElement {
+	e.attributes.Set("name", s)
+
+	return e
+}
+
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Referrerpolicy(v ...IframeReferrerpolicy) *IframeElement {
+	var val IframeReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
+func (e *IframeElement) Sandbox(s ...string) *IframeElement {
+	e.attributes.Set("sandbox", strings.Join(s, " "))
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *IframeElement) Src(s string) *IframeElement {
+	e.attributes.Set("src", s)
+
+	return e
+}
+
+func (e *IframeElement) Srcdoc(s string) *IframeElement {
+	e.attributes.Set("srcdoc", s)
+
+	return e
+}
+
+func (e *IframeElement) Width(i int) *IframeElement {
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
@@ -433,6 +464,26 @@ func (e *IframeElement) Enterkeyhint(a IframeEnterkeyhint) *IframeElement {
 	return e
 }
 
+func (e *IframeElement) Exportparts(s string) *IframeElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *IframeElement) Headingoffset(i int) *IframeElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *IframeElement) Headingreset(b bool) *IframeElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *IframeElement) Hidden(v ...IframeHidden) *IframeElement {
@@ -465,6 +516,14 @@ func (e *IframeElement) Inputmode(a IframeInputmode) *IframeElement {
 	return e
 }
 
+func (e *IframeElement) Is(s string) *IframeElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *IframeElement) Itemid(s string) *IframeElement {
 	e.attributes.Set("itemid", s)
 
@@ -509,8 +568,20 @@ func (e *IframeElement) Nonce(s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Popover(s string) *IframeElement {
-	e.attributes.Set("popover", s)
+func (e *IframeElement) Part(s ...string) *IframeElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Popover(v ...IframePopover) *IframeElement {
+	var val IframePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

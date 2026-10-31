@@ -164,134 +164,6 @@ func (e *FeDiffuseLightingElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeDiffuseLightingXmlSpace string
-
-const (
-	FeDiffuseLightingXmlSpaceDefault  FeDiffuseLightingXmlSpace = "default"
-	FeDiffuseLightingXmlSpacePreserve FeDiffuseLightingXmlSpace = "preserve"
-)
-
-type FeDiffuseLightingFillRule string
-
-const (
-	FeDiffuseLightingFillRuleEvenodd FeDiffuseLightingFillRule = "evenodd"
-	FeDiffuseLightingFillRuleNonzero FeDiffuseLightingFillRule = "nonzero"
-)
-
-type FeDiffuseLightingStrokeLinecap string
-
-const (
-	FeDiffuseLightingStrokeLinecapButt   FeDiffuseLightingStrokeLinecap = "butt"
-	FeDiffuseLightingStrokeLinecapRound  FeDiffuseLightingStrokeLinecap = "round"
-	FeDiffuseLightingStrokeLinecapSquare FeDiffuseLightingStrokeLinecap = "square"
-)
-
-type FeDiffuseLightingStrokeLinejoin string
-
-const (
-	FeDiffuseLightingStrokeLinejoinArcs      FeDiffuseLightingStrokeLinejoin = "arcs"
-	FeDiffuseLightingStrokeLinejoinBevel     FeDiffuseLightingStrokeLinejoin = "bevel"
-	FeDiffuseLightingStrokeLinejoinMiter     FeDiffuseLightingStrokeLinejoin = "miter"
-	FeDiffuseLightingStrokeLinejoinMiterClip FeDiffuseLightingStrokeLinejoin = "miter-clip"
-	FeDiffuseLightingStrokeLinejoinRound     FeDiffuseLightingStrokeLinejoin = "round"
-)
-
-type FeDiffuseLightingVisibility string
-
-const (
-	FeDiffuseLightingVisibilityCollapse FeDiffuseLightingVisibility = "collapse"
-	FeDiffuseLightingVisibilityHidden   FeDiffuseLightingVisibility = "hidden"
-	FeDiffuseLightingVisibilityVisible  FeDiffuseLightingVisibility = "visible"
-)
-
-type FeDiffuseLightingClipRule string
-
-const (
-	FeDiffuseLightingClipRuleEvenodd FeDiffuseLightingClipRule = "evenodd"
-	FeDiffuseLightingClipRuleNonzero FeDiffuseLightingClipRule = "nonzero"
-)
-
-type FeDiffuseLightingPointerEvents string
-
-const (
-	FeDiffuseLightingPointerEventsAll            FeDiffuseLightingPointerEvents = "all"
-	FeDiffuseLightingPointerEventsAuto           FeDiffuseLightingPointerEvents = "auto"
-	FeDiffuseLightingPointerEventsBoundingBox    FeDiffuseLightingPointerEvents = "bounding-box"
-	FeDiffuseLightingPointerEventsFill           FeDiffuseLightingPointerEvents = "fill"
-	FeDiffuseLightingPointerEventsNone           FeDiffuseLightingPointerEvents = "none"
-	FeDiffuseLightingPointerEventsPainted        FeDiffuseLightingPointerEvents = "painted"
-	FeDiffuseLightingPointerEventsStroke         FeDiffuseLightingPointerEvents = "stroke"
-	FeDiffuseLightingPointerEventsVisible        FeDiffuseLightingPointerEvents = "visible"
-	FeDiffuseLightingPointerEventsVisibleFill    FeDiffuseLightingPointerEvents = "visibleFill"
-	FeDiffuseLightingPointerEventsVisiblePainted FeDiffuseLightingPointerEvents = "visiblePainted"
-	FeDiffuseLightingPointerEventsVisibleStroke  FeDiffuseLightingPointerEvents = "visibleStroke"
-)
-
-type FeDiffuseLightingVectorEffect string
-
-const (
-	FeDiffuseLightingVectorEffectFixedPosition    FeDiffuseLightingVectorEffect = "fixed-position"
-	FeDiffuseLightingVectorEffectNonRotation      FeDiffuseLightingVectorEffect = "non-rotation"
-	FeDiffuseLightingVectorEffectNonScalingSize   FeDiffuseLightingVectorEffect = "non-scaling-size"
-	FeDiffuseLightingVectorEffectNonScalingStroke FeDiffuseLightingVectorEffect = "non-scaling-stroke"
-	FeDiffuseLightingVectorEffectNone             FeDiffuseLightingVectorEffect = "none"
-)
-
-type FeDiffuseLightingShapeRendering string
-
-const (
-	FeDiffuseLightingShapeRenderingAuto               FeDiffuseLightingShapeRendering = "auto"
-	FeDiffuseLightingShapeRenderingCrispEdges         FeDiffuseLightingShapeRendering = "crispEdges"
-	FeDiffuseLightingShapeRenderingGeometricPrecision FeDiffuseLightingShapeRendering = "geometricPrecision"
-	FeDiffuseLightingShapeRenderingOptimizeSpeed      FeDiffuseLightingShapeRendering = "optimizeSpeed"
-)
-
-type FeDiffuseLightingColorInterpolation string
-
-const (
-	FeDiffuseLightingColorInterpolationAuto      FeDiffuseLightingColorInterpolation = "auto"
-	FeDiffuseLightingColorInterpolationLinearRGB FeDiffuseLightingColorInterpolation = "linearRGB"
-	FeDiffuseLightingColorInterpolationSRGB      FeDiffuseLightingColorInterpolation = "sRGB"
-)
-
-type FeDiffuseLightingColorInterpolationFilters string
-
-const (
-	FeDiffuseLightingColorInterpolationFiltersAuto      FeDiffuseLightingColorInterpolationFilters = "auto"
-	FeDiffuseLightingColorInterpolationFiltersLinearRGB FeDiffuseLightingColorInterpolationFilters = "linearRGB"
-	FeDiffuseLightingColorInterpolationFiltersSRGB      FeDiffuseLightingColorInterpolationFilters = "sRGB"
-)
-
-type FeDiffuseLightingFontStyle string
-
-const (
-	FeDiffuseLightingFontStyleItalic  FeDiffuseLightingFontStyle = "italic"
-	FeDiffuseLightingFontStyleNormal  FeDiffuseLightingFontStyle = "normal"
-	FeDiffuseLightingFontStyleOblique FeDiffuseLightingFontStyle = "oblique"
-)
-
-type FeDiffuseLightingTextAnchor string
-
-const (
-	FeDiffuseLightingTextAnchorEnd    FeDiffuseLightingTextAnchor = "end"
-	FeDiffuseLightingTextAnchorMiddle FeDiffuseLightingTextAnchor = "middle"
-	FeDiffuseLightingTextAnchorStart  FeDiffuseLightingTextAnchor = "start"
-)
-
-type FeDiffuseLightingDominantBaseline string
-
-const (
-	FeDiffuseLightingDominantBaselineAlphabetic   FeDiffuseLightingDominantBaseline = "alphabetic"
-	FeDiffuseLightingDominantBaselineAuto         FeDiffuseLightingDominantBaseline = "auto"
-	FeDiffuseLightingDominantBaselineCentral      FeDiffuseLightingDominantBaseline = "central"
-	FeDiffuseLightingDominantBaselineHanging      FeDiffuseLightingDominantBaseline = "hanging"
-	FeDiffuseLightingDominantBaselineIdeographic  FeDiffuseLightingDominantBaseline = "ideographic"
-	FeDiffuseLightingDominantBaselineMathematical FeDiffuseLightingDominantBaseline = "mathematical"
-	FeDiffuseLightingDominantBaselineMiddle       FeDiffuseLightingDominantBaseline = "middle"
-	FeDiffuseLightingDominantBaselineTextBottom   FeDiffuseLightingDominantBaseline = "text-bottom"
-	FeDiffuseLightingDominantBaselineTextTop      FeDiffuseLightingDominantBaseline = "text-top"
-)
-
 type FeDiffuseLightingAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	FeDiffuseLightingAlignmentBaselineTop            FeDiffuseLightingAlignmentBaseline = "top"
 )
 
-type FeDiffuseLightingTextRendering string
+type FeDiffuseLightingClipRule string
 
 const (
-	FeDiffuseLightingTextRenderingAuto               FeDiffuseLightingTextRendering = "auto"
-	FeDiffuseLightingTextRenderingGeometricPrecision FeDiffuseLightingTextRendering = "geometricPrecision"
-	FeDiffuseLightingTextRenderingOptimizeLegibility FeDiffuseLightingTextRendering = "optimizeLegibility"
-	FeDiffuseLightingTextRenderingOptimizeSpeed      FeDiffuseLightingTextRendering = "optimizeSpeed"
+	FeDiffuseLightingClipRuleEvenodd FeDiffuseLightingClipRule = "evenodd"
+	FeDiffuseLightingClipRuleNonzero FeDiffuseLightingClipRule = "nonzero"
+)
+
+type FeDiffuseLightingColorInterpolation string
+
+const (
+	FeDiffuseLightingColorInterpolationAuto      FeDiffuseLightingColorInterpolation = "auto"
+	FeDiffuseLightingColorInterpolationLinearRGB FeDiffuseLightingColorInterpolation = "linearRGB"
+	FeDiffuseLightingColorInterpolationSRGB      FeDiffuseLightingColorInterpolation = "sRGB"
+)
+
+type FeDiffuseLightingColorInterpolationFilters string
+
+const (
+	FeDiffuseLightingColorInterpolationFiltersAuto      FeDiffuseLightingColorInterpolationFilters = "auto"
+	FeDiffuseLightingColorInterpolationFiltersLinearRGB FeDiffuseLightingColorInterpolationFilters = "linearRGB"
+	FeDiffuseLightingColorInterpolationFiltersSRGB      FeDiffuseLightingColorInterpolationFilters = "sRGB"
+)
+
+type FeDiffuseLightingDirection string
+
+const (
+	FeDiffuseLightingDirectionLtr FeDiffuseLightingDirection = "ltr"
+	FeDiffuseLightingDirectionRtl FeDiffuseLightingDirection = "rtl"
+)
+
+type FeDiffuseLightingDominantBaseline string
+
+const (
+	FeDiffuseLightingDominantBaselineAlphabetic   FeDiffuseLightingDominantBaseline = "alphabetic"
+	FeDiffuseLightingDominantBaselineAuto         FeDiffuseLightingDominantBaseline = "auto"
+	FeDiffuseLightingDominantBaselineCentral      FeDiffuseLightingDominantBaseline = "central"
+	FeDiffuseLightingDominantBaselineHanging      FeDiffuseLightingDominantBaseline = "hanging"
+	FeDiffuseLightingDominantBaselineIdeographic  FeDiffuseLightingDominantBaseline = "ideographic"
+	FeDiffuseLightingDominantBaselineMathematical FeDiffuseLightingDominantBaseline = "mathematical"
+	FeDiffuseLightingDominantBaselineMiddle       FeDiffuseLightingDominantBaseline = "middle"
+	FeDiffuseLightingDominantBaselineTextBottom   FeDiffuseLightingDominantBaseline = "text-bottom"
+	FeDiffuseLightingDominantBaselineTextTop      FeDiffuseLightingDominantBaseline = "text-top"
+)
+
+type FeDiffuseLightingFillRule string
+
+const (
+	FeDiffuseLightingFillRuleEvenodd FeDiffuseLightingFillRule = "evenodd"
+	FeDiffuseLightingFillRuleNonzero FeDiffuseLightingFillRule = "nonzero"
+)
+
+type FeDiffuseLightingFontStyle string
+
+const (
+	FeDiffuseLightingFontStyleItalic  FeDiffuseLightingFontStyle = "italic"
+	FeDiffuseLightingFontStyleNormal  FeDiffuseLightingFontStyle = "normal"
+	FeDiffuseLightingFontStyleOblique FeDiffuseLightingFontStyle = "oblique"
 )
 
 type FeDiffuseLightingImageRendering string
@@ -345,6 +267,66 @@ const (
 	FeDiffuseLightingOverflowVisible FeDiffuseLightingOverflow = "visible"
 )
 
+type FeDiffuseLightingPointerEvents string
+
+const (
+	FeDiffuseLightingPointerEventsAll            FeDiffuseLightingPointerEvents = "all"
+	FeDiffuseLightingPointerEventsAuto           FeDiffuseLightingPointerEvents = "auto"
+	FeDiffuseLightingPointerEventsBoundingBox    FeDiffuseLightingPointerEvents = "bounding-box"
+	FeDiffuseLightingPointerEventsFill           FeDiffuseLightingPointerEvents = "fill"
+	FeDiffuseLightingPointerEventsNone           FeDiffuseLightingPointerEvents = "none"
+	FeDiffuseLightingPointerEventsPainted        FeDiffuseLightingPointerEvents = "painted"
+	FeDiffuseLightingPointerEventsStroke         FeDiffuseLightingPointerEvents = "stroke"
+	FeDiffuseLightingPointerEventsVisible        FeDiffuseLightingPointerEvents = "visible"
+	FeDiffuseLightingPointerEventsVisibleFill    FeDiffuseLightingPointerEvents = "visibleFill"
+	FeDiffuseLightingPointerEventsVisiblePainted FeDiffuseLightingPointerEvents = "visiblePainted"
+	FeDiffuseLightingPointerEventsVisibleStroke  FeDiffuseLightingPointerEvents = "visibleStroke"
+)
+
+type FeDiffuseLightingShapeRendering string
+
+const (
+	FeDiffuseLightingShapeRenderingAuto               FeDiffuseLightingShapeRendering = "auto"
+	FeDiffuseLightingShapeRenderingCrispEdges         FeDiffuseLightingShapeRendering = "crispEdges"
+	FeDiffuseLightingShapeRenderingGeometricPrecision FeDiffuseLightingShapeRendering = "geometricPrecision"
+	FeDiffuseLightingShapeRenderingOptimizeSpeed      FeDiffuseLightingShapeRendering = "optimizeSpeed"
+)
+
+type FeDiffuseLightingStrokeLinecap string
+
+const (
+	FeDiffuseLightingStrokeLinecapButt   FeDiffuseLightingStrokeLinecap = "butt"
+	FeDiffuseLightingStrokeLinecapRound  FeDiffuseLightingStrokeLinecap = "round"
+	FeDiffuseLightingStrokeLinecapSquare FeDiffuseLightingStrokeLinecap = "square"
+)
+
+type FeDiffuseLightingStrokeLinejoin string
+
+const (
+	FeDiffuseLightingStrokeLinejoinArcs      FeDiffuseLightingStrokeLinejoin = "arcs"
+	FeDiffuseLightingStrokeLinejoinBevel     FeDiffuseLightingStrokeLinejoin = "bevel"
+	FeDiffuseLightingStrokeLinejoinMiter     FeDiffuseLightingStrokeLinejoin = "miter"
+	FeDiffuseLightingStrokeLinejoinMiterClip FeDiffuseLightingStrokeLinejoin = "miter-clip"
+	FeDiffuseLightingStrokeLinejoinRound     FeDiffuseLightingStrokeLinejoin = "round"
+)
+
+type FeDiffuseLightingTextAnchor string
+
+const (
+	FeDiffuseLightingTextAnchorEnd    FeDiffuseLightingTextAnchor = "end"
+	FeDiffuseLightingTextAnchorMiddle FeDiffuseLightingTextAnchor = "middle"
+	FeDiffuseLightingTextAnchorStart  FeDiffuseLightingTextAnchor = "start"
+)
+
+type FeDiffuseLightingTextRendering string
+
+const (
+	FeDiffuseLightingTextRenderingAuto               FeDiffuseLightingTextRendering = "auto"
+	FeDiffuseLightingTextRenderingGeometricPrecision FeDiffuseLightingTextRendering = "geometricPrecision"
+	FeDiffuseLightingTextRenderingOptimizeLegibility FeDiffuseLightingTextRendering = "optimizeLegibility"
+	FeDiffuseLightingTextRenderingOptimizeSpeed      FeDiffuseLightingTextRendering = "optimizeSpeed"
+)
+
 type FeDiffuseLightingTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	FeDiffuseLightingTransformBoxViewBox    FeDiffuseLightingTransformBox = "view-box"
 )
 
-type FeDiffuseLightingDirection string
+type FeDiffuseLightingVectorEffect string
 
 const (
-	FeDiffuseLightingDirectionLtr FeDiffuseLightingDirection = "ltr"
-	FeDiffuseLightingDirectionRtl FeDiffuseLightingDirection = "rtl"
+	FeDiffuseLightingVectorEffectFixedPosition    FeDiffuseLightingVectorEffect = "fixed-position"
+	FeDiffuseLightingVectorEffectNonRotation      FeDiffuseLightingVectorEffect = "non-rotation"
+	FeDiffuseLightingVectorEffectNonScalingSize   FeDiffuseLightingVectorEffect = "non-scaling-size"
+	FeDiffuseLightingVectorEffectNonScalingStroke FeDiffuseLightingVectorEffect = "non-scaling-stroke"
+	FeDiffuseLightingVectorEffectNone             FeDiffuseLightingVectorEffect = "none"
+)
+
+type FeDiffuseLightingVisibility string
+
+const (
+	FeDiffuseLightingVisibilityCollapse FeDiffuseLightingVisibility = "collapse"
+	FeDiffuseLightingVisibilityHidden   FeDiffuseLightingVisibility = "hidden"
+	FeDiffuseLightingVisibilityVisible  FeDiffuseLightingVisibility = "visible"
 )
 
 type FeDiffuseLightingWritingMode string
@@ -378,6 +371,55 @@ const (
 	FeDiffuseLightingWritingModeVerticalRl   FeDiffuseLightingWritingMode = "vertical-rl"
 )
 
+type FeDiffuseLightingXmlSpace string
+
+const (
+	FeDiffuseLightingXmlSpaceDefault  FeDiffuseLightingXmlSpace = "default"
+	FeDiffuseLightingXmlSpacePreserve FeDiffuseLightingXmlSpace = "preserve"
+)
+
+func (e *FeDiffuseLightingElement) DiffuseConstant(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("diffuseConstant", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Height(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) In(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("in", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) KernelUnitLength(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("kernelUnitLength", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Result(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) SurfaceScale(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("surfaceScale", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Width(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *FeDiffuseLightingElement) X(s string) *FeDiffuseLightingElement {
 	e.attributes.Set("x", s)
 
@@ -390,50 +432,42 @@ func (e *FeDiffuseLightingElement) Y(s string) *FeDiffuseLightingElement {
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Width(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("width", s)
+func (e *FeDiffuseLightingElement) AlignmentBaseline(a FeDiffuseLightingAlignmentBaseline) *FeDiffuseLightingElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Height(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("height", s)
+func FeDiffuseLightingAlignmentBaselineCustom(s string) FeDiffuseLightingAlignmentBaseline {
+	return FeDiffuseLightingAlignmentBaseline(s)
+}
+
+func (e *FeDiffuseLightingElement) AriaUnsafe(name string, s string) *FeDiffuseLightingElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Result(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("result", s)
+func (e *FeDiffuseLightingElement) Aria(name string, s string) *FeDiffuseLightingElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) In(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("in", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeDiffuseLightingElement) Autofocus(b bool) *FeDiffuseLightingElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) SurfaceScale(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("surfaceScale", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) DiffuseConstant(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("diffuseConstant", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) KernelUnitLength(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("kernelUnitLength", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) Id(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("id", s)
+func (e *FeDiffuseLightingElement) BaselineShift(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -444,40 +478,59 @@ func (e *FeDiffuseLightingElement) Class(s ...string) *FeDiffuseLightingElement 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Style(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeDiffuseLightingElement) Clip(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Tabindex(i int) *FeDiffuseLightingElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeDiffuseLightingElement) ClipPath(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Lang(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("lang", s)
+func (e *FeDiffuseLightingElement) ClipRule(a FeDiffuseLightingClipRule) *FeDiffuseLightingElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) XmlLang(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("xml:lang", s)
+func FeDiffuseLightingClipRuleCustom(s string) FeDiffuseLightingClipRule {
+	return FeDiffuseLightingClipRule(s)
+}
+
+func (e *FeDiffuseLightingElement) Color(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) XmlSpace(a FeDiffuseLightingXmlSpace) *FeDiffuseLightingElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeDiffuseLightingElement) ColorInterpolation(a FeDiffuseLightingColorInterpolation) *FeDiffuseLightingElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeDiffuseLightingElement) Autofocus(b bool) *FeDiffuseLightingElement {
-	e.attributes.SetBool("autofocus", b)
+func FeDiffuseLightingColorInterpolationCustom(s string) FeDiffuseLightingColorInterpolation {
+	return FeDiffuseLightingColorInterpolation(s)
+}
+
+func (e *FeDiffuseLightingElement) ColorInterpolationFilters(a FeDiffuseLightingColorInterpolationFilters) *FeDiffuseLightingElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingColorInterpolationFiltersCustom(s string) FeDiffuseLightingColorInterpolationFilters {
+	return FeDiffuseLightingColorInterpolationFilters(s)
+}
+
+func (e *FeDiffuseLightingElement) Cursor(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -498,20 +551,30 @@ func (e *FeDiffuseLightingElement) Data(name string, s string) *FeDiffuseLightin
 	return e
 }
 
-func (e *FeDiffuseLightingElement) AriaUnsafe(name string, s string) *FeDiffuseLightingElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeDiffuseLightingElement) Direction(a FeDiffuseLightingDirection) *FeDiffuseLightingElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Aria(name string, s string) *FeDiffuseLightingElement {
-	tag := strings.ToLower("aria-" + name)
+func FeDiffuseLightingDirectionCustom(s string) FeDiffuseLightingDirection {
+	return FeDiffuseLightingDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeDiffuseLightingElement) Display(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeDiffuseLightingElement) DominantBaseline(a FeDiffuseLightingDominantBaseline) *FeDiffuseLightingElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingDominantBaselineCustom(s string) FeDiffuseLightingDominantBaseline {
+	return FeDiffuseLightingDominantBaseline(s)
 }
 
 func (e *FeDiffuseLightingElement) Fill(s string) *FeDiffuseLightingElement {
@@ -536,20 +599,220 @@ func FeDiffuseLightingFillRuleCustom(s string) FeDiffuseLightingFillRule {
 	return FeDiffuseLightingFillRule(s)
 }
 
+func (e *FeDiffuseLightingElement) Filter(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FloodColor(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FloodOpacity(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontFamily(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontSize(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontSizeAdjust(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontStretch(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontStyle(a FeDiffuseLightingFontStyle) *FeDiffuseLightingElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingFontStyleCustom(s string) FeDiffuseLightingFontStyle {
+	return FeDiffuseLightingFontStyle(s)
+}
+
+func (e *FeDiffuseLightingElement) FontVariant(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) FontWeight(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeDiffuseLightingElement) GlyphOrientationHorizontal(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeDiffuseLightingElement) GlyphOrientationVertical(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Id(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) ImageRendering(a FeDiffuseLightingImageRendering) *FeDiffuseLightingElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingImageRenderingCustom(s string) FeDiffuseLightingImageRendering {
+	return FeDiffuseLightingImageRendering(s)
+}
+
+func (e *FeDiffuseLightingElement) Lang(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) LetterSpacing(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) LightingColor(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) MarkerEnd(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) MarkerMid(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) MarkerStart(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Mask(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Opacity(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) Overflow(a FeDiffuseLightingOverflow) *FeDiffuseLightingElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingOverflowCustom(s string) FeDiffuseLightingOverflow {
+	return FeDiffuseLightingOverflow(s)
+}
+
+func (e *FeDiffuseLightingElement) PaintOrder(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) PointerEvents(a FeDiffuseLightingPointerEvents) *FeDiffuseLightingElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingPointerEventsCustom(s string) FeDiffuseLightingPointerEvents {
+	return FeDiffuseLightingPointerEvents(s)
+}
+
+func (e *FeDiffuseLightingElement) RequiredExtensions(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) ShapeRendering(a FeDiffuseLightingShapeRendering) *FeDiffuseLightingElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingShapeRenderingCustom(s string) FeDiffuseLightingShapeRendering {
+	return FeDiffuseLightingShapeRendering(s)
+}
+
+func (e *FeDiffuseLightingElement) StopColor(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) StopOpacity(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeDiffuseLightingElement) Stroke(s string) *FeDiffuseLightingElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) StrokeWidth(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeDiffuseLightingElement) StrokeDasharray(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) StrokeOpacity(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDiffuseLightingElement) StrokeDashoffset(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -580,210 +843,28 @@ func (e *FeDiffuseLightingElement) StrokeMiterlimit(f float64) *FeDiffuseLightin
 	return e
 }
 
-func (e *FeDiffuseLightingElement) StrokeDasharray(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeDiffuseLightingElement) StrokeOpacity(f float64) *FeDiffuseLightingElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) StrokeDashoffset(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeDiffuseLightingElement) StrokeWidth(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Opacity(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDiffuseLightingElement) Style(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeDiffuseLightingElement) Color(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("color", s)
+func (e *FeDiffuseLightingElement) Tabindex(i int) *FeDiffuseLightingElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeDiffuseLightingElement) Display(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) Visibility(a FeDiffuseLightingVisibility) *FeDiffuseLightingElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingVisibilityCustom(s string) FeDiffuseLightingVisibility {
-	return FeDiffuseLightingVisibility(s)
-}
-
-func (e *FeDiffuseLightingElement) ClipPath(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) ClipRule(a FeDiffuseLightingClipRule) *FeDiffuseLightingElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingClipRuleCustom(s string) FeDiffuseLightingClipRule {
-	return FeDiffuseLightingClipRule(s)
-}
-
-func (e *FeDiffuseLightingElement) Mask(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) Filter(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) Cursor(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) PointerEvents(a FeDiffuseLightingPointerEvents) *FeDiffuseLightingElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingPointerEventsCustom(s string) FeDiffuseLightingPointerEvents {
-	return FeDiffuseLightingPointerEvents(s)
-}
-
-func (e *FeDiffuseLightingElement) VectorEffect(a FeDiffuseLightingVectorEffect) *FeDiffuseLightingElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingVectorEffectCustom(s string) FeDiffuseLightingVectorEffect {
-	return FeDiffuseLightingVectorEffect(s)
-}
-
-func (e *FeDiffuseLightingElement) PaintOrder(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) ShapeRendering(a FeDiffuseLightingShapeRendering) *FeDiffuseLightingElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingShapeRenderingCustom(s string) FeDiffuseLightingShapeRendering {
-	return FeDiffuseLightingShapeRendering(s)
-}
-
-func (e *FeDiffuseLightingElement) ColorInterpolation(a FeDiffuseLightingColorInterpolation) *FeDiffuseLightingElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingColorInterpolationCustom(s string) FeDiffuseLightingColorInterpolation {
-	return FeDiffuseLightingColorInterpolation(s)
-}
-
-func (e *FeDiffuseLightingElement) ColorInterpolationFilters(a FeDiffuseLightingColorInterpolationFilters) *FeDiffuseLightingElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingColorInterpolationFiltersCustom(s string) FeDiffuseLightingColorInterpolationFilters {
-	return FeDiffuseLightingColorInterpolationFilters(s)
-}
-
-func (e *FeDiffuseLightingElement) FloodColor(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) FloodOpacity(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) LightingColor(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) StopColor(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) StopOpacity(f float64) *FeDiffuseLightingElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) MarkerStart(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) MarkerMid(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) MarkerEnd(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) FontFamily(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) FontSize(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) FontWeight(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) FontStyle(a FeDiffuseLightingFontStyle) *FeDiffuseLightingElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingFontStyleCustom(s string) FeDiffuseLightingFontStyle {
-	return FeDiffuseLightingFontStyle(s)
 }
 
 func (e *FeDiffuseLightingElement) TextAnchor(a FeDiffuseLightingTextAnchor) *FeDiffuseLightingElement {
@@ -796,40 +877,14 @@ func FeDiffuseLightingTextAnchorCustom(s string) FeDiffuseLightingTextAnchor {
 	return FeDiffuseLightingTextAnchor(s)
 }
 
-func (e *FeDiffuseLightingElement) DominantBaseline(a FeDiffuseLightingDominantBaseline) *FeDiffuseLightingElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingDominantBaselineCustom(s string) FeDiffuseLightingDominantBaseline {
-	return FeDiffuseLightingDominantBaseline(s)
-}
-
-func (e *FeDiffuseLightingElement) AlignmentBaseline(a FeDiffuseLightingAlignmentBaseline) *FeDiffuseLightingElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingAlignmentBaselineCustom(s string) FeDiffuseLightingAlignmentBaseline {
-	return FeDiffuseLightingAlignmentBaseline(s)
-}
-
-func (e *FeDiffuseLightingElement) LetterSpacing(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeDiffuseLightingElement) WordSpacing(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeDiffuseLightingElement) TextDecoration(s string) *FeDiffuseLightingElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) TextOverflow(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -844,24 +899,10 @@ func FeDiffuseLightingTextRenderingCustom(s string) FeDiffuseLightingTextRenderi
 	return FeDiffuseLightingTextRendering(s)
 }
 
-func (e *FeDiffuseLightingElement) ImageRendering(a FeDiffuseLightingImageRendering) *FeDiffuseLightingElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeDiffuseLightingElement) Transform(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeDiffuseLightingImageRenderingCustom(s string) FeDiffuseLightingImageRendering {
-	return FeDiffuseLightingImageRendering(s)
-}
-
-func (e *FeDiffuseLightingElement) Overflow(a FeDiffuseLightingOverflow) *FeDiffuseLightingElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeDiffuseLightingOverflowCustom(s string) FeDiffuseLightingOverflow {
-	return FeDiffuseLightingOverflow(s)
 }
 
 func (e *FeDiffuseLightingElement) TransformBox(a FeDiffuseLightingTransformBox) *FeDiffuseLightingElement {
@@ -874,18 +915,46 @@ func FeDiffuseLightingTransformBoxCustom(s string) FeDiffuseLightingTransformBox
 	return FeDiffuseLightingTransformBox(s)
 }
 
-func (e *FeDiffuseLightingElement) Direction(a FeDiffuseLightingDirection) *FeDiffuseLightingElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeDiffuseLightingElement) TransformOrigin(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeDiffuseLightingDirectionCustom(s string) FeDiffuseLightingDirection {
-	return FeDiffuseLightingDirection(s)
-}
-
 func (e *FeDiffuseLightingElement) UnicodeBidi(s string) *FeDiffuseLightingElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) VectorEffect(a FeDiffuseLightingVectorEffect) *FeDiffuseLightingElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingVectorEffectCustom(s string) FeDiffuseLightingVectorEffect {
+	return FeDiffuseLightingVectorEffect(s)
+}
+
+func (e *FeDiffuseLightingElement) Visibility(a FeDiffuseLightingVisibility) *FeDiffuseLightingElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeDiffuseLightingVisibilityCustom(s string) FeDiffuseLightingVisibility {
+	return FeDiffuseLightingVisibility(s)
+}
+
+func (e *FeDiffuseLightingElement) WhiteSpace(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeDiffuseLightingElement) WordSpacing(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -900,8 +969,20 @@ func FeDiffuseLightingWritingModeCustom(s string) FeDiffuseLightingWritingMode {
 	return FeDiffuseLightingWritingMode(s)
 }
 
-func (e *FeDiffuseLightingElement) WhiteSpace(s string) *FeDiffuseLightingElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeDiffuseLightingElement) XmlLang(s string) *FeDiffuseLightingElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeDiffuseLightingElement) XmlSpace(a FeDiffuseLightingXmlSpace) *FeDiffuseLightingElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

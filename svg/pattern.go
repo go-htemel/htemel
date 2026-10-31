@@ -164,13 +164,6 @@ func (e *PatternElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PatternPatternUnits string
-
-const (
-	PatternPatternUnitsObjectBoundingBox PatternPatternUnits = "objectBoundingBox"
-	PatternPatternUnitsUserSpaceOnUse    PatternPatternUnits = "userSpaceOnUse"
-)
-
 type PatternPatternContentUnits string
 
 const (
@@ -178,132 +171,11 @@ const (
 	PatternPatternContentUnitsUserSpaceOnUse    PatternPatternContentUnits = "userSpaceOnUse"
 )
 
-type PatternXmlSpace string
+type PatternPatternUnits string
 
 const (
-	PatternXmlSpaceDefault  PatternXmlSpace = "default"
-	PatternXmlSpacePreserve PatternXmlSpace = "preserve"
-)
-
-type PatternFillRule string
-
-const (
-	PatternFillRuleEvenodd PatternFillRule = "evenodd"
-	PatternFillRuleNonzero PatternFillRule = "nonzero"
-)
-
-type PatternStrokeLinecap string
-
-const (
-	PatternStrokeLinecapButt   PatternStrokeLinecap = "butt"
-	PatternStrokeLinecapRound  PatternStrokeLinecap = "round"
-	PatternStrokeLinecapSquare PatternStrokeLinecap = "square"
-)
-
-type PatternStrokeLinejoin string
-
-const (
-	PatternStrokeLinejoinArcs      PatternStrokeLinejoin = "arcs"
-	PatternStrokeLinejoinBevel     PatternStrokeLinejoin = "bevel"
-	PatternStrokeLinejoinMiter     PatternStrokeLinejoin = "miter"
-	PatternStrokeLinejoinMiterClip PatternStrokeLinejoin = "miter-clip"
-	PatternStrokeLinejoinRound     PatternStrokeLinejoin = "round"
-)
-
-type PatternVisibility string
-
-const (
-	PatternVisibilityCollapse PatternVisibility = "collapse"
-	PatternVisibilityHidden   PatternVisibility = "hidden"
-	PatternVisibilityVisible  PatternVisibility = "visible"
-)
-
-type PatternClipRule string
-
-const (
-	PatternClipRuleEvenodd PatternClipRule = "evenodd"
-	PatternClipRuleNonzero PatternClipRule = "nonzero"
-)
-
-type PatternPointerEvents string
-
-const (
-	PatternPointerEventsAll            PatternPointerEvents = "all"
-	PatternPointerEventsAuto           PatternPointerEvents = "auto"
-	PatternPointerEventsBoundingBox    PatternPointerEvents = "bounding-box"
-	PatternPointerEventsFill           PatternPointerEvents = "fill"
-	PatternPointerEventsNone           PatternPointerEvents = "none"
-	PatternPointerEventsPainted        PatternPointerEvents = "painted"
-	PatternPointerEventsStroke         PatternPointerEvents = "stroke"
-	PatternPointerEventsVisible        PatternPointerEvents = "visible"
-	PatternPointerEventsVisibleFill    PatternPointerEvents = "visibleFill"
-	PatternPointerEventsVisiblePainted PatternPointerEvents = "visiblePainted"
-	PatternPointerEventsVisibleStroke  PatternPointerEvents = "visibleStroke"
-)
-
-type PatternVectorEffect string
-
-const (
-	PatternVectorEffectFixedPosition    PatternVectorEffect = "fixed-position"
-	PatternVectorEffectNonRotation      PatternVectorEffect = "non-rotation"
-	PatternVectorEffectNonScalingSize   PatternVectorEffect = "non-scaling-size"
-	PatternVectorEffectNonScalingStroke PatternVectorEffect = "non-scaling-stroke"
-	PatternVectorEffectNone             PatternVectorEffect = "none"
-)
-
-type PatternShapeRendering string
-
-const (
-	PatternShapeRenderingAuto               PatternShapeRendering = "auto"
-	PatternShapeRenderingCrispEdges         PatternShapeRendering = "crispEdges"
-	PatternShapeRenderingGeometricPrecision PatternShapeRendering = "geometricPrecision"
-	PatternShapeRenderingOptimizeSpeed      PatternShapeRendering = "optimizeSpeed"
-)
-
-type PatternColorInterpolation string
-
-const (
-	PatternColorInterpolationAuto      PatternColorInterpolation = "auto"
-	PatternColorInterpolationLinearRGB PatternColorInterpolation = "linearRGB"
-	PatternColorInterpolationSRGB      PatternColorInterpolation = "sRGB"
-)
-
-type PatternColorInterpolationFilters string
-
-const (
-	PatternColorInterpolationFiltersAuto      PatternColorInterpolationFilters = "auto"
-	PatternColorInterpolationFiltersLinearRGB PatternColorInterpolationFilters = "linearRGB"
-	PatternColorInterpolationFiltersSRGB      PatternColorInterpolationFilters = "sRGB"
-)
-
-type PatternFontStyle string
-
-const (
-	PatternFontStyleItalic  PatternFontStyle = "italic"
-	PatternFontStyleNormal  PatternFontStyle = "normal"
-	PatternFontStyleOblique PatternFontStyle = "oblique"
-)
-
-type PatternTextAnchor string
-
-const (
-	PatternTextAnchorEnd    PatternTextAnchor = "end"
-	PatternTextAnchorMiddle PatternTextAnchor = "middle"
-	PatternTextAnchorStart  PatternTextAnchor = "start"
-)
-
-type PatternDominantBaseline string
-
-const (
-	PatternDominantBaselineAlphabetic   PatternDominantBaseline = "alphabetic"
-	PatternDominantBaselineAuto         PatternDominantBaseline = "auto"
-	PatternDominantBaselineCentral      PatternDominantBaseline = "central"
-	PatternDominantBaselineHanging      PatternDominantBaseline = "hanging"
-	PatternDominantBaselineIdeographic  PatternDominantBaseline = "ideographic"
-	PatternDominantBaselineMathematical PatternDominantBaseline = "mathematical"
-	PatternDominantBaselineMiddle       PatternDominantBaseline = "middle"
-	PatternDominantBaselineTextBottom   PatternDominantBaseline = "text-bottom"
-	PatternDominantBaselineTextTop      PatternDominantBaseline = "text-top"
+	PatternPatternUnitsObjectBoundingBox PatternPatternUnits = "objectBoundingBox"
+	PatternPatternUnitsUserSpaceOnUse    PatternPatternUnits = "userSpaceOnUse"
 )
 
 type PatternAlignmentBaseline string
@@ -328,13 +200,63 @@ const (
 	PatternAlignmentBaselineTop            PatternAlignmentBaseline = "top"
 )
 
-type PatternTextRendering string
+type PatternClipRule string
 
 const (
-	PatternTextRenderingAuto               PatternTextRendering = "auto"
-	PatternTextRenderingGeometricPrecision PatternTextRendering = "geometricPrecision"
-	PatternTextRenderingOptimizeLegibility PatternTextRendering = "optimizeLegibility"
-	PatternTextRenderingOptimizeSpeed      PatternTextRendering = "optimizeSpeed"
+	PatternClipRuleEvenodd PatternClipRule = "evenodd"
+	PatternClipRuleNonzero PatternClipRule = "nonzero"
+)
+
+type PatternColorInterpolation string
+
+const (
+	PatternColorInterpolationAuto      PatternColorInterpolation = "auto"
+	PatternColorInterpolationLinearRGB PatternColorInterpolation = "linearRGB"
+	PatternColorInterpolationSRGB      PatternColorInterpolation = "sRGB"
+)
+
+type PatternColorInterpolationFilters string
+
+const (
+	PatternColorInterpolationFiltersAuto      PatternColorInterpolationFilters = "auto"
+	PatternColorInterpolationFiltersLinearRGB PatternColorInterpolationFilters = "linearRGB"
+	PatternColorInterpolationFiltersSRGB      PatternColorInterpolationFilters = "sRGB"
+)
+
+type PatternDirection string
+
+const (
+	PatternDirectionLtr PatternDirection = "ltr"
+	PatternDirectionRtl PatternDirection = "rtl"
+)
+
+type PatternDominantBaseline string
+
+const (
+	PatternDominantBaselineAlphabetic   PatternDominantBaseline = "alphabetic"
+	PatternDominantBaselineAuto         PatternDominantBaseline = "auto"
+	PatternDominantBaselineCentral      PatternDominantBaseline = "central"
+	PatternDominantBaselineHanging      PatternDominantBaseline = "hanging"
+	PatternDominantBaselineIdeographic  PatternDominantBaseline = "ideographic"
+	PatternDominantBaselineMathematical PatternDominantBaseline = "mathematical"
+	PatternDominantBaselineMiddle       PatternDominantBaseline = "middle"
+	PatternDominantBaselineTextBottom   PatternDominantBaseline = "text-bottom"
+	PatternDominantBaselineTextTop      PatternDominantBaseline = "text-top"
+)
+
+type PatternFillRule string
+
+const (
+	PatternFillRuleEvenodd PatternFillRule = "evenodd"
+	PatternFillRuleNonzero PatternFillRule = "nonzero"
+)
+
+type PatternFontStyle string
+
+const (
+	PatternFontStyleItalic  PatternFontStyle = "italic"
+	PatternFontStyleNormal  PatternFontStyle = "normal"
+	PatternFontStyleOblique PatternFontStyle = "oblique"
 )
 
 type PatternImageRendering string
@@ -359,6 +281,66 @@ const (
 	PatternOverflowVisible PatternOverflow = "visible"
 )
 
+type PatternPointerEvents string
+
+const (
+	PatternPointerEventsAll            PatternPointerEvents = "all"
+	PatternPointerEventsAuto           PatternPointerEvents = "auto"
+	PatternPointerEventsBoundingBox    PatternPointerEvents = "bounding-box"
+	PatternPointerEventsFill           PatternPointerEvents = "fill"
+	PatternPointerEventsNone           PatternPointerEvents = "none"
+	PatternPointerEventsPainted        PatternPointerEvents = "painted"
+	PatternPointerEventsStroke         PatternPointerEvents = "stroke"
+	PatternPointerEventsVisible        PatternPointerEvents = "visible"
+	PatternPointerEventsVisibleFill    PatternPointerEvents = "visibleFill"
+	PatternPointerEventsVisiblePainted PatternPointerEvents = "visiblePainted"
+	PatternPointerEventsVisibleStroke  PatternPointerEvents = "visibleStroke"
+)
+
+type PatternShapeRendering string
+
+const (
+	PatternShapeRenderingAuto               PatternShapeRendering = "auto"
+	PatternShapeRenderingCrispEdges         PatternShapeRendering = "crispEdges"
+	PatternShapeRenderingGeometricPrecision PatternShapeRendering = "geometricPrecision"
+	PatternShapeRenderingOptimizeSpeed      PatternShapeRendering = "optimizeSpeed"
+)
+
+type PatternStrokeLinecap string
+
+const (
+	PatternStrokeLinecapButt   PatternStrokeLinecap = "butt"
+	PatternStrokeLinecapRound  PatternStrokeLinecap = "round"
+	PatternStrokeLinecapSquare PatternStrokeLinecap = "square"
+)
+
+type PatternStrokeLinejoin string
+
+const (
+	PatternStrokeLinejoinArcs      PatternStrokeLinejoin = "arcs"
+	PatternStrokeLinejoinBevel     PatternStrokeLinejoin = "bevel"
+	PatternStrokeLinejoinMiter     PatternStrokeLinejoin = "miter"
+	PatternStrokeLinejoinMiterClip PatternStrokeLinejoin = "miter-clip"
+	PatternStrokeLinejoinRound     PatternStrokeLinejoin = "round"
+)
+
+type PatternTextAnchor string
+
+const (
+	PatternTextAnchorEnd    PatternTextAnchor = "end"
+	PatternTextAnchorMiddle PatternTextAnchor = "middle"
+	PatternTextAnchorStart  PatternTextAnchor = "start"
+)
+
+type PatternTextRendering string
+
+const (
+	PatternTextRenderingAuto               PatternTextRendering = "auto"
+	PatternTextRenderingGeometricPrecision PatternTextRendering = "geometricPrecision"
+	PatternTextRenderingOptimizeLegibility PatternTextRendering = "optimizeLegibility"
+	PatternTextRenderingOptimizeSpeed      PatternTextRendering = "optimizeSpeed"
+)
+
 type PatternTransformBox string
 
 const (
@@ -369,11 +351,22 @@ const (
 	PatternTransformBoxViewBox    PatternTransformBox = "view-box"
 )
 
-type PatternDirection string
+type PatternVectorEffect string
 
 const (
-	PatternDirectionLtr PatternDirection = "ltr"
-	PatternDirectionRtl PatternDirection = "rtl"
+	PatternVectorEffectFixedPosition    PatternVectorEffect = "fixed-position"
+	PatternVectorEffectNonRotation      PatternVectorEffect = "non-rotation"
+	PatternVectorEffectNonScalingSize   PatternVectorEffect = "non-scaling-size"
+	PatternVectorEffectNonScalingStroke PatternVectorEffect = "non-scaling-stroke"
+	PatternVectorEffectNone             PatternVectorEffect = "none"
+)
+
+type PatternVisibility string
+
+const (
+	PatternVisibilityCollapse PatternVisibility = "collapse"
+	PatternVisibilityHidden   PatternVisibility = "hidden"
+	PatternVisibilityVisible  PatternVisibility = "visible"
 )
 
 type PatternWritingMode string
@@ -392,35 +385,12 @@ const (
 	PatternWritingModeVerticalRl   PatternWritingMode = "vertical-rl"
 )
 
-func (e *PatternElement) Href(s string) *PatternElement {
-	e.attributes.Set("href", s)
+type PatternXmlSpace string
 
-	return e
-}
-
-func (e *PatternElement) XlinkHref(s string) *PatternElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *PatternElement) X(s string) *PatternElement {
-	e.attributes.Set("x", s)
-
-	return e
-}
-
-func (e *PatternElement) Y(s string) *PatternElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *PatternElement) Width(s string) *PatternElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
+const (
+	PatternXmlSpaceDefault  PatternXmlSpace = "default"
+	PatternXmlSpacePreserve PatternXmlSpace = "preserve"
+)
 
 func (e *PatternElement) Height(s string) *PatternElement {
 	e.attributes.Set("height", s)
@@ -428,8 +398,10 @@ func (e *PatternElement) Height(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) PatternUnits(a PatternPatternUnits) *PatternElement {
-	e.attributes.Set("patternUnits", string(a))
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *PatternElement) Href(s string) *PatternElement {
+	e.attributes.Set("href", s)
 
 	return e
 }
@@ -446,8 +418,8 @@ func (e *PatternElement) PatternTransform(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) ViewBox(s string) *PatternElement {
-	e.attributes.Set("viewBox", s)
+func (e *PatternElement) PatternUnits(a PatternPatternUnits) *PatternElement {
+	e.attributes.Set("patternUnits", string(a))
 
 	return e
 }
@@ -458,8 +430,82 @@ func (e *PatternElement) PreserveAspectRatio(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) Id(s string) *PatternElement {
-	e.attributes.Set("id", s)
+func (e *PatternElement) SystemLanguage(s string) *PatternElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *PatternElement) ViewBox(s string) *PatternElement {
+	e.attributes.Set("viewBox", s)
+
+	return e
+}
+
+func (e *PatternElement) Width(s string) *PatternElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *PatternElement) X(s string) *PatternElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) XlinkHref(s string) *PatternElement {
+	e.attributes.Set("xlink:href", s)
+
+	return e
+}
+
+func (e *PatternElement) Y(s string) *PatternElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *PatternElement) AlignmentBaseline(a PatternAlignmentBaseline) *PatternElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func PatternAlignmentBaselineCustom(s string) PatternAlignmentBaseline {
+	return PatternAlignmentBaseline(s)
+}
+
+func (e *PatternElement) AriaUnsafe(name string, s string) *PatternElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *PatternElement) Aria(name string, s string) *PatternElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *PatternElement) Autofocus(b bool) *PatternElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *PatternElement) BaselineShift(s string) *PatternElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -470,40 +516,59 @@ func (e *PatternElement) Class(s ...string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) Style(s string) *PatternElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) Clip(s string) *PatternElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *PatternElement) Tabindex(i int) *PatternElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *PatternElement) ClipPath(s string) *PatternElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *PatternElement) Lang(s string) *PatternElement {
-	e.attributes.Set("lang", s)
+func (e *PatternElement) ClipRule(a PatternClipRule) *PatternElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *PatternElement) XmlLang(s string) *PatternElement {
-	e.attributes.Set("xml:lang", s)
+func PatternClipRuleCustom(s string) PatternClipRule {
+	return PatternClipRule(s)
+}
+
+func (e *PatternElement) Color(s string) *PatternElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *PatternElement) XmlSpace(a PatternXmlSpace) *PatternElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *PatternElement) ColorInterpolation(a PatternColorInterpolation) *PatternElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PatternElement) Autofocus(b bool) *PatternElement {
-	e.attributes.SetBool("autofocus", b)
+func PatternColorInterpolationCustom(s string) PatternColorInterpolation {
+	return PatternColorInterpolation(s)
+}
+
+func (e *PatternElement) ColorInterpolationFilters(a PatternColorInterpolationFilters) *PatternElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func PatternColorInterpolationFiltersCustom(s string) PatternColorInterpolationFilters {
+	return PatternColorInterpolationFilters(s)
+}
+
+func (e *PatternElement) Cursor(s string) *PatternElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -524,20 +589,30 @@ func (e *PatternElement) Data(name string, s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) AriaUnsafe(name string, s string) *PatternElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *PatternElement) Direction(a PatternDirection) *PatternElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *PatternElement) Aria(name string, s string) *PatternElement {
-	tag := strings.ToLower("aria-" + name)
+func PatternDirectionCustom(s string) PatternDirection {
+	return PatternDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *PatternElement) Display(s string) *PatternElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *PatternElement) DominantBaseline(a PatternDominantBaseline) *PatternElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func PatternDominantBaselineCustom(s string) PatternDominantBaseline {
+	return PatternDominantBaseline(s)
 }
 
 func (e *PatternElement) Fill(s string) *PatternElement {
@@ -562,20 +637,220 @@ func PatternFillRuleCustom(s string) PatternFillRule {
 	return PatternFillRule(s)
 }
 
+func (e *PatternElement) Filter(s string) *PatternElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *PatternElement) FloodColor(s string) *PatternElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *PatternElement) FloodOpacity(f float64) *PatternElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PatternElement) FontFamily(s string) *PatternElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *PatternElement) FontSize(s string) *PatternElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *PatternElement) FontSizeAdjust(s string) *PatternElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *PatternElement) FontStretch(s string) *PatternElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *PatternElement) FontStyle(a PatternFontStyle) *PatternElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func PatternFontStyleCustom(s string) PatternFontStyle {
+	return PatternFontStyle(s)
+}
+
+func (e *PatternElement) FontVariant(s string) *PatternElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *PatternElement) FontWeight(s string) *PatternElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) GlyphOrientationHorizontal(s string) *PatternElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) GlyphOrientationVertical(s string) *PatternElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *PatternElement) Id(s string) *PatternElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *PatternElement) ImageRendering(a PatternImageRendering) *PatternElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func PatternImageRenderingCustom(s string) PatternImageRendering {
+	return PatternImageRendering(s)
+}
+
+func (e *PatternElement) Lang(s string) *PatternElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *PatternElement) LetterSpacing(s string) *PatternElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *PatternElement) LightingColor(s string) *PatternElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *PatternElement) MarkerEnd(s string) *PatternElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *PatternElement) MarkerMid(s string) *PatternElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *PatternElement) MarkerStart(s string) *PatternElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *PatternElement) Mask(s string) *PatternElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *PatternElement) Opacity(f float64) *PatternElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PatternElement) Overflow(a PatternOverflow) *PatternElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func PatternOverflowCustom(s string) PatternOverflow {
+	return PatternOverflow(s)
+}
+
+func (e *PatternElement) PaintOrder(s string) *PatternElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *PatternElement) PointerEvents(a PatternPointerEvents) *PatternElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func PatternPointerEventsCustom(s string) PatternPointerEvents {
+	return PatternPointerEvents(s)
+}
+
+func (e *PatternElement) RequiredExtensions(s string) *PatternElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *PatternElement) ShapeRendering(a PatternShapeRendering) *PatternElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func PatternShapeRenderingCustom(s string) PatternShapeRendering {
+	return PatternShapeRendering(s)
+}
+
+func (e *PatternElement) StopColor(s string) *PatternElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *PatternElement) StopOpacity(f float64) *PatternElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PatternElement) Stroke(s string) *PatternElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *PatternElement) StrokeWidth(s string) *PatternElement {
-	e.attributes.Set("stroke-width", s)
+func (e *PatternElement) StrokeDasharray(s string) *PatternElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *PatternElement) StrokeOpacity(f float64) *PatternElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PatternElement) StrokeDashoffset(s string) *PatternElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -606,210 +881,28 @@ func (e *PatternElement) StrokeMiterlimit(f float64) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) StrokeDasharray(s string) *PatternElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *PatternElement) StrokeOpacity(f float64) *PatternElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *PatternElement) StrokeDashoffset(s string) *PatternElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *PatternElement) StrokeWidth(s string) *PatternElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *PatternElement) Opacity(f float64) *PatternElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PatternElement) Style(s string) *PatternElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *PatternElement) Color(s string) *PatternElement {
-	e.attributes.Set("color", s)
+func (e *PatternElement) Tabindex(i int) *PatternElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *PatternElement) Display(s string) *PatternElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *PatternElement) Visibility(a PatternVisibility) *PatternElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func PatternVisibilityCustom(s string) PatternVisibility {
-	return PatternVisibility(s)
-}
-
-func (e *PatternElement) ClipPath(s string) *PatternElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *PatternElement) ClipRule(a PatternClipRule) *PatternElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func PatternClipRuleCustom(s string) PatternClipRule {
-	return PatternClipRule(s)
-}
-
-func (e *PatternElement) Mask(s string) *PatternElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *PatternElement) Filter(s string) *PatternElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *PatternElement) Cursor(s string) *PatternElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *PatternElement) PointerEvents(a PatternPointerEvents) *PatternElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func PatternPointerEventsCustom(s string) PatternPointerEvents {
-	return PatternPointerEvents(s)
-}
-
-func (e *PatternElement) VectorEffect(a PatternVectorEffect) *PatternElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func PatternVectorEffectCustom(s string) PatternVectorEffect {
-	return PatternVectorEffect(s)
-}
-
-func (e *PatternElement) PaintOrder(s string) *PatternElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *PatternElement) ShapeRendering(a PatternShapeRendering) *PatternElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func PatternShapeRenderingCustom(s string) PatternShapeRendering {
-	return PatternShapeRendering(s)
-}
-
-func (e *PatternElement) ColorInterpolation(a PatternColorInterpolation) *PatternElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func PatternColorInterpolationCustom(s string) PatternColorInterpolation {
-	return PatternColorInterpolation(s)
-}
-
-func (e *PatternElement) ColorInterpolationFilters(a PatternColorInterpolationFilters) *PatternElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func PatternColorInterpolationFiltersCustom(s string) PatternColorInterpolationFilters {
-	return PatternColorInterpolationFilters(s)
-}
-
-func (e *PatternElement) FloodColor(s string) *PatternElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *PatternElement) FloodOpacity(f float64) *PatternElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PatternElement) LightingColor(s string) *PatternElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *PatternElement) StopColor(s string) *PatternElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *PatternElement) StopOpacity(f float64) *PatternElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PatternElement) MarkerStart(s string) *PatternElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *PatternElement) MarkerMid(s string) *PatternElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *PatternElement) MarkerEnd(s string) *PatternElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *PatternElement) FontFamily(s string) *PatternElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *PatternElement) FontSize(s string) *PatternElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *PatternElement) FontWeight(s string) *PatternElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *PatternElement) FontStyle(a PatternFontStyle) *PatternElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func PatternFontStyleCustom(s string) PatternFontStyle {
-	return PatternFontStyle(s)
 }
 
 func (e *PatternElement) TextAnchor(a PatternTextAnchor) *PatternElement {
@@ -822,40 +915,14 @@ func PatternTextAnchorCustom(s string) PatternTextAnchor {
 	return PatternTextAnchor(s)
 }
 
-func (e *PatternElement) DominantBaseline(a PatternDominantBaseline) *PatternElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func PatternDominantBaselineCustom(s string) PatternDominantBaseline {
-	return PatternDominantBaseline(s)
-}
-
-func (e *PatternElement) AlignmentBaseline(a PatternAlignmentBaseline) *PatternElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func PatternAlignmentBaselineCustom(s string) PatternAlignmentBaseline {
-	return PatternAlignmentBaseline(s)
-}
-
-func (e *PatternElement) LetterSpacing(s string) *PatternElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *PatternElement) WordSpacing(s string) *PatternElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *PatternElement) TextDecoration(s string) *PatternElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *PatternElement) TextOverflow(s string) *PatternElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -870,24 +937,10 @@ func PatternTextRenderingCustom(s string) PatternTextRendering {
 	return PatternTextRendering(s)
 }
 
-func (e *PatternElement) ImageRendering(a PatternImageRendering) *PatternElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *PatternElement) Transform(s string) *PatternElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func PatternImageRenderingCustom(s string) PatternImageRendering {
-	return PatternImageRendering(s)
-}
-
-func (e *PatternElement) Overflow(a PatternOverflow) *PatternElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func PatternOverflowCustom(s string) PatternOverflow {
-	return PatternOverflow(s)
 }
 
 func (e *PatternElement) TransformBox(a PatternTransformBox) *PatternElement {
@@ -900,18 +953,46 @@ func PatternTransformBoxCustom(s string) PatternTransformBox {
 	return PatternTransformBox(s)
 }
 
-func (e *PatternElement) Direction(a PatternDirection) *PatternElement {
-	e.attributes.Set("direction", string(a))
+func (e *PatternElement) TransformOrigin(s string) *PatternElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func PatternDirectionCustom(s string) PatternDirection {
-	return PatternDirection(s)
-}
-
 func (e *PatternElement) UnicodeBidi(s string) *PatternElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *PatternElement) VectorEffect(a PatternVectorEffect) *PatternElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func PatternVectorEffectCustom(s string) PatternVectorEffect {
+	return PatternVectorEffect(s)
+}
+
+func (e *PatternElement) Visibility(a PatternVisibility) *PatternElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func PatternVisibilityCustom(s string) PatternVisibility {
+	return PatternVisibility(s)
+}
+
+func (e *PatternElement) WhiteSpace(s string) *PatternElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *PatternElement) WordSpacing(s string) *PatternElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -926,8 +1007,20 @@ func PatternWritingModeCustom(s string) PatternWritingMode {
 	return PatternWritingMode(s)
 }
 
-func (e *PatternElement) WhiteSpace(s string) *PatternElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) XmlLang(s string) *PatternElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *PatternElement) XmlSpace(a PatternXmlSpace) *PatternElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

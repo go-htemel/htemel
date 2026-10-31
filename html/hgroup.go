@@ -240,6 +240,15 @@ const (
 	HgroupInputmodeUrl     HgroupInputmode = "url"
 )
 
+type HgroupPopover string
+
+const (
+	HgroupPopoverAuto   HgroupPopover = "auto"
+	HgroupPopoverHint   HgroupPopover = "hint"
+	HgroupPopoverManual HgroupPopover = "manual"
+	HgroupPopoverEmpty  HgroupPopover = ""
+)
+
 type HgroupSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *HgroupElement) Enterkeyhint(a HgroupEnterkeyhint) *HgroupElement {
 	return e
 }
 
+func (e *HgroupElement) Exportparts(s string) *HgroupElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *HgroupElement) Headingoffset(i int) *HgroupElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *HgroupElement) Headingreset(b bool) *HgroupElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HgroupElement) Hidden(v ...HgroupHidden) *HgroupElement {
@@ -396,6 +425,14 @@ func (e *HgroupElement) Inputmode(a HgroupInputmode) *HgroupElement {
 	return e
 }
 
+func (e *HgroupElement) Is(s string) *HgroupElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *HgroupElement) Itemid(s string) *HgroupElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *HgroupElement) Nonce(s string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Popover(s string) *HgroupElement {
-	e.attributes.Set("popover", s)
+func (e *HgroupElement) Part(s ...string) *HgroupElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Popover(v ...HgroupPopover) *HgroupElement {
+	var val HgroupPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

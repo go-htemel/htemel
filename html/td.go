@@ -240,6 +240,15 @@ const (
 	TdInputmodeUrl     TdInputmode = "url"
 )
 
+type TdPopover string
+
+const (
+	TdPopoverAuto   TdPopover = "auto"
+	TdPopoverHint   TdPopover = "hint"
+	TdPopoverManual TdPopover = "manual"
+	TdPopoverEmpty  TdPopover = ""
+)
+
 type TdSpellcheck string
 
 const (
@@ -264,20 +273,20 @@ const (
 	TdWritingsuggestionsEmpty TdWritingsuggestions = ""
 )
 
-func (e *TdElement) Span(i int) *TdElement {
-	e.attributes.Set("span", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *TdElement) Rowspan(i int) *TdElement {
-	e.attributes.Set("rowspan", strconv.Itoa(i))
+func (e *TdElement) Colspan(i int) *TdElement {
+	e.attributes.Set("colspan", strconv.Itoa(i))
 
 	return e
 }
 
 func (e *TdElement) Headers(s ...string) *TdElement {
 	e.attributes.Set("headers", strings.Join(s, " "))
+
+	return e
+}
+
+func (e *TdElement) Rowspan(i int) *TdElement {
+	e.attributes.Set("rowspan", strconv.Itoa(i))
 
 	return e
 }
@@ -382,6 +391,26 @@ func (e *TdElement) Enterkeyhint(a TdEnterkeyhint) *TdElement {
 	return e
 }
 
+func (e *TdElement) Exportparts(s string) *TdElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TdElement) Headingoffset(i int) *TdElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TdElement) Headingreset(b bool) *TdElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TdElement) Hidden(v ...TdHidden) *TdElement {
@@ -414,6 +443,14 @@ func (e *TdElement) Inputmode(a TdInputmode) *TdElement {
 	return e
 }
 
+func (e *TdElement) Is(s string) *TdElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TdElement) Itemid(s string) *TdElement {
 	e.attributes.Set("itemid", s)
 
@@ -458,8 +495,20 @@ func (e *TdElement) Nonce(s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Popover(s string) *TdElement {
-	e.attributes.Set("popover", s)
+func (e *TdElement) Part(s ...string) *TdElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Popover(v ...TdPopover) *TdElement {
+	var val TdPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

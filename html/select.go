@@ -240,6 +240,15 @@ const (
 	SelectInputmodeUrl     SelectInputmode = "url"
 )
 
+type SelectPopover string
+
+const (
+	SelectPopoverAuto   SelectPopover = "auto"
+	SelectPopoverHint   SelectPopover = "hint"
+	SelectPopoverManual SelectPopover = "manual"
+	SelectPopoverEmpty  SelectPopover = ""
+)
+
 type SelectSpellcheck string
 
 const (
@@ -264,8 +273,8 @@ const (
 	SelectWritingsuggestionsEmpty SelectWritingsuggestions = ""
 )
 
-func (e *SelectElement) Autocomplete(s string) *SelectElement {
-	e.attributes.Set("autocomplete", s)
+func (e *SelectElement) Autocomplete(s ...string) *SelectElement {
+	e.attributes.Set("autocomplete", strings.Join(s, " "))
 
 	return e
 }
@@ -412,6 +421,26 @@ func (e *SelectElement) Enterkeyhint(a SelectEnterkeyhint) *SelectElement {
 	return e
 }
 
+func (e *SelectElement) Exportparts(s string) *SelectElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SelectElement) Headingoffset(i int) *SelectElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SelectElement) Headingreset(b bool) *SelectElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SelectElement) Hidden(v ...SelectHidden) *SelectElement {
@@ -444,6 +473,14 @@ func (e *SelectElement) Inputmode(a SelectInputmode) *SelectElement {
 	return e
 }
 
+func (e *SelectElement) Is(s string) *SelectElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SelectElement) Itemid(s string) *SelectElement {
 	e.attributes.Set("itemid", s)
 
@@ -488,8 +525,20 @@ func (e *SelectElement) Nonce(s string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Popover(s string) *SelectElement {
-	e.attributes.Set("popover", s)
+func (e *SelectElement) Part(s ...string) *SelectElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Popover(v ...SelectPopover) *SelectElement {
+	var val SelectPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

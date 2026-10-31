@@ -240,6 +240,15 @@ const (
 	SpanInputmodeUrl     SpanInputmode = "url"
 )
 
+type SpanPopover string
+
+const (
+	SpanPopoverAuto   SpanPopover = "auto"
+	SpanPopoverHint   SpanPopover = "hint"
+	SpanPopoverManual SpanPopover = "manual"
+	SpanPopoverEmpty  SpanPopover = ""
+)
+
 type SpanSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SpanElement) Enterkeyhint(a SpanEnterkeyhint) *SpanElement {
 	return e
 }
 
+func (e *SpanElement) Exportparts(s string) *SpanElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SpanElement) Headingoffset(i int) *SpanElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SpanElement) Headingreset(b bool) *SpanElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SpanElement) Hidden(v ...SpanHidden) *SpanElement {
@@ -396,6 +425,14 @@ func (e *SpanElement) Inputmode(a SpanInputmode) *SpanElement {
 	return e
 }
 
+func (e *SpanElement) Is(s string) *SpanElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SpanElement) Itemid(s string) *SpanElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SpanElement) Nonce(s string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Popover(s string) *SpanElement {
-	e.attributes.Set("popover", s)
+func (e *SpanElement) Part(s ...string) *SpanElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Popover(v ...SpanPopover) *SpanElement {
+	var val SpanPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

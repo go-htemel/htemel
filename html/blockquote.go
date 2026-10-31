@@ -240,6 +240,15 @@ const (
 	BlockquoteInputmodeUrl     BlockquoteInputmode = "url"
 )
 
+type BlockquotePopover string
+
+const (
+	BlockquotePopoverAuto   BlockquotePopover = "auto"
+	BlockquotePopoverHint   BlockquotePopover = "hint"
+	BlockquotePopoverManual BlockquotePopover = "manual"
+	BlockquotePopoverEmpty  BlockquotePopover = ""
+)
+
 type BlockquoteSpellcheck string
 
 const (
@@ -264,6 +273,8 @@ const (
 	BlockquoteWritingsuggestionsEmpty BlockquoteWritingsuggestions = ""
 )
 
+// Cite sets the "cite" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BlockquoteElement) Cite(s string) *BlockquoteElement {
 	e.attributes.Set("cite", s)
 
@@ -370,6 +381,26 @@ func (e *BlockquoteElement) Enterkeyhint(a BlockquoteEnterkeyhint) *BlockquoteEl
 	return e
 }
 
+func (e *BlockquoteElement) Exportparts(s string) *BlockquoteElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *BlockquoteElement) Headingoffset(i int) *BlockquoteElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *BlockquoteElement) Headingreset(b bool) *BlockquoteElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BlockquoteElement) Hidden(v ...BlockquoteHidden) *BlockquoteElement {
@@ -402,6 +433,14 @@ func (e *BlockquoteElement) Inputmode(a BlockquoteInputmode) *BlockquoteElement 
 	return e
 }
 
+func (e *BlockquoteElement) Is(s string) *BlockquoteElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BlockquoteElement) Itemid(s string) *BlockquoteElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +485,20 @@ func (e *BlockquoteElement) Nonce(s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Popover(s string) *BlockquoteElement {
-	e.attributes.Set("popover", s)
+func (e *BlockquoteElement) Part(s ...string) *BlockquoteElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Popover(v ...BlockquotePopover) *BlockquoteElement {
+	var val BlockquotePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

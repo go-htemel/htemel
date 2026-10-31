@@ -240,6 +240,15 @@ const (
 	FieldsetInputmodeUrl     FieldsetInputmode = "url"
 )
 
+type FieldsetPopover string
+
+const (
+	FieldsetPopoverAuto   FieldsetPopover = "auto"
+	FieldsetPopoverHint   FieldsetPopover = "hint"
+	FieldsetPopoverManual FieldsetPopover = "manual"
+	FieldsetPopoverEmpty  FieldsetPopover = ""
+)
+
 type FieldsetSpellcheck string
 
 const (
@@ -384,6 +393,26 @@ func (e *FieldsetElement) Enterkeyhint(a FieldsetEnterkeyhint) *FieldsetElement 
 	return e
 }
 
+func (e *FieldsetElement) Exportparts(s string) *FieldsetElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *FieldsetElement) Headingoffset(i int) *FieldsetElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FieldsetElement) Headingreset(b bool) *FieldsetElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FieldsetElement) Hidden(v ...FieldsetHidden) *FieldsetElement {
@@ -416,6 +445,14 @@ func (e *FieldsetElement) Inputmode(a FieldsetInputmode) *FieldsetElement {
 	return e
 }
 
+func (e *FieldsetElement) Is(s string) *FieldsetElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FieldsetElement) Itemid(s string) *FieldsetElement {
 	e.attributes.Set("itemid", s)
 
@@ -460,8 +497,20 @@ func (e *FieldsetElement) Nonce(s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Popover(s string) *FieldsetElement {
-	e.attributes.Set("popover", s)
+func (e *FieldsetElement) Part(s ...string) *FieldsetElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Popover(v ...FieldsetPopover) *FieldsetElement {
+	var val FieldsetPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

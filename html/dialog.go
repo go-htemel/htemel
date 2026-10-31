@@ -248,6 +248,15 @@ const (
 	DialogInputmodeUrl     DialogInputmode = "url"
 )
 
+type DialogPopover string
+
+const (
+	DialogPopoverAuto   DialogPopover = "auto"
+	DialogPopoverHint   DialogPopover = "hint"
+	DialogPopoverManual DialogPopover = "manual"
+	DialogPopoverEmpty  DialogPopover = ""
+)
+
 type DialogSpellcheck string
 
 const (
@@ -386,6 +395,26 @@ func (e *DialogElement) Enterkeyhint(a DialogEnterkeyhint) *DialogElement {
 	return e
 }
 
+func (e *DialogElement) Exportparts(s string) *DialogElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *DialogElement) Headingoffset(i int) *DialogElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DialogElement) Headingreset(b bool) *DialogElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DialogElement) Hidden(v ...DialogHidden) *DialogElement {
@@ -418,6 +447,14 @@ func (e *DialogElement) Inputmode(a DialogInputmode) *DialogElement {
 	return e
 }
 
+func (e *DialogElement) Is(s string) *DialogElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DialogElement) Itemid(s string) *DialogElement {
 	e.attributes.Set("itemid", s)
 
@@ -462,8 +499,20 @@ func (e *DialogElement) Nonce(s string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Popover(s string) *DialogElement {
-	e.attributes.Set("popover", s)
+func (e *DialogElement) Part(s ...string) *DialogElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Popover(v ...DialogPopover) *DialogElement {
+	var val DialogPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

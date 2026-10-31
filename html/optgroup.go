@@ -240,6 +240,15 @@ const (
 	OptgroupInputmodeUrl     OptgroupInputmode = "url"
 )
 
+type OptgroupPopover string
+
+const (
+	OptgroupPopoverAuto   OptgroupPopover = "auto"
+	OptgroupPopoverHint   OptgroupPopover = "hint"
+	OptgroupPopoverManual OptgroupPopover = "manual"
+	OptgroupPopoverEmpty  OptgroupPopover = ""
+)
+
 type OptgroupSpellcheck string
 
 const (
@@ -378,6 +387,26 @@ func (e *OptgroupElement) Enterkeyhint(a OptgroupEnterkeyhint) *OptgroupElement 
 	return e
 }
 
+func (e *OptgroupElement) Exportparts(s string) *OptgroupElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *OptgroupElement) Headingoffset(i int) *OptgroupElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *OptgroupElement) Headingreset(b bool) *OptgroupElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OptgroupElement) Hidden(v ...OptgroupHidden) *OptgroupElement {
@@ -410,6 +439,14 @@ func (e *OptgroupElement) Inputmode(a OptgroupInputmode) *OptgroupElement {
 	return e
 }
 
+func (e *OptgroupElement) Is(s string) *OptgroupElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *OptgroupElement) Itemid(s string) *OptgroupElement {
 	e.attributes.Set("itemid", s)
 
@@ -454,8 +491,20 @@ func (e *OptgroupElement) Nonce(s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Popover(s string) *OptgroupElement {
-	e.attributes.Set("popover", s)
+func (e *OptgroupElement) Part(s ...string) *OptgroupElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Popover(v ...OptgroupPopover) *OptgroupElement {
+	var val OptgroupPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

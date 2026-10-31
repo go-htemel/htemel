@@ -240,6 +240,15 @@ const (
 	MenuInputmodeUrl     MenuInputmode = "url"
 )
 
+type MenuPopover string
+
+const (
+	MenuPopoverAuto   MenuPopover = "auto"
+	MenuPopoverHint   MenuPopover = "hint"
+	MenuPopoverManual MenuPopover = "manual"
+	MenuPopoverEmpty  MenuPopover = ""
+)
+
 type MenuSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *MenuElement) Enterkeyhint(a MenuEnterkeyhint) *MenuElement {
 	return e
 }
 
+func (e *MenuElement) Exportparts(s string) *MenuElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *MenuElement) Headingoffset(i int) *MenuElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MenuElement) Headingreset(b bool) *MenuElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MenuElement) Hidden(v ...MenuHidden) *MenuElement {
@@ -396,6 +425,14 @@ func (e *MenuElement) Inputmode(a MenuInputmode) *MenuElement {
 	return e
 }
 
+func (e *MenuElement) Is(s string) *MenuElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *MenuElement) Itemid(s string) *MenuElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *MenuElement) Nonce(s string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Popover(s string) *MenuElement {
-	e.attributes.Set("popover", s)
+func (e *MenuElement) Part(s ...string) *MenuElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Popover(v ...MenuPopover) *MenuElement {
+	var val MenuPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

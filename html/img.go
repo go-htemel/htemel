@@ -125,6 +125,14 @@ const (
 	ImgDecodingSync  ImgDecoding = "sync"
 )
 
+type ImgFetchpriority string
+
+const (
+	ImgFetchpriorityAuto ImgFetchpriority = "auto"
+	ImgFetchpriorityHigh ImgFetchpriority = "high"
+	ImgFetchpriorityLow  ImgFetchpriority = "low"
+)
+
 type ImgLoading string
 
 const (
@@ -132,12 +140,18 @@ const (
 	ImgLoadingLazy  ImgLoading = "lazy"
 )
 
-type ImgFetchpriority string
+type ImgReferrerpolicy string
 
 const (
-	ImgFetchpriorityAuto ImgFetchpriority = "auto"
-	ImgFetchpriorityHigh ImgFetchpriority = "high"
-	ImgFetchpriorityLow  ImgFetchpriority = "low"
+	ImgReferrerpolicyNoReferrer                  ImgReferrerpolicy = "no-referrer"
+	ImgReferrerpolicyNoReferrerWhenDowngrade     ImgReferrerpolicy = "no-referrer-when-downgrade"
+	ImgReferrerpolicyOrigin                      ImgReferrerpolicy = "origin"
+	ImgReferrerpolicyOriginWhenCrossOrigin       ImgReferrerpolicy = "origin-when-cross-origin"
+	ImgReferrerpolicySameOrigin                  ImgReferrerpolicy = "same-origin"
+	ImgReferrerpolicyStrictOrigin                ImgReferrerpolicy = "strict-origin"
+	ImgReferrerpolicyStrictOriginWhenCrossOrigin ImgReferrerpolicy = "strict-origin-when-cross-origin"
+	ImgReferrerpolicyUnsafeUrl                   ImgReferrerpolicy = "unsafe-url"
+	ImgReferrerpolicyEmpty                       ImgReferrerpolicy = ""
 )
 
 type ImgAutocapitalize string
@@ -216,6 +230,15 @@ const (
 	ImgInputmodeUrl     ImgInputmode = "url"
 )
 
+type ImgPopover string
+
+const (
+	ImgPopoverAuto   ImgPopover = "auto"
+	ImgPopoverHint   ImgPopover = "hint"
+	ImgPopoverManual ImgPopover = "manual"
+	ImgPopoverEmpty  ImgPopover = ""
+)
+
 type ImgSpellcheck string
 
 const (
@@ -246,20 +269,10 @@ func (e *ImgElement) Alt(s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Src(s string) *ImgElement {
-	e.attributes.Set("src", s)
-
-	return e
-}
-
-func (e *ImgElement) Srcset(s string) *ImgElement {
-	e.attributes.Set("srcset", s)
-
-	return e
-}
-
-func (e *ImgElement) Sizes(s string) *ImgElement {
-	e.attributes.Set("sizes", s)
+// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ImgElement) Controls(b bool) *ImgElement {
+	e.attributes.SetBool("controls", b)
 
 	return e
 }
@@ -276,8 +289,20 @@ func (e *ImgElement) Crossorigin(v ...ImgCrossorigin) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Usemap(s string) *ImgElement {
-	e.attributes.Set("usemap", s)
+func (e *ImgElement) Decoding(a ImgDecoding) *ImgElement {
+	e.attributes.Set("decoding", string(a))
+
+	return e
+}
+
+func (e *ImgElement) Fetchpriority(a ImgFetchpriority) *ImgElement {
+	e.attributes.Set("fetchpriority", string(a))
+
+	return e
+}
+
+func (e *ImgElement) Height(i int) *ImgElement {
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -290,38 +315,52 @@ func (e *ImgElement) Ismap(b bool) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Width(i int) *ImgElement {
-	e.attributes.Set("width", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *ImgElement) Height(i int) *ImgElement {
-	e.attributes.Set("height", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *ImgElement) Referrerpolicy(s string) *ImgElement {
-	e.attributes.Set("referrerpolicy", s)
-
-	return e
-}
-
-func (e *ImgElement) Decoding(a ImgDecoding) *ImgElement {
-	e.attributes.Set("decoding", string(a))
-
-	return e
-}
-
 func (e *ImgElement) Loading(a ImgLoading) *ImgElement {
 	e.attributes.Set("loading", string(a))
 
 	return e
 }
 
-func (e *ImgElement) Fetchpriority(a ImgFetchpriority) *ImgElement {
-	e.attributes.Set("fetchpriority", string(a))
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Referrerpolicy(v ...ImgReferrerpolicy) *ImgElement {
+	var val ImgReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
+func (e *ImgElement) Sizes(s string) *ImgElement {
+	e.attributes.Set("sizes", s)
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *ImgElement) Src(s string) *ImgElement {
+	e.attributes.Set("src", s)
+
+	return e
+}
+
+func (e *ImgElement) Srcset(s string) *ImgElement {
+	e.attributes.Set("srcset", s)
+
+	return e
+}
+
+func (e *ImgElement) Usemap(s string) *ImgElement {
+	e.attributes.Set("usemap", s)
+
+	return e
+}
+
+func (e *ImgElement) Width(i int) *ImgElement {
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
@@ -426,6 +465,26 @@ func (e *ImgElement) Enterkeyhint(a ImgEnterkeyhint) *ImgElement {
 	return e
 }
 
+func (e *ImgElement) Exportparts(s string) *ImgElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ImgElement) Headingoffset(i int) *ImgElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ImgElement) Headingreset(b bool) *ImgElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ImgElement) Hidden(v ...ImgHidden) *ImgElement {
@@ -458,6 +517,14 @@ func (e *ImgElement) Inputmode(a ImgInputmode) *ImgElement {
 	return e
 }
 
+func (e *ImgElement) Is(s string) *ImgElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ImgElement) Itemid(s string) *ImgElement {
 	e.attributes.Set("itemid", s)
 
@@ -502,8 +569,20 @@ func (e *ImgElement) Nonce(s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Popover(s string) *ImgElement {
-	e.attributes.Set("popover", s)
+func (e *ImgElement) Part(s ...string) *ImgElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Popover(v ...ImgPopover) *ImgElement {
+	var val ImgPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

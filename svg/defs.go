@@ -164,134 +164,6 @@ func (e *DefsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DefsXmlSpace string
-
-const (
-	DefsXmlSpaceDefault  DefsXmlSpace = "default"
-	DefsXmlSpacePreserve DefsXmlSpace = "preserve"
-)
-
-type DefsFillRule string
-
-const (
-	DefsFillRuleEvenodd DefsFillRule = "evenodd"
-	DefsFillRuleNonzero DefsFillRule = "nonzero"
-)
-
-type DefsStrokeLinecap string
-
-const (
-	DefsStrokeLinecapButt   DefsStrokeLinecap = "butt"
-	DefsStrokeLinecapRound  DefsStrokeLinecap = "round"
-	DefsStrokeLinecapSquare DefsStrokeLinecap = "square"
-)
-
-type DefsStrokeLinejoin string
-
-const (
-	DefsStrokeLinejoinArcs      DefsStrokeLinejoin = "arcs"
-	DefsStrokeLinejoinBevel     DefsStrokeLinejoin = "bevel"
-	DefsStrokeLinejoinMiter     DefsStrokeLinejoin = "miter"
-	DefsStrokeLinejoinMiterClip DefsStrokeLinejoin = "miter-clip"
-	DefsStrokeLinejoinRound     DefsStrokeLinejoin = "round"
-)
-
-type DefsVisibility string
-
-const (
-	DefsVisibilityCollapse DefsVisibility = "collapse"
-	DefsVisibilityHidden   DefsVisibility = "hidden"
-	DefsVisibilityVisible  DefsVisibility = "visible"
-)
-
-type DefsClipRule string
-
-const (
-	DefsClipRuleEvenodd DefsClipRule = "evenodd"
-	DefsClipRuleNonzero DefsClipRule = "nonzero"
-)
-
-type DefsPointerEvents string
-
-const (
-	DefsPointerEventsAll            DefsPointerEvents = "all"
-	DefsPointerEventsAuto           DefsPointerEvents = "auto"
-	DefsPointerEventsBoundingBox    DefsPointerEvents = "bounding-box"
-	DefsPointerEventsFill           DefsPointerEvents = "fill"
-	DefsPointerEventsNone           DefsPointerEvents = "none"
-	DefsPointerEventsPainted        DefsPointerEvents = "painted"
-	DefsPointerEventsStroke         DefsPointerEvents = "stroke"
-	DefsPointerEventsVisible        DefsPointerEvents = "visible"
-	DefsPointerEventsVisibleFill    DefsPointerEvents = "visibleFill"
-	DefsPointerEventsVisiblePainted DefsPointerEvents = "visiblePainted"
-	DefsPointerEventsVisibleStroke  DefsPointerEvents = "visibleStroke"
-)
-
-type DefsVectorEffect string
-
-const (
-	DefsVectorEffectFixedPosition    DefsVectorEffect = "fixed-position"
-	DefsVectorEffectNonRotation      DefsVectorEffect = "non-rotation"
-	DefsVectorEffectNonScalingSize   DefsVectorEffect = "non-scaling-size"
-	DefsVectorEffectNonScalingStroke DefsVectorEffect = "non-scaling-stroke"
-	DefsVectorEffectNone             DefsVectorEffect = "none"
-)
-
-type DefsShapeRendering string
-
-const (
-	DefsShapeRenderingAuto               DefsShapeRendering = "auto"
-	DefsShapeRenderingCrispEdges         DefsShapeRendering = "crispEdges"
-	DefsShapeRenderingGeometricPrecision DefsShapeRendering = "geometricPrecision"
-	DefsShapeRenderingOptimizeSpeed      DefsShapeRendering = "optimizeSpeed"
-)
-
-type DefsColorInterpolation string
-
-const (
-	DefsColorInterpolationAuto      DefsColorInterpolation = "auto"
-	DefsColorInterpolationLinearRGB DefsColorInterpolation = "linearRGB"
-	DefsColorInterpolationSRGB      DefsColorInterpolation = "sRGB"
-)
-
-type DefsColorInterpolationFilters string
-
-const (
-	DefsColorInterpolationFiltersAuto      DefsColorInterpolationFilters = "auto"
-	DefsColorInterpolationFiltersLinearRGB DefsColorInterpolationFilters = "linearRGB"
-	DefsColorInterpolationFiltersSRGB      DefsColorInterpolationFilters = "sRGB"
-)
-
-type DefsFontStyle string
-
-const (
-	DefsFontStyleItalic  DefsFontStyle = "italic"
-	DefsFontStyleNormal  DefsFontStyle = "normal"
-	DefsFontStyleOblique DefsFontStyle = "oblique"
-)
-
-type DefsTextAnchor string
-
-const (
-	DefsTextAnchorEnd    DefsTextAnchor = "end"
-	DefsTextAnchorMiddle DefsTextAnchor = "middle"
-	DefsTextAnchorStart  DefsTextAnchor = "start"
-)
-
-type DefsDominantBaseline string
-
-const (
-	DefsDominantBaselineAlphabetic   DefsDominantBaseline = "alphabetic"
-	DefsDominantBaselineAuto         DefsDominantBaseline = "auto"
-	DefsDominantBaselineCentral      DefsDominantBaseline = "central"
-	DefsDominantBaselineHanging      DefsDominantBaseline = "hanging"
-	DefsDominantBaselineIdeographic  DefsDominantBaseline = "ideographic"
-	DefsDominantBaselineMathematical DefsDominantBaseline = "mathematical"
-	DefsDominantBaselineMiddle       DefsDominantBaseline = "middle"
-	DefsDominantBaselineTextBottom   DefsDominantBaseline = "text-bottom"
-	DefsDominantBaselineTextTop      DefsDominantBaseline = "text-top"
-)
-
 type DefsAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	DefsAlignmentBaselineTop            DefsAlignmentBaseline = "top"
 )
 
-type DefsTextRendering string
+type DefsClipRule string
 
 const (
-	DefsTextRenderingAuto               DefsTextRendering = "auto"
-	DefsTextRenderingGeometricPrecision DefsTextRendering = "geometricPrecision"
-	DefsTextRenderingOptimizeLegibility DefsTextRendering = "optimizeLegibility"
-	DefsTextRenderingOptimizeSpeed      DefsTextRendering = "optimizeSpeed"
+	DefsClipRuleEvenodd DefsClipRule = "evenodd"
+	DefsClipRuleNonzero DefsClipRule = "nonzero"
+)
+
+type DefsColorInterpolation string
+
+const (
+	DefsColorInterpolationAuto      DefsColorInterpolation = "auto"
+	DefsColorInterpolationLinearRGB DefsColorInterpolation = "linearRGB"
+	DefsColorInterpolationSRGB      DefsColorInterpolation = "sRGB"
+)
+
+type DefsColorInterpolationFilters string
+
+const (
+	DefsColorInterpolationFiltersAuto      DefsColorInterpolationFilters = "auto"
+	DefsColorInterpolationFiltersLinearRGB DefsColorInterpolationFilters = "linearRGB"
+	DefsColorInterpolationFiltersSRGB      DefsColorInterpolationFilters = "sRGB"
+)
+
+type DefsDirection string
+
+const (
+	DefsDirectionLtr DefsDirection = "ltr"
+	DefsDirectionRtl DefsDirection = "rtl"
+)
+
+type DefsDominantBaseline string
+
+const (
+	DefsDominantBaselineAlphabetic   DefsDominantBaseline = "alphabetic"
+	DefsDominantBaselineAuto         DefsDominantBaseline = "auto"
+	DefsDominantBaselineCentral      DefsDominantBaseline = "central"
+	DefsDominantBaselineHanging      DefsDominantBaseline = "hanging"
+	DefsDominantBaselineIdeographic  DefsDominantBaseline = "ideographic"
+	DefsDominantBaselineMathematical DefsDominantBaseline = "mathematical"
+	DefsDominantBaselineMiddle       DefsDominantBaseline = "middle"
+	DefsDominantBaselineTextBottom   DefsDominantBaseline = "text-bottom"
+	DefsDominantBaselineTextTop      DefsDominantBaseline = "text-top"
+)
+
+type DefsFillRule string
+
+const (
+	DefsFillRuleEvenodd DefsFillRule = "evenodd"
+	DefsFillRuleNonzero DefsFillRule = "nonzero"
+)
+
+type DefsFontStyle string
+
+const (
+	DefsFontStyleItalic  DefsFontStyle = "italic"
+	DefsFontStyleNormal  DefsFontStyle = "normal"
+	DefsFontStyleOblique DefsFontStyle = "oblique"
 )
 
 type DefsImageRendering string
@@ -345,6 +267,66 @@ const (
 	DefsOverflowVisible DefsOverflow = "visible"
 )
 
+type DefsPointerEvents string
+
+const (
+	DefsPointerEventsAll            DefsPointerEvents = "all"
+	DefsPointerEventsAuto           DefsPointerEvents = "auto"
+	DefsPointerEventsBoundingBox    DefsPointerEvents = "bounding-box"
+	DefsPointerEventsFill           DefsPointerEvents = "fill"
+	DefsPointerEventsNone           DefsPointerEvents = "none"
+	DefsPointerEventsPainted        DefsPointerEvents = "painted"
+	DefsPointerEventsStroke         DefsPointerEvents = "stroke"
+	DefsPointerEventsVisible        DefsPointerEvents = "visible"
+	DefsPointerEventsVisibleFill    DefsPointerEvents = "visibleFill"
+	DefsPointerEventsVisiblePainted DefsPointerEvents = "visiblePainted"
+	DefsPointerEventsVisibleStroke  DefsPointerEvents = "visibleStroke"
+)
+
+type DefsShapeRendering string
+
+const (
+	DefsShapeRenderingAuto               DefsShapeRendering = "auto"
+	DefsShapeRenderingCrispEdges         DefsShapeRendering = "crispEdges"
+	DefsShapeRenderingGeometricPrecision DefsShapeRendering = "geometricPrecision"
+	DefsShapeRenderingOptimizeSpeed      DefsShapeRendering = "optimizeSpeed"
+)
+
+type DefsStrokeLinecap string
+
+const (
+	DefsStrokeLinecapButt   DefsStrokeLinecap = "butt"
+	DefsStrokeLinecapRound  DefsStrokeLinecap = "round"
+	DefsStrokeLinecapSquare DefsStrokeLinecap = "square"
+)
+
+type DefsStrokeLinejoin string
+
+const (
+	DefsStrokeLinejoinArcs      DefsStrokeLinejoin = "arcs"
+	DefsStrokeLinejoinBevel     DefsStrokeLinejoin = "bevel"
+	DefsStrokeLinejoinMiter     DefsStrokeLinejoin = "miter"
+	DefsStrokeLinejoinMiterClip DefsStrokeLinejoin = "miter-clip"
+	DefsStrokeLinejoinRound     DefsStrokeLinejoin = "round"
+)
+
+type DefsTextAnchor string
+
+const (
+	DefsTextAnchorEnd    DefsTextAnchor = "end"
+	DefsTextAnchorMiddle DefsTextAnchor = "middle"
+	DefsTextAnchorStart  DefsTextAnchor = "start"
+)
+
+type DefsTextRendering string
+
+const (
+	DefsTextRenderingAuto               DefsTextRendering = "auto"
+	DefsTextRenderingGeometricPrecision DefsTextRendering = "geometricPrecision"
+	DefsTextRenderingOptimizeLegibility DefsTextRendering = "optimizeLegibility"
+	DefsTextRenderingOptimizeSpeed      DefsTextRendering = "optimizeSpeed"
+)
+
 type DefsTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	DefsTransformBoxViewBox    DefsTransformBox = "view-box"
 )
 
-type DefsDirection string
+type DefsVectorEffect string
 
 const (
-	DefsDirectionLtr DefsDirection = "ltr"
-	DefsDirectionRtl DefsDirection = "rtl"
+	DefsVectorEffectFixedPosition    DefsVectorEffect = "fixed-position"
+	DefsVectorEffectNonRotation      DefsVectorEffect = "non-rotation"
+	DefsVectorEffectNonScalingSize   DefsVectorEffect = "non-scaling-size"
+	DefsVectorEffectNonScalingStroke DefsVectorEffect = "non-scaling-stroke"
+	DefsVectorEffectNone             DefsVectorEffect = "none"
+)
+
+type DefsVisibility string
+
+const (
+	DefsVisibilityCollapse DefsVisibility = "collapse"
+	DefsVisibilityHidden   DefsVisibility = "hidden"
+	DefsVisibilityVisible  DefsVisibility = "visible"
 )
 
 type DefsWritingMode string
@@ -378,20 +371,55 @@ const (
 	DefsWritingModeVerticalRl   DefsWritingMode = "vertical-rl"
 )
 
-func (e *DefsElement) Transform(s string) *DefsElement {
-	e.attributes.Set("transform", s)
+type DefsXmlSpace string
+
+const (
+	DefsXmlSpaceDefault  DefsXmlSpace = "default"
+	DefsXmlSpacePreserve DefsXmlSpace = "preserve"
+)
+
+func (e *DefsElement) SystemLanguage(s string) *DefsElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *DefsElement) TransformOrigin(s string) *DefsElement {
-	e.attributes.Set("transform-origin", s)
+func (e *DefsElement) AlignmentBaseline(a DefsAlignmentBaseline) *DefsElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *DefsElement) Id(s string) *DefsElement {
-	e.attributes.Set("id", s)
+func DefsAlignmentBaselineCustom(s string) DefsAlignmentBaseline {
+	return DefsAlignmentBaseline(s)
+}
+
+func (e *DefsElement) AriaUnsafe(name string, s string) *DefsElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *DefsElement) Aria(name string, s string) *DefsElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DefsElement) Autofocus(b bool) *DefsElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *DefsElement) BaselineShift(s string) *DefsElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -402,40 +430,59 @@ func (e *DefsElement) Class(s ...string) *DefsElement {
 	return e
 }
 
-func (e *DefsElement) Style(s string) *DefsElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *DefsElement) Clip(s string) *DefsElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *DefsElement) Tabindex(i int) *DefsElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *DefsElement) ClipPath(s string) *DefsElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *DefsElement) Lang(s string) *DefsElement {
-	e.attributes.Set("lang", s)
+func (e *DefsElement) ClipRule(a DefsClipRule) *DefsElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *DefsElement) XmlLang(s string) *DefsElement {
-	e.attributes.Set("xml:lang", s)
+func DefsClipRuleCustom(s string) DefsClipRule {
+	return DefsClipRule(s)
+}
+
+func (e *DefsElement) Color(s string) *DefsElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *DefsElement) XmlSpace(a DefsXmlSpace) *DefsElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *DefsElement) ColorInterpolation(a DefsColorInterpolation) *DefsElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *DefsElement) Autofocus(b bool) *DefsElement {
-	e.attributes.SetBool("autofocus", b)
+func DefsColorInterpolationCustom(s string) DefsColorInterpolation {
+	return DefsColorInterpolation(s)
+}
+
+func (e *DefsElement) ColorInterpolationFilters(a DefsColorInterpolationFilters) *DefsElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func DefsColorInterpolationFiltersCustom(s string) DefsColorInterpolationFilters {
+	return DefsColorInterpolationFilters(s)
+}
+
+func (e *DefsElement) Cursor(s string) *DefsElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -456,20 +503,30 @@ func (e *DefsElement) Data(name string, s string) *DefsElement {
 	return e
 }
 
-func (e *DefsElement) AriaUnsafe(name string, s string) *DefsElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *DefsElement) Direction(a DefsDirection) *DefsElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *DefsElement) Aria(name string, s string) *DefsElement {
-	tag := strings.ToLower("aria-" + name)
+func DefsDirectionCustom(s string) DefsDirection {
+	return DefsDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *DefsElement) Display(s string) *DefsElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *DefsElement) DominantBaseline(a DefsDominantBaseline) *DefsElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func DefsDominantBaselineCustom(s string) DefsDominantBaseline {
+	return DefsDominantBaseline(s)
 }
 
 func (e *DefsElement) Fill(s string) *DefsElement {
@@ -494,20 +551,220 @@ func DefsFillRuleCustom(s string) DefsFillRule {
 	return DefsFillRule(s)
 }
 
+func (e *DefsElement) Filter(s string) *DefsElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *DefsElement) FloodColor(s string) *DefsElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *DefsElement) FloodOpacity(f float64) *DefsElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *DefsElement) FontFamily(s string) *DefsElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *DefsElement) FontSize(s string) *DefsElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *DefsElement) FontSizeAdjust(s string) *DefsElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *DefsElement) FontStretch(s string) *DefsElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *DefsElement) FontStyle(a DefsFontStyle) *DefsElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func DefsFontStyleCustom(s string) DefsFontStyle {
+	return DefsFontStyle(s)
+}
+
+func (e *DefsElement) FontVariant(s string) *DefsElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *DefsElement) FontWeight(s string) *DefsElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *DefsElement) GlyphOrientationHorizontal(s string) *DefsElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *DefsElement) GlyphOrientationVertical(s string) *DefsElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *DefsElement) Id(s string) *DefsElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *DefsElement) ImageRendering(a DefsImageRendering) *DefsElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func DefsImageRenderingCustom(s string) DefsImageRendering {
+	return DefsImageRendering(s)
+}
+
+func (e *DefsElement) Lang(s string) *DefsElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *DefsElement) LetterSpacing(s string) *DefsElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *DefsElement) LightingColor(s string) *DefsElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *DefsElement) MarkerEnd(s string) *DefsElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *DefsElement) MarkerMid(s string) *DefsElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *DefsElement) MarkerStart(s string) *DefsElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *DefsElement) Mask(s string) *DefsElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *DefsElement) Opacity(f float64) *DefsElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *DefsElement) Overflow(a DefsOverflow) *DefsElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func DefsOverflowCustom(s string) DefsOverflow {
+	return DefsOverflow(s)
+}
+
+func (e *DefsElement) PaintOrder(s string) *DefsElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *DefsElement) PointerEvents(a DefsPointerEvents) *DefsElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func DefsPointerEventsCustom(s string) DefsPointerEvents {
+	return DefsPointerEvents(s)
+}
+
+func (e *DefsElement) RequiredExtensions(s string) *DefsElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *DefsElement) ShapeRendering(a DefsShapeRendering) *DefsElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func DefsShapeRenderingCustom(s string) DefsShapeRendering {
+	return DefsShapeRendering(s)
+}
+
+func (e *DefsElement) StopColor(s string) *DefsElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *DefsElement) StopOpacity(f float64) *DefsElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *DefsElement) Stroke(s string) *DefsElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *DefsElement) StrokeWidth(s string) *DefsElement {
-	e.attributes.Set("stroke-width", s)
+func (e *DefsElement) StrokeDasharray(s string) *DefsElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *DefsElement) StrokeOpacity(f float64) *DefsElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *DefsElement) StrokeDashoffset(s string) *DefsElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -538,210 +795,28 @@ func (e *DefsElement) StrokeMiterlimit(f float64) *DefsElement {
 	return e
 }
 
-func (e *DefsElement) StrokeDasharray(s string) *DefsElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *DefsElement) StrokeOpacity(f float64) *DefsElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *DefsElement) StrokeDashoffset(s string) *DefsElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *DefsElement) StrokeWidth(s string) *DefsElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *DefsElement) Opacity(f float64) *DefsElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *DefsElement) Style(s string) *DefsElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *DefsElement) Color(s string) *DefsElement {
-	e.attributes.Set("color", s)
+func (e *DefsElement) Tabindex(i int) *DefsElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *DefsElement) Display(s string) *DefsElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *DefsElement) Visibility(a DefsVisibility) *DefsElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func DefsVisibilityCustom(s string) DefsVisibility {
-	return DefsVisibility(s)
-}
-
-func (e *DefsElement) ClipPath(s string) *DefsElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *DefsElement) ClipRule(a DefsClipRule) *DefsElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func DefsClipRuleCustom(s string) DefsClipRule {
-	return DefsClipRule(s)
-}
-
-func (e *DefsElement) Mask(s string) *DefsElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *DefsElement) Filter(s string) *DefsElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *DefsElement) Cursor(s string) *DefsElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *DefsElement) PointerEvents(a DefsPointerEvents) *DefsElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func DefsPointerEventsCustom(s string) DefsPointerEvents {
-	return DefsPointerEvents(s)
-}
-
-func (e *DefsElement) VectorEffect(a DefsVectorEffect) *DefsElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func DefsVectorEffectCustom(s string) DefsVectorEffect {
-	return DefsVectorEffect(s)
-}
-
-func (e *DefsElement) PaintOrder(s string) *DefsElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *DefsElement) ShapeRendering(a DefsShapeRendering) *DefsElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func DefsShapeRenderingCustom(s string) DefsShapeRendering {
-	return DefsShapeRendering(s)
-}
-
-func (e *DefsElement) ColorInterpolation(a DefsColorInterpolation) *DefsElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func DefsColorInterpolationCustom(s string) DefsColorInterpolation {
-	return DefsColorInterpolation(s)
-}
-
-func (e *DefsElement) ColorInterpolationFilters(a DefsColorInterpolationFilters) *DefsElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func DefsColorInterpolationFiltersCustom(s string) DefsColorInterpolationFilters {
-	return DefsColorInterpolationFilters(s)
-}
-
-func (e *DefsElement) FloodColor(s string) *DefsElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *DefsElement) FloodOpacity(f float64) *DefsElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *DefsElement) LightingColor(s string) *DefsElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *DefsElement) StopColor(s string) *DefsElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *DefsElement) StopOpacity(f float64) *DefsElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *DefsElement) MarkerStart(s string) *DefsElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *DefsElement) MarkerMid(s string) *DefsElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *DefsElement) MarkerEnd(s string) *DefsElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *DefsElement) FontFamily(s string) *DefsElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *DefsElement) FontSize(s string) *DefsElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *DefsElement) FontWeight(s string) *DefsElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *DefsElement) FontStyle(a DefsFontStyle) *DefsElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func DefsFontStyleCustom(s string) DefsFontStyle {
-	return DefsFontStyle(s)
 }
 
 func (e *DefsElement) TextAnchor(a DefsTextAnchor) *DefsElement {
@@ -754,40 +829,14 @@ func DefsTextAnchorCustom(s string) DefsTextAnchor {
 	return DefsTextAnchor(s)
 }
 
-func (e *DefsElement) DominantBaseline(a DefsDominantBaseline) *DefsElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func DefsDominantBaselineCustom(s string) DefsDominantBaseline {
-	return DefsDominantBaseline(s)
-}
-
-func (e *DefsElement) AlignmentBaseline(a DefsAlignmentBaseline) *DefsElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func DefsAlignmentBaselineCustom(s string) DefsAlignmentBaseline {
-	return DefsAlignmentBaseline(s)
-}
-
-func (e *DefsElement) LetterSpacing(s string) *DefsElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *DefsElement) WordSpacing(s string) *DefsElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *DefsElement) TextDecoration(s string) *DefsElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *DefsElement) TextOverflow(s string) *DefsElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -802,24 +851,10 @@ func DefsTextRenderingCustom(s string) DefsTextRendering {
 	return DefsTextRendering(s)
 }
 
-func (e *DefsElement) ImageRendering(a DefsImageRendering) *DefsElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *DefsElement) Transform(s string) *DefsElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func DefsImageRenderingCustom(s string) DefsImageRendering {
-	return DefsImageRendering(s)
-}
-
-func (e *DefsElement) Overflow(a DefsOverflow) *DefsElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func DefsOverflowCustom(s string) DefsOverflow {
-	return DefsOverflow(s)
 }
 
 func (e *DefsElement) TransformBox(a DefsTransformBox) *DefsElement {
@@ -832,18 +867,46 @@ func DefsTransformBoxCustom(s string) DefsTransformBox {
 	return DefsTransformBox(s)
 }
 
-func (e *DefsElement) Direction(a DefsDirection) *DefsElement {
-	e.attributes.Set("direction", string(a))
+func (e *DefsElement) TransformOrigin(s string) *DefsElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func DefsDirectionCustom(s string) DefsDirection {
-	return DefsDirection(s)
-}
-
 func (e *DefsElement) UnicodeBidi(s string) *DefsElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *DefsElement) VectorEffect(a DefsVectorEffect) *DefsElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func DefsVectorEffectCustom(s string) DefsVectorEffect {
+	return DefsVectorEffect(s)
+}
+
+func (e *DefsElement) Visibility(a DefsVisibility) *DefsElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func DefsVisibilityCustom(s string) DefsVisibility {
+	return DefsVisibility(s)
+}
+
+func (e *DefsElement) WhiteSpace(s string) *DefsElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *DefsElement) WordSpacing(s string) *DefsElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -858,8 +921,20 @@ func DefsWritingModeCustom(s string) DefsWritingMode {
 	return DefsWritingMode(s)
 }
 
-func (e *DefsElement) WhiteSpace(s string) *DefsElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *DefsElement) XmlLang(s string) *DefsElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *DefsElement) XmlSpace(a DefsXmlSpace) *DefsElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

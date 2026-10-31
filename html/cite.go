@@ -240,6 +240,15 @@ const (
 	CiteInputmodeUrl     CiteInputmode = "url"
 )
 
+type CitePopover string
+
+const (
+	CitePopoverAuto   CitePopover = "auto"
+	CitePopoverHint   CitePopover = "hint"
+	CitePopoverManual CitePopover = "manual"
+	CitePopoverEmpty  CitePopover = ""
+)
+
 type CiteSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *CiteElement) Enterkeyhint(a CiteEnterkeyhint) *CiteElement {
 	return e
 }
 
+func (e *CiteElement) Exportparts(s string) *CiteElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *CiteElement) Headingoffset(i int) *CiteElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *CiteElement) Headingreset(b bool) *CiteElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *CiteElement) Hidden(v ...CiteHidden) *CiteElement {
@@ -396,6 +425,14 @@ func (e *CiteElement) Inputmode(a CiteInputmode) *CiteElement {
 	return e
 }
 
+func (e *CiteElement) Is(s string) *CiteElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *CiteElement) Itemid(s string) *CiteElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *CiteElement) Nonce(s string) *CiteElement {
 	return e
 }
 
-func (e *CiteElement) Popover(s string) *CiteElement {
-	e.attributes.Set("popover", s)
+func (e *CiteElement) Part(s ...string) *CiteElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CiteElement) Popover(v ...CitePopover) *CiteElement {
+	var val CitePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

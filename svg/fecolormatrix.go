@@ -173,134 +173,6 @@ const (
 	FeColorMatrixTypeSaturate         FeColorMatrixType = "saturate"
 )
 
-type FeColorMatrixXmlSpace string
-
-const (
-	FeColorMatrixXmlSpaceDefault  FeColorMatrixXmlSpace = "default"
-	FeColorMatrixXmlSpacePreserve FeColorMatrixXmlSpace = "preserve"
-)
-
-type FeColorMatrixFillRule string
-
-const (
-	FeColorMatrixFillRuleEvenodd FeColorMatrixFillRule = "evenodd"
-	FeColorMatrixFillRuleNonzero FeColorMatrixFillRule = "nonzero"
-)
-
-type FeColorMatrixStrokeLinecap string
-
-const (
-	FeColorMatrixStrokeLinecapButt   FeColorMatrixStrokeLinecap = "butt"
-	FeColorMatrixStrokeLinecapRound  FeColorMatrixStrokeLinecap = "round"
-	FeColorMatrixStrokeLinecapSquare FeColorMatrixStrokeLinecap = "square"
-)
-
-type FeColorMatrixStrokeLinejoin string
-
-const (
-	FeColorMatrixStrokeLinejoinArcs      FeColorMatrixStrokeLinejoin = "arcs"
-	FeColorMatrixStrokeLinejoinBevel     FeColorMatrixStrokeLinejoin = "bevel"
-	FeColorMatrixStrokeLinejoinMiter     FeColorMatrixStrokeLinejoin = "miter"
-	FeColorMatrixStrokeLinejoinMiterClip FeColorMatrixStrokeLinejoin = "miter-clip"
-	FeColorMatrixStrokeLinejoinRound     FeColorMatrixStrokeLinejoin = "round"
-)
-
-type FeColorMatrixVisibility string
-
-const (
-	FeColorMatrixVisibilityCollapse FeColorMatrixVisibility = "collapse"
-	FeColorMatrixVisibilityHidden   FeColorMatrixVisibility = "hidden"
-	FeColorMatrixVisibilityVisible  FeColorMatrixVisibility = "visible"
-)
-
-type FeColorMatrixClipRule string
-
-const (
-	FeColorMatrixClipRuleEvenodd FeColorMatrixClipRule = "evenodd"
-	FeColorMatrixClipRuleNonzero FeColorMatrixClipRule = "nonzero"
-)
-
-type FeColorMatrixPointerEvents string
-
-const (
-	FeColorMatrixPointerEventsAll            FeColorMatrixPointerEvents = "all"
-	FeColorMatrixPointerEventsAuto           FeColorMatrixPointerEvents = "auto"
-	FeColorMatrixPointerEventsBoundingBox    FeColorMatrixPointerEvents = "bounding-box"
-	FeColorMatrixPointerEventsFill           FeColorMatrixPointerEvents = "fill"
-	FeColorMatrixPointerEventsNone           FeColorMatrixPointerEvents = "none"
-	FeColorMatrixPointerEventsPainted        FeColorMatrixPointerEvents = "painted"
-	FeColorMatrixPointerEventsStroke         FeColorMatrixPointerEvents = "stroke"
-	FeColorMatrixPointerEventsVisible        FeColorMatrixPointerEvents = "visible"
-	FeColorMatrixPointerEventsVisibleFill    FeColorMatrixPointerEvents = "visibleFill"
-	FeColorMatrixPointerEventsVisiblePainted FeColorMatrixPointerEvents = "visiblePainted"
-	FeColorMatrixPointerEventsVisibleStroke  FeColorMatrixPointerEvents = "visibleStroke"
-)
-
-type FeColorMatrixVectorEffect string
-
-const (
-	FeColorMatrixVectorEffectFixedPosition    FeColorMatrixVectorEffect = "fixed-position"
-	FeColorMatrixVectorEffectNonRotation      FeColorMatrixVectorEffect = "non-rotation"
-	FeColorMatrixVectorEffectNonScalingSize   FeColorMatrixVectorEffect = "non-scaling-size"
-	FeColorMatrixVectorEffectNonScalingStroke FeColorMatrixVectorEffect = "non-scaling-stroke"
-	FeColorMatrixVectorEffectNone             FeColorMatrixVectorEffect = "none"
-)
-
-type FeColorMatrixShapeRendering string
-
-const (
-	FeColorMatrixShapeRenderingAuto               FeColorMatrixShapeRendering = "auto"
-	FeColorMatrixShapeRenderingCrispEdges         FeColorMatrixShapeRendering = "crispEdges"
-	FeColorMatrixShapeRenderingGeometricPrecision FeColorMatrixShapeRendering = "geometricPrecision"
-	FeColorMatrixShapeRenderingOptimizeSpeed      FeColorMatrixShapeRendering = "optimizeSpeed"
-)
-
-type FeColorMatrixColorInterpolation string
-
-const (
-	FeColorMatrixColorInterpolationAuto      FeColorMatrixColorInterpolation = "auto"
-	FeColorMatrixColorInterpolationLinearRGB FeColorMatrixColorInterpolation = "linearRGB"
-	FeColorMatrixColorInterpolationSRGB      FeColorMatrixColorInterpolation = "sRGB"
-)
-
-type FeColorMatrixColorInterpolationFilters string
-
-const (
-	FeColorMatrixColorInterpolationFiltersAuto      FeColorMatrixColorInterpolationFilters = "auto"
-	FeColorMatrixColorInterpolationFiltersLinearRGB FeColorMatrixColorInterpolationFilters = "linearRGB"
-	FeColorMatrixColorInterpolationFiltersSRGB      FeColorMatrixColorInterpolationFilters = "sRGB"
-)
-
-type FeColorMatrixFontStyle string
-
-const (
-	FeColorMatrixFontStyleItalic  FeColorMatrixFontStyle = "italic"
-	FeColorMatrixFontStyleNormal  FeColorMatrixFontStyle = "normal"
-	FeColorMatrixFontStyleOblique FeColorMatrixFontStyle = "oblique"
-)
-
-type FeColorMatrixTextAnchor string
-
-const (
-	FeColorMatrixTextAnchorEnd    FeColorMatrixTextAnchor = "end"
-	FeColorMatrixTextAnchorMiddle FeColorMatrixTextAnchor = "middle"
-	FeColorMatrixTextAnchorStart  FeColorMatrixTextAnchor = "start"
-)
-
-type FeColorMatrixDominantBaseline string
-
-const (
-	FeColorMatrixDominantBaselineAlphabetic   FeColorMatrixDominantBaseline = "alphabetic"
-	FeColorMatrixDominantBaselineAuto         FeColorMatrixDominantBaseline = "auto"
-	FeColorMatrixDominantBaselineCentral      FeColorMatrixDominantBaseline = "central"
-	FeColorMatrixDominantBaselineHanging      FeColorMatrixDominantBaseline = "hanging"
-	FeColorMatrixDominantBaselineIdeographic  FeColorMatrixDominantBaseline = "ideographic"
-	FeColorMatrixDominantBaselineMathematical FeColorMatrixDominantBaseline = "mathematical"
-	FeColorMatrixDominantBaselineMiddle       FeColorMatrixDominantBaseline = "middle"
-	FeColorMatrixDominantBaselineTextBottom   FeColorMatrixDominantBaseline = "text-bottom"
-	FeColorMatrixDominantBaselineTextTop      FeColorMatrixDominantBaseline = "text-top"
-)
-
 type FeColorMatrixAlignmentBaseline string
 
 const (
@@ -323,13 +195,63 @@ const (
 	FeColorMatrixAlignmentBaselineTop            FeColorMatrixAlignmentBaseline = "top"
 )
 
-type FeColorMatrixTextRendering string
+type FeColorMatrixClipRule string
 
 const (
-	FeColorMatrixTextRenderingAuto               FeColorMatrixTextRendering = "auto"
-	FeColorMatrixTextRenderingGeometricPrecision FeColorMatrixTextRendering = "geometricPrecision"
-	FeColorMatrixTextRenderingOptimizeLegibility FeColorMatrixTextRendering = "optimizeLegibility"
-	FeColorMatrixTextRenderingOptimizeSpeed      FeColorMatrixTextRendering = "optimizeSpeed"
+	FeColorMatrixClipRuleEvenodd FeColorMatrixClipRule = "evenodd"
+	FeColorMatrixClipRuleNonzero FeColorMatrixClipRule = "nonzero"
+)
+
+type FeColorMatrixColorInterpolation string
+
+const (
+	FeColorMatrixColorInterpolationAuto      FeColorMatrixColorInterpolation = "auto"
+	FeColorMatrixColorInterpolationLinearRGB FeColorMatrixColorInterpolation = "linearRGB"
+	FeColorMatrixColorInterpolationSRGB      FeColorMatrixColorInterpolation = "sRGB"
+)
+
+type FeColorMatrixColorInterpolationFilters string
+
+const (
+	FeColorMatrixColorInterpolationFiltersAuto      FeColorMatrixColorInterpolationFilters = "auto"
+	FeColorMatrixColorInterpolationFiltersLinearRGB FeColorMatrixColorInterpolationFilters = "linearRGB"
+	FeColorMatrixColorInterpolationFiltersSRGB      FeColorMatrixColorInterpolationFilters = "sRGB"
+)
+
+type FeColorMatrixDirection string
+
+const (
+	FeColorMatrixDirectionLtr FeColorMatrixDirection = "ltr"
+	FeColorMatrixDirectionRtl FeColorMatrixDirection = "rtl"
+)
+
+type FeColorMatrixDominantBaseline string
+
+const (
+	FeColorMatrixDominantBaselineAlphabetic   FeColorMatrixDominantBaseline = "alphabetic"
+	FeColorMatrixDominantBaselineAuto         FeColorMatrixDominantBaseline = "auto"
+	FeColorMatrixDominantBaselineCentral      FeColorMatrixDominantBaseline = "central"
+	FeColorMatrixDominantBaselineHanging      FeColorMatrixDominantBaseline = "hanging"
+	FeColorMatrixDominantBaselineIdeographic  FeColorMatrixDominantBaseline = "ideographic"
+	FeColorMatrixDominantBaselineMathematical FeColorMatrixDominantBaseline = "mathematical"
+	FeColorMatrixDominantBaselineMiddle       FeColorMatrixDominantBaseline = "middle"
+	FeColorMatrixDominantBaselineTextBottom   FeColorMatrixDominantBaseline = "text-bottom"
+	FeColorMatrixDominantBaselineTextTop      FeColorMatrixDominantBaseline = "text-top"
+)
+
+type FeColorMatrixFillRule string
+
+const (
+	FeColorMatrixFillRuleEvenodd FeColorMatrixFillRule = "evenodd"
+	FeColorMatrixFillRuleNonzero FeColorMatrixFillRule = "nonzero"
+)
+
+type FeColorMatrixFontStyle string
+
+const (
+	FeColorMatrixFontStyleItalic  FeColorMatrixFontStyle = "italic"
+	FeColorMatrixFontStyleNormal  FeColorMatrixFontStyle = "normal"
+	FeColorMatrixFontStyleOblique FeColorMatrixFontStyle = "oblique"
 )
 
 type FeColorMatrixImageRendering string
@@ -354,6 +276,66 @@ const (
 	FeColorMatrixOverflowVisible FeColorMatrixOverflow = "visible"
 )
 
+type FeColorMatrixPointerEvents string
+
+const (
+	FeColorMatrixPointerEventsAll            FeColorMatrixPointerEvents = "all"
+	FeColorMatrixPointerEventsAuto           FeColorMatrixPointerEvents = "auto"
+	FeColorMatrixPointerEventsBoundingBox    FeColorMatrixPointerEvents = "bounding-box"
+	FeColorMatrixPointerEventsFill           FeColorMatrixPointerEvents = "fill"
+	FeColorMatrixPointerEventsNone           FeColorMatrixPointerEvents = "none"
+	FeColorMatrixPointerEventsPainted        FeColorMatrixPointerEvents = "painted"
+	FeColorMatrixPointerEventsStroke         FeColorMatrixPointerEvents = "stroke"
+	FeColorMatrixPointerEventsVisible        FeColorMatrixPointerEvents = "visible"
+	FeColorMatrixPointerEventsVisibleFill    FeColorMatrixPointerEvents = "visibleFill"
+	FeColorMatrixPointerEventsVisiblePainted FeColorMatrixPointerEvents = "visiblePainted"
+	FeColorMatrixPointerEventsVisibleStroke  FeColorMatrixPointerEvents = "visibleStroke"
+)
+
+type FeColorMatrixShapeRendering string
+
+const (
+	FeColorMatrixShapeRenderingAuto               FeColorMatrixShapeRendering = "auto"
+	FeColorMatrixShapeRenderingCrispEdges         FeColorMatrixShapeRendering = "crispEdges"
+	FeColorMatrixShapeRenderingGeometricPrecision FeColorMatrixShapeRendering = "geometricPrecision"
+	FeColorMatrixShapeRenderingOptimizeSpeed      FeColorMatrixShapeRendering = "optimizeSpeed"
+)
+
+type FeColorMatrixStrokeLinecap string
+
+const (
+	FeColorMatrixStrokeLinecapButt   FeColorMatrixStrokeLinecap = "butt"
+	FeColorMatrixStrokeLinecapRound  FeColorMatrixStrokeLinecap = "round"
+	FeColorMatrixStrokeLinecapSquare FeColorMatrixStrokeLinecap = "square"
+)
+
+type FeColorMatrixStrokeLinejoin string
+
+const (
+	FeColorMatrixStrokeLinejoinArcs      FeColorMatrixStrokeLinejoin = "arcs"
+	FeColorMatrixStrokeLinejoinBevel     FeColorMatrixStrokeLinejoin = "bevel"
+	FeColorMatrixStrokeLinejoinMiter     FeColorMatrixStrokeLinejoin = "miter"
+	FeColorMatrixStrokeLinejoinMiterClip FeColorMatrixStrokeLinejoin = "miter-clip"
+	FeColorMatrixStrokeLinejoinRound     FeColorMatrixStrokeLinejoin = "round"
+)
+
+type FeColorMatrixTextAnchor string
+
+const (
+	FeColorMatrixTextAnchorEnd    FeColorMatrixTextAnchor = "end"
+	FeColorMatrixTextAnchorMiddle FeColorMatrixTextAnchor = "middle"
+	FeColorMatrixTextAnchorStart  FeColorMatrixTextAnchor = "start"
+)
+
+type FeColorMatrixTextRendering string
+
+const (
+	FeColorMatrixTextRenderingAuto               FeColorMatrixTextRendering = "auto"
+	FeColorMatrixTextRenderingGeometricPrecision FeColorMatrixTextRendering = "geometricPrecision"
+	FeColorMatrixTextRenderingOptimizeLegibility FeColorMatrixTextRendering = "optimizeLegibility"
+	FeColorMatrixTextRenderingOptimizeSpeed      FeColorMatrixTextRendering = "optimizeSpeed"
+)
+
 type FeColorMatrixTransformBox string
 
 const (
@@ -364,11 +346,22 @@ const (
 	FeColorMatrixTransformBoxViewBox    FeColorMatrixTransformBox = "view-box"
 )
 
-type FeColorMatrixDirection string
+type FeColorMatrixVectorEffect string
 
 const (
-	FeColorMatrixDirectionLtr FeColorMatrixDirection = "ltr"
-	FeColorMatrixDirectionRtl FeColorMatrixDirection = "rtl"
+	FeColorMatrixVectorEffectFixedPosition    FeColorMatrixVectorEffect = "fixed-position"
+	FeColorMatrixVectorEffectNonRotation      FeColorMatrixVectorEffect = "non-rotation"
+	FeColorMatrixVectorEffectNonScalingSize   FeColorMatrixVectorEffect = "non-scaling-size"
+	FeColorMatrixVectorEffectNonScalingStroke FeColorMatrixVectorEffect = "non-scaling-stroke"
+	FeColorMatrixVectorEffectNone             FeColorMatrixVectorEffect = "none"
+)
+
+type FeColorMatrixVisibility string
+
+const (
+	FeColorMatrixVisibilityCollapse FeColorMatrixVisibility = "collapse"
+	FeColorMatrixVisibilityHidden   FeColorMatrixVisibility = "hidden"
+	FeColorMatrixVisibilityVisible  FeColorMatrixVisibility = "visible"
 )
 
 type FeColorMatrixWritingMode string
@@ -387,23 +380,12 @@ const (
 	FeColorMatrixWritingModeVerticalRl   FeColorMatrixWritingMode = "vertical-rl"
 )
 
-func (e *FeColorMatrixElement) X(s string) *FeColorMatrixElement {
-	e.attributes.Set("x", s)
+type FeColorMatrixXmlSpace string
 
-	return e
-}
-
-func (e *FeColorMatrixElement) Y(s string) *FeColorMatrixElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) Width(s string) *FeColorMatrixElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
+const (
+	FeColorMatrixXmlSpaceDefault  FeColorMatrixXmlSpace = "default"
+	FeColorMatrixXmlSpacePreserve FeColorMatrixXmlSpace = "preserve"
+)
 
 func (e *FeColorMatrixElement) Height(s string) *FeColorMatrixElement {
 	e.attributes.Set("height", s)
@@ -411,14 +393,14 @@ func (e *FeColorMatrixElement) Height(s string) *FeColorMatrixElement {
 	return e
 }
 
-func (e *FeColorMatrixElement) Result(s string) *FeColorMatrixElement {
-	e.attributes.Set("result", s)
+func (e *FeColorMatrixElement) In(s string) *FeColorMatrixElement {
+	e.attributes.Set("in", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) In(s string) *FeColorMatrixElement {
-	e.attributes.Set("in", s)
+func (e *FeColorMatrixElement) Result(s string) *FeColorMatrixElement {
+	e.attributes.Set("result", s)
 
 	return e
 }
@@ -435,8 +417,60 @@ func (e *FeColorMatrixElement) Values(s string) *FeColorMatrixElement {
 	return e
 }
 
-func (e *FeColorMatrixElement) Id(s string) *FeColorMatrixElement {
-	e.attributes.Set("id", s)
+func (e *FeColorMatrixElement) Width(s string) *FeColorMatrixElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) X(s string) *FeColorMatrixElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Y(s string) *FeColorMatrixElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) AlignmentBaseline(a FeColorMatrixAlignmentBaseline) *FeColorMatrixElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeColorMatrixAlignmentBaselineCustom(s string) FeColorMatrixAlignmentBaseline {
+	return FeColorMatrixAlignmentBaseline(s)
+}
+
+func (e *FeColorMatrixElement) AriaUnsafe(name string, s string) *FeColorMatrixElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Aria(name string, s string) *FeColorMatrixElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeColorMatrixElement) Autofocus(b bool) *FeColorMatrixElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) BaselineShift(s string) *FeColorMatrixElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -447,40 +481,59 @@ func (e *FeColorMatrixElement) Class(s ...string) *FeColorMatrixElement {
 	return e
 }
 
-func (e *FeColorMatrixElement) Style(s string) *FeColorMatrixElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeColorMatrixElement) Clip(s string) *FeColorMatrixElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) Tabindex(i int) *FeColorMatrixElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeColorMatrixElement) ClipPath(s string) *FeColorMatrixElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) Lang(s string) *FeColorMatrixElement {
-	e.attributes.Set("lang", s)
+func (e *FeColorMatrixElement) ClipRule(a FeColorMatrixClipRule) *FeColorMatrixElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeColorMatrixElement) XmlLang(s string) *FeColorMatrixElement {
-	e.attributes.Set("xml:lang", s)
+func FeColorMatrixClipRuleCustom(s string) FeColorMatrixClipRule {
+	return FeColorMatrixClipRule(s)
+}
+
+func (e *FeColorMatrixElement) Color(s string) *FeColorMatrixElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) XmlSpace(a FeColorMatrixXmlSpace) *FeColorMatrixElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeColorMatrixElement) ColorInterpolation(a FeColorMatrixColorInterpolation) *FeColorMatrixElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeColorMatrixElement) Autofocus(b bool) *FeColorMatrixElement {
-	e.attributes.SetBool("autofocus", b)
+func FeColorMatrixColorInterpolationCustom(s string) FeColorMatrixColorInterpolation {
+	return FeColorMatrixColorInterpolation(s)
+}
+
+func (e *FeColorMatrixElement) ColorInterpolationFilters(a FeColorMatrixColorInterpolationFilters) *FeColorMatrixElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeColorMatrixColorInterpolationFiltersCustom(s string) FeColorMatrixColorInterpolationFilters {
+	return FeColorMatrixColorInterpolationFilters(s)
+}
+
+func (e *FeColorMatrixElement) Cursor(s string) *FeColorMatrixElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -501,20 +554,30 @@ func (e *FeColorMatrixElement) Data(name string, s string) *FeColorMatrixElement
 	return e
 }
 
-func (e *FeColorMatrixElement) AriaUnsafe(name string, s string) *FeColorMatrixElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeColorMatrixElement) Direction(a FeColorMatrixDirection) *FeColorMatrixElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeColorMatrixElement) Aria(name string, s string) *FeColorMatrixElement {
-	tag := strings.ToLower("aria-" + name)
+func FeColorMatrixDirectionCustom(s string) FeColorMatrixDirection {
+	return FeColorMatrixDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeColorMatrixElement) Display(s string) *FeColorMatrixElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeColorMatrixElement) DominantBaseline(a FeColorMatrixDominantBaseline) *FeColorMatrixElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeColorMatrixDominantBaselineCustom(s string) FeColorMatrixDominantBaseline {
+	return FeColorMatrixDominantBaseline(s)
 }
 
 func (e *FeColorMatrixElement) Fill(s string) *FeColorMatrixElement {
@@ -539,20 +602,220 @@ func FeColorMatrixFillRuleCustom(s string) FeColorMatrixFillRule {
 	return FeColorMatrixFillRule(s)
 }
 
+func (e *FeColorMatrixElement) Filter(s string) *FeColorMatrixElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FloodColor(s string) *FeColorMatrixElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FloodOpacity(f float64) *FeColorMatrixElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontFamily(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontSize(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontSizeAdjust(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontStretch(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontStyle(a FeColorMatrixFontStyle) *FeColorMatrixElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeColorMatrixFontStyleCustom(s string) FeColorMatrixFontStyle {
+	return FeColorMatrixFontStyle(s)
+}
+
+func (e *FeColorMatrixElement) FontVariant(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) FontWeight(s string) *FeColorMatrixElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeColorMatrixElement) GlyphOrientationHorizontal(s string) *FeColorMatrixElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeColorMatrixElement) GlyphOrientationVertical(s string) *FeColorMatrixElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Id(s string) *FeColorMatrixElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) ImageRendering(a FeColorMatrixImageRendering) *FeColorMatrixElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeColorMatrixImageRenderingCustom(s string) FeColorMatrixImageRendering {
+	return FeColorMatrixImageRendering(s)
+}
+
+func (e *FeColorMatrixElement) Lang(s string) *FeColorMatrixElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) LetterSpacing(s string) *FeColorMatrixElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) LightingColor(s string) *FeColorMatrixElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) MarkerEnd(s string) *FeColorMatrixElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) MarkerMid(s string) *FeColorMatrixElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) MarkerStart(s string) *FeColorMatrixElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Mask(s string) *FeColorMatrixElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Opacity(f float64) *FeColorMatrixElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeColorMatrixElement) Overflow(a FeColorMatrixOverflow) *FeColorMatrixElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeColorMatrixOverflowCustom(s string) FeColorMatrixOverflow {
+	return FeColorMatrixOverflow(s)
+}
+
+func (e *FeColorMatrixElement) PaintOrder(s string) *FeColorMatrixElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) PointerEvents(a FeColorMatrixPointerEvents) *FeColorMatrixElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeColorMatrixPointerEventsCustom(s string) FeColorMatrixPointerEvents {
+	return FeColorMatrixPointerEvents(s)
+}
+
+func (e *FeColorMatrixElement) RequiredExtensions(s string) *FeColorMatrixElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) ShapeRendering(a FeColorMatrixShapeRendering) *FeColorMatrixElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeColorMatrixShapeRenderingCustom(s string) FeColorMatrixShapeRendering {
+	return FeColorMatrixShapeRendering(s)
+}
+
+func (e *FeColorMatrixElement) StopColor(s string) *FeColorMatrixElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) StopOpacity(f float64) *FeColorMatrixElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeColorMatrixElement) Stroke(s string) *FeColorMatrixElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) StrokeWidth(s string) *FeColorMatrixElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeColorMatrixElement) StrokeDasharray(s string) *FeColorMatrixElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) StrokeOpacity(f float64) *FeColorMatrixElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeColorMatrixElement) StrokeDashoffset(s string) *FeColorMatrixElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -583,210 +846,28 @@ func (e *FeColorMatrixElement) StrokeMiterlimit(f float64) *FeColorMatrixElement
 	return e
 }
 
-func (e *FeColorMatrixElement) StrokeDasharray(s string) *FeColorMatrixElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeColorMatrixElement) StrokeOpacity(f float64) *FeColorMatrixElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeColorMatrixElement) StrokeDashoffset(s string) *FeColorMatrixElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeColorMatrixElement) StrokeWidth(s string) *FeColorMatrixElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) Opacity(f float64) *FeColorMatrixElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeColorMatrixElement) Style(s string) *FeColorMatrixElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeColorMatrixElement) Color(s string) *FeColorMatrixElement {
-	e.attributes.Set("color", s)
+func (e *FeColorMatrixElement) Tabindex(i int) *FeColorMatrixElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeColorMatrixElement) Display(s string) *FeColorMatrixElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) Visibility(a FeColorMatrixVisibility) *FeColorMatrixElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeColorMatrixVisibilityCustom(s string) FeColorMatrixVisibility {
-	return FeColorMatrixVisibility(s)
-}
-
-func (e *FeColorMatrixElement) ClipPath(s string) *FeColorMatrixElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) ClipRule(a FeColorMatrixClipRule) *FeColorMatrixElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeColorMatrixClipRuleCustom(s string) FeColorMatrixClipRule {
-	return FeColorMatrixClipRule(s)
-}
-
-func (e *FeColorMatrixElement) Mask(s string) *FeColorMatrixElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) Filter(s string) *FeColorMatrixElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) Cursor(s string) *FeColorMatrixElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) PointerEvents(a FeColorMatrixPointerEvents) *FeColorMatrixElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeColorMatrixPointerEventsCustom(s string) FeColorMatrixPointerEvents {
-	return FeColorMatrixPointerEvents(s)
-}
-
-func (e *FeColorMatrixElement) VectorEffect(a FeColorMatrixVectorEffect) *FeColorMatrixElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeColorMatrixVectorEffectCustom(s string) FeColorMatrixVectorEffect {
-	return FeColorMatrixVectorEffect(s)
-}
-
-func (e *FeColorMatrixElement) PaintOrder(s string) *FeColorMatrixElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) ShapeRendering(a FeColorMatrixShapeRendering) *FeColorMatrixElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeColorMatrixShapeRenderingCustom(s string) FeColorMatrixShapeRendering {
-	return FeColorMatrixShapeRendering(s)
-}
-
-func (e *FeColorMatrixElement) ColorInterpolation(a FeColorMatrixColorInterpolation) *FeColorMatrixElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeColorMatrixColorInterpolationCustom(s string) FeColorMatrixColorInterpolation {
-	return FeColorMatrixColorInterpolation(s)
-}
-
-func (e *FeColorMatrixElement) ColorInterpolationFilters(a FeColorMatrixColorInterpolationFilters) *FeColorMatrixElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeColorMatrixColorInterpolationFiltersCustom(s string) FeColorMatrixColorInterpolationFilters {
-	return FeColorMatrixColorInterpolationFilters(s)
-}
-
-func (e *FeColorMatrixElement) FloodColor(s string) *FeColorMatrixElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) FloodOpacity(f float64) *FeColorMatrixElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeColorMatrixElement) LightingColor(s string) *FeColorMatrixElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) StopColor(s string) *FeColorMatrixElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) StopOpacity(f float64) *FeColorMatrixElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeColorMatrixElement) MarkerStart(s string) *FeColorMatrixElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) MarkerMid(s string) *FeColorMatrixElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) MarkerEnd(s string) *FeColorMatrixElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) FontFamily(s string) *FeColorMatrixElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) FontSize(s string) *FeColorMatrixElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) FontWeight(s string) *FeColorMatrixElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) FontStyle(a FeColorMatrixFontStyle) *FeColorMatrixElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeColorMatrixFontStyleCustom(s string) FeColorMatrixFontStyle {
-	return FeColorMatrixFontStyle(s)
 }
 
 func (e *FeColorMatrixElement) TextAnchor(a FeColorMatrixTextAnchor) *FeColorMatrixElement {
@@ -799,40 +880,14 @@ func FeColorMatrixTextAnchorCustom(s string) FeColorMatrixTextAnchor {
 	return FeColorMatrixTextAnchor(s)
 }
 
-func (e *FeColorMatrixElement) DominantBaseline(a FeColorMatrixDominantBaseline) *FeColorMatrixElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeColorMatrixDominantBaselineCustom(s string) FeColorMatrixDominantBaseline {
-	return FeColorMatrixDominantBaseline(s)
-}
-
-func (e *FeColorMatrixElement) AlignmentBaseline(a FeColorMatrixAlignmentBaseline) *FeColorMatrixElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeColorMatrixAlignmentBaselineCustom(s string) FeColorMatrixAlignmentBaseline {
-	return FeColorMatrixAlignmentBaseline(s)
-}
-
-func (e *FeColorMatrixElement) LetterSpacing(s string) *FeColorMatrixElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeColorMatrixElement) WordSpacing(s string) *FeColorMatrixElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeColorMatrixElement) TextDecoration(s string) *FeColorMatrixElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) TextOverflow(s string) *FeColorMatrixElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -847,24 +902,10 @@ func FeColorMatrixTextRenderingCustom(s string) FeColorMatrixTextRendering {
 	return FeColorMatrixTextRendering(s)
 }
 
-func (e *FeColorMatrixElement) ImageRendering(a FeColorMatrixImageRendering) *FeColorMatrixElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeColorMatrixElement) Transform(s string) *FeColorMatrixElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeColorMatrixImageRenderingCustom(s string) FeColorMatrixImageRendering {
-	return FeColorMatrixImageRendering(s)
-}
-
-func (e *FeColorMatrixElement) Overflow(a FeColorMatrixOverflow) *FeColorMatrixElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeColorMatrixOverflowCustom(s string) FeColorMatrixOverflow {
-	return FeColorMatrixOverflow(s)
 }
 
 func (e *FeColorMatrixElement) TransformBox(a FeColorMatrixTransformBox) *FeColorMatrixElement {
@@ -877,18 +918,46 @@ func FeColorMatrixTransformBoxCustom(s string) FeColorMatrixTransformBox {
 	return FeColorMatrixTransformBox(s)
 }
 
-func (e *FeColorMatrixElement) Direction(a FeColorMatrixDirection) *FeColorMatrixElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeColorMatrixElement) TransformOrigin(s string) *FeColorMatrixElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeColorMatrixDirectionCustom(s string) FeColorMatrixDirection {
-	return FeColorMatrixDirection(s)
-}
-
 func (e *FeColorMatrixElement) UnicodeBidi(s string) *FeColorMatrixElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) VectorEffect(a FeColorMatrixVectorEffect) *FeColorMatrixElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeColorMatrixVectorEffectCustom(s string) FeColorMatrixVectorEffect {
+	return FeColorMatrixVectorEffect(s)
+}
+
+func (e *FeColorMatrixElement) Visibility(a FeColorMatrixVisibility) *FeColorMatrixElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeColorMatrixVisibilityCustom(s string) FeColorMatrixVisibility {
+	return FeColorMatrixVisibility(s)
+}
+
+func (e *FeColorMatrixElement) WhiteSpace(s string) *FeColorMatrixElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeColorMatrixElement) WordSpacing(s string) *FeColorMatrixElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -903,8 +972,20 @@ func FeColorMatrixWritingModeCustom(s string) FeColorMatrixWritingMode {
 	return FeColorMatrixWritingMode(s)
 }
 
-func (e *FeColorMatrixElement) WhiteSpace(s string) *FeColorMatrixElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeColorMatrixElement) XmlLang(s string) *FeColorMatrixElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeColorMatrixElement) XmlSpace(a FeColorMatrixXmlSpace) *FeColorMatrixElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

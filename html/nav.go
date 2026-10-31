@@ -240,6 +240,15 @@ const (
 	NavInputmodeUrl     NavInputmode = "url"
 )
 
+type NavPopover string
+
+const (
+	NavPopoverAuto   NavPopover = "auto"
+	NavPopoverHint   NavPopover = "hint"
+	NavPopoverManual NavPopover = "manual"
+	NavPopoverEmpty  NavPopover = ""
+)
+
 type NavSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *NavElement) Enterkeyhint(a NavEnterkeyhint) *NavElement {
 	return e
 }
 
+func (e *NavElement) Exportparts(s string) *NavElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *NavElement) Headingoffset(i int) *NavElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *NavElement) Headingreset(b bool) *NavElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *NavElement) Hidden(v ...NavHidden) *NavElement {
@@ -396,6 +425,14 @@ func (e *NavElement) Inputmode(a NavInputmode) *NavElement {
 	return e
 }
 
+func (e *NavElement) Is(s string) *NavElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *NavElement) Itemid(s string) *NavElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *NavElement) Nonce(s string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Popover(s string) *NavElement {
-	e.attributes.Set("popover", s)
+func (e *NavElement) Part(s ...string) *NavElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Popover(v ...NavPopover) *NavElement {
+	var val NavPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

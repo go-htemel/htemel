@@ -240,6 +240,15 @@ const (
 	TheadInputmodeUrl     TheadInputmode = "url"
 )
 
+type TheadPopover string
+
+const (
+	TheadPopoverAuto   TheadPopover = "auto"
+	TheadPopoverHint   TheadPopover = "hint"
+	TheadPopoverManual TheadPopover = "manual"
+	TheadPopoverEmpty  TheadPopover = ""
+)
+
 type TheadSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *TheadElement) Enterkeyhint(a TheadEnterkeyhint) *TheadElement {
 	return e
 }
 
+func (e *TheadElement) Exportparts(s string) *TheadElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TheadElement) Headingoffset(i int) *TheadElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TheadElement) Headingreset(b bool) *TheadElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TheadElement) Hidden(v ...TheadHidden) *TheadElement {
@@ -396,6 +425,14 @@ func (e *TheadElement) Inputmode(a TheadInputmode) *TheadElement {
 	return e
 }
 
+func (e *TheadElement) Is(s string) *TheadElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TheadElement) Itemid(s string) *TheadElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *TheadElement) Nonce(s string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Popover(s string) *TheadElement {
-	e.attributes.Set("popover", s)
+func (e *TheadElement) Part(s ...string) *TheadElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Popover(v ...TheadPopover) *TheadElement {
+	var val TheadPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

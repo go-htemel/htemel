@@ -164,18 +164,18 @@ func (e *TextPathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type TextPathLengthAdjust string
+
+const (
+	TextPathLengthAdjustSpacing          TextPathLengthAdjust = "spacing"
+	TextPathLengthAdjustSpacingAndGlyphs TextPathLengthAdjust = "spacingAndGlyphs"
+)
+
 type TextPathMethod string
 
 const (
 	TextPathMethodAlign   TextPathMethod = "align"
 	TextPathMethodStretch TextPathMethod = "stretch"
-)
-
-type TextPathSpacing string
-
-const (
-	TextPathSpacingAuto  TextPathSpacing = "auto"
-	TextPathSpacingExact TextPathSpacing = "exact"
 )
 
 type TextPathSide string
@@ -185,139 +185,11 @@ const (
 	TextPathSideRight TextPathSide = "right"
 )
 
-type TextPathLengthAdjust string
+type TextPathSpacing string
 
 const (
-	TextPathLengthAdjustSpacing          TextPathLengthAdjust = "spacing"
-	TextPathLengthAdjustSpacingAndGlyphs TextPathLengthAdjust = "spacingAndGlyphs"
-)
-
-type TextPathXmlSpace string
-
-const (
-	TextPathXmlSpaceDefault  TextPathXmlSpace = "default"
-	TextPathXmlSpacePreserve TextPathXmlSpace = "preserve"
-)
-
-type TextPathFillRule string
-
-const (
-	TextPathFillRuleEvenodd TextPathFillRule = "evenodd"
-	TextPathFillRuleNonzero TextPathFillRule = "nonzero"
-)
-
-type TextPathStrokeLinecap string
-
-const (
-	TextPathStrokeLinecapButt   TextPathStrokeLinecap = "butt"
-	TextPathStrokeLinecapRound  TextPathStrokeLinecap = "round"
-	TextPathStrokeLinecapSquare TextPathStrokeLinecap = "square"
-)
-
-type TextPathStrokeLinejoin string
-
-const (
-	TextPathStrokeLinejoinArcs      TextPathStrokeLinejoin = "arcs"
-	TextPathStrokeLinejoinBevel     TextPathStrokeLinejoin = "bevel"
-	TextPathStrokeLinejoinMiter     TextPathStrokeLinejoin = "miter"
-	TextPathStrokeLinejoinMiterClip TextPathStrokeLinejoin = "miter-clip"
-	TextPathStrokeLinejoinRound     TextPathStrokeLinejoin = "round"
-)
-
-type TextPathVisibility string
-
-const (
-	TextPathVisibilityCollapse TextPathVisibility = "collapse"
-	TextPathVisibilityHidden   TextPathVisibility = "hidden"
-	TextPathVisibilityVisible  TextPathVisibility = "visible"
-)
-
-type TextPathClipRule string
-
-const (
-	TextPathClipRuleEvenodd TextPathClipRule = "evenodd"
-	TextPathClipRuleNonzero TextPathClipRule = "nonzero"
-)
-
-type TextPathPointerEvents string
-
-const (
-	TextPathPointerEventsAll            TextPathPointerEvents = "all"
-	TextPathPointerEventsAuto           TextPathPointerEvents = "auto"
-	TextPathPointerEventsBoundingBox    TextPathPointerEvents = "bounding-box"
-	TextPathPointerEventsFill           TextPathPointerEvents = "fill"
-	TextPathPointerEventsNone           TextPathPointerEvents = "none"
-	TextPathPointerEventsPainted        TextPathPointerEvents = "painted"
-	TextPathPointerEventsStroke         TextPathPointerEvents = "stroke"
-	TextPathPointerEventsVisible        TextPathPointerEvents = "visible"
-	TextPathPointerEventsVisibleFill    TextPathPointerEvents = "visibleFill"
-	TextPathPointerEventsVisiblePainted TextPathPointerEvents = "visiblePainted"
-	TextPathPointerEventsVisibleStroke  TextPathPointerEvents = "visibleStroke"
-)
-
-type TextPathVectorEffect string
-
-const (
-	TextPathVectorEffectFixedPosition    TextPathVectorEffect = "fixed-position"
-	TextPathVectorEffectNonRotation      TextPathVectorEffect = "non-rotation"
-	TextPathVectorEffectNonScalingSize   TextPathVectorEffect = "non-scaling-size"
-	TextPathVectorEffectNonScalingStroke TextPathVectorEffect = "non-scaling-stroke"
-	TextPathVectorEffectNone             TextPathVectorEffect = "none"
-)
-
-type TextPathShapeRendering string
-
-const (
-	TextPathShapeRenderingAuto               TextPathShapeRendering = "auto"
-	TextPathShapeRenderingCrispEdges         TextPathShapeRendering = "crispEdges"
-	TextPathShapeRenderingGeometricPrecision TextPathShapeRendering = "geometricPrecision"
-	TextPathShapeRenderingOptimizeSpeed      TextPathShapeRendering = "optimizeSpeed"
-)
-
-type TextPathColorInterpolation string
-
-const (
-	TextPathColorInterpolationAuto      TextPathColorInterpolation = "auto"
-	TextPathColorInterpolationLinearRGB TextPathColorInterpolation = "linearRGB"
-	TextPathColorInterpolationSRGB      TextPathColorInterpolation = "sRGB"
-)
-
-type TextPathColorInterpolationFilters string
-
-const (
-	TextPathColorInterpolationFiltersAuto      TextPathColorInterpolationFilters = "auto"
-	TextPathColorInterpolationFiltersLinearRGB TextPathColorInterpolationFilters = "linearRGB"
-	TextPathColorInterpolationFiltersSRGB      TextPathColorInterpolationFilters = "sRGB"
-)
-
-type TextPathFontStyle string
-
-const (
-	TextPathFontStyleItalic  TextPathFontStyle = "italic"
-	TextPathFontStyleNormal  TextPathFontStyle = "normal"
-	TextPathFontStyleOblique TextPathFontStyle = "oblique"
-)
-
-type TextPathTextAnchor string
-
-const (
-	TextPathTextAnchorEnd    TextPathTextAnchor = "end"
-	TextPathTextAnchorMiddle TextPathTextAnchor = "middle"
-	TextPathTextAnchorStart  TextPathTextAnchor = "start"
-)
-
-type TextPathDominantBaseline string
-
-const (
-	TextPathDominantBaselineAlphabetic   TextPathDominantBaseline = "alphabetic"
-	TextPathDominantBaselineAuto         TextPathDominantBaseline = "auto"
-	TextPathDominantBaselineCentral      TextPathDominantBaseline = "central"
-	TextPathDominantBaselineHanging      TextPathDominantBaseline = "hanging"
-	TextPathDominantBaselineIdeographic  TextPathDominantBaseline = "ideographic"
-	TextPathDominantBaselineMathematical TextPathDominantBaseline = "mathematical"
-	TextPathDominantBaselineMiddle       TextPathDominantBaseline = "middle"
-	TextPathDominantBaselineTextBottom   TextPathDominantBaseline = "text-bottom"
-	TextPathDominantBaselineTextTop      TextPathDominantBaseline = "text-top"
+	TextPathSpacingAuto  TextPathSpacing = "auto"
+	TextPathSpacingExact TextPathSpacing = "exact"
 )
 
 type TextPathAlignmentBaseline string
@@ -342,13 +214,63 @@ const (
 	TextPathAlignmentBaselineTop            TextPathAlignmentBaseline = "top"
 )
 
-type TextPathTextRendering string
+type TextPathClipRule string
 
 const (
-	TextPathTextRenderingAuto               TextPathTextRendering = "auto"
-	TextPathTextRenderingGeometricPrecision TextPathTextRendering = "geometricPrecision"
-	TextPathTextRenderingOptimizeLegibility TextPathTextRendering = "optimizeLegibility"
-	TextPathTextRenderingOptimizeSpeed      TextPathTextRendering = "optimizeSpeed"
+	TextPathClipRuleEvenodd TextPathClipRule = "evenodd"
+	TextPathClipRuleNonzero TextPathClipRule = "nonzero"
+)
+
+type TextPathColorInterpolation string
+
+const (
+	TextPathColorInterpolationAuto      TextPathColorInterpolation = "auto"
+	TextPathColorInterpolationLinearRGB TextPathColorInterpolation = "linearRGB"
+	TextPathColorInterpolationSRGB      TextPathColorInterpolation = "sRGB"
+)
+
+type TextPathColorInterpolationFilters string
+
+const (
+	TextPathColorInterpolationFiltersAuto      TextPathColorInterpolationFilters = "auto"
+	TextPathColorInterpolationFiltersLinearRGB TextPathColorInterpolationFilters = "linearRGB"
+	TextPathColorInterpolationFiltersSRGB      TextPathColorInterpolationFilters = "sRGB"
+)
+
+type TextPathDirection string
+
+const (
+	TextPathDirectionLtr TextPathDirection = "ltr"
+	TextPathDirectionRtl TextPathDirection = "rtl"
+)
+
+type TextPathDominantBaseline string
+
+const (
+	TextPathDominantBaselineAlphabetic   TextPathDominantBaseline = "alphabetic"
+	TextPathDominantBaselineAuto         TextPathDominantBaseline = "auto"
+	TextPathDominantBaselineCentral      TextPathDominantBaseline = "central"
+	TextPathDominantBaselineHanging      TextPathDominantBaseline = "hanging"
+	TextPathDominantBaselineIdeographic  TextPathDominantBaseline = "ideographic"
+	TextPathDominantBaselineMathematical TextPathDominantBaseline = "mathematical"
+	TextPathDominantBaselineMiddle       TextPathDominantBaseline = "middle"
+	TextPathDominantBaselineTextBottom   TextPathDominantBaseline = "text-bottom"
+	TextPathDominantBaselineTextTop      TextPathDominantBaseline = "text-top"
+)
+
+type TextPathFillRule string
+
+const (
+	TextPathFillRuleEvenodd TextPathFillRule = "evenodd"
+	TextPathFillRuleNonzero TextPathFillRule = "nonzero"
+)
+
+type TextPathFontStyle string
+
+const (
+	TextPathFontStyleItalic  TextPathFontStyle = "italic"
+	TextPathFontStyleNormal  TextPathFontStyle = "normal"
+	TextPathFontStyleOblique TextPathFontStyle = "oblique"
 )
 
 type TextPathImageRendering string
@@ -373,6 +295,66 @@ const (
 	TextPathOverflowVisible TextPathOverflow = "visible"
 )
 
+type TextPathPointerEvents string
+
+const (
+	TextPathPointerEventsAll            TextPathPointerEvents = "all"
+	TextPathPointerEventsAuto           TextPathPointerEvents = "auto"
+	TextPathPointerEventsBoundingBox    TextPathPointerEvents = "bounding-box"
+	TextPathPointerEventsFill           TextPathPointerEvents = "fill"
+	TextPathPointerEventsNone           TextPathPointerEvents = "none"
+	TextPathPointerEventsPainted        TextPathPointerEvents = "painted"
+	TextPathPointerEventsStroke         TextPathPointerEvents = "stroke"
+	TextPathPointerEventsVisible        TextPathPointerEvents = "visible"
+	TextPathPointerEventsVisibleFill    TextPathPointerEvents = "visibleFill"
+	TextPathPointerEventsVisiblePainted TextPathPointerEvents = "visiblePainted"
+	TextPathPointerEventsVisibleStroke  TextPathPointerEvents = "visibleStroke"
+)
+
+type TextPathShapeRendering string
+
+const (
+	TextPathShapeRenderingAuto               TextPathShapeRendering = "auto"
+	TextPathShapeRenderingCrispEdges         TextPathShapeRendering = "crispEdges"
+	TextPathShapeRenderingGeometricPrecision TextPathShapeRendering = "geometricPrecision"
+	TextPathShapeRenderingOptimizeSpeed      TextPathShapeRendering = "optimizeSpeed"
+)
+
+type TextPathStrokeLinecap string
+
+const (
+	TextPathStrokeLinecapButt   TextPathStrokeLinecap = "butt"
+	TextPathStrokeLinecapRound  TextPathStrokeLinecap = "round"
+	TextPathStrokeLinecapSquare TextPathStrokeLinecap = "square"
+)
+
+type TextPathStrokeLinejoin string
+
+const (
+	TextPathStrokeLinejoinArcs      TextPathStrokeLinejoin = "arcs"
+	TextPathStrokeLinejoinBevel     TextPathStrokeLinejoin = "bevel"
+	TextPathStrokeLinejoinMiter     TextPathStrokeLinejoin = "miter"
+	TextPathStrokeLinejoinMiterClip TextPathStrokeLinejoin = "miter-clip"
+	TextPathStrokeLinejoinRound     TextPathStrokeLinejoin = "round"
+)
+
+type TextPathTextAnchor string
+
+const (
+	TextPathTextAnchorEnd    TextPathTextAnchor = "end"
+	TextPathTextAnchorMiddle TextPathTextAnchor = "middle"
+	TextPathTextAnchorStart  TextPathTextAnchor = "start"
+)
+
+type TextPathTextRendering string
+
+const (
+	TextPathTextRenderingAuto               TextPathTextRendering = "auto"
+	TextPathTextRenderingGeometricPrecision TextPathTextRendering = "geometricPrecision"
+	TextPathTextRenderingOptimizeLegibility TextPathTextRendering = "optimizeLegibility"
+	TextPathTextRenderingOptimizeSpeed      TextPathTextRendering = "optimizeSpeed"
+)
+
 type TextPathTransformBox string
 
 const (
@@ -383,11 +365,22 @@ const (
 	TextPathTransformBoxViewBox    TextPathTransformBox = "view-box"
 )
 
-type TextPathDirection string
+type TextPathVectorEffect string
 
 const (
-	TextPathDirectionLtr TextPathDirection = "ltr"
-	TextPathDirectionRtl TextPathDirection = "rtl"
+	TextPathVectorEffectFixedPosition    TextPathVectorEffect = "fixed-position"
+	TextPathVectorEffectNonRotation      TextPathVectorEffect = "non-rotation"
+	TextPathVectorEffectNonScalingSize   TextPathVectorEffect = "non-scaling-size"
+	TextPathVectorEffectNonScalingStroke TextPathVectorEffect = "non-scaling-stroke"
+	TextPathVectorEffectNone             TextPathVectorEffect = "none"
+)
+
+type TextPathVisibility string
+
+const (
+	TextPathVisibilityCollapse TextPathVisibility = "collapse"
+	TextPathVisibilityHidden   TextPathVisibility = "hidden"
+	TextPathVisibilityVisible  TextPathVisibility = "visible"
 )
 
 type TextPathWritingMode string
@@ -406,50 +399,17 @@ const (
 	TextPathWritingModeVerticalRl   TextPathWritingMode = "vertical-rl"
 )
 
+type TextPathXmlSpace string
+
+const (
+	TextPathXmlSpaceDefault  TextPathXmlSpace = "default"
+	TextPathXmlSpacePreserve TextPathXmlSpace = "preserve"
+)
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TextPathElement) Href(s string) *TextPathElement {
 	e.attributes.Set("href", s)
-
-	return e
-}
-
-func (e *TextPathElement) XlinkHref(s string) *TextPathElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *TextPathElement) StartOffset(s string) *TextPathElement {
-	e.attributes.Set("startOffset", s)
-
-	return e
-}
-
-func (e *TextPathElement) Method(a TextPathMethod) *TextPathElement {
-	e.attributes.Set("method", string(a))
-
-	return e
-}
-
-func (e *TextPathElement) Spacing(a TextPathSpacing) *TextPathElement {
-	e.attributes.Set("spacing", string(a))
-
-	return e
-}
-
-func (e *TextPathElement) Side(a TextPathSide) *TextPathElement {
-	e.attributes.Set("side", string(a))
-
-	return e
-}
-
-func (e *TextPathElement) Path(s string) *TextPathElement {
-	e.attributes.Set("path", s)
-
-	return e
-}
-
-func (e *TextPathElement) TextLength(s string) *TextPathElement {
-	e.attributes.Set("textLength", s)
 
 	return e
 }
@@ -460,8 +420,88 @@ func (e *TextPathElement) LengthAdjust(a TextPathLengthAdjust) *TextPathElement 
 	return e
 }
 
-func (e *TextPathElement) Id(s string) *TextPathElement {
-	e.attributes.Set("id", s)
+func (e *TextPathElement) Method(a TextPathMethod) *TextPathElement {
+	e.attributes.Set("method", string(a))
+
+	return e
+}
+
+func (e *TextPathElement) Side(a TextPathSide) *TextPathElement {
+	e.attributes.Set("side", string(a))
+
+	return e
+}
+
+func (e *TextPathElement) Spacing(a TextPathSpacing) *TextPathElement {
+	e.attributes.Set("spacing", string(a))
+
+	return e
+}
+
+func (e *TextPathElement) StartOffset(s string) *TextPathElement {
+	e.attributes.Set("startOffset", s)
+
+	return e
+}
+
+func (e *TextPathElement) SystemLanguage(s string) *TextPathElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *TextPathElement) TextLength(s string) *TextPathElement {
+	e.attributes.Set("textLength", s)
+
+	return e
+}
+
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) XlinkHref(s string) *TextPathElement {
+	e.attributes.Set("xlink:href", s)
+
+	return e
+}
+
+func (e *TextPathElement) AlignmentBaseline(a TextPathAlignmentBaseline) *TextPathElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func TextPathAlignmentBaselineCustom(s string) TextPathAlignmentBaseline {
+	return TextPathAlignmentBaseline(s)
+}
+
+func (e *TextPathElement) AriaUnsafe(name string, s string) *TextPathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *TextPathElement) Aria(name string, s string) *TextPathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TextPathElement) Autofocus(b bool) *TextPathElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *TextPathElement) BaselineShift(s string) *TextPathElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -472,40 +512,59 @@ func (e *TextPathElement) Class(s ...string) *TextPathElement {
 	return e
 }
 
-func (e *TextPathElement) Style(s string) *TextPathElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) Clip(s string) *TextPathElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *TextPathElement) Tabindex(i int) *TextPathElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *TextPathElement) ClipPath(s string) *TextPathElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *TextPathElement) Lang(s string) *TextPathElement {
-	e.attributes.Set("lang", s)
+func (e *TextPathElement) ClipRule(a TextPathClipRule) *TextPathElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *TextPathElement) XmlLang(s string) *TextPathElement {
-	e.attributes.Set("xml:lang", s)
+func TextPathClipRuleCustom(s string) TextPathClipRule {
+	return TextPathClipRule(s)
+}
+
+func (e *TextPathElement) Color(s string) *TextPathElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *TextPathElement) XmlSpace(a TextPathXmlSpace) *TextPathElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *TextPathElement) ColorInterpolation(a TextPathColorInterpolation) *TextPathElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TextPathElement) Autofocus(b bool) *TextPathElement {
-	e.attributes.SetBool("autofocus", b)
+func TextPathColorInterpolationCustom(s string) TextPathColorInterpolation {
+	return TextPathColorInterpolation(s)
+}
+
+func (e *TextPathElement) ColorInterpolationFilters(a TextPathColorInterpolationFilters) *TextPathElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func TextPathColorInterpolationFiltersCustom(s string) TextPathColorInterpolationFilters {
+	return TextPathColorInterpolationFilters(s)
+}
+
+func (e *TextPathElement) Cursor(s string) *TextPathElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -526,20 +585,30 @@ func (e *TextPathElement) Data(name string, s string) *TextPathElement {
 	return e
 }
 
-func (e *TextPathElement) AriaUnsafe(name string, s string) *TextPathElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *TextPathElement) Direction(a TextPathDirection) *TextPathElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *TextPathElement) Aria(name string, s string) *TextPathElement {
-	tag := strings.ToLower("aria-" + name)
+func TextPathDirectionCustom(s string) TextPathDirection {
+	return TextPathDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *TextPathElement) Display(s string) *TextPathElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *TextPathElement) DominantBaseline(a TextPathDominantBaseline) *TextPathElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func TextPathDominantBaselineCustom(s string) TextPathDominantBaseline {
+	return TextPathDominantBaseline(s)
 }
 
 func (e *TextPathElement) Fill(s string) *TextPathElement {
@@ -564,20 +633,220 @@ func TextPathFillRuleCustom(s string) TextPathFillRule {
 	return TextPathFillRule(s)
 }
 
+func (e *TextPathElement) Filter(s string) *TextPathElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *TextPathElement) FloodColor(s string) *TextPathElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *TextPathElement) FloodOpacity(f float64) *TextPathElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *TextPathElement) FontFamily(s string) *TextPathElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *TextPathElement) FontSize(s string) *TextPathElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *TextPathElement) FontSizeAdjust(s string) *TextPathElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *TextPathElement) FontStretch(s string) *TextPathElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *TextPathElement) FontStyle(a TextPathFontStyle) *TextPathElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func TextPathFontStyleCustom(s string) TextPathFontStyle {
+	return TextPathFontStyle(s)
+}
+
+func (e *TextPathElement) FontVariant(s string) *TextPathElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *TextPathElement) FontWeight(s string) *TextPathElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) GlyphOrientationHorizontal(s string) *TextPathElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) GlyphOrientationVertical(s string) *TextPathElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *TextPathElement) Id(s string) *TextPathElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *TextPathElement) ImageRendering(a TextPathImageRendering) *TextPathElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func TextPathImageRenderingCustom(s string) TextPathImageRendering {
+	return TextPathImageRendering(s)
+}
+
+func (e *TextPathElement) Lang(s string) *TextPathElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *TextPathElement) LetterSpacing(s string) *TextPathElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *TextPathElement) LightingColor(s string) *TextPathElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *TextPathElement) MarkerEnd(s string) *TextPathElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *TextPathElement) MarkerMid(s string) *TextPathElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *TextPathElement) MarkerStart(s string) *TextPathElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *TextPathElement) Mask(s string) *TextPathElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *TextPathElement) Opacity(f float64) *TextPathElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *TextPathElement) Overflow(a TextPathOverflow) *TextPathElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func TextPathOverflowCustom(s string) TextPathOverflow {
+	return TextPathOverflow(s)
+}
+
+func (e *TextPathElement) PaintOrder(s string) *TextPathElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *TextPathElement) PointerEvents(a TextPathPointerEvents) *TextPathElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func TextPathPointerEventsCustom(s string) TextPathPointerEvents {
+	return TextPathPointerEvents(s)
+}
+
+func (e *TextPathElement) RequiredExtensions(s string) *TextPathElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *TextPathElement) ShapeRendering(a TextPathShapeRendering) *TextPathElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func TextPathShapeRenderingCustom(s string) TextPathShapeRendering {
+	return TextPathShapeRendering(s)
+}
+
+func (e *TextPathElement) StopColor(s string) *TextPathElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *TextPathElement) StopOpacity(f float64) *TextPathElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *TextPathElement) Stroke(s string) *TextPathElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *TextPathElement) StrokeWidth(s string) *TextPathElement {
-	e.attributes.Set("stroke-width", s)
+func (e *TextPathElement) StrokeDasharray(s string) *TextPathElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *TextPathElement) StrokeOpacity(f float64) *TextPathElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *TextPathElement) StrokeDashoffset(s string) *TextPathElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -608,210 +877,28 @@ func (e *TextPathElement) StrokeMiterlimit(f float64) *TextPathElement {
 	return e
 }
 
-func (e *TextPathElement) StrokeDasharray(s string) *TextPathElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *TextPathElement) StrokeOpacity(f float64) *TextPathElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *TextPathElement) StrokeDashoffset(s string) *TextPathElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *TextPathElement) StrokeWidth(s string) *TextPathElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *TextPathElement) Opacity(f float64) *TextPathElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *TextPathElement) Style(s string) *TextPathElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *TextPathElement) Color(s string) *TextPathElement {
-	e.attributes.Set("color", s)
+func (e *TextPathElement) Tabindex(i int) *TextPathElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *TextPathElement) Display(s string) *TextPathElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *TextPathElement) Visibility(a TextPathVisibility) *TextPathElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func TextPathVisibilityCustom(s string) TextPathVisibility {
-	return TextPathVisibility(s)
-}
-
-func (e *TextPathElement) ClipPath(s string) *TextPathElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *TextPathElement) ClipRule(a TextPathClipRule) *TextPathElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func TextPathClipRuleCustom(s string) TextPathClipRule {
-	return TextPathClipRule(s)
-}
-
-func (e *TextPathElement) Mask(s string) *TextPathElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *TextPathElement) Filter(s string) *TextPathElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *TextPathElement) Cursor(s string) *TextPathElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *TextPathElement) PointerEvents(a TextPathPointerEvents) *TextPathElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func TextPathPointerEventsCustom(s string) TextPathPointerEvents {
-	return TextPathPointerEvents(s)
-}
-
-func (e *TextPathElement) VectorEffect(a TextPathVectorEffect) *TextPathElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func TextPathVectorEffectCustom(s string) TextPathVectorEffect {
-	return TextPathVectorEffect(s)
-}
-
-func (e *TextPathElement) PaintOrder(s string) *TextPathElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *TextPathElement) ShapeRendering(a TextPathShapeRendering) *TextPathElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func TextPathShapeRenderingCustom(s string) TextPathShapeRendering {
-	return TextPathShapeRendering(s)
-}
-
-func (e *TextPathElement) ColorInterpolation(a TextPathColorInterpolation) *TextPathElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func TextPathColorInterpolationCustom(s string) TextPathColorInterpolation {
-	return TextPathColorInterpolation(s)
-}
-
-func (e *TextPathElement) ColorInterpolationFilters(a TextPathColorInterpolationFilters) *TextPathElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func TextPathColorInterpolationFiltersCustom(s string) TextPathColorInterpolationFilters {
-	return TextPathColorInterpolationFilters(s)
-}
-
-func (e *TextPathElement) FloodColor(s string) *TextPathElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *TextPathElement) FloodOpacity(f float64) *TextPathElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *TextPathElement) LightingColor(s string) *TextPathElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *TextPathElement) StopColor(s string) *TextPathElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *TextPathElement) StopOpacity(f float64) *TextPathElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *TextPathElement) MarkerStart(s string) *TextPathElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *TextPathElement) MarkerMid(s string) *TextPathElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *TextPathElement) MarkerEnd(s string) *TextPathElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *TextPathElement) FontFamily(s string) *TextPathElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *TextPathElement) FontSize(s string) *TextPathElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *TextPathElement) FontWeight(s string) *TextPathElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *TextPathElement) FontStyle(a TextPathFontStyle) *TextPathElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func TextPathFontStyleCustom(s string) TextPathFontStyle {
-	return TextPathFontStyle(s)
 }
 
 func (e *TextPathElement) TextAnchor(a TextPathTextAnchor) *TextPathElement {
@@ -824,40 +911,14 @@ func TextPathTextAnchorCustom(s string) TextPathTextAnchor {
 	return TextPathTextAnchor(s)
 }
 
-func (e *TextPathElement) DominantBaseline(a TextPathDominantBaseline) *TextPathElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func TextPathDominantBaselineCustom(s string) TextPathDominantBaseline {
-	return TextPathDominantBaseline(s)
-}
-
-func (e *TextPathElement) AlignmentBaseline(a TextPathAlignmentBaseline) *TextPathElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func TextPathAlignmentBaselineCustom(s string) TextPathAlignmentBaseline {
-	return TextPathAlignmentBaseline(s)
-}
-
-func (e *TextPathElement) LetterSpacing(s string) *TextPathElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *TextPathElement) WordSpacing(s string) *TextPathElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *TextPathElement) TextDecoration(s string) *TextPathElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *TextPathElement) TextOverflow(s string) *TextPathElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -872,24 +933,10 @@ func TextPathTextRenderingCustom(s string) TextPathTextRendering {
 	return TextPathTextRendering(s)
 }
 
-func (e *TextPathElement) ImageRendering(a TextPathImageRendering) *TextPathElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *TextPathElement) Transform(s string) *TextPathElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func TextPathImageRenderingCustom(s string) TextPathImageRendering {
-	return TextPathImageRendering(s)
-}
-
-func (e *TextPathElement) Overflow(a TextPathOverflow) *TextPathElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func TextPathOverflowCustom(s string) TextPathOverflow {
-	return TextPathOverflow(s)
 }
 
 func (e *TextPathElement) TransformBox(a TextPathTransformBox) *TextPathElement {
@@ -902,18 +949,46 @@ func TextPathTransformBoxCustom(s string) TextPathTransformBox {
 	return TextPathTransformBox(s)
 }
 
-func (e *TextPathElement) Direction(a TextPathDirection) *TextPathElement {
-	e.attributes.Set("direction", string(a))
+func (e *TextPathElement) TransformOrigin(s string) *TextPathElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func TextPathDirectionCustom(s string) TextPathDirection {
-	return TextPathDirection(s)
-}
-
 func (e *TextPathElement) UnicodeBidi(s string) *TextPathElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *TextPathElement) VectorEffect(a TextPathVectorEffect) *TextPathElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func TextPathVectorEffectCustom(s string) TextPathVectorEffect {
+	return TextPathVectorEffect(s)
+}
+
+func (e *TextPathElement) Visibility(a TextPathVisibility) *TextPathElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func TextPathVisibilityCustom(s string) TextPathVisibility {
+	return TextPathVisibility(s)
+}
+
+func (e *TextPathElement) WhiteSpace(s string) *TextPathElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *TextPathElement) WordSpacing(s string) *TextPathElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -928,8 +1003,20 @@ func TextPathWritingModeCustom(s string) TextPathWritingMode {
 	return TextPathWritingMode(s)
 }
 
-func (e *TextPathElement) WhiteSpace(s string) *TextPathElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) XmlLang(s string) *TextPathElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *TextPathElement) XmlSpace(a TextPathXmlSpace) *TextPathElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

@@ -240,6 +240,15 @@ const (
 	HtmlInputmodeUrl     HtmlInputmode = "url"
 )
 
+type HtmlPopover string
+
+const (
+	HtmlPopoverAuto   HtmlPopover = "auto"
+	HtmlPopoverHint   HtmlPopover = "hint"
+	HtmlPopoverManual HtmlPopover = "manual"
+	HtmlPopoverEmpty  HtmlPopover = ""
+)
+
 type HtmlSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *HtmlElement) Enterkeyhint(a HtmlEnterkeyhint) *HtmlElement {
 	return e
 }
 
+func (e *HtmlElement) Exportparts(s string) *HtmlElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *HtmlElement) Headingoffset(i int) *HtmlElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *HtmlElement) Headingreset(b bool) *HtmlElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HtmlElement) Hidden(v ...HtmlHidden) *HtmlElement {
@@ -396,6 +425,14 @@ func (e *HtmlElement) Inputmode(a HtmlInputmode) *HtmlElement {
 	return e
 }
 
+func (e *HtmlElement) Is(s string) *HtmlElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *HtmlElement) Itemid(s string) *HtmlElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *HtmlElement) Nonce(s string) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Popover(s string) *HtmlElement {
-	e.attributes.Set("popover", s)
+func (e *HtmlElement) Part(s ...string) *HtmlElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HtmlElement) Popover(v ...HtmlPopover) *HtmlElement {
+	var val HtmlPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

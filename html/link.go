@@ -117,18 +117,26 @@ const (
 	LinkCrossoriginEmpty          LinkCrossorigin = ""
 )
 
-type LinkBlocking string
-
-const (
-	LinkBlockingRender LinkBlocking = "render"
-)
-
 type LinkFetchpriority string
 
 const (
 	LinkFetchpriorityAuto LinkFetchpriority = "auto"
 	LinkFetchpriorityHigh LinkFetchpriority = "high"
 	LinkFetchpriorityLow  LinkFetchpriority = "low"
+)
+
+type LinkReferrerpolicy string
+
+const (
+	LinkReferrerpolicyNoReferrer                  LinkReferrerpolicy = "no-referrer"
+	LinkReferrerpolicyNoReferrerWhenDowngrade     LinkReferrerpolicy = "no-referrer-when-downgrade"
+	LinkReferrerpolicyOrigin                      LinkReferrerpolicy = "origin"
+	LinkReferrerpolicyOriginWhenCrossOrigin       LinkReferrerpolicy = "origin-when-cross-origin"
+	LinkReferrerpolicySameOrigin                  LinkReferrerpolicy = "same-origin"
+	LinkReferrerpolicyStrictOrigin                LinkReferrerpolicy = "strict-origin"
+	LinkReferrerpolicyStrictOriginWhenCrossOrigin LinkReferrerpolicy = "strict-origin-when-cross-origin"
+	LinkReferrerpolicyUnsafeUrl                   LinkReferrerpolicy = "unsafe-url"
+	LinkReferrerpolicyEmpty                       LinkReferrerpolicy = ""
 )
 
 type LinkAutocapitalize string
@@ -207,6 +215,15 @@ const (
 	LinkInputmodeUrl     LinkInputmode = "url"
 )
 
+type LinkPopover string
+
+const (
+	LinkPopoverAuto   LinkPopover = "auto"
+	LinkPopoverHint   LinkPopover = "hint"
+	LinkPopoverManual LinkPopover = "manual"
+	LinkPopoverEmpty  LinkPopover = ""
+)
+
 type LinkSpellcheck string
 
 const (
@@ -231,8 +248,20 @@ const (
 	LinkWritingsuggestionsEmpty LinkWritingsuggestions = ""
 )
 
-func (e *LinkElement) Href(s string) *LinkElement {
-	e.attributes.Set("href", s)
+func (e *LinkElement) As(s string) *LinkElement {
+	e.attributes.Set("as", s)
+
+	return e
+}
+
+func (e *LinkElement) Blocking(s ...string) *LinkElement {
+	e.attributes.Set("blocking", strings.Join(s, " "))
+
+	return e
+}
+
+func (e *LinkElement) Color(s string) *LinkElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
@@ -249,78 +278,6 @@ func (e *LinkElement) Crossorigin(v ...LinkCrossorigin) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Rel(s ...string) *LinkElement {
-	e.attributes.Set("rel", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *LinkElement) Media(s string) *LinkElement {
-	e.attributes.Set("media", s)
-
-	return e
-}
-
-func (e *LinkElement) Integrity(s string) *LinkElement {
-	e.attributes.Set("integrity", s)
-
-	return e
-}
-
-func (e *LinkElement) Hreflang(s string) *LinkElement {
-	e.attributes.Set("hreflang", s)
-
-	return e
-}
-
-func (e *LinkElement) Type(s string) *LinkElement {
-	e.attributes.Set("type", s)
-
-	return e
-}
-
-func (e *LinkElement) Referrerpolicy(s string) *LinkElement {
-	e.attributes.Set("referrerpolicy", s)
-
-	return e
-}
-
-func (e *LinkElement) Sizes(s ...string) *LinkElement {
-	e.attributes.Set("sizes", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *LinkElement) Imagesrcset(s string) *LinkElement {
-	e.attributes.Set("imagesrcset", s)
-
-	return e
-}
-
-func (e *LinkElement) Imagesizes(s string) *LinkElement {
-	e.attributes.Set("imagesizes", s)
-
-	return e
-}
-
-func (e *LinkElement) As(s string) *LinkElement {
-	e.attributes.Set("as", s)
-
-	return e
-}
-
-func (e *LinkElement) Blocking(a LinkBlocking) *LinkElement {
-	e.attributes.Set("blocking", string(a))
-
-	return e
-}
-
-func (e *LinkElement) Color(s string) *LinkElement {
-	e.attributes.Set("color", s)
-
-	return e
-}
-
 // Disabled sets the boolean attribute "disabled". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *LinkElement) Disabled(b bool) *LinkElement {
@@ -331,6 +288,74 @@ func (e *LinkElement) Disabled(b bool) *LinkElement {
 
 func (e *LinkElement) Fetchpriority(a LinkFetchpriority) *LinkElement {
 	e.attributes.Set("fetchpriority", string(a))
+
+	return e
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *LinkElement) Href(s string) *LinkElement {
+	e.attributes.Set("href", s)
+
+	return e
+}
+
+func (e *LinkElement) Hreflang(s string) *LinkElement {
+	e.attributes.Set("hreflang", s)
+
+	return e
+}
+
+func (e *LinkElement) Imagesizes(s string) *LinkElement {
+	e.attributes.Set("imagesizes", s)
+
+	return e
+}
+
+func (e *LinkElement) Imagesrcset(s string) *LinkElement {
+	e.attributes.Set("imagesrcset", s)
+
+	return e
+}
+
+func (e *LinkElement) Integrity(s string) *LinkElement {
+	e.attributes.Set("integrity", s)
+
+	return e
+}
+
+func (e *LinkElement) Media(s string) *LinkElement {
+	e.attributes.Set("media", s)
+
+	return e
+}
+
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Referrerpolicy(v ...LinkReferrerpolicy) *LinkElement {
+	var val LinkReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
+func (e *LinkElement) Rel(s ...string) *LinkElement {
+	e.attributes.Set("rel", strings.Join(s, " "))
+
+	return e
+}
+
+func (e *LinkElement) Sizes(s ...string) *LinkElement {
+	e.attributes.Set("sizes", strings.Join(s, " "))
+
+	return e
+}
+
+func (e *LinkElement) Type(s string) *LinkElement {
+	e.attributes.Set("type", s)
 
 	return e
 }
@@ -435,6 +460,26 @@ func (e *LinkElement) Enterkeyhint(a LinkEnterkeyhint) *LinkElement {
 	return e
 }
 
+func (e *LinkElement) Exportparts(s string) *LinkElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *LinkElement) Headingoffset(i int) *LinkElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *LinkElement) Headingreset(b bool) *LinkElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *LinkElement) Hidden(v ...LinkHidden) *LinkElement {
@@ -467,6 +512,14 @@ func (e *LinkElement) Inputmode(a LinkInputmode) *LinkElement {
 	return e
 }
 
+func (e *LinkElement) Is(s string) *LinkElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *LinkElement) Itemid(s string) *LinkElement {
 	e.attributes.Set("itemid", s)
 
@@ -511,8 +564,20 @@ func (e *LinkElement) Nonce(s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Popover(s string) *LinkElement {
-	e.attributes.Set("popover", s)
+func (e *LinkElement) Part(s ...string) *LinkElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Popover(v ...LinkPopover) *LinkElement {
+	var val LinkPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

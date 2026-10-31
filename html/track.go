@@ -195,6 +195,15 @@ const (
 	TrackInputmodeUrl     TrackInputmode = "url"
 )
 
+type TrackPopover string
+
+const (
+	TrackPopoverAuto   TrackPopover = "auto"
+	TrackPopoverHint   TrackPopover = "hint"
+	TrackPopoverManual TrackPopover = "manual"
+	TrackPopoverEmpty  TrackPopover = ""
+)
+
 type TrackSpellcheck string
 
 const (
@@ -219,20 +228,16 @@ const (
 	TrackWritingsuggestionsEmpty TrackWritingsuggestions = ""
 )
 
+// Default sets the boolean attribute "default". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TrackElement) Default(b bool) *TrackElement {
+	e.attributes.SetBool("default", b)
+
+	return e
+}
+
 func (e *TrackElement) Kind(a TrackKind) *TrackElement {
 	e.attributes.Set("kind", string(a))
-
-	return e
-}
-
-func (e *TrackElement) Src(s string) *TrackElement {
-	e.attributes.Set("src", s)
-
-	return e
-}
-
-func (e *TrackElement) Srclang(s string) *TrackElement {
-	e.attributes.Set("srclang", s)
 
 	return e
 }
@@ -243,10 +248,16 @@ func (e *TrackElement) Label(s string) *TrackElement {
 	return e
 }
 
-// Default sets the boolean attribute "default". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TrackElement) Default(b bool) *TrackElement {
-	e.attributes.SetBool("default", b)
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *TrackElement) Src(s string) *TrackElement {
+	e.attributes.Set("src", s)
+
+	return e
+}
+
+func (e *TrackElement) Srclang(s string) *TrackElement {
+	e.attributes.Set("srclang", s)
 
 	return e
 }
@@ -351,6 +362,26 @@ func (e *TrackElement) Enterkeyhint(a TrackEnterkeyhint) *TrackElement {
 	return e
 }
 
+func (e *TrackElement) Exportparts(s string) *TrackElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TrackElement) Headingoffset(i int) *TrackElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TrackElement) Headingreset(b bool) *TrackElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TrackElement) Hidden(v ...TrackHidden) *TrackElement {
@@ -383,6 +414,14 @@ func (e *TrackElement) Inputmode(a TrackInputmode) *TrackElement {
 	return e
 }
 
+func (e *TrackElement) Is(s string) *TrackElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TrackElement) Itemid(s string) *TrackElement {
 	e.attributes.Set("itemid", s)
 
@@ -427,8 +466,20 @@ func (e *TrackElement) Nonce(s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Popover(s string) *TrackElement {
-	e.attributes.Set("popover", s)
+func (e *TrackElement) Part(s ...string) *TrackElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrackElement) Popover(v ...TrackPopover) *TrackElement {
+	var val TrackPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

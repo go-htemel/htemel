@@ -109,15 +109,19 @@ func (e *MetaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type MetaCharset string
+
+const (
+	MetaCharsetUtf8 MetaCharset = "utf-8"
+)
+
 type MetaHttpEquiv string
 
 const (
-	MetaHttpEquivContentLanguage       MetaHttpEquiv = "content-language"
 	MetaHttpEquivContentSecurityPolicy MetaHttpEquiv = "content-security-policy"
 	MetaHttpEquivContentType           MetaHttpEquiv = "content-type"
 	MetaHttpEquivDefaultStyle          MetaHttpEquiv = "default-style"
 	MetaHttpEquivRefresh               MetaHttpEquiv = "refresh"
-	MetaHttpEquivSetCookie             MetaHttpEquiv = "set-cookie"
 	MetaHttpEquivXUaCompatible         MetaHttpEquiv = "x-ua-compatible"
 )
 
@@ -197,6 +201,15 @@ const (
 	MetaInputmodeUrl     MetaInputmode = "url"
 )
 
+type MetaPopover string
+
+const (
+	MetaPopoverAuto   MetaPopover = "auto"
+	MetaPopoverHint   MetaPopover = "hint"
+	MetaPopoverManual MetaPopover = "manual"
+	MetaPopoverEmpty  MetaPopover = ""
+)
+
 type MetaSpellcheck string
 
 const (
@@ -221,14 +234,8 @@ const (
 	MetaWritingsuggestionsEmpty MetaWritingsuggestions = ""
 )
 
-func (e *MetaElement) Name(s string) *MetaElement {
-	e.attributes.Set("name", s)
-
-	return e
-}
-
-func (e *MetaElement) HttpEquiv(a MetaHttpEquiv) *MetaElement {
-	e.attributes.Set("http-equiv", string(a))
+func (e *MetaElement) Charset(a MetaCharset) *MetaElement {
+	e.attributes.Set("charset", string(a))
 
 	return e
 }
@@ -239,14 +246,20 @@ func (e *MetaElement) Content(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Charset(s string) *MetaElement {
-	e.attributes.Set("charset", s)
+func (e *MetaElement) HttpEquiv(a MetaHttpEquiv) *MetaElement {
+	e.attributes.Set("http-equiv", string(a))
 
 	return e
 }
 
 func (e *MetaElement) Media(s string) *MetaElement {
 	e.attributes.Set("media", s)
+
+	return e
+}
+
+func (e *MetaElement) Name(s string) *MetaElement {
+	e.attributes.Set("name", s)
 
 	return e
 }
@@ -351,6 +364,26 @@ func (e *MetaElement) Enterkeyhint(a MetaEnterkeyhint) *MetaElement {
 	return e
 }
 
+func (e *MetaElement) Exportparts(s string) *MetaElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *MetaElement) Headingoffset(i int) *MetaElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MetaElement) Headingreset(b bool) *MetaElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MetaElement) Hidden(v ...MetaHidden) *MetaElement {
@@ -383,6 +416,14 @@ func (e *MetaElement) Inputmode(a MetaInputmode) *MetaElement {
 	return e
 }
 
+func (e *MetaElement) Is(s string) *MetaElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *MetaElement) Itemid(s string) *MetaElement {
 	e.attributes.Set("itemid", s)
 
@@ -427,8 +468,20 @@ func (e *MetaElement) Nonce(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Popover(s string) *MetaElement {
-	e.attributes.Set("popover", s)
+func (e *MetaElement) Part(s ...string) *MetaElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Popover(v ...MetaPopover) *MetaElement {
+	var val MetaPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

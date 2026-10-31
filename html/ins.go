@@ -240,6 +240,15 @@ const (
 	InsInputmodeUrl     InsInputmode = "url"
 )
 
+type InsPopover string
+
+const (
+	InsPopoverAuto   InsPopover = "auto"
+	InsPopoverHint   InsPopover = "hint"
+	InsPopoverManual InsPopover = "manual"
+	InsPopoverEmpty  InsPopover = ""
+)
+
 type InsSpellcheck string
 
 const (
@@ -264,6 +273,8 @@ const (
 	InsWritingsuggestionsEmpty InsWritingsuggestions = ""
 )
 
+// Cite sets the "cite" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *InsElement) Cite(s string) *InsElement {
 	e.attributes.Set("cite", s)
 
@@ -376,6 +387,26 @@ func (e *InsElement) Enterkeyhint(a InsEnterkeyhint) *InsElement {
 	return e
 }
 
+func (e *InsElement) Exportparts(s string) *InsElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *InsElement) Headingoffset(i int) *InsElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *InsElement) Headingreset(b bool) *InsElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *InsElement) Hidden(v ...InsHidden) *InsElement {
@@ -408,6 +439,14 @@ func (e *InsElement) Inputmode(a InsInputmode) *InsElement {
 	return e
 }
 
+func (e *InsElement) Is(s string) *InsElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *InsElement) Itemid(s string) *InsElement {
 	e.attributes.Set("itemid", s)
 
@@ -452,8 +491,20 @@ func (e *InsElement) Nonce(s string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Popover(s string) *InsElement {
-	e.attributes.Set("popover", s)
+func (e *InsElement) Part(s ...string) *InsElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Popover(v ...InsPopover) *InsElement {
+	var val InsPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -240,6 +240,15 @@ const (
 	SmallInputmodeUrl     SmallInputmode = "url"
 )
 
+type SmallPopover string
+
+const (
+	SmallPopoverAuto   SmallPopover = "auto"
+	SmallPopoverHint   SmallPopover = "hint"
+	SmallPopoverManual SmallPopover = "manual"
+	SmallPopoverEmpty  SmallPopover = ""
+)
+
 type SmallSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SmallElement) Enterkeyhint(a SmallEnterkeyhint) *SmallElement {
 	return e
 }
 
+func (e *SmallElement) Exportparts(s string) *SmallElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SmallElement) Headingoffset(i int) *SmallElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SmallElement) Headingreset(b bool) *SmallElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SmallElement) Hidden(v ...SmallHidden) *SmallElement {
@@ -396,6 +425,14 @@ func (e *SmallElement) Inputmode(a SmallInputmode) *SmallElement {
 	return e
 }
 
+func (e *SmallElement) Is(s string) *SmallElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SmallElement) Itemid(s string) *SmallElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SmallElement) Nonce(s string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Popover(s string) *SmallElement {
-	e.attributes.Set("popover", s)
+func (e *SmallElement) Part(s ...string) *SmallElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Popover(v ...SmallPopover) *SmallElement {
+	var val SmallPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

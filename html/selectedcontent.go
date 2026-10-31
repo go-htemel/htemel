@@ -240,6 +240,15 @@ const (
 	SelectedcontentInputmodeUrl     SelectedcontentInputmode = "url"
 )
 
+type SelectedcontentPopover string
+
+const (
+	SelectedcontentPopoverAuto   SelectedcontentPopover = "auto"
+	SelectedcontentPopoverHint   SelectedcontentPopover = "hint"
+	SelectedcontentPopoverManual SelectedcontentPopover = "manual"
+	SelectedcontentPopoverEmpty  SelectedcontentPopover = ""
+)
+
 type SelectedcontentSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SelectedcontentElement) Enterkeyhint(a SelectedcontentEnterkeyhint) *Se
 	return e
 }
 
+func (e *SelectedcontentElement) Exportparts(s string) *SelectedcontentElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SelectedcontentElement) Headingoffset(i int) *SelectedcontentElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SelectedcontentElement) Headingreset(b bool) *SelectedcontentElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SelectedcontentElement) Hidden(v ...SelectedcontentHidden) *SelectedcontentElement {
@@ -396,6 +425,14 @@ func (e *SelectedcontentElement) Inputmode(a SelectedcontentInputmode) *Selected
 	return e
 }
 
+func (e *SelectedcontentElement) Is(s string) *SelectedcontentElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SelectedcontentElement) Itemid(s string) *SelectedcontentElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SelectedcontentElement) Nonce(s string) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Popover(s string) *SelectedcontentElement {
-	e.attributes.Set("popover", s)
+func (e *SelectedcontentElement) Part(s ...string) *SelectedcontentElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Popover(v ...SelectedcontentPopover) *SelectedcontentElement {
+	var val SelectedcontentPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

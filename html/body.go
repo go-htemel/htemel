@@ -240,6 +240,15 @@ const (
 	BodyInputmodeUrl     BodyInputmode = "url"
 )
 
+type BodyPopover string
+
+const (
+	BodyPopoverAuto   BodyPopover = "auto"
+	BodyPopoverHint   BodyPopover = "hint"
+	BodyPopoverManual BodyPopover = "manual"
+	BodyPopoverEmpty  BodyPopover = ""
+)
+
 type BodySpellcheck string
 
 const (
@@ -318,12 +327,6 @@ func (e *BodyElement) Ononline(s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Onpageswap(s string) *BodyElement {
-	e.attributes.Set("onpageswap", s)
-
-	return e
-}
-
 func (e *BodyElement) Onpagehide(s string) *BodyElement {
 	e.attributes.Set("onpagehide", s)
 
@@ -338,6 +341,12 @@ func (e *BodyElement) Onpagereveal(s string) *BodyElement {
 
 func (e *BodyElement) Onpageshow(s string) *BodyElement {
 	e.attributes.Set("onpageshow", s)
+
+	return e
+}
+
+func (e *BodyElement) Onpageswap(s string) *BodyElement {
+	e.attributes.Set("onpageswap", s)
 
 	return e
 }
@@ -472,6 +481,26 @@ func (e *BodyElement) Enterkeyhint(a BodyEnterkeyhint) *BodyElement {
 	return e
 }
 
+func (e *BodyElement) Exportparts(s string) *BodyElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *BodyElement) Headingoffset(i int) *BodyElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *BodyElement) Headingreset(b bool) *BodyElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BodyElement) Hidden(v ...BodyHidden) *BodyElement {
@@ -504,6 +533,14 @@ func (e *BodyElement) Inputmode(a BodyInputmode) *BodyElement {
 	return e
 }
 
+func (e *BodyElement) Is(s string) *BodyElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BodyElement) Itemid(s string) *BodyElement {
 	e.attributes.Set("itemid", s)
 
@@ -548,8 +585,20 @@ func (e *BodyElement) Nonce(s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Popover(s string) *BodyElement {
-	e.attributes.Set("popover", s)
+func (e *BodyElement) Part(s ...string) *BodyElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Popover(v ...BodyPopover) *BodyElement {
+	var val BodyPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

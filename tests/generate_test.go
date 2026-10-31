@@ -12,6 +12,7 @@ import (
 var generatedPackages = []struct{ spec, dir string }{
 	{spec: "html.json", dir: "html"},
 	{spec: "svg.json", dir: "svg"},
+	{spec: "mathml.json", dir: "mathml"},
 }
 
 // TestGeneratedCodeIsCurrent runs the generator for each spec into a temp dir and compares the output

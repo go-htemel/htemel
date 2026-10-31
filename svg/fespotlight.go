@@ -164,134 +164,6 @@ func (e *FeSpotLightElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeSpotLightXmlSpace string
-
-const (
-	FeSpotLightXmlSpaceDefault  FeSpotLightXmlSpace = "default"
-	FeSpotLightXmlSpacePreserve FeSpotLightXmlSpace = "preserve"
-)
-
-type FeSpotLightFillRule string
-
-const (
-	FeSpotLightFillRuleEvenodd FeSpotLightFillRule = "evenodd"
-	FeSpotLightFillRuleNonzero FeSpotLightFillRule = "nonzero"
-)
-
-type FeSpotLightStrokeLinecap string
-
-const (
-	FeSpotLightStrokeLinecapButt   FeSpotLightStrokeLinecap = "butt"
-	FeSpotLightStrokeLinecapRound  FeSpotLightStrokeLinecap = "round"
-	FeSpotLightStrokeLinecapSquare FeSpotLightStrokeLinecap = "square"
-)
-
-type FeSpotLightStrokeLinejoin string
-
-const (
-	FeSpotLightStrokeLinejoinArcs      FeSpotLightStrokeLinejoin = "arcs"
-	FeSpotLightStrokeLinejoinBevel     FeSpotLightStrokeLinejoin = "bevel"
-	FeSpotLightStrokeLinejoinMiter     FeSpotLightStrokeLinejoin = "miter"
-	FeSpotLightStrokeLinejoinMiterClip FeSpotLightStrokeLinejoin = "miter-clip"
-	FeSpotLightStrokeLinejoinRound     FeSpotLightStrokeLinejoin = "round"
-)
-
-type FeSpotLightVisibility string
-
-const (
-	FeSpotLightVisibilityCollapse FeSpotLightVisibility = "collapse"
-	FeSpotLightVisibilityHidden   FeSpotLightVisibility = "hidden"
-	FeSpotLightVisibilityVisible  FeSpotLightVisibility = "visible"
-)
-
-type FeSpotLightClipRule string
-
-const (
-	FeSpotLightClipRuleEvenodd FeSpotLightClipRule = "evenodd"
-	FeSpotLightClipRuleNonzero FeSpotLightClipRule = "nonzero"
-)
-
-type FeSpotLightPointerEvents string
-
-const (
-	FeSpotLightPointerEventsAll            FeSpotLightPointerEvents = "all"
-	FeSpotLightPointerEventsAuto           FeSpotLightPointerEvents = "auto"
-	FeSpotLightPointerEventsBoundingBox    FeSpotLightPointerEvents = "bounding-box"
-	FeSpotLightPointerEventsFill           FeSpotLightPointerEvents = "fill"
-	FeSpotLightPointerEventsNone           FeSpotLightPointerEvents = "none"
-	FeSpotLightPointerEventsPainted        FeSpotLightPointerEvents = "painted"
-	FeSpotLightPointerEventsStroke         FeSpotLightPointerEvents = "stroke"
-	FeSpotLightPointerEventsVisible        FeSpotLightPointerEvents = "visible"
-	FeSpotLightPointerEventsVisibleFill    FeSpotLightPointerEvents = "visibleFill"
-	FeSpotLightPointerEventsVisiblePainted FeSpotLightPointerEvents = "visiblePainted"
-	FeSpotLightPointerEventsVisibleStroke  FeSpotLightPointerEvents = "visibleStroke"
-)
-
-type FeSpotLightVectorEffect string
-
-const (
-	FeSpotLightVectorEffectFixedPosition    FeSpotLightVectorEffect = "fixed-position"
-	FeSpotLightVectorEffectNonRotation      FeSpotLightVectorEffect = "non-rotation"
-	FeSpotLightVectorEffectNonScalingSize   FeSpotLightVectorEffect = "non-scaling-size"
-	FeSpotLightVectorEffectNonScalingStroke FeSpotLightVectorEffect = "non-scaling-stroke"
-	FeSpotLightVectorEffectNone             FeSpotLightVectorEffect = "none"
-)
-
-type FeSpotLightShapeRendering string
-
-const (
-	FeSpotLightShapeRenderingAuto               FeSpotLightShapeRendering = "auto"
-	FeSpotLightShapeRenderingCrispEdges         FeSpotLightShapeRendering = "crispEdges"
-	FeSpotLightShapeRenderingGeometricPrecision FeSpotLightShapeRendering = "geometricPrecision"
-	FeSpotLightShapeRenderingOptimizeSpeed      FeSpotLightShapeRendering = "optimizeSpeed"
-)
-
-type FeSpotLightColorInterpolation string
-
-const (
-	FeSpotLightColorInterpolationAuto      FeSpotLightColorInterpolation = "auto"
-	FeSpotLightColorInterpolationLinearRGB FeSpotLightColorInterpolation = "linearRGB"
-	FeSpotLightColorInterpolationSRGB      FeSpotLightColorInterpolation = "sRGB"
-)
-
-type FeSpotLightColorInterpolationFilters string
-
-const (
-	FeSpotLightColorInterpolationFiltersAuto      FeSpotLightColorInterpolationFilters = "auto"
-	FeSpotLightColorInterpolationFiltersLinearRGB FeSpotLightColorInterpolationFilters = "linearRGB"
-	FeSpotLightColorInterpolationFiltersSRGB      FeSpotLightColorInterpolationFilters = "sRGB"
-)
-
-type FeSpotLightFontStyle string
-
-const (
-	FeSpotLightFontStyleItalic  FeSpotLightFontStyle = "italic"
-	FeSpotLightFontStyleNormal  FeSpotLightFontStyle = "normal"
-	FeSpotLightFontStyleOblique FeSpotLightFontStyle = "oblique"
-)
-
-type FeSpotLightTextAnchor string
-
-const (
-	FeSpotLightTextAnchorEnd    FeSpotLightTextAnchor = "end"
-	FeSpotLightTextAnchorMiddle FeSpotLightTextAnchor = "middle"
-	FeSpotLightTextAnchorStart  FeSpotLightTextAnchor = "start"
-)
-
-type FeSpotLightDominantBaseline string
-
-const (
-	FeSpotLightDominantBaselineAlphabetic   FeSpotLightDominantBaseline = "alphabetic"
-	FeSpotLightDominantBaselineAuto         FeSpotLightDominantBaseline = "auto"
-	FeSpotLightDominantBaselineCentral      FeSpotLightDominantBaseline = "central"
-	FeSpotLightDominantBaselineHanging      FeSpotLightDominantBaseline = "hanging"
-	FeSpotLightDominantBaselineIdeographic  FeSpotLightDominantBaseline = "ideographic"
-	FeSpotLightDominantBaselineMathematical FeSpotLightDominantBaseline = "mathematical"
-	FeSpotLightDominantBaselineMiddle       FeSpotLightDominantBaseline = "middle"
-	FeSpotLightDominantBaselineTextBottom   FeSpotLightDominantBaseline = "text-bottom"
-	FeSpotLightDominantBaselineTextTop      FeSpotLightDominantBaseline = "text-top"
-)
-
 type FeSpotLightAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	FeSpotLightAlignmentBaselineTop            FeSpotLightAlignmentBaseline = "top"
 )
 
-type FeSpotLightTextRendering string
+type FeSpotLightClipRule string
 
 const (
-	FeSpotLightTextRenderingAuto               FeSpotLightTextRendering = "auto"
-	FeSpotLightTextRenderingGeometricPrecision FeSpotLightTextRendering = "geometricPrecision"
-	FeSpotLightTextRenderingOptimizeLegibility FeSpotLightTextRendering = "optimizeLegibility"
-	FeSpotLightTextRenderingOptimizeSpeed      FeSpotLightTextRendering = "optimizeSpeed"
+	FeSpotLightClipRuleEvenodd FeSpotLightClipRule = "evenodd"
+	FeSpotLightClipRuleNonzero FeSpotLightClipRule = "nonzero"
+)
+
+type FeSpotLightColorInterpolation string
+
+const (
+	FeSpotLightColorInterpolationAuto      FeSpotLightColorInterpolation = "auto"
+	FeSpotLightColorInterpolationLinearRGB FeSpotLightColorInterpolation = "linearRGB"
+	FeSpotLightColorInterpolationSRGB      FeSpotLightColorInterpolation = "sRGB"
+)
+
+type FeSpotLightColorInterpolationFilters string
+
+const (
+	FeSpotLightColorInterpolationFiltersAuto      FeSpotLightColorInterpolationFilters = "auto"
+	FeSpotLightColorInterpolationFiltersLinearRGB FeSpotLightColorInterpolationFilters = "linearRGB"
+	FeSpotLightColorInterpolationFiltersSRGB      FeSpotLightColorInterpolationFilters = "sRGB"
+)
+
+type FeSpotLightDirection string
+
+const (
+	FeSpotLightDirectionLtr FeSpotLightDirection = "ltr"
+	FeSpotLightDirectionRtl FeSpotLightDirection = "rtl"
+)
+
+type FeSpotLightDominantBaseline string
+
+const (
+	FeSpotLightDominantBaselineAlphabetic   FeSpotLightDominantBaseline = "alphabetic"
+	FeSpotLightDominantBaselineAuto         FeSpotLightDominantBaseline = "auto"
+	FeSpotLightDominantBaselineCentral      FeSpotLightDominantBaseline = "central"
+	FeSpotLightDominantBaselineHanging      FeSpotLightDominantBaseline = "hanging"
+	FeSpotLightDominantBaselineIdeographic  FeSpotLightDominantBaseline = "ideographic"
+	FeSpotLightDominantBaselineMathematical FeSpotLightDominantBaseline = "mathematical"
+	FeSpotLightDominantBaselineMiddle       FeSpotLightDominantBaseline = "middle"
+	FeSpotLightDominantBaselineTextBottom   FeSpotLightDominantBaseline = "text-bottom"
+	FeSpotLightDominantBaselineTextTop      FeSpotLightDominantBaseline = "text-top"
+)
+
+type FeSpotLightFillRule string
+
+const (
+	FeSpotLightFillRuleEvenodd FeSpotLightFillRule = "evenodd"
+	FeSpotLightFillRuleNonzero FeSpotLightFillRule = "nonzero"
+)
+
+type FeSpotLightFontStyle string
+
+const (
+	FeSpotLightFontStyleItalic  FeSpotLightFontStyle = "italic"
+	FeSpotLightFontStyleNormal  FeSpotLightFontStyle = "normal"
+	FeSpotLightFontStyleOblique FeSpotLightFontStyle = "oblique"
 )
 
 type FeSpotLightImageRendering string
@@ -345,6 +267,66 @@ const (
 	FeSpotLightOverflowVisible FeSpotLightOverflow = "visible"
 )
 
+type FeSpotLightPointerEvents string
+
+const (
+	FeSpotLightPointerEventsAll            FeSpotLightPointerEvents = "all"
+	FeSpotLightPointerEventsAuto           FeSpotLightPointerEvents = "auto"
+	FeSpotLightPointerEventsBoundingBox    FeSpotLightPointerEvents = "bounding-box"
+	FeSpotLightPointerEventsFill           FeSpotLightPointerEvents = "fill"
+	FeSpotLightPointerEventsNone           FeSpotLightPointerEvents = "none"
+	FeSpotLightPointerEventsPainted        FeSpotLightPointerEvents = "painted"
+	FeSpotLightPointerEventsStroke         FeSpotLightPointerEvents = "stroke"
+	FeSpotLightPointerEventsVisible        FeSpotLightPointerEvents = "visible"
+	FeSpotLightPointerEventsVisibleFill    FeSpotLightPointerEvents = "visibleFill"
+	FeSpotLightPointerEventsVisiblePainted FeSpotLightPointerEvents = "visiblePainted"
+	FeSpotLightPointerEventsVisibleStroke  FeSpotLightPointerEvents = "visibleStroke"
+)
+
+type FeSpotLightShapeRendering string
+
+const (
+	FeSpotLightShapeRenderingAuto               FeSpotLightShapeRendering = "auto"
+	FeSpotLightShapeRenderingCrispEdges         FeSpotLightShapeRendering = "crispEdges"
+	FeSpotLightShapeRenderingGeometricPrecision FeSpotLightShapeRendering = "geometricPrecision"
+	FeSpotLightShapeRenderingOptimizeSpeed      FeSpotLightShapeRendering = "optimizeSpeed"
+)
+
+type FeSpotLightStrokeLinecap string
+
+const (
+	FeSpotLightStrokeLinecapButt   FeSpotLightStrokeLinecap = "butt"
+	FeSpotLightStrokeLinecapRound  FeSpotLightStrokeLinecap = "round"
+	FeSpotLightStrokeLinecapSquare FeSpotLightStrokeLinecap = "square"
+)
+
+type FeSpotLightStrokeLinejoin string
+
+const (
+	FeSpotLightStrokeLinejoinArcs      FeSpotLightStrokeLinejoin = "arcs"
+	FeSpotLightStrokeLinejoinBevel     FeSpotLightStrokeLinejoin = "bevel"
+	FeSpotLightStrokeLinejoinMiter     FeSpotLightStrokeLinejoin = "miter"
+	FeSpotLightStrokeLinejoinMiterClip FeSpotLightStrokeLinejoin = "miter-clip"
+	FeSpotLightStrokeLinejoinRound     FeSpotLightStrokeLinejoin = "round"
+)
+
+type FeSpotLightTextAnchor string
+
+const (
+	FeSpotLightTextAnchorEnd    FeSpotLightTextAnchor = "end"
+	FeSpotLightTextAnchorMiddle FeSpotLightTextAnchor = "middle"
+	FeSpotLightTextAnchorStart  FeSpotLightTextAnchor = "start"
+)
+
+type FeSpotLightTextRendering string
+
+const (
+	FeSpotLightTextRenderingAuto               FeSpotLightTextRendering = "auto"
+	FeSpotLightTextRenderingGeometricPrecision FeSpotLightTextRendering = "geometricPrecision"
+	FeSpotLightTextRenderingOptimizeLegibility FeSpotLightTextRendering = "optimizeLegibility"
+	FeSpotLightTextRenderingOptimizeSpeed      FeSpotLightTextRendering = "optimizeSpeed"
+)
+
 type FeSpotLightTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	FeSpotLightTransformBoxViewBox    FeSpotLightTransformBox = "view-box"
 )
 
-type FeSpotLightDirection string
+type FeSpotLightVectorEffect string
 
 const (
-	FeSpotLightDirectionLtr FeSpotLightDirection = "ltr"
-	FeSpotLightDirectionRtl FeSpotLightDirection = "rtl"
+	FeSpotLightVectorEffectFixedPosition    FeSpotLightVectorEffect = "fixed-position"
+	FeSpotLightVectorEffectNonRotation      FeSpotLightVectorEffect = "non-rotation"
+	FeSpotLightVectorEffectNonScalingSize   FeSpotLightVectorEffect = "non-scaling-size"
+	FeSpotLightVectorEffectNonScalingStroke FeSpotLightVectorEffect = "non-scaling-stroke"
+	FeSpotLightVectorEffectNone             FeSpotLightVectorEffect = "none"
+)
+
+type FeSpotLightVisibility string
+
+const (
+	FeSpotLightVisibilityCollapse FeSpotLightVisibility = "collapse"
+	FeSpotLightVisibilityHidden   FeSpotLightVisibility = "hidden"
+	FeSpotLightVisibilityVisible  FeSpotLightVisibility = "visible"
 )
 
 type FeSpotLightWritingMode string
@@ -378,20 +371,15 @@ const (
 	FeSpotLightWritingModeVerticalRl   FeSpotLightWritingMode = "vertical-rl"
 )
 
-func (e *FeSpotLightElement) X(f float64) *FeSpotLightElement {
-	e.attributes.Set("x", strconv.FormatFloat(f, 'g', -1, 64))
+type FeSpotLightXmlSpace string
 
-	return e
-}
+const (
+	FeSpotLightXmlSpaceDefault  FeSpotLightXmlSpace = "default"
+	FeSpotLightXmlSpacePreserve FeSpotLightXmlSpace = "preserve"
+)
 
-func (e *FeSpotLightElement) Y(f float64) *FeSpotLightElement {
-	e.attributes.Set("y", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeSpotLightElement) Z(f float64) *FeSpotLightElement {
-	e.attributes.Set("z", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeSpotLightElement) LimitingConeAngle(f float64) *FeSpotLightElement {
+	e.attributes.Set("limitingConeAngle", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -420,14 +408,60 @@ func (e *FeSpotLightElement) SpecularExponent(f float64) *FeSpotLightElement {
 	return e
 }
 
-func (e *FeSpotLightElement) LimitingConeAngle(f float64) *FeSpotLightElement {
-	e.attributes.Set("limitingConeAngle", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeSpotLightElement) X(f float64) *FeSpotLightElement {
+	e.attributes.Set("x", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeSpotLightElement) Id(s string) *FeSpotLightElement {
-	e.attributes.Set("id", s)
+func (e *FeSpotLightElement) Y(f float64) *FeSpotLightElement {
+	e.attributes.Set("y", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeSpotLightElement) Z(f float64) *FeSpotLightElement {
+	e.attributes.Set("z", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeSpotLightElement) AlignmentBaseline(a FeSpotLightAlignmentBaseline) *FeSpotLightElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeSpotLightAlignmentBaselineCustom(s string) FeSpotLightAlignmentBaseline {
+	return FeSpotLightAlignmentBaseline(s)
+}
+
+func (e *FeSpotLightElement) AriaUnsafe(name string, s string) *FeSpotLightElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) Aria(name string, s string) *FeSpotLightElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeSpotLightElement) Autofocus(b bool) *FeSpotLightElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeSpotLightElement) BaselineShift(s string) *FeSpotLightElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -438,40 +472,59 @@ func (e *FeSpotLightElement) Class(s ...string) *FeSpotLightElement {
 	return e
 }
 
-func (e *FeSpotLightElement) Style(s string) *FeSpotLightElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeSpotLightElement) Clip(s string) *FeSpotLightElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) Tabindex(i int) *FeSpotLightElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeSpotLightElement) ClipPath(s string) *FeSpotLightElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) Lang(s string) *FeSpotLightElement {
-	e.attributes.Set("lang", s)
+func (e *FeSpotLightElement) ClipRule(a FeSpotLightClipRule) *FeSpotLightElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeSpotLightElement) XmlLang(s string) *FeSpotLightElement {
-	e.attributes.Set("xml:lang", s)
+func FeSpotLightClipRuleCustom(s string) FeSpotLightClipRule {
+	return FeSpotLightClipRule(s)
+}
+
+func (e *FeSpotLightElement) Color(s string) *FeSpotLightElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) XmlSpace(a FeSpotLightXmlSpace) *FeSpotLightElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeSpotLightElement) ColorInterpolation(a FeSpotLightColorInterpolation) *FeSpotLightElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeSpotLightElement) Autofocus(b bool) *FeSpotLightElement {
-	e.attributes.SetBool("autofocus", b)
+func FeSpotLightColorInterpolationCustom(s string) FeSpotLightColorInterpolation {
+	return FeSpotLightColorInterpolation(s)
+}
+
+func (e *FeSpotLightElement) ColorInterpolationFilters(a FeSpotLightColorInterpolationFilters) *FeSpotLightElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeSpotLightColorInterpolationFiltersCustom(s string) FeSpotLightColorInterpolationFilters {
+	return FeSpotLightColorInterpolationFilters(s)
+}
+
+func (e *FeSpotLightElement) Cursor(s string) *FeSpotLightElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -492,20 +545,30 @@ func (e *FeSpotLightElement) Data(name string, s string) *FeSpotLightElement {
 	return e
 }
 
-func (e *FeSpotLightElement) AriaUnsafe(name string, s string) *FeSpotLightElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeSpotLightElement) Direction(a FeSpotLightDirection) *FeSpotLightElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeSpotLightElement) Aria(name string, s string) *FeSpotLightElement {
-	tag := strings.ToLower("aria-" + name)
+func FeSpotLightDirectionCustom(s string) FeSpotLightDirection {
+	return FeSpotLightDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeSpotLightElement) Display(s string) *FeSpotLightElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeSpotLightElement) DominantBaseline(a FeSpotLightDominantBaseline) *FeSpotLightElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeSpotLightDominantBaselineCustom(s string) FeSpotLightDominantBaseline {
+	return FeSpotLightDominantBaseline(s)
 }
 
 func (e *FeSpotLightElement) Fill(s string) *FeSpotLightElement {
@@ -530,20 +593,220 @@ func FeSpotLightFillRuleCustom(s string) FeSpotLightFillRule {
 	return FeSpotLightFillRule(s)
 }
 
+func (e *FeSpotLightElement) Filter(s string) *FeSpotLightElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FloodColor(s string) *FeSpotLightElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FloodOpacity(f float64) *FeSpotLightElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontFamily(s string) *FeSpotLightElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontSize(s string) *FeSpotLightElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontSizeAdjust(s string) *FeSpotLightElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontStretch(s string) *FeSpotLightElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontStyle(a FeSpotLightFontStyle) *FeSpotLightElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeSpotLightFontStyleCustom(s string) FeSpotLightFontStyle {
+	return FeSpotLightFontStyle(s)
+}
+
+func (e *FeSpotLightElement) FontVariant(s string) *FeSpotLightElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) FontWeight(s string) *FeSpotLightElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeSpotLightElement) GlyphOrientationHorizontal(s string) *FeSpotLightElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeSpotLightElement) GlyphOrientationVertical(s string) *FeSpotLightElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) Id(s string) *FeSpotLightElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) ImageRendering(a FeSpotLightImageRendering) *FeSpotLightElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeSpotLightImageRenderingCustom(s string) FeSpotLightImageRendering {
+	return FeSpotLightImageRendering(s)
+}
+
+func (e *FeSpotLightElement) Lang(s string) *FeSpotLightElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) LetterSpacing(s string) *FeSpotLightElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) LightingColor(s string) *FeSpotLightElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) MarkerEnd(s string) *FeSpotLightElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) MarkerMid(s string) *FeSpotLightElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) MarkerStart(s string) *FeSpotLightElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) Mask(s string) *FeSpotLightElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) Opacity(f float64) *FeSpotLightElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeSpotLightElement) Overflow(a FeSpotLightOverflow) *FeSpotLightElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeSpotLightOverflowCustom(s string) FeSpotLightOverflow {
+	return FeSpotLightOverflow(s)
+}
+
+func (e *FeSpotLightElement) PaintOrder(s string) *FeSpotLightElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) PointerEvents(a FeSpotLightPointerEvents) *FeSpotLightElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeSpotLightPointerEventsCustom(s string) FeSpotLightPointerEvents {
+	return FeSpotLightPointerEvents(s)
+}
+
+func (e *FeSpotLightElement) RequiredExtensions(s string) *FeSpotLightElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) ShapeRendering(a FeSpotLightShapeRendering) *FeSpotLightElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeSpotLightShapeRenderingCustom(s string) FeSpotLightShapeRendering {
+	return FeSpotLightShapeRendering(s)
+}
+
+func (e *FeSpotLightElement) StopColor(s string) *FeSpotLightElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) StopOpacity(f float64) *FeSpotLightElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeSpotLightElement) Stroke(s string) *FeSpotLightElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) StrokeWidth(s string) *FeSpotLightElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeSpotLightElement) StrokeDasharray(s string) *FeSpotLightElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) StrokeOpacity(f float64) *FeSpotLightElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeSpotLightElement) StrokeDashoffset(s string) *FeSpotLightElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -574,210 +837,28 @@ func (e *FeSpotLightElement) StrokeMiterlimit(f float64) *FeSpotLightElement {
 	return e
 }
 
-func (e *FeSpotLightElement) StrokeDasharray(s string) *FeSpotLightElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeSpotLightElement) StrokeOpacity(f float64) *FeSpotLightElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeSpotLightElement) StrokeDashoffset(s string) *FeSpotLightElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeSpotLightElement) StrokeWidth(s string) *FeSpotLightElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) Opacity(f float64) *FeSpotLightElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeSpotLightElement) Style(s string) *FeSpotLightElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeSpotLightElement) Color(s string) *FeSpotLightElement {
-	e.attributes.Set("color", s)
+func (e *FeSpotLightElement) Tabindex(i int) *FeSpotLightElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeSpotLightElement) Display(s string) *FeSpotLightElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) Visibility(a FeSpotLightVisibility) *FeSpotLightElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeSpotLightVisibilityCustom(s string) FeSpotLightVisibility {
-	return FeSpotLightVisibility(s)
-}
-
-func (e *FeSpotLightElement) ClipPath(s string) *FeSpotLightElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) ClipRule(a FeSpotLightClipRule) *FeSpotLightElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeSpotLightClipRuleCustom(s string) FeSpotLightClipRule {
-	return FeSpotLightClipRule(s)
-}
-
-func (e *FeSpotLightElement) Mask(s string) *FeSpotLightElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) Filter(s string) *FeSpotLightElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) Cursor(s string) *FeSpotLightElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) PointerEvents(a FeSpotLightPointerEvents) *FeSpotLightElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeSpotLightPointerEventsCustom(s string) FeSpotLightPointerEvents {
-	return FeSpotLightPointerEvents(s)
-}
-
-func (e *FeSpotLightElement) VectorEffect(a FeSpotLightVectorEffect) *FeSpotLightElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeSpotLightVectorEffectCustom(s string) FeSpotLightVectorEffect {
-	return FeSpotLightVectorEffect(s)
-}
-
-func (e *FeSpotLightElement) PaintOrder(s string) *FeSpotLightElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) ShapeRendering(a FeSpotLightShapeRendering) *FeSpotLightElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeSpotLightShapeRenderingCustom(s string) FeSpotLightShapeRendering {
-	return FeSpotLightShapeRendering(s)
-}
-
-func (e *FeSpotLightElement) ColorInterpolation(a FeSpotLightColorInterpolation) *FeSpotLightElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeSpotLightColorInterpolationCustom(s string) FeSpotLightColorInterpolation {
-	return FeSpotLightColorInterpolation(s)
-}
-
-func (e *FeSpotLightElement) ColorInterpolationFilters(a FeSpotLightColorInterpolationFilters) *FeSpotLightElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeSpotLightColorInterpolationFiltersCustom(s string) FeSpotLightColorInterpolationFilters {
-	return FeSpotLightColorInterpolationFilters(s)
-}
-
-func (e *FeSpotLightElement) FloodColor(s string) *FeSpotLightElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) FloodOpacity(f float64) *FeSpotLightElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeSpotLightElement) LightingColor(s string) *FeSpotLightElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) StopColor(s string) *FeSpotLightElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) StopOpacity(f float64) *FeSpotLightElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeSpotLightElement) MarkerStart(s string) *FeSpotLightElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) MarkerMid(s string) *FeSpotLightElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) MarkerEnd(s string) *FeSpotLightElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) FontFamily(s string) *FeSpotLightElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) FontSize(s string) *FeSpotLightElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) FontWeight(s string) *FeSpotLightElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) FontStyle(a FeSpotLightFontStyle) *FeSpotLightElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeSpotLightFontStyleCustom(s string) FeSpotLightFontStyle {
-	return FeSpotLightFontStyle(s)
 }
 
 func (e *FeSpotLightElement) TextAnchor(a FeSpotLightTextAnchor) *FeSpotLightElement {
@@ -790,40 +871,14 @@ func FeSpotLightTextAnchorCustom(s string) FeSpotLightTextAnchor {
 	return FeSpotLightTextAnchor(s)
 }
 
-func (e *FeSpotLightElement) DominantBaseline(a FeSpotLightDominantBaseline) *FeSpotLightElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeSpotLightDominantBaselineCustom(s string) FeSpotLightDominantBaseline {
-	return FeSpotLightDominantBaseline(s)
-}
-
-func (e *FeSpotLightElement) AlignmentBaseline(a FeSpotLightAlignmentBaseline) *FeSpotLightElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeSpotLightAlignmentBaselineCustom(s string) FeSpotLightAlignmentBaseline {
-	return FeSpotLightAlignmentBaseline(s)
-}
-
-func (e *FeSpotLightElement) LetterSpacing(s string) *FeSpotLightElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeSpotLightElement) WordSpacing(s string) *FeSpotLightElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeSpotLightElement) TextDecoration(s string) *FeSpotLightElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) TextOverflow(s string) *FeSpotLightElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -838,24 +893,10 @@ func FeSpotLightTextRenderingCustom(s string) FeSpotLightTextRendering {
 	return FeSpotLightTextRendering(s)
 }
 
-func (e *FeSpotLightElement) ImageRendering(a FeSpotLightImageRendering) *FeSpotLightElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeSpotLightElement) Transform(s string) *FeSpotLightElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeSpotLightImageRenderingCustom(s string) FeSpotLightImageRendering {
-	return FeSpotLightImageRendering(s)
-}
-
-func (e *FeSpotLightElement) Overflow(a FeSpotLightOverflow) *FeSpotLightElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeSpotLightOverflowCustom(s string) FeSpotLightOverflow {
-	return FeSpotLightOverflow(s)
 }
 
 func (e *FeSpotLightElement) TransformBox(a FeSpotLightTransformBox) *FeSpotLightElement {
@@ -868,18 +909,46 @@ func FeSpotLightTransformBoxCustom(s string) FeSpotLightTransformBox {
 	return FeSpotLightTransformBox(s)
 }
 
-func (e *FeSpotLightElement) Direction(a FeSpotLightDirection) *FeSpotLightElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeSpotLightElement) TransformOrigin(s string) *FeSpotLightElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeSpotLightDirectionCustom(s string) FeSpotLightDirection {
-	return FeSpotLightDirection(s)
-}
-
 func (e *FeSpotLightElement) UnicodeBidi(s string) *FeSpotLightElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) VectorEffect(a FeSpotLightVectorEffect) *FeSpotLightElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeSpotLightVectorEffectCustom(s string) FeSpotLightVectorEffect {
+	return FeSpotLightVectorEffect(s)
+}
+
+func (e *FeSpotLightElement) Visibility(a FeSpotLightVisibility) *FeSpotLightElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeSpotLightVisibilityCustom(s string) FeSpotLightVisibility {
+	return FeSpotLightVisibility(s)
+}
+
+func (e *FeSpotLightElement) WhiteSpace(s string) *FeSpotLightElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeSpotLightElement) WordSpacing(s string) *FeSpotLightElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -894,8 +963,20 @@ func FeSpotLightWritingModeCustom(s string) FeSpotLightWritingMode {
 	return FeSpotLightWritingMode(s)
 }
 
-func (e *FeSpotLightElement) WhiteSpace(s string) *FeSpotLightElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeSpotLightElement) XmlLang(s string) *FeSpotLightElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeSpotLightElement) XmlSpace(a FeSpotLightXmlSpace) *FeSpotLightElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

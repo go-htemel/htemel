@@ -164,6 +164,15 @@ func (e *ThElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type ThScope string
+
+const (
+	ThScopeCol      ThScope = "col"
+	ThScopeColgroup ThScope = "colgroup"
+	ThScopeRow      ThScope = "row"
+	ThScopeRowgroup ThScope = "rowgroup"
+)
+
 type ThAutocapitalize string
 
 const (
@@ -240,6 +249,15 @@ const (
 	ThInputmodeUrl     ThInputmode = "url"
 )
 
+type ThPopover string
+
+const (
+	ThPopoverAuto   ThPopover = "auto"
+	ThPopoverHint   ThPopover = "hint"
+	ThPopoverManual ThPopover = "manual"
+	ThPopoverEmpty  ThPopover = ""
+)
+
 type ThSpellcheck string
 
 const (
@@ -264,14 +282,14 @@ const (
 	ThWritingsuggestionsEmpty ThWritingsuggestions = ""
 )
 
-func (e *ThElement) Span(i int) *ThElement {
-	e.attributes.Set("span", strconv.Itoa(i))
+func (e *ThElement) Abbr(s string) *ThElement {
+	e.attributes.Set("abbr", s)
 
 	return e
 }
 
-func (e *ThElement) Rowspan(i int) *ThElement {
-	e.attributes.Set("rowspan", strconv.Itoa(i))
+func (e *ThElement) Colspan(i int) *ThElement {
+	e.attributes.Set("colspan", strconv.Itoa(i))
 
 	return e
 }
@@ -282,14 +300,14 @@ func (e *ThElement) Headers(s ...string) *ThElement {
 	return e
 }
 
-func (e *ThElement) Scope(s string) *ThElement {
-	e.attributes.Set("scope", s)
+func (e *ThElement) Rowspan(i int) *ThElement {
+	e.attributes.Set("rowspan", strconv.Itoa(i))
 
 	return e
 }
 
-func (e *ThElement) Abbr(s string) *ThElement {
-	e.attributes.Set("abbr", s)
+func (e *ThElement) Scope(a ThScope) *ThElement {
+	e.attributes.Set("scope", string(a))
 
 	return e
 }
@@ -394,6 +412,26 @@ func (e *ThElement) Enterkeyhint(a ThEnterkeyhint) *ThElement {
 	return e
 }
 
+func (e *ThElement) Exportparts(s string) *ThElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ThElement) Headingoffset(i int) *ThElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ThElement) Headingreset(b bool) *ThElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ThElement) Hidden(v ...ThHidden) *ThElement {
@@ -426,6 +464,14 @@ func (e *ThElement) Inputmode(a ThInputmode) *ThElement {
 	return e
 }
 
+func (e *ThElement) Is(s string) *ThElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ThElement) Itemid(s string) *ThElement {
 	e.attributes.Set("itemid", s)
 
@@ -470,8 +516,20 @@ func (e *ThElement) Nonce(s string) *ThElement {
 	return e
 }
 
-func (e *ThElement) Popover(s string) *ThElement {
-	e.attributes.Set("popover", s)
+func (e *ThElement) Part(s ...string) *ThElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ThElement) Popover(v ...ThPopover) *ThElement {
+	var val ThPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

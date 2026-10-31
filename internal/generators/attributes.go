@@ -3,23 +3,27 @@ package generators
 import (
 	"bytes"
 	"sort"
+	"strings"
 	"text/template"
 
 	"github.com/go-htemel/spec"
 )
 
-// urlAttributes lists attributes whose values are URLs. The spec (go-htemel/spec v0.1.1) has no URL
-// attribute type, so these are currently generated as plain (HTML-escaped) strings. The list exists so
-// scheme filtering (e.g. rejecting "javascript:") can be added later in one place.
-var urlAttributes = map[string]bool{
-	"href": true, "src": true, "action": true, "formaction": true, "poster": true, "cite": true,
-	"data": true, "usemap": true, "itemid": true, "ping": true, "manifest": true,
+// attrDoc returns the doc comment for a setter: a Deprecated paragraph when the attribute is deprecated
+// and, for URL-valued string attributes, a hint about validating untrusted input.
+func attrDoc(name string, a spec.Attribute) string {
+	var doc string
+	if u, ok := a.(*spec.AttributeTypeString); ok && u.URL {
+		doc += "// " + name + " sets the \"" + a.GetName() + "\" attribute.\n// Value is a URL; validate untrusted input with htemel.URL.\n"
+	}
+	if a.IsDeprecated() {
+		if doc == "" {
+			doc += "// " + name + " sets the \"" + a.GetName() + "\" attribute.\n"
+		}
+		doc += "//\n// Deprecated: the \"" + a.GetName() + "\" attribute is deprecated or obsolete in its source specification.\n"
+	}
+	return doc
 }
-
-// isURLAttr reports whether the named attribute carries a URL value.
-func isURLAttr(name string) bool { return urlAttributes[name] }
-
-var _ = isURLAttr // reserved for future URL sanitization
 
 func BuildAttributes(e *spec.Element) func() (*template.Template, ImportSet) {
 	return func() (*template.Template, ImportSet) {
@@ -29,6 +33,7 @@ func BuildAttributes(e *spec.Element) func() (*template.Template, ImportSet) {
 		buf := &bytes.Buffer{}
 
 		for _, attr := range e.Attributes {
+			start := buf.Len()
 			switch a := attr.(type) {
 			case *spec.AttributeTypeString:
 				buf.WriteString(`
@@ -152,6 +157,14 @@ func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(name string, s s
 	return e
 }
 `)
+			}
+			if doc := attrDoc(goIdent(attr.GetName()), attr); doc != "" {
+				seg := buf.String()[start:] // begins with "\n"
+				if strings.HasPrefix(seg[1:], "//") {
+					doc += "//\n" // keep the setter's own comment out of the Deprecated paragraph
+				}
+				buf.Truncate(start)
+				buf.WriteString("\n" + doc + seg[1:])
 			}
 		}
 

@@ -109,6 +109,26 @@ func (e *AreaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type AreaDownload string
+
+const (
+	AreaDownloadEmpty AreaDownload = ""
+)
+
+type AreaReferrerpolicy string
+
+const (
+	AreaReferrerpolicyNoReferrer                  AreaReferrerpolicy = "no-referrer"
+	AreaReferrerpolicyNoReferrerWhenDowngrade     AreaReferrerpolicy = "no-referrer-when-downgrade"
+	AreaReferrerpolicyOrigin                      AreaReferrerpolicy = "origin"
+	AreaReferrerpolicyOriginWhenCrossOrigin       AreaReferrerpolicy = "origin-when-cross-origin"
+	AreaReferrerpolicySameOrigin                  AreaReferrerpolicy = "same-origin"
+	AreaReferrerpolicyStrictOrigin                AreaReferrerpolicy = "strict-origin"
+	AreaReferrerpolicyStrictOriginWhenCrossOrigin AreaReferrerpolicy = "strict-origin-when-cross-origin"
+	AreaReferrerpolicyUnsafeUrl                   AreaReferrerpolicy = "unsafe-url"
+	AreaReferrerpolicyEmpty                       AreaReferrerpolicy = ""
+)
+
 type AreaShape string
 
 const (
@@ -194,6 +214,15 @@ const (
 	AreaInputmodeUrl     AreaInputmode = "url"
 )
 
+type AreaPopover string
+
+const (
+	AreaPopoverAuto   AreaPopover = "auto"
+	AreaPopoverHint   AreaPopover = "hint"
+	AreaPopoverManual AreaPopover = "manual"
+	AreaPopoverEmpty  AreaPopover = ""
+)
+
 type AreaSpellcheck string
 
 const (
@@ -230,28 +259,32 @@ func (e *AreaElement) Coords(s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Shape(a AreaShape) *AreaElement {
-	e.attributes.Set("shape", string(a))
+// Download sets the "download" attribute. Called with no argument, Download() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Download(v ...AreaDownload) *AreaElement {
+	var val AreaDownload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("download", string(val))
 
 	return e
 }
 
+func AreaDownloadCustom(s string) AreaDownload {
+	return AreaDownload(s)
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AreaElement) Href(s string) *AreaElement {
 	e.attributes.Set("href", s)
 
 	return e
 }
 
-func (e *AreaElement) Target(s string) *AreaElement {
-	e.attributes.Set("target", s)
-
-	return e
-}
-
-// Download sets the boolean attribute "download". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AreaElement) Download(b bool) *AreaElement {
-	e.attributes.SetBool("download", b)
+func (e *AreaElement) Hreflang(s string) *AreaElement {
+	e.attributes.Set("hreflang", s)
 
 	return e
 }
@@ -262,14 +295,38 @@ func (e *AreaElement) Ping(s ...string) *AreaElement {
 	return e
 }
 
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Referrerpolicy(v ...AreaReferrerpolicy) *AreaElement {
+	var val AreaReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
 func (e *AreaElement) Rel(s ...string) *AreaElement {
 	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
 
-func (e *AreaElement) Referrerpolicy(s string) *AreaElement {
-	e.attributes.Set("referrerpolicy", s)
+func (e *AreaElement) Shape(a AreaShape) *AreaElement {
+	e.attributes.Set("shape", string(a))
+
+	return e
+}
+
+func (e *AreaElement) Target(s string) *AreaElement {
+	e.attributes.Set("target", s)
+
+	return e
+}
+
+func (e *AreaElement) Type(s string) *AreaElement {
+	e.attributes.Set("type", s)
 
 	return e
 }
@@ -374,6 +431,26 @@ func (e *AreaElement) Enterkeyhint(a AreaEnterkeyhint) *AreaElement {
 	return e
 }
 
+func (e *AreaElement) Exportparts(s string) *AreaElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *AreaElement) Headingoffset(i int) *AreaElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AreaElement) Headingreset(b bool) *AreaElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AreaElement) Hidden(v ...AreaHidden) *AreaElement {
@@ -406,6 +483,14 @@ func (e *AreaElement) Inputmode(a AreaInputmode) *AreaElement {
 	return e
 }
 
+func (e *AreaElement) Is(s string) *AreaElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AreaElement) Itemid(s string) *AreaElement {
 	e.attributes.Set("itemid", s)
 
@@ -450,8 +535,20 @@ func (e *AreaElement) Nonce(s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Popover(s string) *AreaElement {
-	e.attributes.Set("popover", s)
+func (e *AreaElement) Part(s ...string) *AreaElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Popover(v ...AreaPopover) *AreaElement {
+	var val AreaPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

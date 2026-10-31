@@ -175,6 +175,14 @@ const (
 	ButtonCommandTogglePopover ButtonCommand = "toggle-popover"
 )
 
+type ButtonFormenctype string
+
+const (
+	ButtonFormenctypeApplicationXWwwFormUrlencoded ButtonFormenctype = "application/x-www-form-urlencoded"
+	ButtonFormenctypeMultipartFormData             ButtonFormenctype = "multipart/form-data"
+	ButtonFormenctypeTextPlain                     ButtonFormenctype = "text/plain"
+)
+
 type ButtonFormmethod string
 
 const (
@@ -275,6 +283,15 @@ const (
 	ButtonInputmodeUrl     ButtonInputmode = "url"
 )
 
+type ButtonPopover string
+
+const (
+	ButtonPopoverAuto   ButtonPopover = "auto"
+	ButtonPopoverHint   ButtonPopover = "hint"
+	ButtonPopoverManual ButtonPopover = "manual"
+	ButtonPopoverEmpty  ButtonPopover = ""
+)
+
 type ButtonSpellcheck string
 
 const (
@@ -329,14 +346,16 @@ func (e *ButtonElement) Form(s string) *ButtonElement {
 	return e
 }
 
+// Formaction sets the "formaction" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ButtonElement) Formaction(s string) *ButtonElement {
 	e.attributes.Set("formaction", s)
 
 	return e
 }
 
-func (e *ButtonElement) Formenctype(s string) *ButtonElement {
-	e.attributes.Set("formenctype", s)
+func (e *ButtonElement) Formenctype(a ButtonFormenctype) *ButtonElement {
+	e.attributes.Set("formenctype", string(a))
 
 	return e
 }
@@ -491,6 +510,26 @@ func (e *ButtonElement) Enterkeyhint(a ButtonEnterkeyhint) *ButtonElement {
 	return e
 }
 
+func (e *ButtonElement) Exportparts(s string) *ButtonElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ButtonElement) Headingoffset(i int) *ButtonElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ButtonElement) Headingreset(b bool) *ButtonElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ButtonElement) Hidden(v ...ButtonHidden) *ButtonElement {
@@ -523,6 +562,14 @@ func (e *ButtonElement) Inputmode(a ButtonInputmode) *ButtonElement {
 	return e
 }
 
+func (e *ButtonElement) Is(s string) *ButtonElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ButtonElement) Itemid(s string) *ButtonElement {
 	e.attributes.Set("itemid", s)
 
@@ -567,8 +614,20 @@ func (e *ButtonElement) Nonce(s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Popover(s string) *ButtonElement {
-	e.attributes.Set("popover", s)
+func (e *ButtonElement) Part(s ...string) *ButtonElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Popover(v ...ButtonPopover) *ButtonElement {
+	var val ButtonPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

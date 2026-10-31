@@ -171,134 +171,6 @@ const (
 	FeMorphologyOperatorErode  FeMorphologyOperator = "erode"
 )
 
-type FeMorphologyXmlSpace string
-
-const (
-	FeMorphologyXmlSpaceDefault  FeMorphologyXmlSpace = "default"
-	FeMorphologyXmlSpacePreserve FeMorphologyXmlSpace = "preserve"
-)
-
-type FeMorphologyFillRule string
-
-const (
-	FeMorphologyFillRuleEvenodd FeMorphologyFillRule = "evenodd"
-	FeMorphologyFillRuleNonzero FeMorphologyFillRule = "nonzero"
-)
-
-type FeMorphologyStrokeLinecap string
-
-const (
-	FeMorphologyStrokeLinecapButt   FeMorphologyStrokeLinecap = "butt"
-	FeMorphologyStrokeLinecapRound  FeMorphologyStrokeLinecap = "round"
-	FeMorphologyStrokeLinecapSquare FeMorphologyStrokeLinecap = "square"
-)
-
-type FeMorphologyStrokeLinejoin string
-
-const (
-	FeMorphologyStrokeLinejoinArcs      FeMorphologyStrokeLinejoin = "arcs"
-	FeMorphologyStrokeLinejoinBevel     FeMorphologyStrokeLinejoin = "bevel"
-	FeMorphologyStrokeLinejoinMiter     FeMorphologyStrokeLinejoin = "miter"
-	FeMorphologyStrokeLinejoinMiterClip FeMorphologyStrokeLinejoin = "miter-clip"
-	FeMorphologyStrokeLinejoinRound     FeMorphologyStrokeLinejoin = "round"
-)
-
-type FeMorphologyVisibility string
-
-const (
-	FeMorphologyVisibilityCollapse FeMorphologyVisibility = "collapse"
-	FeMorphologyVisibilityHidden   FeMorphologyVisibility = "hidden"
-	FeMorphologyVisibilityVisible  FeMorphologyVisibility = "visible"
-)
-
-type FeMorphologyClipRule string
-
-const (
-	FeMorphologyClipRuleEvenodd FeMorphologyClipRule = "evenodd"
-	FeMorphologyClipRuleNonzero FeMorphologyClipRule = "nonzero"
-)
-
-type FeMorphologyPointerEvents string
-
-const (
-	FeMorphologyPointerEventsAll            FeMorphologyPointerEvents = "all"
-	FeMorphologyPointerEventsAuto           FeMorphologyPointerEvents = "auto"
-	FeMorphologyPointerEventsBoundingBox    FeMorphologyPointerEvents = "bounding-box"
-	FeMorphologyPointerEventsFill           FeMorphologyPointerEvents = "fill"
-	FeMorphologyPointerEventsNone           FeMorphologyPointerEvents = "none"
-	FeMorphologyPointerEventsPainted        FeMorphologyPointerEvents = "painted"
-	FeMorphologyPointerEventsStroke         FeMorphologyPointerEvents = "stroke"
-	FeMorphologyPointerEventsVisible        FeMorphologyPointerEvents = "visible"
-	FeMorphologyPointerEventsVisibleFill    FeMorphologyPointerEvents = "visibleFill"
-	FeMorphologyPointerEventsVisiblePainted FeMorphologyPointerEvents = "visiblePainted"
-	FeMorphologyPointerEventsVisibleStroke  FeMorphologyPointerEvents = "visibleStroke"
-)
-
-type FeMorphologyVectorEffect string
-
-const (
-	FeMorphologyVectorEffectFixedPosition    FeMorphologyVectorEffect = "fixed-position"
-	FeMorphologyVectorEffectNonRotation      FeMorphologyVectorEffect = "non-rotation"
-	FeMorphologyVectorEffectNonScalingSize   FeMorphologyVectorEffect = "non-scaling-size"
-	FeMorphologyVectorEffectNonScalingStroke FeMorphologyVectorEffect = "non-scaling-stroke"
-	FeMorphologyVectorEffectNone             FeMorphologyVectorEffect = "none"
-)
-
-type FeMorphologyShapeRendering string
-
-const (
-	FeMorphologyShapeRenderingAuto               FeMorphologyShapeRendering = "auto"
-	FeMorphologyShapeRenderingCrispEdges         FeMorphologyShapeRendering = "crispEdges"
-	FeMorphologyShapeRenderingGeometricPrecision FeMorphologyShapeRendering = "geometricPrecision"
-	FeMorphologyShapeRenderingOptimizeSpeed      FeMorphologyShapeRendering = "optimizeSpeed"
-)
-
-type FeMorphologyColorInterpolation string
-
-const (
-	FeMorphologyColorInterpolationAuto      FeMorphologyColorInterpolation = "auto"
-	FeMorphologyColorInterpolationLinearRGB FeMorphologyColorInterpolation = "linearRGB"
-	FeMorphologyColorInterpolationSRGB      FeMorphologyColorInterpolation = "sRGB"
-)
-
-type FeMorphologyColorInterpolationFilters string
-
-const (
-	FeMorphologyColorInterpolationFiltersAuto      FeMorphologyColorInterpolationFilters = "auto"
-	FeMorphologyColorInterpolationFiltersLinearRGB FeMorphologyColorInterpolationFilters = "linearRGB"
-	FeMorphologyColorInterpolationFiltersSRGB      FeMorphologyColorInterpolationFilters = "sRGB"
-)
-
-type FeMorphologyFontStyle string
-
-const (
-	FeMorphologyFontStyleItalic  FeMorphologyFontStyle = "italic"
-	FeMorphologyFontStyleNormal  FeMorphologyFontStyle = "normal"
-	FeMorphologyFontStyleOblique FeMorphologyFontStyle = "oblique"
-)
-
-type FeMorphologyTextAnchor string
-
-const (
-	FeMorphologyTextAnchorEnd    FeMorphologyTextAnchor = "end"
-	FeMorphologyTextAnchorMiddle FeMorphologyTextAnchor = "middle"
-	FeMorphologyTextAnchorStart  FeMorphologyTextAnchor = "start"
-)
-
-type FeMorphologyDominantBaseline string
-
-const (
-	FeMorphologyDominantBaselineAlphabetic   FeMorphologyDominantBaseline = "alphabetic"
-	FeMorphologyDominantBaselineAuto         FeMorphologyDominantBaseline = "auto"
-	FeMorphologyDominantBaselineCentral      FeMorphologyDominantBaseline = "central"
-	FeMorphologyDominantBaselineHanging      FeMorphologyDominantBaseline = "hanging"
-	FeMorphologyDominantBaselineIdeographic  FeMorphologyDominantBaseline = "ideographic"
-	FeMorphologyDominantBaselineMathematical FeMorphologyDominantBaseline = "mathematical"
-	FeMorphologyDominantBaselineMiddle       FeMorphologyDominantBaseline = "middle"
-	FeMorphologyDominantBaselineTextBottom   FeMorphologyDominantBaseline = "text-bottom"
-	FeMorphologyDominantBaselineTextTop      FeMorphologyDominantBaseline = "text-top"
-)
-
 type FeMorphologyAlignmentBaseline string
 
 const (
@@ -321,13 +193,63 @@ const (
 	FeMorphologyAlignmentBaselineTop            FeMorphologyAlignmentBaseline = "top"
 )
 
-type FeMorphologyTextRendering string
+type FeMorphologyClipRule string
 
 const (
-	FeMorphologyTextRenderingAuto               FeMorphologyTextRendering = "auto"
-	FeMorphologyTextRenderingGeometricPrecision FeMorphologyTextRendering = "geometricPrecision"
-	FeMorphologyTextRenderingOptimizeLegibility FeMorphologyTextRendering = "optimizeLegibility"
-	FeMorphologyTextRenderingOptimizeSpeed      FeMorphologyTextRendering = "optimizeSpeed"
+	FeMorphologyClipRuleEvenodd FeMorphologyClipRule = "evenodd"
+	FeMorphologyClipRuleNonzero FeMorphologyClipRule = "nonzero"
+)
+
+type FeMorphologyColorInterpolation string
+
+const (
+	FeMorphologyColorInterpolationAuto      FeMorphologyColorInterpolation = "auto"
+	FeMorphologyColorInterpolationLinearRGB FeMorphologyColorInterpolation = "linearRGB"
+	FeMorphologyColorInterpolationSRGB      FeMorphologyColorInterpolation = "sRGB"
+)
+
+type FeMorphologyColorInterpolationFilters string
+
+const (
+	FeMorphologyColorInterpolationFiltersAuto      FeMorphologyColorInterpolationFilters = "auto"
+	FeMorphologyColorInterpolationFiltersLinearRGB FeMorphologyColorInterpolationFilters = "linearRGB"
+	FeMorphologyColorInterpolationFiltersSRGB      FeMorphologyColorInterpolationFilters = "sRGB"
+)
+
+type FeMorphologyDirection string
+
+const (
+	FeMorphologyDirectionLtr FeMorphologyDirection = "ltr"
+	FeMorphologyDirectionRtl FeMorphologyDirection = "rtl"
+)
+
+type FeMorphologyDominantBaseline string
+
+const (
+	FeMorphologyDominantBaselineAlphabetic   FeMorphologyDominantBaseline = "alphabetic"
+	FeMorphologyDominantBaselineAuto         FeMorphologyDominantBaseline = "auto"
+	FeMorphologyDominantBaselineCentral      FeMorphologyDominantBaseline = "central"
+	FeMorphologyDominantBaselineHanging      FeMorphologyDominantBaseline = "hanging"
+	FeMorphologyDominantBaselineIdeographic  FeMorphologyDominantBaseline = "ideographic"
+	FeMorphologyDominantBaselineMathematical FeMorphologyDominantBaseline = "mathematical"
+	FeMorphologyDominantBaselineMiddle       FeMorphologyDominantBaseline = "middle"
+	FeMorphologyDominantBaselineTextBottom   FeMorphologyDominantBaseline = "text-bottom"
+	FeMorphologyDominantBaselineTextTop      FeMorphologyDominantBaseline = "text-top"
+)
+
+type FeMorphologyFillRule string
+
+const (
+	FeMorphologyFillRuleEvenodd FeMorphologyFillRule = "evenodd"
+	FeMorphologyFillRuleNonzero FeMorphologyFillRule = "nonzero"
+)
+
+type FeMorphologyFontStyle string
+
+const (
+	FeMorphologyFontStyleItalic  FeMorphologyFontStyle = "italic"
+	FeMorphologyFontStyleNormal  FeMorphologyFontStyle = "normal"
+	FeMorphologyFontStyleOblique FeMorphologyFontStyle = "oblique"
 )
 
 type FeMorphologyImageRendering string
@@ -352,6 +274,66 @@ const (
 	FeMorphologyOverflowVisible FeMorphologyOverflow = "visible"
 )
 
+type FeMorphologyPointerEvents string
+
+const (
+	FeMorphologyPointerEventsAll            FeMorphologyPointerEvents = "all"
+	FeMorphologyPointerEventsAuto           FeMorphologyPointerEvents = "auto"
+	FeMorphologyPointerEventsBoundingBox    FeMorphologyPointerEvents = "bounding-box"
+	FeMorphologyPointerEventsFill           FeMorphologyPointerEvents = "fill"
+	FeMorphologyPointerEventsNone           FeMorphologyPointerEvents = "none"
+	FeMorphologyPointerEventsPainted        FeMorphologyPointerEvents = "painted"
+	FeMorphologyPointerEventsStroke         FeMorphologyPointerEvents = "stroke"
+	FeMorphologyPointerEventsVisible        FeMorphologyPointerEvents = "visible"
+	FeMorphologyPointerEventsVisibleFill    FeMorphologyPointerEvents = "visibleFill"
+	FeMorphologyPointerEventsVisiblePainted FeMorphologyPointerEvents = "visiblePainted"
+	FeMorphologyPointerEventsVisibleStroke  FeMorphologyPointerEvents = "visibleStroke"
+)
+
+type FeMorphologyShapeRendering string
+
+const (
+	FeMorphologyShapeRenderingAuto               FeMorphologyShapeRendering = "auto"
+	FeMorphologyShapeRenderingCrispEdges         FeMorphologyShapeRendering = "crispEdges"
+	FeMorphologyShapeRenderingGeometricPrecision FeMorphologyShapeRendering = "geometricPrecision"
+	FeMorphologyShapeRenderingOptimizeSpeed      FeMorphologyShapeRendering = "optimizeSpeed"
+)
+
+type FeMorphologyStrokeLinecap string
+
+const (
+	FeMorphologyStrokeLinecapButt   FeMorphologyStrokeLinecap = "butt"
+	FeMorphologyStrokeLinecapRound  FeMorphologyStrokeLinecap = "round"
+	FeMorphologyStrokeLinecapSquare FeMorphologyStrokeLinecap = "square"
+)
+
+type FeMorphologyStrokeLinejoin string
+
+const (
+	FeMorphologyStrokeLinejoinArcs      FeMorphologyStrokeLinejoin = "arcs"
+	FeMorphologyStrokeLinejoinBevel     FeMorphologyStrokeLinejoin = "bevel"
+	FeMorphologyStrokeLinejoinMiter     FeMorphologyStrokeLinejoin = "miter"
+	FeMorphologyStrokeLinejoinMiterClip FeMorphologyStrokeLinejoin = "miter-clip"
+	FeMorphologyStrokeLinejoinRound     FeMorphologyStrokeLinejoin = "round"
+)
+
+type FeMorphologyTextAnchor string
+
+const (
+	FeMorphologyTextAnchorEnd    FeMorphologyTextAnchor = "end"
+	FeMorphologyTextAnchorMiddle FeMorphologyTextAnchor = "middle"
+	FeMorphologyTextAnchorStart  FeMorphologyTextAnchor = "start"
+)
+
+type FeMorphologyTextRendering string
+
+const (
+	FeMorphologyTextRenderingAuto               FeMorphologyTextRendering = "auto"
+	FeMorphologyTextRenderingGeometricPrecision FeMorphologyTextRendering = "geometricPrecision"
+	FeMorphologyTextRenderingOptimizeLegibility FeMorphologyTextRendering = "optimizeLegibility"
+	FeMorphologyTextRenderingOptimizeSpeed      FeMorphologyTextRendering = "optimizeSpeed"
+)
+
 type FeMorphologyTransformBox string
 
 const (
@@ -362,11 +344,22 @@ const (
 	FeMorphologyTransformBoxViewBox    FeMorphologyTransformBox = "view-box"
 )
 
-type FeMorphologyDirection string
+type FeMorphologyVectorEffect string
 
 const (
-	FeMorphologyDirectionLtr FeMorphologyDirection = "ltr"
-	FeMorphologyDirectionRtl FeMorphologyDirection = "rtl"
+	FeMorphologyVectorEffectFixedPosition    FeMorphologyVectorEffect = "fixed-position"
+	FeMorphologyVectorEffectNonRotation      FeMorphologyVectorEffect = "non-rotation"
+	FeMorphologyVectorEffectNonScalingSize   FeMorphologyVectorEffect = "non-scaling-size"
+	FeMorphologyVectorEffectNonScalingStroke FeMorphologyVectorEffect = "non-scaling-stroke"
+	FeMorphologyVectorEffectNone             FeMorphologyVectorEffect = "none"
+)
+
+type FeMorphologyVisibility string
+
+const (
+	FeMorphologyVisibilityCollapse FeMorphologyVisibility = "collapse"
+	FeMorphologyVisibilityHidden   FeMorphologyVisibility = "hidden"
+	FeMorphologyVisibilityVisible  FeMorphologyVisibility = "visible"
 )
 
 type FeMorphologyWritingMode string
@@ -385,32 +378,15 @@ const (
 	FeMorphologyWritingModeVerticalRl   FeMorphologyWritingMode = "vertical-rl"
 )
 
-func (e *FeMorphologyElement) X(s string) *FeMorphologyElement {
-	e.attributes.Set("x", s)
+type FeMorphologyXmlSpace string
 
-	return e
-}
-
-func (e *FeMorphologyElement) Y(s string) *FeMorphologyElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) Width(s string) *FeMorphologyElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
+const (
+	FeMorphologyXmlSpaceDefault  FeMorphologyXmlSpace = "default"
+	FeMorphologyXmlSpacePreserve FeMorphologyXmlSpace = "preserve"
+)
 
 func (e *FeMorphologyElement) Height(s string) *FeMorphologyElement {
 	e.attributes.Set("height", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) Result(s string) *FeMorphologyElement {
-	e.attributes.Set("result", s)
 
 	return e
 }
@@ -433,8 +409,66 @@ func (e *FeMorphologyElement) Radius(s string) *FeMorphologyElement {
 	return e
 }
 
-func (e *FeMorphologyElement) Id(s string) *FeMorphologyElement {
-	e.attributes.Set("id", s)
+func (e *FeMorphologyElement) Result(s string) *FeMorphologyElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Width(s string) *FeMorphologyElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) X(s string) *FeMorphologyElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Y(s string) *FeMorphologyElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) AlignmentBaseline(a FeMorphologyAlignmentBaseline) *FeMorphologyElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeMorphologyAlignmentBaselineCustom(s string) FeMorphologyAlignmentBaseline {
+	return FeMorphologyAlignmentBaseline(s)
+}
+
+func (e *FeMorphologyElement) AriaUnsafe(name string, s string) *FeMorphologyElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Aria(name string, s string) *FeMorphologyElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeMorphologyElement) Autofocus(b bool) *FeMorphologyElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeMorphologyElement) BaselineShift(s string) *FeMorphologyElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -445,40 +479,59 @@ func (e *FeMorphologyElement) Class(s ...string) *FeMorphologyElement {
 	return e
 }
 
-func (e *FeMorphologyElement) Style(s string) *FeMorphologyElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeMorphologyElement) Clip(s string) *FeMorphologyElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) Tabindex(i int) *FeMorphologyElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeMorphologyElement) ClipPath(s string) *FeMorphologyElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) Lang(s string) *FeMorphologyElement {
-	e.attributes.Set("lang", s)
+func (e *FeMorphologyElement) ClipRule(a FeMorphologyClipRule) *FeMorphologyElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeMorphologyElement) XmlLang(s string) *FeMorphologyElement {
-	e.attributes.Set("xml:lang", s)
+func FeMorphologyClipRuleCustom(s string) FeMorphologyClipRule {
+	return FeMorphologyClipRule(s)
+}
+
+func (e *FeMorphologyElement) Color(s string) *FeMorphologyElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) XmlSpace(a FeMorphologyXmlSpace) *FeMorphologyElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeMorphologyElement) ColorInterpolation(a FeMorphologyColorInterpolation) *FeMorphologyElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeMorphologyElement) Autofocus(b bool) *FeMorphologyElement {
-	e.attributes.SetBool("autofocus", b)
+func FeMorphologyColorInterpolationCustom(s string) FeMorphologyColorInterpolation {
+	return FeMorphologyColorInterpolation(s)
+}
+
+func (e *FeMorphologyElement) ColorInterpolationFilters(a FeMorphologyColorInterpolationFilters) *FeMorphologyElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeMorphologyColorInterpolationFiltersCustom(s string) FeMorphologyColorInterpolationFilters {
+	return FeMorphologyColorInterpolationFilters(s)
+}
+
+func (e *FeMorphologyElement) Cursor(s string) *FeMorphologyElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -499,20 +552,30 @@ func (e *FeMorphologyElement) Data(name string, s string) *FeMorphologyElement {
 	return e
 }
 
-func (e *FeMorphologyElement) AriaUnsafe(name string, s string) *FeMorphologyElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeMorphologyElement) Direction(a FeMorphologyDirection) *FeMorphologyElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeMorphologyElement) Aria(name string, s string) *FeMorphologyElement {
-	tag := strings.ToLower("aria-" + name)
+func FeMorphologyDirectionCustom(s string) FeMorphologyDirection {
+	return FeMorphologyDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeMorphologyElement) Display(s string) *FeMorphologyElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeMorphologyElement) DominantBaseline(a FeMorphologyDominantBaseline) *FeMorphologyElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeMorphologyDominantBaselineCustom(s string) FeMorphologyDominantBaseline {
+	return FeMorphologyDominantBaseline(s)
 }
 
 func (e *FeMorphologyElement) Fill(s string) *FeMorphologyElement {
@@ -537,20 +600,220 @@ func FeMorphologyFillRuleCustom(s string) FeMorphologyFillRule {
 	return FeMorphologyFillRule(s)
 }
 
+func (e *FeMorphologyElement) Filter(s string) *FeMorphologyElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FloodColor(s string) *FeMorphologyElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FloodOpacity(f float64) *FeMorphologyElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontFamily(s string) *FeMorphologyElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontSize(s string) *FeMorphologyElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontSizeAdjust(s string) *FeMorphologyElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontStretch(s string) *FeMorphologyElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontStyle(a FeMorphologyFontStyle) *FeMorphologyElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeMorphologyFontStyleCustom(s string) FeMorphologyFontStyle {
+	return FeMorphologyFontStyle(s)
+}
+
+func (e *FeMorphologyElement) FontVariant(s string) *FeMorphologyElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) FontWeight(s string) *FeMorphologyElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeMorphologyElement) GlyphOrientationHorizontal(s string) *FeMorphologyElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeMorphologyElement) GlyphOrientationVertical(s string) *FeMorphologyElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Id(s string) *FeMorphologyElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) ImageRendering(a FeMorphologyImageRendering) *FeMorphologyElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeMorphologyImageRenderingCustom(s string) FeMorphologyImageRendering {
+	return FeMorphologyImageRendering(s)
+}
+
+func (e *FeMorphologyElement) Lang(s string) *FeMorphologyElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) LetterSpacing(s string) *FeMorphologyElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) LightingColor(s string) *FeMorphologyElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) MarkerEnd(s string) *FeMorphologyElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) MarkerMid(s string) *FeMorphologyElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) MarkerStart(s string) *FeMorphologyElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Mask(s string) *FeMorphologyElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) Opacity(f float64) *FeMorphologyElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeMorphologyElement) Overflow(a FeMorphologyOverflow) *FeMorphologyElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeMorphologyOverflowCustom(s string) FeMorphologyOverflow {
+	return FeMorphologyOverflow(s)
+}
+
+func (e *FeMorphologyElement) PaintOrder(s string) *FeMorphologyElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) PointerEvents(a FeMorphologyPointerEvents) *FeMorphologyElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeMorphologyPointerEventsCustom(s string) FeMorphologyPointerEvents {
+	return FeMorphologyPointerEvents(s)
+}
+
+func (e *FeMorphologyElement) RequiredExtensions(s string) *FeMorphologyElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) ShapeRendering(a FeMorphologyShapeRendering) *FeMorphologyElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeMorphologyShapeRenderingCustom(s string) FeMorphologyShapeRendering {
+	return FeMorphologyShapeRendering(s)
+}
+
+func (e *FeMorphologyElement) StopColor(s string) *FeMorphologyElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) StopOpacity(f float64) *FeMorphologyElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeMorphologyElement) Stroke(s string) *FeMorphologyElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) StrokeWidth(s string) *FeMorphologyElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeMorphologyElement) StrokeDasharray(s string) *FeMorphologyElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) StrokeOpacity(f float64) *FeMorphologyElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeMorphologyElement) StrokeDashoffset(s string) *FeMorphologyElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -581,210 +844,28 @@ func (e *FeMorphologyElement) StrokeMiterlimit(f float64) *FeMorphologyElement {
 	return e
 }
 
-func (e *FeMorphologyElement) StrokeDasharray(s string) *FeMorphologyElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeMorphologyElement) StrokeOpacity(f float64) *FeMorphologyElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeMorphologyElement) StrokeDashoffset(s string) *FeMorphologyElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeMorphologyElement) StrokeWidth(s string) *FeMorphologyElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) Opacity(f float64) *FeMorphologyElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeMorphologyElement) Style(s string) *FeMorphologyElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeMorphologyElement) Color(s string) *FeMorphologyElement {
-	e.attributes.Set("color", s)
+func (e *FeMorphologyElement) Tabindex(i int) *FeMorphologyElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeMorphologyElement) Display(s string) *FeMorphologyElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) Visibility(a FeMorphologyVisibility) *FeMorphologyElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeMorphologyVisibilityCustom(s string) FeMorphologyVisibility {
-	return FeMorphologyVisibility(s)
-}
-
-func (e *FeMorphologyElement) ClipPath(s string) *FeMorphologyElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) ClipRule(a FeMorphologyClipRule) *FeMorphologyElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeMorphologyClipRuleCustom(s string) FeMorphologyClipRule {
-	return FeMorphologyClipRule(s)
-}
-
-func (e *FeMorphologyElement) Mask(s string) *FeMorphologyElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) Filter(s string) *FeMorphologyElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) Cursor(s string) *FeMorphologyElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) PointerEvents(a FeMorphologyPointerEvents) *FeMorphologyElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeMorphologyPointerEventsCustom(s string) FeMorphologyPointerEvents {
-	return FeMorphologyPointerEvents(s)
-}
-
-func (e *FeMorphologyElement) VectorEffect(a FeMorphologyVectorEffect) *FeMorphologyElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeMorphologyVectorEffectCustom(s string) FeMorphologyVectorEffect {
-	return FeMorphologyVectorEffect(s)
-}
-
-func (e *FeMorphologyElement) PaintOrder(s string) *FeMorphologyElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) ShapeRendering(a FeMorphologyShapeRendering) *FeMorphologyElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeMorphologyShapeRenderingCustom(s string) FeMorphologyShapeRendering {
-	return FeMorphologyShapeRendering(s)
-}
-
-func (e *FeMorphologyElement) ColorInterpolation(a FeMorphologyColorInterpolation) *FeMorphologyElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeMorphologyColorInterpolationCustom(s string) FeMorphologyColorInterpolation {
-	return FeMorphologyColorInterpolation(s)
-}
-
-func (e *FeMorphologyElement) ColorInterpolationFilters(a FeMorphologyColorInterpolationFilters) *FeMorphologyElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeMorphologyColorInterpolationFiltersCustom(s string) FeMorphologyColorInterpolationFilters {
-	return FeMorphologyColorInterpolationFilters(s)
-}
-
-func (e *FeMorphologyElement) FloodColor(s string) *FeMorphologyElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) FloodOpacity(f float64) *FeMorphologyElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeMorphologyElement) LightingColor(s string) *FeMorphologyElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) StopColor(s string) *FeMorphologyElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) StopOpacity(f float64) *FeMorphologyElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeMorphologyElement) MarkerStart(s string) *FeMorphologyElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) MarkerMid(s string) *FeMorphologyElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) MarkerEnd(s string) *FeMorphologyElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) FontFamily(s string) *FeMorphologyElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) FontSize(s string) *FeMorphologyElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) FontWeight(s string) *FeMorphologyElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) FontStyle(a FeMorphologyFontStyle) *FeMorphologyElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeMorphologyFontStyleCustom(s string) FeMorphologyFontStyle {
-	return FeMorphologyFontStyle(s)
 }
 
 func (e *FeMorphologyElement) TextAnchor(a FeMorphologyTextAnchor) *FeMorphologyElement {
@@ -797,40 +878,14 @@ func FeMorphologyTextAnchorCustom(s string) FeMorphologyTextAnchor {
 	return FeMorphologyTextAnchor(s)
 }
 
-func (e *FeMorphologyElement) DominantBaseline(a FeMorphologyDominantBaseline) *FeMorphologyElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeMorphologyDominantBaselineCustom(s string) FeMorphologyDominantBaseline {
-	return FeMorphologyDominantBaseline(s)
-}
-
-func (e *FeMorphologyElement) AlignmentBaseline(a FeMorphologyAlignmentBaseline) *FeMorphologyElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeMorphologyAlignmentBaselineCustom(s string) FeMorphologyAlignmentBaseline {
-	return FeMorphologyAlignmentBaseline(s)
-}
-
-func (e *FeMorphologyElement) LetterSpacing(s string) *FeMorphologyElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeMorphologyElement) WordSpacing(s string) *FeMorphologyElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeMorphologyElement) TextDecoration(s string) *FeMorphologyElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) TextOverflow(s string) *FeMorphologyElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -845,24 +900,10 @@ func FeMorphologyTextRenderingCustom(s string) FeMorphologyTextRendering {
 	return FeMorphologyTextRendering(s)
 }
 
-func (e *FeMorphologyElement) ImageRendering(a FeMorphologyImageRendering) *FeMorphologyElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeMorphologyElement) Transform(s string) *FeMorphologyElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeMorphologyImageRenderingCustom(s string) FeMorphologyImageRendering {
-	return FeMorphologyImageRendering(s)
-}
-
-func (e *FeMorphologyElement) Overflow(a FeMorphologyOverflow) *FeMorphologyElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeMorphologyOverflowCustom(s string) FeMorphologyOverflow {
-	return FeMorphologyOverflow(s)
 }
 
 func (e *FeMorphologyElement) TransformBox(a FeMorphologyTransformBox) *FeMorphologyElement {
@@ -875,18 +916,46 @@ func FeMorphologyTransformBoxCustom(s string) FeMorphologyTransformBox {
 	return FeMorphologyTransformBox(s)
 }
 
-func (e *FeMorphologyElement) Direction(a FeMorphologyDirection) *FeMorphologyElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeMorphologyElement) TransformOrigin(s string) *FeMorphologyElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeMorphologyDirectionCustom(s string) FeMorphologyDirection {
-	return FeMorphologyDirection(s)
-}
-
 func (e *FeMorphologyElement) UnicodeBidi(s string) *FeMorphologyElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) VectorEffect(a FeMorphologyVectorEffect) *FeMorphologyElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeMorphologyVectorEffectCustom(s string) FeMorphologyVectorEffect {
+	return FeMorphologyVectorEffect(s)
+}
+
+func (e *FeMorphologyElement) Visibility(a FeMorphologyVisibility) *FeMorphologyElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeMorphologyVisibilityCustom(s string) FeMorphologyVisibility {
+	return FeMorphologyVisibility(s)
+}
+
+func (e *FeMorphologyElement) WhiteSpace(s string) *FeMorphologyElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeMorphologyElement) WordSpacing(s string) *FeMorphologyElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -901,8 +970,20 @@ func FeMorphologyWritingModeCustom(s string) FeMorphologyWritingMode {
 	return FeMorphologyWritingMode(s)
 }
 
-func (e *FeMorphologyElement) WhiteSpace(s string) *FeMorphologyElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeMorphologyElement) XmlLang(s string) *FeMorphologyElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeMorphologyElement) XmlSpace(a FeMorphologyXmlSpace) *FeMorphologyElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

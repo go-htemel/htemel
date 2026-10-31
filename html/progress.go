@@ -240,6 +240,15 @@ const (
 	ProgressInputmodeUrl     ProgressInputmode = "url"
 )
 
+type ProgressPopover string
+
+const (
+	ProgressPopoverAuto   ProgressPopover = "auto"
+	ProgressPopoverHint   ProgressPopover = "hint"
+	ProgressPopoverManual ProgressPopover = "manual"
+	ProgressPopoverEmpty  ProgressPopover = ""
+)
+
 type ProgressSpellcheck string
 
 const (
@@ -264,14 +273,14 @@ const (
 	ProgressWritingsuggestionsEmpty ProgressWritingsuggestions = ""
 )
 
-func (e *ProgressElement) Value(f float64) *ProgressElement {
-	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ProgressElement) Max(f float64) *ProgressElement {
+	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *ProgressElement) Max(f float64) *ProgressElement {
-	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ProgressElement) Value(f float64) *ProgressElement {
+	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -376,6 +385,26 @@ func (e *ProgressElement) Enterkeyhint(a ProgressEnterkeyhint) *ProgressElement 
 	return e
 }
 
+func (e *ProgressElement) Exportparts(s string) *ProgressElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ProgressElement) Headingoffset(i int) *ProgressElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ProgressElement) Headingreset(b bool) *ProgressElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ProgressElement) Hidden(v ...ProgressHidden) *ProgressElement {
@@ -408,6 +437,14 @@ func (e *ProgressElement) Inputmode(a ProgressInputmode) *ProgressElement {
 	return e
 }
 
+func (e *ProgressElement) Is(s string) *ProgressElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ProgressElement) Itemid(s string) *ProgressElement {
 	e.attributes.Set("itemid", s)
 
@@ -452,8 +489,20 @@ func (e *ProgressElement) Nonce(s string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Popover(s string) *ProgressElement {
-	e.attributes.Set("popover", s)
+func (e *ProgressElement) Part(s ...string) *ProgressElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Popover(v ...ProgressPopover) *ProgressElement {
+	var val ProgressPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

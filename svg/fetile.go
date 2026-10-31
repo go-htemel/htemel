@@ -164,134 +164,6 @@ func (e *FeTileElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeTileXmlSpace string
-
-const (
-	FeTileXmlSpaceDefault  FeTileXmlSpace = "default"
-	FeTileXmlSpacePreserve FeTileXmlSpace = "preserve"
-)
-
-type FeTileFillRule string
-
-const (
-	FeTileFillRuleEvenodd FeTileFillRule = "evenodd"
-	FeTileFillRuleNonzero FeTileFillRule = "nonzero"
-)
-
-type FeTileStrokeLinecap string
-
-const (
-	FeTileStrokeLinecapButt   FeTileStrokeLinecap = "butt"
-	FeTileStrokeLinecapRound  FeTileStrokeLinecap = "round"
-	FeTileStrokeLinecapSquare FeTileStrokeLinecap = "square"
-)
-
-type FeTileStrokeLinejoin string
-
-const (
-	FeTileStrokeLinejoinArcs      FeTileStrokeLinejoin = "arcs"
-	FeTileStrokeLinejoinBevel     FeTileStrokeLinejoin = "bevel"
-	FeTileStrokeLinejoinMiter     FeTileStrokeLinejoin = "miter"
-	FeTileStrokeLinejoinMiterClip FeTileStrokeLinejoin = "miter-clip"
-	FeTileStrokeLinejoinRound     FeTileStrokeLinejoin = "round"
-)
-
-type FeTileVisibility string
-
-const (
-	FeTileVisibilityCollapse FeTileVisibility = "collapse"
-	FeTileVisibilityHidden   FeTileVisibility = "hidden"
-	FeTileVisibilityVisible  FeTileVisibility = "visible"
-)
-
-type FeTileClipRule string
-
-const (
-	FeTileClipRuleEvenodd FeTileClipRule = "evenodd"
-	FeTileClipRuleNonzero FeTileClipRule = "nonzero"
-)
-
-type FeTilePointerEvents string
-
-const (
-	FeTilePointerEventsAll            FeTilePointerEvents = "all"
-	FeTilePointerEventsAuto           FeTilePointerEvents = "auto"
-	FeTilePointerEventsBoundingBox    FeTilePointerEvents = "bounding-box"
-	FeTilePointerEventsFill           FeTilePointerEvents = "fill"
-	FeTilePointerEventsNone           FeTilePointerEvents = "none"
-	FeTilePointerEventsPainted        FeTilePointerEvents = "painted"
-	FeTilePointerEventsStroke         FeTilePointerEvents = "stroke"
-	FeTilePointerEventsVisible        FeTilePointerEvents = "visible"
-	FeTilePointerEventsVisibleFill    FeTilePointerEvents = "visibleFill"
-	FeTilePointerEventsVisiblePainted FeTilePointerEvents = "visiblePainted"
-	FeTilePointerEventsVisibleStroke  FeTilePointerEvents = "visibleStroke"
-)
-
-type FeTileVectorEffect string
-
-const (
-	FeTileVectorEffectFixedPosition    FeTileVectorEffect = "fixed-position"
-	FeTileVectorEffectNonRotation      FeTileVectorEffect = "non-rotation"
-	FeTileVectorEffectNonScalingSize   FeTileVectorEffect = "non-scaling-size"
-	FeTileVectorEffectNonScalingStroke FeTileVectorEffect = "non-scaling-stroke"
-	FeTileVectorEffectNone             FeTileVectorEffect = "none"
-)
-
-type FeTileShapeRendering string
-
-const (
-	FeTileShapeRenderingAuto               FeTileShapeRendering = "auto"
-	FeTileShapeRenderingCrispEdges         FeTileShapeRendering = "crispEdges"
-	FeTileShapeRenderingGeometricPrecision FeTileShapeRendering = "geometricPrecision"
-	FeTileShapeRenderingOptimizeSpeed      FeTileShapeRendering = "optimizeSpeed"
-)
-
-type FeTileColorInterpolation string
-
-const (
-	FeTileColorInterpolationAuto      FeTileColorInterpolation = "auto"
-	FeTileColorInterpolationLinearRGB FeTileColorInterpolation = "linearRGB"
-	FeTileColorInterpolationSRGB      FeTileColorInterpolation = "sRGB"
-)
-
-type FeTileColorInterpolationFilters string
-
-const (
-	FeTileColorInterpolationFiltersAuto      FeTileColorInterpolationFilters = "auto"
-	FeTileColorInterpolationFiltersLinearRGB FeTileColorInterpolationFilters = "linearRGB"
-	FeTileColorInterpolationFiltersSRGB      FeTileColorInterpolationFilters = "sRGB"
-)
-
-type FeTileFontStyle string
-
-const (
-	FeTileFontStyleItalic  FeTileFontStyle = "italic"
-	FeTileFontStyleNormal  FeTileFontStyle = "normal"
-	FeTileFontStyleOblique FeTileFontStyle = "oblique"
-)
-
-type FeTileTextAnchor string
-
-const (
-	FeTileTextAnchorEnd    FeTileTextAnchor = "end"
-	FeTileTextAnchorMiddle FeTileTextAnchor = "middle"
-	FeTileTextAnchorStart  FeTileTextAnchor = "start"
-)
-
-type FeTileDominantBaseline string
-
-const (
-	FeTileDominantBaselineAlphabetic   FeTileDominantBaseline = "alphabetic"
-	FeTileDominantBaselineAuto         FeTileDominantBaseline = "auto"
-	FeTileDominantBaselineCentral      FeTileDominantBaseline = "central"
-	FeTileDominantBaselineHanging      FeTileDominantBaseline = "hanging"
-	FeTileDominantBaselineIdeographic  FeTileDominantBaseline = "ideographic"
-	FeTileDominantBaselineMathematical FeTileDominantBaseline = "mathematical"
-	FeTileDominantBaselineMiddle       FeTileDominantBaseline = "middle"
-	FeTileDominantBaselineTextBottom   FeTileDominantBaseline = "text-bottom"
-	FeTileDominantBaselineTextTop      FeTileDominantBaseline = "text-top"
-)
-
 type FeTileAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	FeTileAlignmentBaselineTop            FeTileAlignmentBaseline = "top"
 )
 
-type FeTileTextRendering string
+type FeTileClipRule string
 
 const (
-	FeTileTextRenderingAuto               FeTileTextRendering = "auto"
-	FeTileTextRenderingGeometricPrecision FeTileTextRendering = "geometricPrecision"
-	FeTileTextRenderingOptimizeLegibility FeTileTextRendering = "optimizeLegibility"
-	FeTileTextRenderingOptimizeSpeed      FeTileTextRendering = "optimizeSpeed"
+	FeTileClipRuleEvenodd FeTileClipRule = "evenodd"
+	FeTileClipRuleNonzero FeTileClipRule = "nonzero"
+)
+
+type FeTileColorInterpolation string
+
+const (
+	FeTileColorInterpolationAuto      FeTileColorInterpolation = "auto"
+	FeTileColorInterpolationLinearRGB FeTileColorInterpolation = "linearRGB"
+	FeTileColorInterpolationSRGB      FeTileColorInterpolation = "sRGB"
+)
+
+type FeTileColorInterpolationFilters string
+
+const (
+	FeTileColorInterpolationFiltersAuto      FeTileColorInterpolationFilters = "auto"
+	FeTileColorInterpolationFiltersLinearRGB FeTileColorInterpolationFilters = "linearRGB"
+	FeTileColorInterpolationFiltersSRGB      FeTileColorInterpolationFilters = "sRGB"
+)
+
+type FeTileDirection string
+
+const (
+	FeTileDirectionLtr FeTileDirection = "ltr"
+	FeTileDirectionRtl FeTileDirection = "rtl"
+)
+
+type FeTileDominantBaseline string
+
+const (
+	FeTileDominantBaselineAlphabetic   FeTileDominantBaseline = "alphabetic"
+	FeTileDominantBaselineAuto         FeTileDominantBaseline = "auto"
+	FeTileDominantBaselineCentral      FeTileDominantBaseline = "central"
+	FeTileDominantBaselineHanging      FeTileDominantBaseline = "hanging"
+	FeTileDominantBaselineIdeographic  FeTileDominantBaseline = "ideographic"
+	FeTileDominantBaselineMathematical FeTileDominantBaseline = "mathematical"
+	FeTileDominantBaselineMiddle       FeTileDominantBaseline = "middle"
+	FeTileDominantBaselineTextBottom   FeTileDominantBaseline = "text-bottom"
+	FeTileDominantBaselineTextTop      FeTileDominantBaseline = "text-top"
+)
+
+type FeTileFillRule string
+
+const (
+	FeTileFillRuleEvenodd FeTileFillRule = "evenodd"
+	FeTileFillRuleNonzero FeTileFillRule = "nonzero"
+)
+
+type FeTileFontStyle string
+
+const (
+	FeTileFontStyleItalic  FeTileFontStyle = "italic"
+	FeTileFontStyleNormal  FeTileFontStyle = "normal"
+	FeTileFontStyleOblique FeTileFontStyle = "oblique"
 )
 
 type FeTileImageRendering string
@@ -345,6 +267,66 @@ const (
 	FeTileOverflowVisible FeTileOverflow = "visible"
 )
 
+type FeTilePointerEvents string
+
+const (
+	FeTilePointerEventsAll            FeTilePointerEvents = "all"
+	FeTilePointerEventsAuto           FeTilePointerEvents = "auto"
+	FeTilePointerEventsBoundingBox    FeTilePointerEvents = "bounding-box"
+	FeTilePointerEventsFill           FeTilePointerEvents = "fill"
+	FeTilePointerEventsNone           FeTilePointerEvents = "none"
+	FeTilePointerEventsPainted        FeTilePointerEvents = "painted"
+	FeTilePointerEventsStroke         FeTilePointerEvents = "stroke"
+	FeTilePointerEventsVisible        FeTilePointerEvents = "visible"
+	FeTilePointerEventsVisibleFill    FeTilePointerEvents = "visibleFill"
+	FeTilePointerEventsVisiblePainted FeTilePointerEvents = "visiblePainted"
+	FeTilePointerEventsVisibleStroke  FeTilePointerEvents = "visibleStroke"
+)
+
+type FeTileShapeRendering string
+
+const (
+	FeTileShapeRenderingAuto               FeTileShapeRendering = "auto"
+	FeTileShapeRenderingCrispEdges         FeTileShapeRendering = "crispEdges"
+	FeTileShapeRenderingGeometricPrecision FeTileShapeRendering = "geometricPrecision"
+	FeTileShapeRenderingOptimizeSpeed      FeTileShapeRendering = "optimizeSpeed"
+)
+
+type FeTileStrokeLinecap string
+
+const (
+	FeTileStrokeLinecapButt   FeTileStrokeLinecap = "butt"
+	FeTileStrokeLinecapRound  FeTileStrokeLinecap = "round"
+	FeTileStrokeLinecapSquare FeTileStrokeLinecap = "square"
+)
+
+type FeTileStrokeLinejoin string
+
+const (
+	FeTileStrokeLinejoinArcs      FeTileStrokeLinejoin = "arcs"
+	FeTileStrokeLinejoinBevel     FeTileStrokeLinejoin = "bevel"
+	FeTileStrokeLinejoinMiter     FeTileStrokeLinejoin = "miter"
+	FeTileStrokeLinejoinMiterClip FeTileStrokeLinejoin = "miter-clip"
+	FeTileStrokeLinejoinRound     FeTileStrokeLinejoin = "round"
+)
+
+type FeTileTextAnchor string
+
+const (
+	FeTileTextAnchorEnd    FeTileTextAnchor = "end"
+	FeTileTextAnchorMiddle FeTileTextAnchor = "middle"
+	FeTileTextAnchorStart  FeTileTextAnchor = "start"
+)
+
+type FeTileTextRendering string
+
+const (
+	FeTileTextRenderingAuto               FeTileTextRendering = "auto"
+	FeTileTextRenderingGeometricPrecision FeTileTextRendering = "geometricPrecision"
+	FeTileTextRenderingOptimizeLegibility FeTileTextRendering = "optimizeLegibility"
+	FeTileTextRenderingOptimizeSpeed      FeTileTextRendering = "optimizeSpeed"
+)
+
 type FeTileTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	FeTileTransformBoxViewBox    FeTileTransformBox = "view-box"
 )
 
-type FeTileDirection string
+type FeTileVectorEffect string
 
 const (
-	FeTileDirectionLtr FeTileDirection = "ltr"
-	FeTileDirectionRtl FeTileDirection = "rtl"
+	FeTileVectorEffectFixedPosition    FeTileVectorEffect = "fixed-position"
+	FeTileVectorEffectNonRotation      FeTileVectorEffect = "non-rotation"
+	FeTileVectorEffectNonScalingSize   FeTileVectorEffect = "non-scaling-size"
+	FeTileVectorEffectNonScalingStroke FeTileVectorEffect = "non-scaling-stroke"
+	FeTileVectorEffectNone             FeTileVectorEffect = "none"
+)
+
+type FeTileVisibility string
+
+const (
+	FeTileVisibilityCollapse FeTileVisibility = "collapse"
+	FeTileVisibilityHidden   FeTileVisibility = "hidden"
+	FeTileVisibilityVisible  FeTileVisibility = "visible"
 )
 
 type FeTileWritingMode string
@@ -378,6 +371,37 @@ const (
 	FeTileWritingModeVerticalRl   FeTileWritingMode = "vertical-rl"
 )
 
+type FeTileXmlSpace string
+
+const (
+	FeTileXmlSpaceDefault  FeTileXmlSpace = "default"
+	FeTileXmlSpacePreserve FeTileXmlSpace = "preserve"
+)
+
+func (e *FeTileElement) Height(s string) *FeTileElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *FeTileElement) In(s string) *FeTileElement {
+	e.attributes.Set("in", s)
+
+	return e
+}
+
+func (e *FeTileElement) Result(s string) *FeTileElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
+func (e *FeTileElement) Width(s string) *FeTileElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *FeTileElement) X(s string) *FeTileElement {
 	e.attributes.Set("x", s)
 
@@ -390,32 +414,42 @@ func (e *FeTileElement) Y(s string) *FeTileElement {
 	return e
 }
 
-func (e *FeTileElement) Width(s string) *FeTileElement {
-	e.attributes.Set("width", s)
+func (e *FeTileElement) AlignmentBaseline(a FeTileAlignmentBaseline) *FeTileElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *FeTileElement) Height(s string) *FeTileElement {
-	e.attributes.Set("height", s)
+func FeTileAlignmentBaselineCustom(s string) FeTileAlignmentBaseline {
+	return FeTileAlignmentBaseline(s)
+}
+
+func (e *FeTileElement) AriaUnsafe(name string, s string) *FeTileElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *FeTileElement) Result(s string) *FeTileElement {
-	e.attributes.Set("result", s)
+func (e *FeTileElement) Aria(name string, s string) *FeTileElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *FeTileElement) In(s string) *FeTileElement {
-	e.attributes.Set("in", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeTileElement) Autofocus(b bool) *FeTileElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *FeTileElement) Id(s string) *FeTileElement {
-	e.attributes.Set("id", s)
+func (e *FeTileElement) BaselineShift(s string) *FeTileElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -426,40 +460,59 @@ func (e *FeTileElement) Class(s ...string) *FeTileElement {
 	return e
 }
 
-func (e *FeTileElement) Style(s string) *FeTileElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeTileElement) Clip(s string) *FeTileElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeTileElement) Tabindex(i int) *FeTileElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeTileElement) ClipPath(s string) *FeTileElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeTileElement) Lang(s string) *FeTileElement {
-	e.attributes.Set("lang", s)
+func (e *FeTileElement) ClipRule(a FeTileClipRule) *FeTileElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeTileElement) XmlLang(s string) *FeTileElement {
-	e.attributes.Set("xml:lang", s)
+func FeTileClipRuleCustom(s string) FeTileClipRule {
+	return FeTileClipRule(s)
+}
+
+func (e *FeTileElement) Color(s string) *FeTileElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeTileElement) XmlSpace(a FeTileXmlSpace) *FeTileElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeTileElement) ColorInterpolation(a FeTileColorInterpolation) *FeTileElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeTileElement) Autofocus(b bool) *FeTileElement {
-	e.attributes.SetBool("autofocus", b)
+func FeTileColorInterpolationCustom(s string) FeTileColorInterpolation {
+	return FeTileColorInterpolation(s)
+}
+
+func (e *FeTileElement) ColorInterpolationFilters(a FeTileColorInterpolationFilters) *FeTileElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeTileColorInterpolationFiltersCustom(s string) FeTileColorInterpolationFilters {
+	return FeTileColorInterpolationFilters(s)
+}
+
+func (e *FeTileElement) Cursor(s string) *FeTileElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -480,20 +533,30 @@ func (e *FeTileElement) Data(name string, s string) *FeTileElement {
 	return e
 }
 
-func (e *FeTileElement) AriaUnsafe(name string, s string) *FeTileElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeTileElement) Direction(a FeTileDirection) *FeTileElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeTileElement) Aria(name string, s string) *FeTileElement {
-	tag := strings.ToLower("aria-" + name)
+func FeTileDirectionCustom(s string) FeTileDirection {
+	return FeTileDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeTileElement) Display(s string) *FeTileElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeTileElement) DominantBaseline(a FeTileDominantBaseline) *FeTileElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeTileDominantBaselineCustom(s string) FeTileDominantBaseline {
+	return FeTileDominantBaseline(s)
 }
 
 func (e *FeTileElement) Fill(s string) *FeTileElement {
@@ -518,20 +581,220 @@ func FeTileFillRuleCustom(s string) FeTileFillRule {
 	return FeTileFillRule(s)
 }
 
+func (e *FeTileElement) Filter(s string) *FeTileElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeTileElement) FloodColor(s string) *FeTileElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeTileElement) FloodOpacity(f float64) *FeTileElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeTileElement) FontFamily(s string) *FeTileElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeTileElement) FontSize(s string) *FeTileElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeTileElement) FontSizeAdjust(s string) *FeTileElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeTileElement) FontStretch(s string) *FeTileElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeTileElement) FontStyle(a FeTileFontStyle) *FeTileElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeTileFontStyleCustom(s string) FeTileFontStyle {
+	return FeTileFontStyle(s)
+}
+
+func (e *FeTileElement) FontVariant(s string) *FeTileElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeTileElement) FontWeight(s string) *FeTileElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeTileElement) GlyphOrientationHorizontal(s string) *FeTileElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeTileElement) GlyphOrientationVertical(s string) *FeTileElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeTileElement) Id(s string) *FeTileElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeTileElement) ImageRendering(a FeTileImageRendering) *FeTileElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeTileImageRenderingCustom(s string) FeTileImageRendering {
+	return FeTileImageRendering(s)
+}
+
+func (e *FeTileElement) Lang(s string) *FeTileElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeTileElement) LetterSpacing(s string) *FeTileElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeTileElement) LightingColor(s string) *FeTileElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeTileElement) MarkerEnd(s string) *FeTileElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeTileElement) MarkerMid(s string) *FeTileElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeTileElement) MarkerStart(s string) *FeTileElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeTileElement) Mask(s string) *FeTileElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeTileElement) Opacity(f float64) *FeTileElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeTileElement) Overflow(a FeTileOverflow) *FeTileElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeTileOverflowCustom(s string) FeTileOverflow {
+	return FeTileOverflow(s)
+}
+
+func (e *FeTileElement) PaintOrder(s string) *FeTileElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeTileElement) PointerEvents(a FeTilePointerEvents) *FeTileElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeTilePointerEventsCustom(s string) FeTilePointerEvents {
+	return FeTilePointerEvents(s)
+}
+
+func (e *FeTileElement) RequiredExtensions(s string) *FeTileElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeTileElement) ShapeRendering(a FeTileShapeRendering) *FeTileElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeTileShapeRenderingCustom(s string) FeTileShapeRendering {
+	return FeTileShapeRendering(s)
+}
+
+func (e *FeTileElement) StopColor(s string) *FeTileElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeTileElement) StopOpacity(f float64) *FeTileElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeTileElement) Stroke(s string) *FeTileElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeTileElement) StrokeWidth(s string) *FeTileElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeTileElement) StrokeDasharray(s string) *FeTileElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeTileElement) StrokeOpacity(f float64) *FeTileElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeTileElement) StrokeDashoffset(s string) *FeTileElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -562,210 +825,28 @@ func (e *FeTileElement) StrokeMiterlimit(f float64) *FeTileElement {
 	return e
 }
 
-func (e *FeTileElement) StrokeDasharray(s string) *FeTileElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeTileElement) StrokeOpacity(f float64) *FeTileElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeTileElement) StrokeDashoffset(s string) *FeTileElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeTileElement) StrokeWidth(s string) *FeTileElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeTileElement) Opacity(f float64) *FeTileElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeTileElement) Style(s string) *FeTileElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeTileElement) Color(s string) *FeTileElement {
-	e.attributes.Set("color", s)
+func (e *FeTileElement) Tabindex(i int) *FeTileElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeTileElement) Display(s string) *FeTileElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeTileElement) Visibility(a FeTileVisibility) *FeTileElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeTileVisibilityCustom(s string) FeTileVisibility {
-	return FeTileVisibility(s)
-}
-
-func (e *FeTileElement) ClipPath(s string) *FeTileElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeTileElement) ClipRule(a FeTileClipRule) *FeTileElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeTileClipRuleCustom(s string) FeTileClipRule {
-	return FeTileClipRule(s)
-}
-
-func (e *FeTileElement) Mask(s string) *FeTileElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeTileElement) Filter(s string) *FeTileElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeTileElement) Cursor(s string) *FeTileElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeTileElement) PointerEvents(a FeTilePointerEvents) *FeTileElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeTilePointerEventsCustom(s string) FeTilePointerEvents {
-	return FeTilePointerEvents(s)
-}
-
-func (e *FeTileElement) VectorEffect(a FeTileVectorEffect) *FeTileElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeTileVectorEffectCustom(s string) FeTileVectorEffect {
-	return FeTileVectorEffect(s)
-}
-
-func (e *FeTileElement) PaintOrder(s string) *FeTileElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeTileElement) ShapeRendering(a FeTileShapeRendering) *FeTileElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeTileShapeRenderingCustom(s string) FeTileShapeRendering {
-	return FeTileShapeRendering(s)
-}
-
-func (e *FeTileElement) ColorInterpolation(a FeTileColorInterpolation) *FeTileElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeTileColorInterpolationCustom(s string) FeTileColorInterpolation {
-	return FeTileColorInterpolation(s)
-}
-
-func (e *FeTileElement) ColorInterpolationFilters(a FeTileColorInterpolationFilters) *FeTileElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeTileColorInterpolationFiltersCustom(s string) FeTileColorInterpolationFilters {
-	return FeTileColorInterpolationFilters(s)
-}
-
-func (e *FeTileElement) FloodColor(s string) *FeTileElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeTileElement) FloodOpacity(f float64) *FeTileElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeTileElement) LightingColor(s string) *FeTileElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeTileElement) StopColor(s string) *FeTileElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeTileElement) StopOpacity(f float64) *FeTileElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeTileElement) MarkerStart(s string) *FeTileElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeTileElement) MarkerMid(s string) *FeTileElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeTileElement) MarkerEnd(s string) *FeTileElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeTileElement) FontFamily(s string) *FeTileElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeTileElement) FontSize(s string) *FeTileElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeTileElement) FontWeight(s string) *FeTileElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeTileElement) FontStyle(a FeTileFontStyle) *FeTileElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeTileFontStyleCustom(s string) FeTileFontStyle {
-	return FeTileFontStyle(s)
 }
 
 func (e *FeTileElement) TextAnchor(a FeTileTextAnchor) *FeTileElement {
@@ -778,40 +859,14 @@ func FeTileTextAnchorCustom(s string) FeTileTextAnchor {
 	return FeTileTextAnchor(s)
 }
 
-func (e *FeTileElement) DominantBaseline(a FeTileDominantBaseline) *FeTileElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeTileDominantBaselineCustom(s string) FeTileDominantBaseline {
-	return FeTileDominantBaseline(s)
-}
-
-func (e *FeTileElement) AlignmentBaseline(a FeTileAlignmentBaseline) *FeTileElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeTileAlignmentBaselineCustom(s string) FeTileAlignmentBaseline {
-	return FeTileAlignmentBaseline(s)
-}
-
-func (e *FeTileElement) LetterSpacing(s string) *FeTileElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeTileElement) WordSpacing(s string) *FeTileElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeTileElement) TextDecoration(s string) *FeTileElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeTileElement) TextOverflow(s string) *FeTileElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -826,24 +881,10 @@ func FeTileTextRenderingCustom(s string) FeTileTextRendering {
 	return FeTileTextRendering(s)
 }
 
-func (e *FeTileElement) ImageRendering(a FeTileImageRendering) *FeTileElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeTileElement) Transform(s string) *FeTileElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeTileImageRenderingCustom(s string) FeTileImageRendering {
-	return FeTileImageRendering(s)
-}
-
-func (e *FeTileElement) Overflow(a FeTileOverflow) *FeTileElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeTileOverflowCustom(s string) FeTileOverflow {
-	return FeTileOverflow(s)
 }
 
 func (e *FeTileElement) TransformBox(a FeTileTransformBox) *FeTileElement {
@@ -856,18 +897,46 @@ func FeTileTransformBoxCustom(s string) FeTileTransformBox {
 	return FeTileTransformBox(s)
 }
 
-func (e *FeTileElement) Direction(a FeTileDirection) *FeTileElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeTileElement) TransformOrigin(s string) *FeTileElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeTileDirectionCustom(s string) FeTileDirection {
-	return FeTileDirection(s)
-}
-
 func (e *FeTileElement) UnicodeBidi(s string) *FeTileElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeTileElement) VectorEffect(a FeTileVectorEffect) *FeTileElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeTileVectorEffectCustom(s string) FeTileVectorEffect {
+	return FeTileVectorEffect(s)
+}
+
+func (e *FeTileElement) Visibility(a FeTileVisibility) *FeTileElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeTileVisibilityCustom(s string) FeTileVisibility {
+	return FeTileVisibility(s)
+}
+
+func (e *FeTileElement) WhiteSpace(s string) *FeTileElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeTileElement) WordSpacing(s string) *FeTileElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -882,8 +951,20 @@ func FeTileWritingModeCustom(s string) FeTileWritingMode {
 	return FeTileWritingMode(s)
 }
 
-func (e *FeTileElement) WhiteSpace(s string) *FeTileElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeTileElement) XmlLang(s string) *FeTileElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeTileElement) XmlSpace(a FeTileXmlSpace) *FeTileElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

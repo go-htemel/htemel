@@ -185,6 +185,15 @@ const (
 	BaseInputmodeUrl     BaseInputmode = "url"
 )
 
+type BasePopover string
+
+const (
+	BasePopoverAuto   BasePopover = "auto"
+	BasePopoverHint   BasePopover = "hint"
+	BasePopoverManual BasePopover = "manual"
+	BasePopoverEmpty  BasePopover = ""
+)
+
 type BaseSpellcheck string
 
 const (
@@ -209,6 +218,8 @@ const (
 	BaseWritingsuggestionsEmpty BaseWritingsuggestions = ""
 )
 
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BaseElement) Href(s string) *BaseElement {
 	e.attributes.Set("href", s)
 
@@ -321,6 +332,26 @@ func (e *BaseElement) Enterkeyhint(a BaseEnterkeyhint) *BaseElement {
 	return e
 }
 
+func (e *BaseElement) Exportparts(s string) *BaseElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *BaseElement) Headingoffset(i int) *BaseElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *BaseElement) Headingreset(b bool) *BaseElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BaseElement) Hidden(v ...BaseHidden) *BaseElement {
@@ -353,6 +384,14 @@ func (e *BaseElement) Inputmode(a BaseInputmode) *BaseElement {
 	return e
 }
 
+func (e *BaseElement) Is(s string) *BaseElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BaseElement) Itemid(s string) *BaseElement {
 	e.attributes.Set("itemid", s)
 
@@ -397,8 +436,20 @@ func (e *BaseElement) Nonce(s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Popover(s string) *BaseElement {
-	e.attributes.Set("popover", s)
+func (e *BaseElement) Part(s ...string) *BaseElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Popover(v ...BasePopover) *BaseElement {
+	var val BasePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

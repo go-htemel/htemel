@@ -240,6 +240,15 @@ const (
 	TbodyInputmodeUrl     TbodyInputmode = "url"
 )
 
+type TbodyPopover string
+
+const (
+	TbodyPopoverAuto   TbodyPopover = "auto"
+	TbodyPopoverHint   TbodyPopover = "hint"
+	TbodyPopoverManual TbodyPopover = "manual"
+	TbodyPopoverEmpty  TbodyPopover = ""
+)
+
 type TbodySpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *TbodyElement) Enterkeyhint(a TbodyEnterkeyhint) *TbodyElement {
 	return e
 }
 
+func (e *TbodyElement) Exportparts(s string) *TbodyElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TbodyElement) Headingoffset(i int) *TbodyElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TbodyElement) Headingreset(b bool) *TbodyElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TbodyElement) Hidden(v ...TbodyHidden) *TbodyElement {
@@ -396,6 +425,14 @@ func (e *TbodyElement) Inputmode(a TbodyInputmode) *TbodyElement {
 	return e
 }
 
+func (e *TbodyElement) Is(s string) *TbodyElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TbodyElement) Itemid(s string) *TbodyElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *TbodyElement) Nonce(s string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Popover(s string) *TbodyElement {
-	e.attributes.Set("popover", s)
+func (e *TbodyElement) Part(s ...string) *TbodyElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Popover(v ...TbodyPopover) *TbodyElement {
+	var val TbodyPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

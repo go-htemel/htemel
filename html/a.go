@@ -164,6 +164,26 @@ func (e *AElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type ADownload string
+
+const (
+	ADownloadEmpty ADownload = ""
+)
+
+type AReferrerpolicy string
+
+const (
+	AReferrerpolicyNoReferrer                  AReferrerpolicy = "no-referrer"
+	AReferrerpolicyNoReferrerWhenDowngrade     AReferrerpolicy = "no-referrer-when-downgrade"
+	AReferrerpolicyOrigin                      AReferrerpolicy = "origin"
+	AReferrerpolicyOriginWhenCrossOrigin       AReferrerpolicy = "origin-when-cross-origin"
+	AReferrerpolicySameOrigin                  AReferrerpolicy = "same-origin"
+	AReferrerpolicyStrictOrigin                AReferrerpolicy = "strict-origin"
+	AReferrerpolicyStrictOriginWhenCrossOrigin AReferrerpolicy = "strict-origin-when-cross-origin"
+	AReferrerpolicyUnsafeUrl                   AReferrerpolicy = "unsafe-url"
+	AReferrerpolicyEmpty                       AReferrerpolicy = ""
+)
+
 type AAutocapitalize string
 
 const (
@@ -240,6 +260,15 @@ const (
 	AInputmodeUrl     AInputmode = "url"
 )
 
+type APopover string
+
+const (
+	APopoverAuto   APopover = "auto"
+	APopoverHint   APopover = "hint"
+	APopoverManual APopover = "manual"
+	APopoverEmpty  APopover = ""
+)
+
 type ASpellcheck string
 
 const (
@@ -264,34 +293,26 @@ const (
 	AWritingsuggestionsEmpty AWritingsuggestions = ""
 )
 
+// Download sets the "download" attribute. Called with no argument, Download() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Download(v ...ADownload) *AElement {
+	var val ADownload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("download", string(val))
+
+	return e
+}
+
+func ADownloadCustom(s string) ADownload {
+	return ADownload(s)
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AElement) Href(s string) *AElement {
 	e.attributes.Set("href", s)
-
-	return e
-}
-
-func (e *AElement) Target(s string) *AElement {
-	e.attributes.Set("target", s)
-
-	return e
-}
-
-// Download sets the boolean attribute "download". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AElement) Download(b bool) *AElement {
-	e.attributes.SetBool("download", b)
-
-	return e
-}
-
-func (e *AElement) Ping(s ...string) *AElement {
-	e.attributes.Set("ping", strings.Join(s, " "))
-
-	return e
-}
-
-func (e *AElement) Rel(s ...string) *AElement {
-	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
@@ -302,14 +323,38 @@ func (e *AElement) Hreflang(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Type(s string) *AElement {
-	e.attributes.Set("type", s)
+func (e *AElement) Ping(s ...string) *AElement {
+	e.attributes.Set("ping", strings.Join(s, " "))
 
 	return e
 }
 
-func (e *AElement) Referrerpolicy(s string) *AElement {
-	e.attributes.Set("referrerpolicy", s)
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Referrerpolicy(v ...AReferrerpolicy) *AElement {
+	var val AReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
+func (e *AElement) Rel(s ...string) *AElement {
+	e.attributes.Set("rel", strings.Join(s, " "))
+
+	return e
+}
+
+func (e *AElement) Target(s string) *AElement {
+	e.attributes.Set("target", s)
+
+	return e
+}
+
+func (e *AElement) Type(s string) *AElement {
+	e.attributes.Set("type", s)
 
 	return e
 }
@@ -414,6 +459,26 @@ func (e *AElement) Enterkeyhint(a AEnterkeyhint) *AElement {
 	return e
 }
 
+func (e *AElement) Exportparts(s string) *AElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *AElement) Headingoffset(i int) *AElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AElement) Headingreset(b bool) *AElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AElement) Hidden(v ...AHidden) *AElement {
@@ -446,6 +511,14 @@ func (e *AElement) Inputmode(a AInputmode) *AElement {
 	return e
 }
 
+func (e *AElement) Is(s string) *AElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AElement) Itemid(s string) *AElement {
 	e.attributes.Set("itemid", s)
 
@@ -490,8 +563,20 @@ func (e *AElement) Nonce(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Popover(s string) *AElement {
-	e.attributes.Set("popover", s)
+func (e *AElement) Part(s ...string) *AElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Popover(v ...APopover) *AElement {
+	var val APopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

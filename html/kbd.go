@@ -240,6 +240,15 @@ const (
 	KbdInputmodeUrl     KbdInputmode = "url"
 )
 
+type KbdPopover string
+
+const (
+	KbdPopoverAuto   KbdPopover = "auto"
+	KbdPopoverHint   KbdPopover = "hint"
+	KbdPopoverManual KbdPopover = "manual"
+	KbdPopoverEmpty  KbdPopover = ""
+)
+
 type KbdSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *KbdElement) Enterkeyhint(a KbdEnterkeyhint) *KbdElement {
 	return e
 }
 
+func (e *KbdElement) Exportparts(s string) *KbdElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *KbdElement) Headingoffset(i int) *KbdElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *KbdElement) Headingreset(b bool) *KbdElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *KbdElement) Hidden(v ...KbdHidden) *KbdElement {
@@ -396,6 +425,14 @@ func (e *KbdElement) Inputmode(a KbdInputmode) *KbdElement {
 	return e
 }
 
+func (e *KbdElement) Is(s string) *KbdElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *KbdElement) Itemid(s string) *KbdElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *KbdElement) Nonce(s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Popover(s string) *KbdElement {
-	e.attributes.Set("popover", s)
+func (e *KbdElement) Part(s ...string) *KbdElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Popover(v ...KbdPopover) *KbdElement {
+	var val KbdPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

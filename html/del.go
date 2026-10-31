@@ -240,6 +240,15 @@ const (
 	DelInputmodeUrl     DelInputmode = "url"
 )
 
+type DelPopover string
+
+const (
+	DelPopoverAuto   DelPopover = "auto"
+	DelPopoverHint   DelPopover = "hint"
+	DelPopoverManual DelPopover = "manual"
+	DelPopoverEmpty  DelPopover = ""
+)
+
 type DelSpellcheck string
 
 const (
@@ -264,6 +273,8 @@ const (
 	DelWritingsuggestionsEmpty DelWritingsuggestions = ""
 )
 
+// Cite sets the "cite" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DelElement) Cite(s string) *DelElement {
 	e.attributes.Set("cite", s)
 
@@ -376,6 +387,26 @@ func (e *DelElement) Enterkeyhint(a DelEnterkeyhint) *DelElement {
 	return e
 }
 
+func (e *DelElement) Exportparts(s string) *DelElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *DelElement) Headingoffset(i int) *DelElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DelElement) Headingreset(b bool) *DelElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DelElement) Hidden(v ...DelHidden) *DelElement {
@@ -408,6 +439,14 @@ func (e *DelElement) Inputmode(a DelInputmode) *DelElement {
 	return e
 }
 
+func (e *DelElement) Is(s string) *DelElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DelElement) Itemid(s string) *DelElement {
 	e.attributes.Set("itemid", s)
 
@@ -452,8 +491,20 @@ func (e *DelElement) Nonce(s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Popover(s string) *DelElement {
-	e.attributes.Set("popover", s)
+func (e *DelElement) Part(s ...string) *DelElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Popover(v ...DelPopover) *DelElement {
+	var val DelPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

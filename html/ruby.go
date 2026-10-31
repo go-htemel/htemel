@@ -240,6 +240,15 @@ const (
 	RubyInputmodeUrl     RubyInputmode = "url"
 )
 
+type RubyPopover string
+
+const (
+	RubyPopoverAuto   RubyPopover = "auto"
+	RubyPopoverHint   RubyPopover = "hint"
+	RubyPopoverManual RubyPopover = "manual"
+	RubyPopoverEmpty  RubyPopover = ""
+)
+
 type RubySpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *RubyElement) Enterkeyhint(a RubyEnterkeyhint) *RubyElement {
 	return e
 }
 
+func (e *RubyElement) Exportparts(s string) *RubyElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *RubyElement) Headingoffset(i int) *RubyElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *RubyElement) Headingreset(b bool) *RubyElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *RubyElement) Hidden(v ...RubyHidden) *RubyElement {
@@ -396,6 +425,14 @@ func (e *RubyElement) Inputmode(a RubyInputmode) *RubyElement {
 	return e
 }
 
+func (e *RubyElement) Is(s string) *RubyElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *RubyElement) Itemid(s string) *RubyElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *RubyElement) Nonce(s string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Popover(s string) *RubyElement {
-	e.attributes.Set("popover", s)
+func (e *RubyElement) Part(s ...string) *RubyElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Popover(v ...RubyPopover) *RubyElement {
+	var val RubyPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

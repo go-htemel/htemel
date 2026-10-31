@@ -240,6 +240,15 @@ const (
 	HeadInputmodeUrl     HeadInputmode = "url"
 )
 
+type HeadPopover string
+
+const (
+	HeadPopoverAuto   HeadPopover = "auto"
+	HeadPopoverHint   HeadPopover = "hint"
+	HeadPopoverManual HeadPopover = "manual"
+	HeadPopoverEmpty  HeadPopover = ""
+)
+
 type HeadSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *HeadElement) Enterkeyhint(a HeadEnterkeyhint) *HeadElement {
 	return e
 }
 
+func (e *HeadElement) Exportparts(s string) *HeadElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *HeadElement) Headingoffset(i int) *HeadElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *HeadElement) Headingreset(b bool) *HeadElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HeadElement) Hidden(v ...HeadHidden) *HeadElement {
@@ -396,6 +425,14 @@ func (e *HeadElement) Inputmode(a HeadInputmode) *HeadElement {
 	return e
 }
 
+func (e *HeadElement) Is(s string) *HeadElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *HeadElement) Itemid(s string) *HeadElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *HeadElement) Nonce(s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Popover(s string) *HeadElement {
-	e.attributes.Set("popover", s)
+func (e *HeadElement) Part(s ...string) *HeadElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Popover(v ...HeadPopover) *HeadElement {
+	var val HeadPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

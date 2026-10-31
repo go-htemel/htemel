@@ -240,6 +240,15 @@ const (
 	DatalistInputmodeUrl     DatalistInputmode = "url"
 )
 
+type DatalistPopover string
+
+const (
+	DatalistPopoverAuto   DatalistPopover = "auto"
+	DatalistPopoverHint   DatalistPopover = "hint"
+	DatalistPopoverManual DatalistPopover = "manual"
+	DatalistPopoverEmpty  DatalistPopover = ""
+)
+
 type DatalistSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *DatalistElement) Enterkeyhint(a DatalistEnterkeyhint) *DatalistElement 
 	return e
 }
 
+func (e *DatalistElement) Exportparts(s string) *DatalistElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *DatalistElement) Headingoffset(i int) *DatalistElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DatalistElement) Headingreset(b bool) *DatalistElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DatalistElement) Hidden(v ...DatalistHidden) *DatalistElement {
@@ -396,6 +425,14 @@ func (e *DatalistElement) Inputmode(a DatalistInputmode) *DatalistElement {
 	return e
 }
 
+func (e *DatalistElement) Is(s string) *DatalistElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DatalistElement) Itemid(s string) *DatalistElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *DatalistElement) Nonce(s string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Popover(s string) *DatalistElement {
-	e.attributes.Set("popover", s)
+func (e *DatalistElement) Part(s ...string) *DatalistElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Popover(v ...DatalistPopover) *DatalistElement {
+	var val DatalistPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

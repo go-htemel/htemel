@@ -240,6 +240,15 @@ const (
 	SubInputmodeUrl     SubInputmode = "url"
 )
 
+type SubPopover string
+
+const (
+	SubPopoverAuto   SubPopover = "auto"
+	SubPopoverHint   SubPopover = "hint"
+	SubPopoverManual SubPopover = "manual"
+	SubPopoverEmpty  SubPopover = ""
+)
+
 type SubSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SubElement) Enterkeyhint(a SubEnterkeyhint) *SubElement {
 	return e
 }
 
+func (e *SubElement) Exportparts(s string) *SubElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SubElement) Headingoffset(i int) *SubElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SubElement) Headingreset(b bool) *SubElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SubElement) Hidden(v ...SubHidden) *SubElement {
@@ -396,6 +425,14 @@ func (e *SubElement) Inputmode(a SubInputmode) *SubElement {
 	return e
 }
 
+func (e *SubElement) Is(s string) *SubElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SubElement) Itemid(s string) *SubElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SubElement) Nonce(s string) *SubElement {
 	return e
 }
 
-func (e *SubElement) Popover(s string) *SubElement {
-	e.attributes.Set("popover", s)
+func (e *SubElement) Part(s ...string) *SubElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Popover(v ...SubPopover) *SubElement {
+	var val SubPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

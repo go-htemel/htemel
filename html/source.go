@@ -185,6 +185,15 @@ const (
 	SourceInputmodeUrl     SourceInputmode = "url"
 )
 
+type SourcePopover string
+
+const (
+	SourcePopoverAuto   SourcePopover = "auto"
+	SourcePopoverHint   SourcePopover = "hint"
+	SourcePopoverManual SourcePopover = "manual"
+	SourcePopoverEmpty  SourcePopover = ""
+)
+
 type SourceSpellcheck string
 
 const (
@@ -209,8 +218,8 @@ const (
 	SourceWritingsuggestionsEmpty SourceWritingsuggestions = ""
 )
 
-func (e *SourceElement) Type(s string) *SourceElement {
-	e.attributes.Set("type", s)
+func (e *SourceElement) Height(i int) *SourceElement {
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -221,6 +230,14 @@ func (e *SourceElement) Media(s string) *SourceElement {
 	return e
 }
 
+func (e *SourceElement) Sizes(s string) *SourceElement {
+	e.attributes.Set("sizes", s)
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SourceElement) Src(s string) *SourceElement {
 	e.attributes.Set("src", s)
 
@@ -233,20 +250,14 @@ func (e *SourceElement) Srcset(s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Sizes(s string) *SourceElement {
-	e.attributes.Set("sizes", s)
+func (e *SourceElement) Type(s string) *SourceElement {
+	e.attributes.Set("type", s)
 
 	return e
 }
 
 func (e *SourceElement) Width(i int) *SourceElement {
 	e.attributes.Set("width", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *SourceElement) Height(i int) *SourceElement {
-	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -351,6 +362,26 @@ func (e *SourceElement) Enterkeyhint(a SourceEnterkeyhint) *SourceElement {
 	return e
 }
 
+func (e *SourceElement) Exportparts(s string) *SourceElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SourceElement) Headingoffset(i int) *SourceElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SourceElement) Headingreset(b bool) *SourceElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SourceElement) Hidden(v ...SourceHidden) *SourceElement {
@@ -383,6 +414,14 @@ func (e *SourceElement) Inputmode(a SourceInputmode) *SourceElement {
 	return e
 }
 
+func (e *SourceElement) Is(s string) *SourceElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SourceElement) Itemid(s string) *SourceElement {
 	e.attributes.Set("itemid", s)
 
@@ -427,8 +466,20 @@ func (e *SourceElement) Nonce(s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Popover(s string) *SourceElement {
-	e.attributes.Set("popover", s)
+func (e *SourceElement) Part(s ...string) *SourceElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Popover(v ...SourcePopover) *SourceElement {
+	var val SourcePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

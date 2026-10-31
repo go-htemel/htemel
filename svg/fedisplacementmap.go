@@ -182,134 +182,6 @@ const (
 	FeDisplacementMapYChannelSelectorR FeDisplacementMapYChannelSelector = "R"
 )
 
-type FeDisplacementMapXmlSpace string
-
-const (
-	FeDisplacementMapXmlSpaceDefault  FeDisplacementMapXmlSpace = "default"
-	FeDisplacementMapXmlSpacePreserve FeDisplacementMapXmlSpace = "preserve"
-)
-
-type FeDisplacementMapFillRule string
-
-const (
-	FeDisplacementMapFillRuleEvenodd FeDisplacementMapFillRule = "evenodd"
-	FeDisplacementMapFillRuleNonzero FeDisplacementMapFillRule = "nonzero"
-)
-
-type FeDisplacementMapStrokeLinecap string
-
-const (
-	FeDisplacementMapStrokeLinecapButt   FeDisplacementMapStrokeLinecap = "butt"
-	FeDisplacementMapStrokeLinecapRound  FeDisplacementMapStrokeLinecap = "round"
-	FeDisplacementMapStrokeLinecapSquare FeDisplacementMapStrokeLinecap = "square"
-)
-
-type FeDisplacementMapStrokeLinejoin string
-
-const (
-	FeDisplacementMapStrokeLinejoinArcs      FeDisplacementMapStrokeLinejoin = "arcs"
-	FeDisplacementMapStrokeLinejoinBevel     FeDisplacementMapStrokeLinejoin = "bevel"
-	FeDisplacementMapStrokeLinejoinMiter     FeDisplacementMapStrokeLinejoin = "miter"
-	FeDisplacementMapStrokeLinejoinMiterClip FeDisplacementMapStrokeLinejoin = "miter-clip"
-	FeDisplacementMapStrokeLinejoinRound     FeDisplacementMapStrokeLinejoin = "round"
-)
-
-type FeDisplacementMapVisibility string
-
-const (
-	FeDisplacementMapVisibilityCollapse FeDisplacementMapVisibility = "collapse"
-	FeDisplacementMapVisibilityHidden   FeDisplacementMapVisibility = "hidden"
-	FeDisplacementMapVisibilityVisible  FeDisplacementMapVisibility = "visible"
-)
-
-type FeDisplacementMapClipRule string
-
-const (
-	FeDisplacementMapClipRuleEvenodd FeDisplacementMapClipRule = "evenodd"
-	FeDisplacementMapClipRuleNonzero FeDisplacementMapClipRule = "nonzero"
-)
-
-type FeDisplacementMapPointerEvents string
-
-const (
-	FeDisplacementMapPointerEventsAll            FeDisplacementMapPointerEvents = "all"
-	FeDisplacementMapPointerEventsAuto           FeDisplacementMapPointerEvents = "auto"
-	FeDisplacementMapPointerEventsBoundingBox    FeDisplacementMapPointerEvents = "bounding-box"
-	FeDisplacementMapPointerEventsFill           FeDisplacementMapPointerEvents = "fill"
-	FeDisplacementMapPointerEventsNone           FeDisplacementMapPointerEvents = "none"
-	FeDisplacementMapPointerEventsPainted        FeDisplacementMapPointerEvents = "painted"
-	FeDisplacementMapPointerEventsStroke         FeDisplacementMapPointerEvents = "stroke"
-	FeDisplacementMapPointerEventsVisible        FeDisplacementMapPointerEvents = "visible"
-	FeDisplacementMapPointerEventsVisibleFill    FeDisplacementMapPointerEvents = "visibleFill"
-	FeDisplacementMapPointerEventsVisiblePainted FeDisplacementMapPointerEvents = "visiblePainted"
-	FeDisplacementMapPointerEventsVisibleStroke  FeDisplacementMapPointerEvents = "visibleStroke"
-)
-
-type FeDisplacementMapVectorEffect string
-
-const (
-	FeDisplacementMapVectorEffectFixedPosition    FeDisplacementMapVectorEffect = "fixed-position"
-	FeDisplacementMapVectorEffectNonRotation      FeDisplacementMapVectorEffect = "non-rotation"
-	FeDisplacementMapVectorEffectNonScalingSize   FeDisplacementMapVectorEffect = "non-scaling-size"
-	FeDisplacementMapVectorEffectNonScalingStroke FeDisplacementMapVectorEffect = "non-scaling-stroke"
-	FeDisplacementMapVectorEffectNone             FeDisplacementMapVectorEffect = "none"
-)
-
-type FeDisplacementMapShapeRendering string
-
-const (
-	FeDisplacementMapShapeRenderingAuto               FeDisplacementMapShapeRendering = "auto"
-	FeDisplacementMapShapeRenderingCrispEdges         FeDisplacementMapShapeRendering = "crispEdges"
-	FeDisplacementMapShapeRenderingGeometricPrecision FeDisplacementMapShapeRendering = "geometricPrecision"
-	FeDisplacementMapShapeRenderingOptimizeSpeed      FeDisplacementMapShapeRendering = "optimizeSpeed"
-)
-
-type FeDisplacementMapColorInterpolation string
-
-const (
-	FeDisplacementMapColorInterpolationAuto      FeDisplacementMapColorInterpolation = "auto"
-	FeDisplacementMapColorInterpolationLinearRGB FeDisplacementMapColorInterpolation = "linearRGB"
-	FeDisplacementMapColorInterpolationSRGB      FeDisplacementMapColorInterpolation = "sRGB"
-)
-
-type FeDisplacementMapColorInterpolationFilters string
-
-const (
-	FeDisplacementMapColorInterpolationFiltersAuto      FeDisplacementMapColorInterpolationFilters = "auto"
-	FeDisplacementMapColorInterpolationFiltersLinearRGB FeDisplacementMapColorInterpolationFilters = "linearRGB"
-	FeDisplacementMapColorInterpolationFiltersSRGB      FeDisplacementMapColorInterpolationFilters = "sRGB"
-)
-
-type FeDisplacementMapFontStyle string
-
-const (
-	FeDisplacementMapFontStyleItalic  FeDisplacementMapFontStyle = "italic"
-	FeDisplacementMapFontStyleNormal  FeDisplacementMapFontStyle = "normal"
-	FeDisplacementMapFontStyleOblique FeDisplacementMapFontStyle = "oblique"
-)
-
-type FeDisplacementMapTextAnchor string
-
-const (
-	FeDisplacementMapTextAnchorEnd    FeDisplacementMapTextAnchor = "end"
-	FeDisplacementMapTextAnchorMiddle FeDisplacementMapTextAnchor = "middle"
-	FeDisplacementMapTextAnchorStart  FeDisplacementMapTextAnchor = "start"
-)
-
-type FeDisplacementMapDominantBaseline string
-
-const (
-	FeDisplacementMapDominantBaselineAlphabetic   FeDisplacementMapDominantBaseline = "alphabetic"
-	FeDisplacementMapDominantBaselineAuto         FeDisplacementMapDominantBaseline = "auto"
-	FeDisplacementMapDominantBaselineCentral      FeDisplacementMapDominantBaseline = "central"
-	FeDisplacementMapDominantBaselineHanging      FeDisplacementMapDominantBaseline = "hanging"
-	FeDisplacementMapDominantBaselineIdeographic  FeDisplacementMapDominantBaseline = "ideographic"
-	FeDisplacementMapDominantBaselineMathematical FeDisplacementMapDominantBaseline = "mathematical"
-	FeDisplacementMapDominantBaselineMiddle       FeDisplacementMapDominantBaseline = "middle"
-	FeDisplacementMapDominantBaselineTextBottom   FeDisplacementMapDominantBaseline = "text-bottom"
-	FeDisplacementMapDominantBaselineTextTop      FeDisplacementMapDominantBaseline = "text-top"
-)
-
 type FeDisplacementMapAlignmentBaseline string
 
 const (
@@ -332,13 +204,63 @@ const (
 	FeDisplacementMapAlignmentBaselineTop            FeDisplacementMapAlignmentBaseline = "top"
 )
 
-type FeDisplacementMapTextRendering string
+type FeDisplacementMapClipRule string
 
 const (
-	FeDisplacementMapTextRenderingAuto               FeDisplacementMapTextRendering = "auto"
-	FeDisplacementMapTextRenderingGeometricPrecision FeDisplacementMapTextRendering = "geometricPrecision"
-	FeDisplacementMapTextRenderingOptimizeLegibility FeDisplacementMapTextRendering = "optimizeLegibility"
-	FeDisplacementMapTextRenderingOptimizeSpeed      FeDisplacementMapTextRendering = "optimizeSpeed"
+	FeDisplacementMapClipRuleEvenodd FeDisplacementMapClipRule = "evenodd"
+	FeDisplacementMapClipRuleNonzero FeDisplacementMapClipRule = "nonzero"
+)
+
+type FeDisplacementMapColorInterpolation string
+
+const (
+	FeDisplacementMapColorInterpolationAuto      FeDisplacementMapColorInterpolation = "auto"
+	FeDisplacementMapColorInterpolationLinearRGB FeDisplacementMapColorInterpolation = "linearRGB"
+	FeDisplacementMapColorInterpolationSRGB      FeDisplacementMapColorInterpolation = "sRGB"
+)
+
+type FeDisplacementMapColorInterpolationFilters string
+
+const (
+	FeDisplacementMapColorInterpolationFiltersAuto      FeDisplacementMapColorInterpolationFilters = "auto"
+	FeDisplacementMapColorInterpolationFiltersLinearRGB FeDisplacementMapColorInterpolationFilters = "linearRGB"
+	FeDisplacementMapColorInterpolationFiltersSRGB      FeDisplacementMapColorInterpolationFilters = "sRGB"
+)
+
+type FeDisplacementMapDirection string
+
+const (
+	FeDisplacementMapDirectionLtr FeDisplacementMapDirection = "ltr"
+	FeDisplacementMapDirectionRtl FeDisplacementMapDirection = "rtl"
+)
+
+type FeDisplacementMapDominantBaseline string
+
+const (
+	FeDisplacementMapDominantBaselineAlphabetic   FeDisplacementMapDominantBaseline = "alphabetic"
+	FeDisplacementMapDominantBaselineAuto         FeDisplacementMapDominantBaseline = "auto"
+	FeDisplacementMapDominantBaselineCentral      FeDisplacementMapDominantBaseline = "central"
+	FeDisplacementMapDominantBaselineHanging      FeDisplacementMapDominantBaseline = "hanging"
+	FeDisplacementMapDominantBaselineIdeographic  FeDisplacementMapDominantBaseline = "ideographic"
+	FeDisplacementMapDominantBaselineMathematical FeDisplacementMapDominantBaseline = "mathematical"
+	FeDisplacementMapDominantBaselineMiddle       FeDisplacementMapDominantBaseline = "middle"
+	FeDisplacementMapDominantBaselineTextBottom   FeDisplacementMapDominantBaseline = "text-bottom"
+	FeDisplacementMapDominantBaselineTextTop      FeDisplacementMapDominantBaseline = "text-top"
+)
+
+type FeDisplacementMapFillRule string
+
+const (
+	FeDisplacementMapFillRuleEvenodd FeDisplacementMapFillRule = "evenodd"
+	FeDisplacementMapFillRuleNonzero FeDisplacementMapFillRule = "nonzero"
+)
+
+type FeDisplacementMapFontStyle string
+
+const (
+	FeDisplacementMapFontStyleItalic  FeDisplacementMapFontStyle = "italic"
+	FeDisplacementMapFontStyleNormal  FeDisplacementMapFontStyle = "normal"
+	FeDisplacementMapFontStyleOblique FeDisplacementMapFontStyle = "oblique"
 )
 
 type FeDisplacementMapImageRendering string
@@ -363,6 +285,66 @@ const (
 	FeDisplacementMapOverflowVisible FeDisplacementMapOverflow = "visible"
 )
 
+type FeDisplacementMapPointerEvents string
+
+const (
+	FeDisplacementMapPointerEventsAll            FeDisplacementMapPointerEvents = "all"
+	FeDisplacementMapPointerEventsAuto           FeDisplacementMapPointerEvents = "auto"
+	FeDisplacementMapPointerEventsBoundingBox    FeDisplacementMapPointerEvents = "bounding-box"
+	FeDisplacementMapPointerEventsFill           FeDisplacementMapPointerEvents = "fill"
+	FeDisplacementMapPointerEventsNone           FeDisplacementMapPointerEvents = "none"
+	FeDisplacementMapPointerEventsPainted        FeDisplacementMapPointerEvents = "painted"
+	FeDisplacementMapPointerEventsStroke         FeDisplacementMapPointerEvents = "stroke"
+	FeDisplacementMapPointerEventsVisible        FeDisplacementMapPointerEvents = "visible"
+	FeDisplacementMapPointerEventsVisibleFill    FeDisplacementMapPointerEvents = "visibleFill"
+	FeDisplacementMapPointerEventsVisiblePainted FeDisplacementMapPointerEvents = "visiblePainted"
+	FeDisplacementMapPointerEventsVisibleStroke  FeDisplacementMapPointerEvents = "visibleStroke"
+)
+
+type FeDisplacementMapShapeRendering string
+
+const (
+	FeDisplacementMapShapeRenderingAuto               FeDisplacementMapShapeRendering = "auto"
+	FeDisplacementMapShapeRenderingCrispEdges         FeDisplacementMapShapeRendering = "crispEdges"
+	FeDisplacementMapShapeRenderingGeometricPrecision FeDisplacementMapShapeRendering = "geometricPrecision"
+	FeDisplacementMapShapeRenderingOptimizeSpeed      FeDisplacementMapShapeRendering = "optimizeSpeed"
+)
+
+type FeDisplacementMapStrokeLinecap string
+
+const (
+	FeDisplacementMapStrokeLinecapButt   FeDisplacementMapStrokeLinecap = "butt"
+	FeDisplacementMapStrokeLinecapRound  FeDisplacementMapStrokeLinecap = "round"
+	FeDisplacementMapStrokeLinecapSquare FeDisplacementMapStrokeLinecap = "square"
+)
+
+type FeDisplacementMapStrokeLinejoin string
+
+const (
+	FeDisplacementMapStrokeLinejoinArcs      FeDisplacementMapStrokeLinejoin = "arcs"
+	FeDisplacementMapStrokeLinejoinBevel     FeDisplacementMapStrokeLinejoin = "bevel"
+	FeDisplacementMapStrokeLinejoinMiter     FeDisplacementMapStrokeLinejoin = "miter"
+	FeDisplacementMapStrokeLinejoinMiterClip FeDisplacementMapStrokeLinejoin = "miter-clip"
+	FeDisplacementMapStrokeLinejoinRound     FeDisplacementMapStrokeLinejoin = "round"
+)
+
+type FeDisplacementMapTextAnchor string
+
+const (
+	FeDisplacementMapTextAnchorEnd    FeDisplacementMapTextAnchor = "end"
+	FeDisplacementMapTextAnchorMiddle FeDisplacementMapTextAnchor = "middle"
+	FeDisplacementMapTextAnchorStart  FeDisplacementMapTextAnchor = "start"
+)
+
+type FeDisplacementMapTextRendering string
+
+const (
+	FeDisplacementMapTextRenderingAuto               FeDisplacementMapTextRendering = "auto"
+	FeDisplacementMapTextRenderingGeometricPrecision FeDisplacementMapTextRendering = "geometricPrecision"
+	FeDisplacementMapTextRenderingOptimizeLegibility FeDisplacementMapTextRendering = "optimizeLegibility"
+	FeDisplacementMapTextRenderingOptimizeSpeed      FeDisplacementMapTextRendering = "optimizeSpeed"
+)
+
 type FeDisplacementMapTransformBox string
 
 const (
@@ -373,11 +355,22 @@ const (
 	FeDisplacementMapTransformBoxViewBox    FeDisplacementMapTransformBox = "view-box"
 )
 
-type FeDisplacementMapDirection string
+type FeDisplacementMapVectorEffect string
 
 const (
-	FeDisplacementMapDirectionLtr FeDisplacementMapDirection = "ltr"
-	FeDisplacementMapDirectionRtl FeDisplacementMapDirection = "rtl"
+	FeDisplacementMapVectorEffectFixedPosition    FeDisplacementMapVectorEffect = "fixed-position"
+	FeDisplacementMapVectorEffectNonRotation      FeDisplacementMapVectorEffect = "non-rotation"
+	FeDisplacementMapVectorEffectNonScalingSize   FeDisplacementMapVectorEffect = "non-scaling-size"
+	FeDisplacementMapVectorEffectNonScalingStroke FeDisplacementMapVectorEffect = "non-scaling-stroke"
+	FeDisplacementMapVectorEffectNone             FeDisplacementMapVectorEffect = "none"
+)
+
+type FeDisplacementMapVisibility string
+
+const (
+	FeDisplacementMapVisibilityCollapse FeDisplacementMapVisibility = "collapse"
+	FeDisplacementMapVisibilityHidden   FeDisplacementMapVisibility = "hidden"
+	FeDisplacementMapVisibilityVisible  FeDisplacementMapVisibility = "visible"
 )
 
 type FeDisplacementMapWritingMode string
@@ -396,32 +389,15 @@ const (
 	FeDisplacementMapWritingModeVerticalRl   FeDisplacementMapWritingMode = "vertical-rl"
 )
 
-func (e *FeDisplacementMapElement) X(s string) *FeDisplacementMapElement {
-	e.attributes.Set("x", s)
+type FeDisplacementMapXmlSpace string
 
-	return e
-}
-
-func (e *FeDisplacementMapElement) Y(s string) *FeDisplacementMapElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) Width(s string) *FeDisplacementMapElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
+const (
+	FeDisplacementMapXmlSpaceDefault  FeDisplacementMapXmlSpace = "default"
+	FeDisplacementMapXmlSpacePreserve FeDisplacementMapXmlSpace = "preserve"
+)
 
 func (e *FeDisplacementMapElement) Height(s string) *FeDisplacementMapElement {
 	e.attributes.Set("height", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) Result(s string) *FeDisplacementMapElement {
-	e.attributes.Set("result", s)
 
 	return e
 }
@@ -438,8 +414,26 @@ func (e *FeDisplacementMapElement) In2(s string) *FeDisplacementMapElement {
 	return e
 }
 
+func (e *FeDisplacementMapElement) Result(s string) *FeDisplacementMapElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
 func (e *FeDisplacementMapElement) Scale(f float64) *FeDisplacementMapElement {
 	e.attributes.Set("scale", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Width(s string) *FeDisplacementMapElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) X(s string) *FeDisplacementMapElement {
+	e.attributes.Set("x", s)
 
 	return e
 }
@@ -450,14 +444,54 @@ func (e *FeDisplacementMapElement) XChannelSelector(a FeDisplacementMapXChannelS
 	return e
 }
 
+func (e *FeDisplacementMapElement) Y(s string) *FeDisplacementMapElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
 func (e *FeDisplacementMapElement) YChannelSelector(a FeDisplacementMapYChannelSelector) *FeDisplacementMapElement {
 	e.attributes.Set("yChannelSelector", string(a))
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Id(s string) *FeDisplacementMapElement {
-	e.attributes.Set("id", s)
+func (e *FeDisplacementMapElement) AlignmentBaseline(a FeDisplacementMapAlignmentBaseline) *FeDisplacementMapElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeDisplacementMapAlignmentBaselineCustom(s string) FeDisplacementMapAlignmentBaseline {
+	return FeDisplacementMapAlignmentBaseline(s)
+}
+
+func (e *FeDisplacementMapElement) AriaUnsafe(name string, s string) *FeDisplacementMapElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Aria(name string, s string) *FeDisplacementMapElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeDisplacementMapElement) Autofocus(b bool) *FeDisplacementMapElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) BaselineShift(s string) *FeDisplacementMapElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -468,40 +502,59 @@ func (e *FeDisplacementMapElement) Class(s ...string) *FeDisplacementMapElement 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Style(s string) *FeDisplacementMapElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeDisplacementMapElement) Clip(s string) *FeDisplacementMapElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Tabindex(i int) *FeDisplacementMapElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeDisplacementMapElement) ClipPath(s string) *FeDisplacementMapElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Lang(s string) *FeDisplacementMapElement {
-	e.attributes.Set("lang", s)
+func (e *FeDisplacementMapElement) ClipRule(a FeDisplacementMapClipRule) *FeDisplacementMapElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) XmlLang(s string) *FeDisplacementMapElement {
-	e.attributes.Set("xml:lang", s)
+func FeDisplacementMapClipRuleCustom(s string) FeDisplacementMapClipRule {
+	return FeDisplacementMapClipRule(s)
+}
+
+func (e *FeDisplacementMapElement) Color(s string) *FeDisplacementMapElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) XmlSpace(a FeDisplacementMapXmlSpace) *FeDisplacementMapElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeDisplacementMapElement) ColorInterpolation(a FeDisplacementMapColorInterpolation) *FeDisplacementMapElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeDisplacementMapElement) Autofocus(b bool) *FeDisplacementMapElement {
-	e.attributes.SetBool("autofocus", b)
+func FeDisplacementMapColorInterpolationCustom(s string) FeDisplacementMapColorInterpolation {
+	return FeDisplacementMapColorInterpolation(s)
+}
+
+func (e *FeDisplacementMapElement) ColorInterpolationFilters(a FeDisplacementMapColorInterpolationFilters) *FeDisplacementMapElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeDisplacementMapColorInterpolationFiltersCustom(s string) FeDisplacementMapColorInterpolationFilters {
+	return FeDisplacementMapColorInterpolationFilters(s)
+}
+
+func (e *FeDisplacementMapElement) Cursor(s string) *FeDisplacementMapElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -522,20 +575,30 @@ func (e *FeDisplacementMapElement) Data(name string, s string) *FeDisplacementMa
 	return e
 }
 
-func (e *FeDisplacementMapElement) AriaUnsafe(name string, s string) *FeDisplacementMapElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeDisplacementMapElement) Direction(a FeDisplacementMapDirection) *FeDisplacementMapElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Aria(name string, s string) *FeDisplacementMapElement {
-	tag := strings.ToLower("aria-" + name)
+func FeDisplacementMapDirectionCustom(s string) FeDisplacementMapDirection {
+	return FeDisplacementMapDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeDisplacementMapElement) Display(s string) *FeDisplacementMapElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeDisplacementMapElement) DominantBaseline(a FeDisplacementMapDominantBaseline) *FeDisplacementMapElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeDisplacementMapDominantBaselineCustom(s string) FeDisplacementMapDominantBaseline {
+	return FeDisplacementMapDominantBaseline(s)
 }
 
 func (e *FeDisplacementMapElement) Fill(s string) *FeDisplacementMapElement {
@@ -560,20 +623,220 @@ func FeDisplacementMapFillRuleCustom(s string) FeDisplacementMapFillRule {
 	return FeDisplacementMapFillRule(s)
 }
 
+func (e *FeDisplacementMapElement) Filter(s string) *FeDisplacementMapElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FloodColor(s string) *FeDisplacementMapElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FloodOpacity(f float64) *FeDisplacementMapElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontFamily(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontSize(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontSizeAdjust(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontStretch(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontStyle(a FeDisplacementMapFontStyle) *FeDisplacementMapElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeDisplacementMapFontStyleCustom(s string) FeDisplacementMapFontStyle {
+	return FeDisplacementMapFontStyle(s)
+}
+
+func (e *FeDisplacementMapElement) FontVariant(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) FontWeight(s string) *FeDisplacementMapElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeDisplacementMapElement) GlyphOrientationHorizontal(s string) *FeDisplacementMapElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeDisplacementMapElement) GlyphOrientationVertical(s string) *FeDisplacementMapElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Id(s string) *FeDisplacementMapElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) ImageRendering(a FeDisplacementMapImageRendering) *FeDisplacementMapElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeDisplacementMapImageRenderingCustom(s string) FeDisplacementMapImageRendering {
+	return FeDisplacementMapImageRendering(s)
+}
+
+func (e *FeDisplacementMapElement) Lang(s string) *FeDisplacementMapElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) LetterSpacing(s string) *FeDisplacementMapElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) LightingColor(s string) *FeDisplacementMapElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) MarkerEnd(s string) *FeDisplacementMapElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) MarkerMid(s string) *FeDisplacementMapElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) MarkerStart(s string) *FeDisplacementMapElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Mask(s string) *FeDisplacementMapElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Opacity(f float64) *FeDisplacementMapElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) Overflow(a FeDisplacementMapOverflow) *FeDisplacementMapElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeDisplacementMapOverflowCustom(s string) FeDisplacementMapOverflow {
+	return FeDisplacementMapOverflow(s)
+}
+
+func (e *FeDisplacementMapElement) PaintOrder(s string) *FeDisplacementMapElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) PointerEvents(a FeDisplacementMapPointerEvents) *FeDisplacementMapElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeDisplacementMapPointerEventsCustom(s string) FeDisplacementMapPointerEvents {
+	return FeDisplacementMapPointerEvents(s)
+}
+
+func (e *FeDisplacementMapElement) RequiredExtensions(s string) *FeDisplacementMapElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) ShapeRendering(a FeDisplacementMapShapeRendering) *FeDisplacementMapElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeDisplacementMapShapeRenderingCustom(s string) FeDisplacementMapShapeRendering {
+	return FeDisplacementMapShapeRendering(s)
+}
+
+func (e *FeDisplacementMapElement) StopColor(s string) *FeDisplacementMapElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) StopOpacity(f float64) *FeDisplacementMapElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeDisplacementMapElement) Stroke(s string) *FeDisplacementMapElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) StrokeWidth(s string) *FeDisplacementMapElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeDisplacementMapElement) StrokeDasharray(s string) *FeDisplacementMapElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) StrokeOpacity(f float64) *FeDisplacementMapElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDisplacementMapElement) StrokeDashoffset(s string) *FeDisplacementMapElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -604,210 +867,28 @@ func (e *FeDisplacementMapElement) StrokeMiterlimit(f float64) *FeDisplacementMa
 	return e
 }
 
-func (e *FeDisplacementMapElement) StrokeDasharray(s string) *FeDisplacementMapElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeDisplacementMapElement) StrokeOpacity(f float64) *FeDisplacementMapElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) StrokeDashoffset(s string) *FeDisplacementMapElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeDisplacementMapElement) StrokeWidth(s string) *FeDisplacementMapElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Opacity(f float64) *FeDisplacementMapElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeDisplacementMapElement) Style(s string) *FeDisplacementMapElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeDisplacementMapElement) Color(s string) *FeDisplacementMapElement {
-	e.attributes.Set("color", s)
+func (e *FeDisplacementMapElement) Tabindex(i int) *FeDisplacementMapElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeDisplacementMapElement) Display(s string) *FeDisplacementMapElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) Visibility(a FeDisplacementMapVisibility) *FeDisplacementMapElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeDisplacementMapVisibilityCustom(s string) FeDisplacementMapVisibility {
-	return FeDisplacementMapVisibility(s)
-}
-
-func (e *FeDisplacementMapElement) ClipPath(s string) *FeDisplacementMapElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) ClipRule(a FeDisplacementMapClipRule) *FeDisplacementMapElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeDisplacementMapClipRuleCustom(s string) FeDisplacementMapClipRule {
-	return FeDisplacementMapClipRule(s)
-}
-
-func (e *FeDisplacementMapElement) Mask(s string) *FeDisplacementMapElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) Filter(s string) *FeDisplacementMapElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) Cursor(s string) *FeDisplacementMapElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) PointerEvents(a FeDisplacementMapPointerEvents) *FeDisplacementMapElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeDisplacementMapPointerEventsCustom(s string) FeDisplacementMapPointerEvents {
-	return FeDisplacementMapPointerEvents(s)
-}
-
-func (e *FeDisplacementMapElement) VectorEffect(a FeDisplacementMapVectorEffect) *FeDisplacementMapElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeDisplacementMapVectorEffectCustom(s string) FeDisplacementMapVectorEffect {
-	return FeDisplacementMapVectorEffect(s)
-}
-
-func (e *FeDisplacementMapElement) PaintOrder(s string) *FeDisplacementMapElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) ShapeRendering(a FeDisplacementMapShapeRendering) *FeDisplacementMapElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeDisplacementMapShapeRenderingCustom(s string) FeDisplacementMapShapeRendering {
-	return FeDisplacementMapShapeRendering(s)
-}
-
-func (e *FeDisplacementMapElement) ColorInterpolation(a FeDisplacementMapColorInterpolation) *FeDisplacementMapElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeDisplacementMapColorInterpolationCustom(s string) FeDisplacementMapColorInterpolation {
-	return FeDisplacementMapColorInterpolation(s)
-}
-
-func (e *FeDisplacementMapElement) ColorInterpolationFilters(a FeDisplacementMapColorInterpolationFilters) *FeDisplacementMapElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeDisplacementMapColorInterpolationFiltersCustom(s string) FeDisplacementMapColorInterpolationFilters {
-	return FeDisplacementMapColorInterpolationFilters(s)
-}
-
-func (e *FeDisplacementMapElement) FloodColor(s string) *FeDisplacementMapElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) FloodOpacity(f float64) *FeDisplacementMapElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) LightingColor(s string) *FeDisplacementMapElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) StopColor(s string) *FeDisplacementMapElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) StopOpacity(f float64) *FeDisplacementMapElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) MarkerStart(s string) *FeDisplacementMapElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) MarkerMid(s string) *FeDisplacementMapElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) MarkerEnd(s string) *FeDisplacementMapElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) FontFamily(s string) *FeDisplacementMapElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) FontSize(s string) *FeDisplacementMapElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) FontWeight(s string) *FeDisplacementMapElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) FontStyle(a FeDisplacementMapFontStyle) *FeDisplacementMapElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeDisplacementMapFontStyleCustom(s string) FeDisplacementMapFontStyle {
-	return FeDisplacementMapFontStyle(s)
 }
 
 func (e *FeDisplacementMapElement) TextAnchor(a FeDisplacementMapTextAnchor) *FeDisplacementMapElement {
@@ -820,40 +901,14 @@ func FeDisplacementMapTextAnchorCustom(s string) FeDisplacementMapTextAnchor {
 	return FeDisplacementMapTextAnchor(s)
 }
 
-func (e *FeDisplacementMapElement) DominantBaseline(a FeDisplacementMapDominantBaseline) *FeDisplacementMapElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeDisplacementMapDominantBaselineCustom(s string) FeDisplacementMapDominantBaseline {
-	return FeDisplacementMapDominantBaseline(s)
-}
-
-func (e *FeDisplacementMapElement) AlignmentBaseline(a FeDisplacementMapAlignmentBaseline) *FeDisplacementMapElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeDisplacementMapAlignmentBaselineCustom(s string) FeDisplacementMapAlignmentBaseline {
-	return FeDisplacementMapAlignmentBaseline(s)
-}
-
-func (e *FeDisplacementMapElement) LetterSpacing(s string) *FeDisplacementMapElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeDisplacementMapElement) WordSpacing(s string) *FeDisplacementMapElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeDisplacementMapElement) TextDecoration(s string) *FeDisplacementMapElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) TextOverflow(s string) *FeDisplacementMapElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -868,24 +923,10 @@ func FeDisplacementMapTextRenderingCustom(s string) FeDisplacementMapTextRenderi
 	return FeDisplacementMapTextRendering(s)
 }
 
-func (e *FeDisplacementMapElement) ImageRendering(a FeDisplacementMapImageRendering) *FeDisplacementMapElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeDisplacementMapElement) Transform(s string) *FeDisplacementMapElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeDisplacementMapImageRenderingCustom(s string) FeDisplacementMapImageRendering {
-	return FeDisplacementMapImageRendering(s)
-}
-
-func (e *FeDisplacementMapElement) Overflow(a FeDisplacementMapOverflow) *FeDisplacementMapElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeDisplacementMapOverflowCustom(s string) FeDisplacementMapOverflow {
-	return FeDisplacementMapOverflow(s)
 }
 
 func (e *FeDisplacementMapElement) TransformBox(a FeDisplacementMapTransformBox) *FeDisplacementMapElement {
@@ -898,18 +939,46 @@ func FeDisplacementMapTransformBoxCustom(s string) FeDisplacementMapTransformBox
 	return FeDisplacementMapTransformBox(s)
 }
 
-func (e *FeDisplacementMapElement) Direction(a FeDisplacementMapDirection) *FeDisplacementMapElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeDisplacementMapElement) TransformOrigin(s string) *FeDisplacementMapElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeDisplacementMapDirectionCustom(s string) FeDisplacementMapDirection {
-	return FeDisplacementMapDirection(s)
-}
-
 func (e *FeDisplacementMapElement) UnicodeBidi(s string) *FeDisplacementMapElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) VectorEffect(a FeDisplacementMapVectorEffect) *FeDisplacementMapElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeDisplacementMapVectorEffectCustom(s string) FeDisplacementMapVectorEffect {
+	return FeDisplacementMapVectorEffect(s)
+}
+
+func (e *FeDisplacementMapElement) Visibility(a FeDisplacementMapVisibility) *FeDisplacementMapElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeDisplacementMapVisibilityCustom(s string) FeDisplacementMapVisibility {
+	return FeDisplacementMapVisibility(s)
+}
+
+func (e *FeDisplacementMapElement) WhiteSpace(s string) *FeDisplacementMapElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeDisplacementMapElement) WordSpacing(s string) *FeDisplacementMapElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -924,8 +993,20 @@ func FeDisplacementMapWritingModeCustom(s string) FeDisplacementMapWritingMode {
 	return FeDisplacementMapWritingMode(s)
 }
 
-func (e *FeDisplacementMapElement) WhiteSpace(s string) *FeDisplacementMapElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeDisplacementMapElement) XmlLang(s string) *FeDisplacementMapElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeDisplacementMapElement) XmlSpace(a FeDisplacementMapXmlSpace) *FeDisplacementMapElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

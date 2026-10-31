@@ -135,6 +135,10 @@ func BaseFunc() (*template.Template, ImportSet) {
 {{ end -}}
 //
 // Spec Description: {{ .Description }}
+{{ if .Deprecated -}}
+//
+// Deprecated: <{{ .Tag }}> is deprecated or obsolete in its source specification.
+{{ end -}}
 func {{ .Tag | goIdent }}({{ if not .Void }}children ...htemel.Node{{ end }}) *{{ .Tag | goIdent }}Element {
 	node := &{{ .Tag | goIdent }}Element{
 		{{ if not .Void }}children: children,{{ end }}
@@ -225,7 +229,9 @@ var rawTextElements = map[string]bool{
 	"style":  true,
 }
 
-func isRawText(tag string) bool { return rawTextElements[tag] }
+// isRawText reports whether the element has raw text content: the spec's raw_text flag, or (for older
+// spec files without the flag) the well-known script/style tag names.
+func isRawText(e *spec.Element) bool { return e.RawText || rawTextElements[e.Tag] }
 
 func TextFunc() (*template.Template, ImportSet) {
 	tmpl := template.Must(template.New("TextFunc").
@@ -234,7 +240,7 @@ func TextFunc() (*template.Template, ImportSet) {
 			"isRawText": isRawText,
 		}).Parse(`
 {{ if not .Void }}
-{{ if isRawText .Tag }}
+{{ if isRawText . }}
 // Text adds a raw text node to the element. Because <{{ .Tag }}> is a raw text element, the
 // content is NOT HTML-escaped (so code like "a < b" is preserved). The only transformation is
 // that any case-insensitive "</{{ .Tag }}" sequence is rewritten as "<\/{{ .Tag }}" so the

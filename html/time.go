@@ -240,6 +240,15 @@ const (
 	TimeInputmodeUrl     TimeInputmode = "url"
 )
 
+type TimePopover string
+
+const (
+	TimePopoverAuto   TimePopover = "auto"
+	TimePopoverHint   TimePopover = "hint"
+	TimePopoverManual TimePopover = "manual"
+	TimePopoverEmpty  TimePopover = ""
+)
+
 type TimeSpellcheck string
 
 const (
@@ -370,6 +379,26 @@ func (e *TimeElement) Enterkeyhint(a TimeEnterkeyhint) *TimeElement {
 	return e
 }
 
+func (e *TimeElement) Exportparts(s string) *TimeElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TimeElement) Headingoffset(i int) *TimeElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TimeElement) Headingreset(b bool) *TimeElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TimeElement) Hidden(v ...TimeHidden) *TimeElement {
@@ -402,6 +431,14 @@ func (e *TimeElement) Inputmode(a TimeInputmode) *TimeElement {
 	return e
 }
 
+func (e *TimeElement) Is(s string) *TimeElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TimeElement) Itemid(s string) *TimeElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +483,20 @@ func (e *TimeElement) Nonce(s string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Popover(s string) *TimeElement {
-	e.attributes.Set("popover", s)
+func (e *TimeElement) Part(s ...string) *TimeElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Popover(v ...TimePopover) *TimeElement {
+	var val TimePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -164,11 +164,11 @@ func (e *MaskElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MaskMaskUnits string
+type MaskMaskType string
 
 const (
-	MaskMaskUnitsObjectBoundingBox MaskMaskUnits = "objectBoundingBox"
-	MaskMaskUnitsUserSpaceOnUse    MaskMaskUnits = "userSpaceOnUse"
+	MaskMaskTypeAlpha     MaskMaskType = "alpha"
+	MaskMaskTypeLuminance MaskMaskType = "luminance"
 )
 
 type MaskMaskContentUnits string
@@ -178,139 +178,11 @@ const (
 	MaskMaskContentUnitsUserSpaceOnUse    MaskMaskContentUnits = "userSpaceOnUse"
 )
 
-type MaskMaskType string
+type MaskMaskUnits string
 
 const (
-	MaskMaskTypeAlpha     MaskMaskType = "alpha"
-	MaskMaskTypeLuminance MaskMaskType = "luminance"
-)
-
-type MaskXmlSpace string
-
-const (
-	MaskXmlSpaceDefault  MaskXmlSpace = "default"
-	MaskXmlSpacePreserve MaskXmlSpace = "preserve"
-)
-
-type MaskFillRule string
-
-const (
-	MaskFillRuleEvenodd MaskFillRule = "evenodd"
-	MaskFillRuleNonzero MaskFillRule = "nonzero"
-)
-
-type MaskStrokeLinecap string
-
-const (
-	MaskStrokeLinecapButt   MaskStrokeLinecap = "butt"
-	MaskStrokeLinecapRound  MaskStrokeLinecap = "round"
-	MaskStrokeLinecapSquare MaskStrokeLinecap = "square"
-)
-
-type MaskStrokeLinejoin string
-
-const (
-	MaskStrokeLinejoinArcs      MaskStrokeLinejoin = "arcs"
-	MaskStrokeLinejoinBevel     MaskStrokeLinejoin = "bevel"
-	MaskStrokeLinejoinMiter     MaskStrokeLinejoin = "miter"
-	MaskStrokeLinejoinMiterClip MaskStrokeLinejoin = "miter-clip"
-	MaskStrokeLinejoinRound     MaskStrokeLinejoin = "round"
-)
-
-type MaskVisibility string
-
-const (
-	MaskVisibilityCollapse MaskVisibility = "collapse"
-	MaskVisibilityHidden   MaskVisibility = "hidden"
-	MaskVisibilityVisible  MaskVisibility = "visible"
-)
-
-type MaskClipRule string
-
-const (
-	MaskClipRuleEvenodd MaskClipRule = "evenodd"
-	MaskClipRuleNonzero MaskClipRule = "nonzero"
-)
-
-type MaskPointerEvents string
-
-const (
-	MaskPointerEventsAll            MaskPointerEvents = "all"
-	MaskPointerEventsAuto           MaskPointerEvents = "auto"
-	MaskPointerEventsBoundingBox    MaskPointerEvents = "bounding-box"
-	MaskPointerEventsFill           MaskPointerEvents = "fill"
-	MaskPointerEventsNone           MaskPointerEvents = "none"
-	MaskPointerEventsPainted        MaskPointerEvents = "painted"
-	MaskPointerEventsStroke         MaskPointerEvents = "stroke"
-	MaskPointerEventsVisible        MaskPointerEvents = "visible"
-	MaskPointerEventsVisibleFill    MaskPointerEvents = "visibleFill"
-	MaskPointerEventsVisiblePainted MaskPointerEvents = "visiblePainted"
-	MaskPointerEventsVisibleStroke  MaskPointerEvents = "visibleStroke"
-)
-
-type MaskVectorEffect string
-
-const (
-	MaskVectorEffectFixedPosition    MaskVectorEffect = "fixed-position"
-	MaskVectorEffectNonRotation      MaskVectorEffect = "non-rotation"
-	MaskVectorEffectNonScalingSize   MaskVectorEffect = "non-scaling-size"
-	MaskVectorEffectNonScalingStroke MaskVectorEffect = "non-scaling-stroke"
-	MaskVectorEffectNone             MaskVectorEffect = "none"
-)
-
-type MaskShapeRendering string
-
-const (
-	MaskShapeRenderingAuto               MaskShapeRendering = "auto"
-	MaskShapeRenderingCrispEdges         MaskShapeRendering = "crispEdges"
-	MaskShapeRenderingGeometricPrecision MaskShapeRendering = "geometricPrecision"
-	MaskShapeRenderingOptimizeSpeed      MaskShapeRendering = "optimizeSpeed"
-)
-
-type MaskColorInterpolation string
-
-const (
-	MaskColorInterpolationAuto      MaskColorInterpolation = "auto"
-	MaskColorInterpolationLinearRGB MaskColorInterpolation = "linearRGB"
-	MaskColorInterpolationSRGB      MaskColorInterpolation = "sRGB"
-)
-
-type MaskColorInterpolationFilters string
-
-const (
-	MaskColorInterpolationFiltersAuto      MaskColorInterpolationFilters = "auto"
-	MaskColorInterpolationFiltersLinearRGB MaskColorInterpolationFilters = "linearRGB"
-	MaskColorInterpolationFiltersSRGB      MaskColorInterpolationFilters = "sRGB"
-)
-
-type MaskFontStyle string
-
-const (
-	MaskFontStyleItalic  MaskFontStyle = "italic"
-	MaskFontStyleNormal  MaskFontStyle = "normal"
-	MaskFontStyleOblique MaskFontStyle = "oblique"
-)
-
-type MaskTextAnchor string
-
-const (
-	MaskTextAnchorEnd    MaskTextAnchor = "end"
-	MaskTextAnchorMiddle MaskTextAnchor = "middle"
-	MaskTextAnchorStart  MaskTextAnchor = "start"
-)
-
-type MaskDominantBaseline string
-
-const (
-	MaskDominantBaselineAlphabetic   MaskDominantBaseline = "alphabetic"
-	MaskDominantBaselineAuto         MaskDominantBaseline = "auto"
-	MaskDominantBaselineCentral      MaskDominantBaseline = "central"
-	MaskDominantBaselineHanging      MaskDominantBaseline = "hanging"
-	MaskDominantBaselineIdeographic  MaskDominantBaseline = "ideographic"
-	MaskDominantBaselineMathematical MaskDominantBaseline = "mathematical"
-	MaskDominantBaselineMiddle       MaskDominantBaseline = "middle"
-	MaskDominantBaselineTextBottom   MaskDominantBaseline = "text-bottom"
-	MaskDominantBaselineTextTop      MaskDominantBaseline = "text-top"
+	MaskMaskUnitsObjectBoundingBox MaskMaskUnits = "objectBoundingBox"
+	MaskMaskUnitsUserSpaceOnUse    MaskMaskUnits = "userSpaceOnUse"
 )
 
 type MaskAlignmentBaseline string
@@ -335,13 +207,63 @@ const (
 	MaskAlignmentBaselineTop            MaskAlignmentBaseline = "top"
 )
 
-type MaskTextRendering string
+type MaskClipRule string
 
 const (
-	MaskTextRenderingAuto               MaskTextRendering = "auto"
-	MaskTextRenderingGeometricPrecision MaskTextRendering = "geometricPrecision"
-	MaskTextRenderingOptimizeLegibility MaskTextRendering = "optimizeLegibility"
-	MaskTextRenderingOptimizeSpeed      MaskTextRendering = "optimizeSpeed"
+	MaskClipRuleEvenodd MaskClipRule = "evenodd"
+	MaskClipRuleNonzero MaskClipRule = "nonzero"
+)
+
+type MaskColorInterpolation string
+
+const (
+	MaskColorInterpolationAuto      MaskColorInterpolation = "auto"
+	MaskColorInterpolationLinearRGB MaskColorInterpolation = "linearRGB"
+	MaskColorInterpolationSRGB      MaskColorInterpolation = "sRGB"
+)
+
+type MaskColorInterpolationFilters string
+
+const (
+	MaskColorInterpolationFiltersAuto      MaskColorInterpolationFilters = "auto"
+	MaskColorInterpolationFiltersLinearRGB MaskColorInterpolationFilters = "linearRGB"
+	MaskColorInterpolationFiltersSRGB      MaskColorInterpolationFilters = "sRGB"
+)
+
+type MaskDirection string
+
+const (
+	MaskDirectionLtr MaskDirection = "ltr"
+	MaskDirectionRtl MaskDirection = "rtl"
+)
+
+type MaskDominantBaseline string
+
+const (
+	MaskDominantBaselineAlphabetic   MaskDominantBaseline = "alphabetic"
+	MaskDominantBaselineAuto         MaskDominantBaseline = "auto"
+	MaskDominantBaselineCentral      MaskDominantBaseline = "central"
+	MaskDominantBaselineHanging      MaskDominantBaseline = "hanging"
+	MaskDominantBaselineIdeographic  MaskDominantBaseline = "ideographic"
+	MaskDominantBaselineMathematical MaskDominantBaseline = "mathematical"
+	MaskDominantBaselineMiddle       MaskDominantBaseline = "middle"
+	MaskDominantBaselineTextBottom   MaskDominantBaseline = "text-bottom"
+	MaskDominantBaselineTextTop      MaskDominantBaseline = "text-top"
+)
+
+type MaskFillRule string
+
+const (
+	MaskFillRuleEvenodd MaskFillRule = "evenodd"
+	MaskFillRuleNonzero MaskFillRule = "nonzero"
+)
+
+type MaskFontStyle string
+
+const (
+	MaskFontStyleItalic  MaskFontStyle = "italic"
+	MaskFontStyleNormal  MaskFontStyle = "normal"
+	MaskFontStyleOblique MaskFontStyle = "oblique"
 )
 
 type MaskImageRendering string
@@ -366,6 +288,66 @@ const (
 	MaskOverflowVisible MaskOverflow = "visible"
 )
 
+type MaskPointerEvents string
+
+const (
+	MaskPointerEventsAll            MaskPointerEvents = "all"
+	MaskPointerEventsAuto           MaskPointerEvents = "auto"
+	MaskPointerEventsBoundingBox    MaskPointerEvents = "bounding-box"
+	MaskPointerEventsFill           MaskPointerEvents = "fill"
+	MaskPointerEventsNone           MaskPointerEvents = "none"
+	MaskPointerEventsPainted        MaskPointerEvents = "painted"
+	MaskPointerEventsStroke         MaskPointerEvents = "stroke"
+	MaskPointerEventsVisible        MaskPointerEvents = "visible"
+	MaskPointerEventsVisibleFill    MaskPointerEvents = "visibleFill"
+	MaskPointerEventsVisiblePainted MaskPointerEvents = "visiblePainted"
+	MaskPointerEventsVisibleStroke  MaskPointerEvents = "visibleStroke"
+)
+
+type MaskShapeRendering string
+
+const (
+	MaskShapeRenderingAuto               MaskShapeRendering = "auto"
+	MaskShapeRenderingCrispEdges         MaskShapeRendering = "crispEdges"
+	MaskShapeRenderingGeometricPrecision MaskShapeRendering = "geometricPrecision"
+	MaskShapeRenderingOptimizeSpeed      MaskShapeRendering = "optimizeSpeed"
+)
+
+type MaskStrokeLinecap string
+
+const (
+	MaskStrokeLinecapButt   MaskStrokeLinecap = "butt"
+	MaskStrokeLinecapRound  MaskStrokeLinecap = "round"
+	MaskStrokeLinecapSquare MaskStrokeLinecap = "square"
+)
+
+type MaskStrokeLinejoin string
+
+const (
+	MaskStrokeLinejoinArcs      MaskStrokeLinejoin = "arcs"
+	MaskStrokeLinejoinBevel     MaskStrokeLinejoin = "bevel"
+	MaskStrokeLinejoinMiter     MaskStrokeLinejoin = "miter"
+	MaskStrokeLinejoinMiterClip MaskStrokeLinejoin = "miter-clip"
+	MaskStrokeLinejoinRound     MaskStrokeLinejoin = "round"
+)
+
+type MaskTextAnchor string
+
+const (
+	MaskTextAnchorEnd    MaskTextAnchor = "end"
+	MaskTextAnchorMiddle MaskTextAnchor = "middle"
+	MaskTextAnchorStart  MaskTextAnchor = "start"
+)
+
+type MaskTextRendering string
+
+const (
+	MaskTextRenderingAuto               MaskTextRendering = "auto"
+	MaskTextRenderingGeometricPrecision MaskTextRendering = "geometricPrecision"
+	MaskTextRenderingOptimizeLegibility MaskTextRendering = "optimizeLegibility"
+	MaskTextRenderingOptimizeSpeed      MaskTextRendering = "optimizeSpeed"
+)
+
 type MaskTransformBox string
 
 const (
@@ -376,11 +358,22 @@ const (
 	MaskTransformBoxViewBox    MaskTransformBox = "view-box"
 )
 
-type MaskDirection string
+type MaskVectorEffect string
 
 const (
-	MaskDirectionLtr MaskDirection = "ltr"
-	MaskDirectionRtl MaskDirection = "rtl"
+	MaskVectorEffectFixedPosition    MaskVectorEffect = "fixed-position"
+	MaskVectorEffectNonRotation      MaskVectorEffect = "non-rotation"
+	MaskVectorEffectNonScalingSize   MaskVectorEffect = "non-scaling-size"
+	MaskVectorEffectNonScalingStroke MaskVectorEffect = "non-scaling-stroke"
+	MaskVectorEffectNone             MaskVectorEffect = "none"
+)
+
+type MaskVisibility string
+
+const (
+	MaskVisibilityCollapse MaskVisibility = "collapse"
+	MaskVisibilityHidden   MaskVisibility = "hidden"
+	MaskVisibilityVisible  MaskVisibility = "visible"
 )
 
 type MaskWritingMode string
@@ -399,6 +392,49 @@ const (
 	MaskWritingModeVerticalRl   MaskWritingMode = "vertical-rl"
 )
 
+type MaskXmlSpace string
+
+const (
+	MaskXmlSpaceDefault  MaskXmlSpace = "default"
+	MaskXmlSpacePreserve MaskXmlSpace = "preserve"
+)
+
+func (e *MaskElement) Height(s string) *MaskElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *MaskElement) MaskType(a MaskMaskType) *MaskElement {
+	e.attributes.Set("mask-type", string(a))
+
+	return e
+}
+
+func (e *MaskElement) MaskContentUnits(a MaskMaskContentUnits) *MaskElement {
+	e.attributes.Set("maskContentUnits", string(a))
+
+	return e
+}
+
+func (e *MaskElement) MaskUnits(a MaskMaskUnits) *MaskElement {
+	e.attributes.Set("maskUnits", string(a))
+
+	return e
+}
+
+func (e *MaskElement) SystemLanguage(s string) *MaskElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *MaskElement) Width(s string) *MaskElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *MaskElement) X(s string) *MaskElement {
 	e.attributes.Set("x", s)
 
@@ -411,38 +447,42 @@ func (e *MaskElement) Y(s string) *MaskElement {
 	return e
 }
 
-func (e *MaskElement) Width(s string) *MaskElement {
-	e.attributes.Set("width", s)
+func (e *MaskElement) AlignmentBaseline(a MaskAlignmentBaseline) *MaskElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *MaskElement) Height(s string) *MaskElement {
-	e.attributes.Set("height", s)
+func MaskAlignmentBaselineCustom(s string) MaskAlignmentBaseline {
+	return MaskAlignmentBaseline(s)
+}
+
+func (e *MaskElement) AriaUnsafe(name string, s string) *MaskElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *MaskElement) MaskUnits(a MaskMaskUnits) *MaskElement {
-	e.attributes.Set("maskUnits", string(a))
+func (e *MaskElement) Aria(name string, s string) *MaskElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *MaskElement) MaskContentUnits(a MaskMaskContentUnits) *MaskElement {
-	e.attributes.Set("maskContentUnits", string(a))
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MaskElement) Autofocus(b bool) *MaskElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *MaskElement) MaskType(a MaskMaskType) *MaskElement {
-	e.attributes.Set("mask-type", string(a))
-
-	return e
-}
-
-func (e *MaskElement) Id(s string) *MaskElement {
-	e.attributes.Set("id", s)
+func (e *MaskElement) BaselineShift(s string) *MaskElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -453,40 +493,59 @@ func (e *MaskElement) Class(s ...string) *MaskElement {
 	return e
 }
 
-func (e *MaskElement) Style(s string) *MaskElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *MaskElement) Clip(s string) *MaskElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *MaskElement) Tabindex(i int) *MaskElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *MaskElement) ClipPath(s string) *MaskElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *MaskElement) Lang(s string) *MaskElement {
-	e.attributes.Set("lang", s)
+func (e *MaskElement) ClipRule(a MaskClipRule) *MaskElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *MaskElement) XmlLang(s string) *MaskElement {
-	e.attributes.Set("xml:lang", s)
+func MaskClipRuleCustom(s string) MaskClipRule {
+	return MaskClipRule(s)
+}
+
+func (e *MaskElement) Color(s string) *MaskElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *MaskElement) XmlSpace(a MaskXmlSpace) *MaskElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *MaskElement) ColorInterpolation(a MaskColorInterpolation) *MaskElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MaskElement) Autofocus(b bool) *MaskElement {
-	e.attributes.SetBool("autofocus", b)
+func MaskColorInterpolationCustom(s string) MaskColorInterpolation {
+	return MaskColorInterpolation(s)
+}
+
+func (e *MaskElement) ColorInterpolationFilters(a MaskColorInterpolationFilters) *MaskElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func MaskColorInterpolationFiltersCustom(s string) MaskColorInterpolationFilters {
+	return MaskColorInterpolationFilters(s)
+}
+
+func (e *MaskElement) Cursor(s string) *MaskElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -507,20 +566,30 @@ func (e *MaskElement) Data(name string, s string) *MaskElement {
 	return e
 }
 
-func (e *MaskElement) AriaUnsafe(name string, s string) *MaskElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *MaskElement) Direction(a MaskDirection) *MaskElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *MaskElement) Aria(name string, s string) *MaskElement {
-	tag := strings.ToLower("aria-" + name)
+func MaskDirectionCustom(s string) MaskDirection {
+	return MaskDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *MaskElement) Display(s string) *MaskElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *MaskElement) DominantBaseline(a MaskDominantBaseline) *MaskElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func MaskDominantBaselineCustom(s string) MaskDominantBaseline {
+	return MaskDominantBaseline(s)
 }
 
 func (e *MaskElement) Fill(s string) *MaskElement {
@@ -545,20 +614,220 @@ func MaskFillRuleCustom(s string) MaskFillRule {
 	return MaskFillRule(s)
 }
 
+func (e *MaskElement) Filter(s string) *MaskElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *MaskElement) FloodColor(s string) *MaskElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *MaskElement) FloodOpacity(f float64) *MaskElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MaskElement) FontFamily(s string) *MaskElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *MaskElement) FontSize(s string) *MaskElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *MaskElement) FontSizeAdjust(s string) *MaskElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *MaskElement) FontStretch(s string) *MaskElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *MaskElement) FontStyle(a MaskFontStyle) *MaskElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func MaskFontStyleCustom(s string) MaskFontStyle {
+	return MaskFontStyle(s)
+}
+
+func (e *MaskElement) FontVariant(s string) *MaskElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *MaskElement) FontWeight(s string) *MaskElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *MaskElement) GlyphOrientationHorizontal(s string) *MaskElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *MaskElement) GlyphOrientationVertical(s string) *MaskElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *MaskElement) Id(s string) *MaskElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *MaskElement) ImageRendering(a MaskImageRendering) *MaskElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func MaskImageRenderingCustom(s string) MaskImageRendering {
+	return MaskImageRendering(s)
+}
+
+func (e *MaskElement) Lang(s string) *MaskElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *MaskElement) LetterSpacing(s string) *MaskElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *MaskElement) LightingColor(s string) *MaskElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *MaskElement) MarkerEnd(s string) *MaskElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *MaskElement) MarkerMid(s string) *MaskElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *MaskElement) MarkerStart(s string) *MaskElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *MaskElement) Mask(s string) *MaskElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *MaskElement) Opacity(f float64) *MaskElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MaskElement) Overflow(a MaskOverflow) *MaskElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func MaskOverflowCustom(s string) MaskOverflow {
+	return MaskOverflow(s)
+}
+
+func (e *MaskElement) PaintOrder(s string) *MaskElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *MaskElement) PointerEvents(a MaskPointerEvents) *MaskElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func MaskPointerEventsCustom(s string) MaskPointerEvents {
+	return MaskPointerEvents(s)
+}
+
+func (e *MaskElement) RequiredExtensions(s string) *MaskElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *MaskElement) ShapeRendering(a MaskShapeRendering) *MaskElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func MaskShapeRenderingCustom(s string) MaskShapeRendering {
+	return MaskShapeRendering(s)
+}
+
+func (e *MaskElement) StopColor(s string) *MaskElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *MaskElement) StopOpacity(f float64) *MaskElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *MaskElement) Stroke(s string) *MaskElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *MaskElement) StrokeWidth(s string) *MaskElement {
-	e.attributes.Set("stroke-width", s)
+func (e *MaskElement) StrokeDasharray(s string) *MaskElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *MaskElement) StrokeOpacity(f float64) *MaskElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MaskElement) StrokeDashoffset(s string) *MaskElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -589,210 +858,28 @@ func (e *MaskElement) StrokeMiterlimit(f float64) *MaskElement {
 	return e
 }
 
-func (e *MaskElement) StrokeDasharray(s string) *MaskElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *MaskElement) StrokeOpacity(f float64) *MaskElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *MaskElement) StrokeDashoffset(s string) *MaskElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *MaskElement) StrokeWidth(s string) *MaskElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *MaskElement) Opacity(f float64) *MaskElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MaskElement) Style(s string) *MaskElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *MaskElement) Color(s string) *MaskElement {
-	e.attributes.Set("color", s)
+func (e *MaskElement) Tabindex(i int) *MaskElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *MaskElement) Display(s string) *MaskElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *MaskElement) Visibility(a MaskVisibility) *MaskElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func MaskVisibilityCustom(s string) MaskVisibility {
-	return MaskVisibility(s)
-}
-
-func (e *MaskElement) ClipPath(s string) *MaskElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *MaskElement) ClipRule(a MaskClipRule) *MaskElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func MaskClipRuleCustom(s string) MaskClipRule {
-	return MaskClipRule(s)
-}
-
-func (e *MaskElement) Mask(s string) *MaskElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *MaskElement) Filter(s string) *MaskElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *MaskElement) Cursor(s string) *MaskElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *MaskElement) PointerEvents(a MaskPointerEvents) *MaskElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func MaskPointerEventsCustom(s string) MaskPointerEvents {
-	return MaskPointerEvents(s)
-}
-
-func (e *MaskElement) VectorEffect(a MaskVectorEffect) *MaskElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func MaskVectorEffectCustom(s string) MaskVectorEffect {
-	return MaskVectorEffect(s)
-}
-
-func (e *MaskElement) PaintOrder(s string) *MaskElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *MaskElement) ShapeRendering(a MaskShapeRendering) *MaskElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func MaskShapeRenderingCustom(s string) MaskShapeRendering {
-	return MaskShapeRendering(s)
-}
-
-func (e *MaskElement) ColorInterpolation(a MaskColorInterpolation) *MaskElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func MaskColorInterpolationCustom(s string) MaskColorInterpolation {
-	return MaskColorInterpolation(s)
-}
-
-func (e *MaskElement) ColorInterpolationFilters(a MaskColorInterpolationFilters) *MaskElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func MaskColorInterpolationFiltersCustom(s string) MaskColorInterpolationFilters {
-	return MaskColorInterpolationFilters(s)
-}
-
-func (e *MaskElement) FloodColor(s string) *MaskElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *MaskElement) FloodOpacity(f float64) *MaskElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MaskElement) LightingColor(s string) *MaskElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *MaskElement) StopColor(s string) *MaskElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *MaskElement) StopOpacity(f float64) *MaskElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MaskElement) MarkerStart(s string) *MaskElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *MaskElement) MarkerMid(s string) *MaskElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *MaskElement) MarkerEnd(s string) *MaskElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *MaskElement) FontFamily(s string) *MaskElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *MaskElement) FontSize(s string) *MaskElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *MaskElement) FontWeight(s string) *MaskElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *MaskElement) FontStyle(a MaskFontStyle) *MaskElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func MaskFontStyleCustom(s string) MaskFontStyle {
-	return MaskFontStyle(s)
 }
 
 func (e *MaskElement) TextAnchor(a MaskTextAnchor) *MaskElement {
@@ -805,40 +892,14 @@ func MaskTextAnchorCustom(s string) MaskTextAnchor {
 	return MaskTextAnchor(s)
 }
 
-func (e *MaskElement) DominantBaseline(a MaskDominantBaseline) *MaskElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func MaskDominantBaselineCustom(s string) MaskDominantBaseline {
-	return MaskDominantBaseline(s)
-}
-
-func (e *MaskElement) AlignmentBaseline(a MaskAlignmentBaseline) *MaskElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func MaskAlignmentBaselineCustom(s string) MaskAlignmentBaseline {
-	return MaskAlignmentBaseline(s)
-}
-
-func (e *MaskElement) LetterSpacing(s string) *MaskElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *MaskElement) WordSpacing(s string) *MaskElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *MaskElement) TextDecoration(s string) *MaskElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *MaskElement) TextOverflow(s string) *MaskElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -853,24 +914,10 @@ func MaskTextRenderingCustom(s string) MaskTextRendering {
 	return MaskTextRendering(s)
 }
 
-func (e *MaskElement) ImageRendering(a MaskImageRendering) *MaskElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *MaskElement) Transform(s string) *MaskElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func MaskImageRenderingCustom(s string) MaskImageRendering {
-	return MaskImageRendering(s)
-}
-
-func (e *MaskElement) Overflow(a MaskOverflow) *MaskElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func MaskOverflowCustom(s string) MaskOverflow {
-	return MaskOverflow(s)
 }
 
 func (e *MaskElement) TransformBox(a MaskTransformBox) *MaskElement {
@@ -883,18 +930,46 @@ func MaskTransformBoxCustom(s string) MaskTransformBox {
 	return MaskTransformBox(s)
 }
 
-func (e *MaskElement) Direction(a MaskDirection) *MaskElement {
-	e.attributes.Set("direction", string(a))
+func (e *MaskElement) TransformOrigin(s string) *MaskElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func MaskDirectionCustom(s string) MaskDirection {
-	return MaskDirection(s)
-}
-
 func (e *MaskElement) UnicodeBidi(s string) *MaskElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *MaskElement) VectorEffect(a MaskVectorEffect) *MaskElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func MaskVectorEffectCustom(s string) MaskVectorEffect {
+	return MaskVectorEffect(s)
+}
+
+func (e *MaskElement) Visibility(a MaskVisibility) *MaskElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func MaskVisibilityCustom(s string) MaskVisibility {
+	return MaskVisibility(s)
+}
+
+func (e *MaskElement) WhiteSpace(s string) *MaskElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *MaskElement) WordSpacing(s string) *MaskElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -909,8 +984,20 @@ func MaskWritingModeCustom(s string) MaskWritingMode {
 	return MaskWritingMode(s)
 }
 
-func (e *MaskElement) WhiteSpace(s string) *MaskElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *MaskElement) XmlLang(s string) *MaskElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *MaskElement) XmlSpace(a MaskXmlSpace) *MaskElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

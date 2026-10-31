@@ -164,12 +164,18 @@ func (e *AnimateMotionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AnimateMotionRestart string
+type AnimateMotionAccumulate string
 
 const (
-	AnimateMotionRestartAlways        AnimateMotionRestart = "always"
-	AnimateMotionRestartNever         AnimateMotionRestart = "never"
-	AnimateMotionRestartWhenNotActive AnimateMotionRestart = "whenNotActive"
+	AnimateMotionAccumulateNone AnimateMotionAccumulate = "none"
+	AnimateMotionAccumulateSum  AnimateMotionAccumulate = "sum"
+)
+
+type AnimateMotionAdditive string
+
+const (
+	AnimateMotionAdditiveReplace AnimateMotionAdditive = "replace"
+	AnimateMotionAdditiveSum     AnimateMotionAdditive = "sum"
 )
 
 type AnimateMotionCalcMode string
@@ -181,146 +187,19 @@ const (
 	AnimateMotionCalcModeSpline   AnimateMotionCalcMode = "spline"
 )
 
-type AnimateMotionAdditive string
+type AnimateMotionFill string
 
 const (
-	AnimateMotionAdditiveReplace AnimateMotionAdditive = "replace"
-	AnimateMotionAdditiveSum     AnimateMotionAdditive = "sum"
+	AnimateMotionFillFreeze AnimateMotionFill = "freeze"
+	AnimateMotionFillRemove AnimateMotionFill = "remove"
 )
 
-type AnimateMotionAccumulate string
+type AnimateMotionRestart string
 
 const (
-	AnimateMotionAccumulateNone AnimateMotionAccumulate = "none"
-	AnimateMotionAccumulateSum  AnimateMotionAccumulate = "sum"
-)
-
-type AnimateMotionXmlSpace string
-
-const (
-	AnimateMotionXmlSpaceDefault  AnimateMotionXmlSpace = "default"
-	AnimateMotionXmlSpacePreserve AnimateMotionXmlSpace = "preserve"
-)
-
-type AnimateMotionFillRule string
-
-const (
-	AnimateMotionFillRuleEvenodd AnimateMotionFillRule = "evenodd"
-	AnimateMotionFillRuleNonzero AnimateMotionFillRule = "nonzero"
-)
-
-type AnimateMotionStrokeLinecap string
-
-const (
-	AnimateMotionStrokeLinecapButt   AnimateMotionStrokeLinecap = "butt"
-	AnimateMotionStrokeLinecapRound  AnimateMotionStrokeLinecap = "round"
-	AnimateMotionStrokeLinecapSquare AnimateMotionStrokeLinecap = "square"
-)
-
-type AnimateMotionStrokeLinejoin string
-
-const (
-	AnimateMotionStrokeLinejoinArcs      AnimateMotionStrokeLinejoin = "arcs"
-	AnimateMotionStrokeLinejoinBevel     AnimateMotionStrokeLinejoin = "bevel"
-	AnimateMotionStrokeLinejoinMiter     AnimateMotionStrokeLinejoin = "miter"
-	AnimateMotionStrokeLinejoinMiterClip AnimateMotionStrokeLinejoin = "miter-clip"
-	AnimateMotionStrokeLinejoinRound     AnimateMotionStrokeLinejoin = "round"
-)
-
-type AnimateMotionVisibility string
-
-const (
-	AnimateMotionVisibilityCollapse AnimateMotionVisibility = "collapse"
-	AnimateMotionVisibilityHidden   AnimateMotionVisibility = "hidden"
-	AnimateMotionVisibilityVisible  AnimateMotionVisibility = "visible"
-)
-
-type AnimateMotionClipRule string
-
-const (
-	AnimateMotionClipRuleEvenodd AnimateMotionClipRule = "evenodd"
-	AnimateMotionClipRuleNonzero AnimateMotionClipRule = "nonzero"
-)
-
-type AnimateMotionPointerEvents string
-
-const (
-	AnimateMotionPointerEventsAll            AnimateMotionPointerEvents = "all"
-	AnimateMotionPointerEventsAuto           AnimateMotionPointerEvents = "auto"
-	AnimateMotionPointerEventsBoundingBox    AnimateMotionPointerEvents = "bounding-box"
-	AnimateMotionPointerEventsFill           AnimateMotionPointerEvents = "fill"
-	AnimateMotionPointerEventsNone           AnimateMotionPointerEvents = "none"
-	AnimateMotionPointerEventsPainted        AnimateMotionPointerEvents = "painted"
-	AnimateMotionPointerEventsStroke         AnimateMotionPointerEvents = "stroke"
-	AnimateMotionPointerEventsVisible        AnimateMotionPointerEvents = "visible"
-	AnimateMotionPointerEventsVisibleFill    AnimateMotionPointerEvents = "visibleFill"
-	AnimateMotionPointerEventsVisiblePainted AnimateMotionPointerEvents = "visiblePainted"
-	AnimateMotionPointerEventsVisibleStroke  AnimateMotionPointerEvents = "visibleStroke"
-)
-
-type AnimateMotionVectorEffect string
-
-const (
-	AnimateMotionVectorEffectFixedPosition    AnimateMotionVectorEffect = "fixed-position"
-	AnimateMotionVectorEffectNonRotation      AnimateMotionVectorEffect = "non-rotation"
-	AnimateMotionVectorEffectNonScalingSize   AnimateMotionVectorEffect = "non-scaling-size"
-	AnimateMotionVectorEffectNonScalingStroke AnimateMotionVectorEffect = "non-scaling-stroke"
-	AnimateMotionVectorEffectNone             AnimateMotionVectorEffect = "none"
-)
-
-type AnimateMotionShapeRendering string
-
-const (
-	AnimateMotionShapeRenderingAuto               AnimateMotionShapeRendering = "auto"
-	AnimateMotionShapeRenderingCrispEdges         AnimateMotionShapeRendering = "crispEdges"
-	AnimateMotionShapeRenderingGeometricPrecision AnimateMotionShapeRendering = "geometricPrecision"
-	AnimateMotionShapeRenderingOptimizeSpeed      AnimateMotionShapeRendering = "optimizeSpeed"
-)
-
-type AnimateMotionColorInterpolation string
-
-const (
-	AnimateMotionColorInterpolationAuto      AnimateMotionColorInterpolation = "auto"
-	AnimateMotionColorInterpolationLinearRGB AnimateMotionColorInterpolation = "linearRGB"
-	AnimateMotionColorInterpolationSRGB      AnimateMotionColorInterpolation = "sRGB"
-)
-
-type AnimateMotionColorInterpolationFilters string
-
-const (
-	AnimateMotionColorInterpolationFiltersAuto      AnimateMotionColorInterpolationFilters = "auto"
-	AnimateMotionColorInterpolationFiltersLinearRGB AnimateMotionColorInterpolationFilters = "linearRGB"
-	AnimateMotionColorInterpolationFiltersSRGB      AnimateMotionColorInterpolationFilters = "sRGB"
-)
-
-type AnimateMotionFontStyle string
-
-const (
-	AnimateMotionFontStyleItalic  AnimateMotionFontStyle = "italic"
-	AnimateMotionFontStyleNormal  AnimateMotionFontStyle = "normal"
-	AnimateMotionFontStyleOblique AnimateMotionFontStyle = "oblique"
-)
-
-type AnimateMotionTextAnchor string
-
-const (
-	AnimateMotionTextAnchorEnd    AnimateMotionTextAnchor = "end"
-	AnimateMotionTextAnchorMiddle AnimateMotionTextAnchor = "middle"
-	AnimateMotionTextAnchorStart  AnimateMotionTextAnchor = "start"
-)
-
-type AnimateMotionDominantBaseline string
-
-const (
-	AnimateMotionDominantBaselineAlphabetic   AnimateMotionDominantBaseline = "alphabetic"
-	AnimateMotionDominantBaselineAuto         AnimateMotionDominantBaseline = "auto"
-	AnimateMotionDominantBaselineCentral      AnimateMotionDominantBaseline = "central"
-	AnimateMotionDominantBaselineHanging      AnimateMotionDominantBaseline = "hanging"
-	AnimateMotionDominantBaselineIdeographic  AnimateMotionDominantBaseline = "ideographic"
-	AnimateMotionDominantBaselineMathematical AnimateMotionDominantBaseline = "mathematical"
-	AnimateMotionDominantBaselineMiddle       AnimateMotionDominantBaseline = "middle"
-	AnimateMotionDominantBaselineTextBottom   AnimateMotionDominantBaseline = "text-bottom"
-	AnimateMotionDominantBaselineTextTop      AnimateMotionDominantBaseline = "text-top"
+	AnimateMotionRestartAlways        AnimateMotionRestart = "always"
+	AnimateMotionRestartNever         AnimateMotionRestart = "never"
+	AnimateMotionRestartWhenNotActive AnimateMotionRestart = "whenNotActive"
 )
 
 type AnimateMotionAlignmentBaseline string
@@ -345,13 +224,63 @@ const (
 	AnimateMotionAlignmentBaselineTop            AnimateMotionAlignmentBaseline = "top"
 )
 
-type AnimateMotionTextRendering string
+type AnimateMotionClipRule string
 
 const (
-	AnimateMotionTextRenderingAuto               AnimateMotionTextRendering = "auto"
-	AnimateMotionTextRenderingGeometricPrecision AnimateMotionTextRendering = "geometricPrecision"
-	AnimateMotionTextRenderingOptimizeLegibility AnimateMotionTextRendering = "optimizeLegibility"
-	AnimateMotionTextRenderingOptimizeSpeed      AnimateMotionTextRendering = "optimizeSpeed"
+	AnimateMotionClipRuleEvenodd AnimateMotionClipRule = "evenodd"
+	AnimateMotionClipRuleNonzero AnimateMotionClipRule = "nonzero"
+)
+
+type AnimateMotionColorInterpolation string
+
+const (
+	AnimateMotionColorInterpolationAuto      AnimateMotionColorInterpolation = "auto"
+	AnimateMotionColorInterpolationLinearRGB AnimateMotionColorInterpolation = "linearRGB"
+	AnimateMotionColorInterpolationSRGB      AnimateMotionColorInterpolation = "sRGB"
+)
+
+type AnimateMotionColorInterpolationFilters string
+
+const (
+	AnimateMotionColorInterpolationFiltersAuto      AnimateMotionColorInterpolationFilters = "auto"
+	AnimateMotionColorInterpolationFiltersLinearRGB AnimateMotionColorInterpolationFilters = "linearRGB"
+	AnimateMotionColorInterpolationFiltersSRGB      AnimateMotionColorInterpolationFilters = "sRGB"
+)
+
+type AnimateMotionDirection string
+
+const (
+	AnimateMotionDirectionLtr AnimateMotionDirection = "ltr"
+	AnimateMotionDirectionRtl AnimateMotionDirection = "rtl"
+)
+
+type AnimateMotionDominantBaseline string
+
+const (
+	AnimateMotionDominantBaselineAlphabetic   AnimateMotionDominantBaseline = "alphabetic"
+	AnimateMotionDominantBaselineAuto         AnimateMotionDominantBaseline = "auto"
+	AnimateMotionDominantBaselineCentral      AnimateMotionDominantBaseline = "central"
+	AnimateMotionDominantBaselineHanging      AnimateMotionDominantBaseline = "hanging"
+	AnimateMotionDominantBaselineIdeographic  AnimateMotionDominantBaseline = "ideographic"
+	AnimateMotionDominantBaselineMathematical AnimateMotionDominantBaseline = "mathematical"
+	AnimateMotionDominantBaselineMiddle       AnimateMotionDominantBaseline = "middle"
+	AnimateMotionDominantBaselineTextBottom   AnimateMotionDominantBaseline = "text-bottom"
+	AnimateMotionDominantBaselineTextTop      AnimateMotionDominantBaseline = "text-top"
+)
+
+type AnimateMotionFillRule string
+
+const (
+	AnimateMotionFillRuleEvenodd AnimateMotionFillRule = "evenodd"
+	AnimateMotionFillRuleNonzero AnimateMotionFillRule = "nonzero"
+)
+
+type AnimateMotionFontStyle string
+
+const (
+	AnimateMotionFontStyleItalic  AnimateMotionFontStyle = "italic"
+	AnimateMotionFontStyleNormal  AnimateMotionFontStyle = "normal"
+	AnimateMotionFontStyleOblique AnimateMotionFontStyle = "oblique"
 )
 
 type AnimateMotionImageRendering string
@@ -376,6 +305,66 @@ const (
 	AnimateMotionOverflowVisible AnimateMotionOverflow = "visible"
 )
 
+type AnimateMotionPointerEvents string
+
+const (
+	AnimateMotionPointerEventsAll            AnimateMotionPointerEvents = "all"
+	AnimateMotionPointerEventsAuto           AnimateMotionPointerEvents = "auto"
+	AnimateMotionPointerEventsBoundingBox    AnimateMotionPointerEvents = "bounding-box"
+	AnimateMotionPointerEventsFill           AnimateMotionPointerEvents = "fill"
+	AnimateMotionPointerEventsNone           AnimateMotionPointerEvents = "none"
+	AnimateMotionPointerEventsPainted        AnimateMotionPointerEvents = "painted"
+	AnimateMotionPointerEventsStroke         AnimateMotionPointerEvents = "stroke"
+	AnimateMotionPointerEventsVisible        AnimateMotionPointerEvents = "visible"
+	AnimateMotionPointerEventsVisibleFill    AnimateMotionPointerEvents = "visibleFill"
+	AnimateMotionPointerEventsVisiblePainted AnimateMotionPointerEvents = "visiblePainted"
+	AnimateMotionPointerEventsVisibleStroke  AnimateMotionPointerEvents = "visibleStroke"
+)
+
+type AnimateMotionShapeRendering string
+
+const (
+	AnimateMotionShapeRenderingAuto               AnimateMotionShapeRendering = "auto"
+	AnimateMotionShapeRenderingCrispEdges         AnimateMotionShapeRendering = "crispEdges"
+	AnimateMotionShapeRenderingGeometricPrecision AnimateMotionShapeRendering = "geometricPrecision"
+	AnimateMotionShapeRenderingOptimizeSpeed      AnimateMotionShapeRendering = "optimizeSpeed"
+)
+
+type AnimateMotionStrokeLinecap string
+
+const (
+	AnimateMotionStrokeLinecapButt   AnimateMotionStrokeLinecap = "butt"
+	AnimateMotionStrokeLinecapRound  AnimateMotionStrokeLinecap = "round"
+	AnimateMotionStrokeLinecapSquare AnimateMotionStrokeLinecap = "square"
+)
+
+type AnimateMotionStrokeLinejoin string
+
+const (
+	AnimateMotionStrokeLinejoinArcs      AnimateMotionStrokeLinejoin = "arcs"
+	AnimateMotionStrokeLinejoinBevel     AnimateMotionStrokeLinejoin = "bevel"
+	AnimateMotionStrokeLinejoinMiter     AnimateMotionStrokeLinejoin = "miter"
+	AnimateMotionStrokeLinejoinMiterClip AnimateMotionStrokeLinejoin = "miter-clip"
+	AnimateMotionStrokeLinejoinRound     AnimateMotionStrokeLinejoin = "round"
+)
+
+type AnimateMotionTextAnchor string
+
+const (
+	AnimateMotionTextAnchorEnd    AnimateMotionTextAnchor = "end"
+	AnimateMotionTextAnchorMiddle AnimateMotionTextAnchor = "middle"
+	AnimateMotionTextAnchorStart  AnimateMotionTextAnchor = "start"
+)
+
+type AnimateMotionTextRendering string
+
+const (
+	AnimateMotionTextRenderingAuto               AnimateMotionTextRendering = "auto"
+	AnimateMotionTextRenderingGeometricPrecision AnimateMotionTextRendering = "geometricPrecision"
+	AnimateMotionTextRenderingOptimizeLegibility AnimateMotionTextRendering = "optimizeLegibility"
+	AnimateMotionTextRenderingOptimizeSpeed      AnimateMotionTextRendering = "optimizeSpeed"
+)
+
 type AnimateMotionTransformBox string
 
 const (
@@ -386,11 +375,22 @@ const (
 	AnimateMotionTransformBoxViewBox    AnimateMotionTransformBox = "view-box"
 )
 
-type AnimateMotionDirection string
+type AnimateMotionVectorEffect string
 
 const (
-	AnimateMotionDirectionLtr AnimateMotionDirection = "ltr"
-	AnimateMotionDirectionRtl AnimateMotionDirection = "rtl"
+	AnimateMotionVectorEffectFixedPosition    AnimateMotionVectorEffect = "fixed-position"
+	AnimateMotionVectorEffectNonRotation      AnimateMotionVectorEffect = "non-rotation"
+	AnimateMotionVectorEffectNonScalingSize   AnimateMotionVectorEffect = "non-scaling-size"
+	AnimateMotionVectorEffectNonScalingStroke AnimateMotionVectorEffect = "non-scaling-stroke"
+	AnimateMotionVectorEffectNone             AnimateMotionVectorEffect = "none"
+)
+
+type AnimateMotionVisibility string
+
+const (
+	AnimateMotionVisibilityCollapse AnimateMotionVisibility = "collapse"
+	AnimateMotionVisibilityHidden   AnimateMotionVisibility = "hidden"
+	AnimateMotionVisibilityVisible  AnimateMotionVisibility = "visible"
 )
 
 type AnimateMotionWritingMode string
@@ -409,20 +409,39 @@ const (
 	AnimateMotionWritingModeVerticalRl   AnimateMotionWritingMode = "vertical-rl"
 )
 
-func (e *AnimateMotionElement) Href(s string) *AnimateMotionElement {
-	e.attributes.Set("href", s)
+type AnimateMotionXmlSpace string
+
+const (
+	AnimateMotionXmlSpaceDefault  AnimateMotionXmlSpace = "default"
+	AnimateMotionXmlSpacePreserve AnimateMotionXmlSpace = "preserve"
+)
+
+func (e *AnimateMotionElement) Accumulate(a AnimateMotionAccumulate) *AnimateMotionElement {
+	e.attributes.Set("accumulate", string(a))
 
 	return e
 }
 
-func (e *AnimateMotionElement) XlinkHref(s string) *AnimateMotionElement {
-	e.attributes.Set("xlink:href", s)
+func (e *AnimateMotionElement) Additive(a AnimateMotionAdditive) *AnimateMotionElement {
+	e.attributes.Set("additive", string(a))
 
 	return e
 }
 
 func (e *AnimateMotionElement) Begin(s string) *AnimateMotionElement {
 	e.attributes.Set("begin", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) By(s string) *AnimateMotionElement {
+	e.attributes.Set("by", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) CalcMode(a AnimateMotionCalcMode) *AnimateMotionElement {
+	e.attributes.Set("calcMode", string(a))
 
 	return e
 }
@@ -439,8 +458,40 @@ func (e *AnimateMotionElement) End(s string) *AnimateMotionElement {
 	return e
 }
 
-func (e *AnimateMotionElement) Min(s string) *AnimateMotionElement {
-	e.attributes.Set("min", s)
+func (e *AnimateMotionElement) Fill(a AnimateMotionFill) *AnimateMotionElement {
+	e.attributes.Set("fill", string(a))
+
+	return e
+}
+
+func (e *AnimateMotionElement) From(s string) *AnimateMotionElement {
+	e.attributes.Set("from", s)
+
+	return e
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *AnimateMotionElement) Href(s string) *AnimateMotionElement {
+	e.attributes.Set("href", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) KeyPoints(s string) *AnimateMotionElement {
+	e.attributes.Set("keyPoints", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) KeySplines(s string) *AnimateMotionElement {
+	e.attributes.Set("keySplines", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) KeyTimes(s string) *AnimateMotionElement {
+	e.attributes.Set("keyTimes", s)
 
 	return e
 }
@@ -451,8 +502,20 @@ func (e *AnimateMotionElement) Max(s string) *AnimateMotionElement {
 	return e
 }
 
-func (e *AnimateMotionElement) Restart(a AnimateMotionRestart) *AnimateMotionElement {
-	e.attributes.Set("restart", string(a))
+func (e *AnimateMotionElement) Min(s string) *AnimateMotionElement {
+	e.attributes.Set("min", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Origin(s string) *AnimateMotionElement {
+	e.attributes.Set("origin", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Path(s string) *AnimateMotionElement {
+	e.attributes.Set("path", s)
 
 	return e
 }
@@ -469,68 +532,8 @@ func (e *AnimateMotionElement) RepeatDur(s string) *AnimateMotionElement {
 	return e
 }
 
-func (e *AnimateMotionElement) From(s string) *AnimateMotionElement {
-	e.attributes.Set("from", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) To(s string) *AnimateMotionElement {
-	e.attributes.Set("to", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) By(s string) *AnimateMotionElement {
-	e.attributes.Set("by", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Values(s string) *AnimateMotionElement {
-	e.attributes.Set("values", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) CalcMode(a AnimateMotionCalcMode) *AnimateMotionElement {
-	e.attributes.Set("calcMode", string(a))
-
-	return e
-}
-
-func (e *AnimateMotionElement) KeyTimes(s string) *AnimateMotionElement {
-	e.attributes.Set("keyTimes", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) KeySplines(s string) *AnimateMotionElement {
-	e.attributes.Set("keySplines", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Additive(a AnimateMotionAdditive) *AnimateMotionElement {
-	e.attributes.Set("additive", string(a))
-
-	return e
-}
-
-func (e *AnimateMotionElement) Accumulate(a AnimateMotionAccumulate) *AnimateMotionElement {
-	e.attributes.Set("accumulate", string(a))
-
-	return e
-}
-
-func (e *AnimateMotionElement) Path(s string) *AnimateMotionElement {
-	e.attributes.Set("path", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) KeyPoints(s string) *AnimateMotionElement {
-	e.attributes.Set("keyPoints", s)
+func (e *AnimateMotionElement) Restart(a AnimateMotionRestart) *AnimateMotionElement {
+	e.attributes.Set("restart", string(a))
 
 	return e
 }
@@ -541,8 +544,60 @@ func (e *AnimateMotionElement) Rotate(s string) *AnimateMotionElement {
 	return e
 }
 
-func (e *AnimateMotionElement) Id(s string) *AnimateMotionElement {
-	e.attributes.Set("id", s)
+func (e *AnimateMotionElement) SystemLanguage(s string) *AnimateMotionElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) To(s string) *AnimateMotionElement {
+	e.attributes.Set("to", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Values(s string) *AnimateMotionElement {
+	e.attributes.Set("values", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) AlignmentBaseline(a AnimateMotionAlignmentBaseline) *AnimateMotionElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func AnimateMotionAlignmentBaselineCustom(s string) AnimateMotionAlignmentBaseline {
+	return AnimateMotionAlignmentBaseline(s)
+}
+
+func (e *AnimateMotionElement) AriaUnsafe(name string, s string) *AnimateMotionElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Aria(name string, s string) *AnimateMotionElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AnimateMotionElement) Autofocus(b bool) *AnimateMotionElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *AnimateMotionElement) BaselineShift(s string) *AnimateMotionElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -553,40 +608,59 @@ func (e *AnimateMotionElement) Class(s ...string) *AnimateMotionElement {
 	return e
 }
 
-func (e *AnimateMotionElement) Style(s string) *AnimateMotionElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateMotionElement) Clip(s string) *AnimateMotionElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) Tabindex(i int) *AnimateMotionElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *AnimateMotionElement) ClipPath(s string) *AnimateMotionElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) Lang(s string) *AnimateMotionElement {
-	e.attributes.Set("lang", s)
+func (e *AnimateMotionElement) ClipRule(a AnimateMotionClipRule) *AnimateMotionElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *AnimateMotionElement) XmlLang(s string) *AnimateMotionElement {
-	e.attributes.Set("xml:lang", s)
+func AnimateMotionClipRuleCustom(s string) AnimateMotionClipRule {
+	return AnimateMotionClipRule(s)
+}
+
+func (e *AnimateMotionElement) Color(s string) *AnimateMotionElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) XmlSpace(a AnimateMotionXmlSpace) *AnimateMotionElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *AnimateMotionElement) ColorInterpolation(a AnimateMotionColorInterpolation) *AnimateMotionElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AnimateMotionElement) Autofocus(b bool) *AnimateMotionElement {
-	e.attributes.SetBool("autofocus", b)
+func AnimateMotionColorInterpolationCustom(s string) AnimateMotionColorInterpolation {
+	return AnimateMotionColorInterpolation(s)
+}
+
+func (e *AnimateMotionElement) ColorInterpolationFilters(a AnimateMotionColorInterpolationFilters) *AnimateMotionElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func AnimateMotionColorInterpolationFiltersCustom(s string) AnimateMotionColorInterpolationFilters {
+	return AnimateMotionColorInterpolationFilters(s)
+}
+
+func (e *AnimateMotionElement) Cursor(s string) *AnimateMotionElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -607,26 +681,30 @@ func (e *AnimateMotionElement) Data(name string, s string) *AnimateMotionElement
 	return e
 }
 
-func (e *AnimateMotionElement) AriaUnsafe(name string, s string) *AnimateMotionElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *AnimateMotionElement) Direction(a AnimateMotionDirection) *AnimateMotionElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *AnimateMotionElement) Aria(name string, s string) *AnimateMotionElement {
-	tag := strings.ToLower("aria-" + name)
+func AnimateMotionDirectionCustom(s string) AnimateMotionDirection {
+	return AnimateMotionDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *AnimateMotionElement) Display(s string) *AnimateMotionElement {
+	e.attributes.Set("display", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) Fill(s string) *AnimateMotionElement {
-	e.attributes.Set("fill", s)
+func (e *AnimateMotionElement) DominantBaseline(a AnimateMotionDominantBaseline) *AnimateMotionElement {
+	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
+}
+
+func AnimateMotionDominantBaselineCustom(s string) AnimateMotionDominantBaseline {
+	return AnimateMotionDominantBaseline(s)
 }
 
 func (e *AnimateMotionElement) FillOpacity(f float64) *AnimateMotionElement {
@@ -645,20 +723,220 @@ func AnimateMotionFillRuleCustom(s string) AnimateMotionFillRule {
 	return AnimateMotionFillRule(s)
 }
 
+func (e *AnimateMotionElement) Filter(s string) *AnimateMotionElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FloodColor(s string) *AnimateMotionElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FloodOpacity(f float64) *AnimateMotionElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontFamily(s string) *AnimateMotionElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontSize(s string) *AnimateMotionElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontSizeAdjust(s string) *AnimateMotionElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontStretch(s string) *AnimateMotionElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontStyle(a AnimateMotionFontStyle) *AnimateMotionElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func AnimateMotionFontStyleCustom(s string) AnimateMotionFontStyle {
+	return AnimateMotionFontStyle(s)
+}
+
+func (e *AnimateMotionElement) FontVariant(s string) *AnimateMotionElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) FontWeight(s string) *AnimateMotionElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateMotionElement) GlyphOrientationHorizontal(s string) *AnimateMotionElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateMotionElement) GlyphOrientationVertical(s string) *AnimateMotionElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Id(s string) *AnimateMotionElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) ImageRendering(a AnimateMotionImageRendering) *AnimateMotionElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func AnimateMotionImageRenderingCustom(s string) AnimateMotionImageRendering {
+	return AnimateMotionImageRendering(s)
+}
+
+func (e *AnimateMotionElement) Lang(s string) *AnimateMotionElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) LetterSpacing(s string) *AnimateMotionElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) LightingColor(s string) *AnimateMotionElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) MarkerEnd(s string) *AnimateMotionElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) MarkerMid(s string) *AnimateMotionElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) MarkerStart(s string) *AnimateMotionElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Mask(s string) *AnimateMotionElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) Opacity(f float64) *AnimateMotionElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AnimateMotionElement) Overflow(a AnimateMotionOverflow) *AnimateMotionElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func AnimateMotionOverflowCustom(s string) AnimateMotionOverflow {
+	return AnimateMotionOverflow(s)
+}
+
+func (e *AnimateMotionElement) PaintOrder(s string) *AnimateMotionElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) PointerEvents(a AnimateMotionPointerEvents) *AnimateMotionElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func AnimateMotionPointerEventsCustom(s string) AnimateMotionPointerEvents {
+	return AnimateMotionPointerEvents(s)
+}
+
+func (e *AnimateMotionElement) RequiredExtensions(s string) *AnimateMotionElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) ShapeRendering(a AnimateMotionShapeRendering) *AnimateMotionElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func AnimateMotionShapeRenderingCustom(s string) AnimateMotionShapeRendering {
+	return AnimateMotionShapeRendering(s)
+}
+
+func (e *AnimateMotionElement) StopColor(s string) *AnimateMotionElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) StopOpacity(f float64) *AnimateMotionElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *AnimateMotionElement) Stroke(s string) *AnimateMotionElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) StrokeWidth(s string) *AnimateMotionElement {
-	e.attributes.Set("stroke-width", s)
+func (e *AnimateMotionElement) StrokeDasharray(s string) *AnimateMotionElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) StrokeOpacity(f float64) *AnimateMotionElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AnimateMotionElement) StrokeDashoffset(s string) *AnimateMotionElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -689,210 +967,28 @@ func (e *AnimateMotionElement) StrokeMiterlimit(f float64) *AnimateMotionElement
 	return e
 }
 
-func (e *AnimateMotionElement) StrokeDasharray(s string) *AnimateMotionElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *AnimateMotionElement) StrokeOpacity(f float64) *AnimateMotionElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *AnimateMotionElement) StrokeDashoffset(s string) *AnimateMotionElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *AnimateMotionElement) StrokeWidth(s string) *AnimateMotionElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) Opacity(f float64) *AnimateMotionElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AnimateMotionElement) Style(s string) *AnimateMotionElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *AnimateMotionElement) Color(s string) *AnimateMotionElement {
-	e.attributes.Set("color", s)
+func (e *AnimateMotionElement) Tabindex(i int) *AnimateMotionElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *AnimateMotionElement) Display(s string) *AnimateMotionElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Visibility(a AnimateMotionVisibility) *AnimateMotionElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func AnimateMotionVisibilityCustom(s string) AnimateMotionVisibility {
-	return AnimateMotionVisibility(s)
-}
-
-func (e *AnimateMotionElement) ClipPath(s string) *AnimateMotionElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) ClipRule(a AnimateMotionClipRule) *AnimateMotionElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func AnimateMotionClipRuleCustom(s string) AnimateMotionClipRule {
-	return AnimateMotionClipRule(s)
-}
-
-func (e *AnimateMotionElement) Mask(s string) *AnimateMotionElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Filter(s string) *AnimateMotionElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) Cursor(s string) *AnimateMotionElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) PointerEvents(a AnimateMotionPointerEvents) *AnimateMotionElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func AnimateMotionPointerEventsCustom(s string) AnimateMotionPointerEvents {
-	return AnimateMotionPointerEvents(s)
-}
-
-func (e *AnimateMotionElement) VectorEffect(a AnimateMotionVectorEffect) *AnimateMotionElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func AnimateMotionVectorEffectCustom(s string) AnimateMotionVectorEffect {
-	return AnimateMotionVectorEffect(s)
-}
-
-func (e *AnimateMotionElement) PaintOrder(s string) *AnimateMotionElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) ShapeRendering(a AnimateMotionShapeRendering) *AnimateMotionElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func AnimateMotionShapeRenderingCustom(s string) AnimateMotionShapeRendering {
-	return AnimateMotionShapeRendering(s)
-}
-
-func (e *AnimateMotionElement) ColorInterpolation(a AnimateMotionColorInterpolation) *AnimateMotionElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func AnimateMotionColorInterpolationCustom(s string) AnimateMotionColorInterpolation {
-	return AnimateMotionColorInterpolation(s)
-}
-
-func (e *AnimateMotionElement) ColorInterpolationFilters(a AnimateMotionColorInterpolationFilters) *AnimateMotionElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func AnimateMotionColorInterpolationFiltersCustom(s string) AnimateMotionColorInterpolationFilters {
-	return AnimateMotionColorInterpolationFilters(s)
-}
-
-func (e *AnimateMotionElement) FloodColor(s string) *AnimateMotionElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) FloodOpacity(f float64) *AnimateMotionElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AnimateMotionElement) LightingColor(s string) *AnimateMotionElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) StopColor(s string) *AnimateMotionElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) StopOpacity(f float64) *AnimateMotionElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AnimateMotionElement) MarkerStart(s string) *AnimateMotionElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) MarkerMid(s string) *AnimateMotionElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) MarkerEnd(s string) *AnimateMotionElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) FontFamily(s string) *AnimateMotionElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) FontSize(s string) *AnimateMotionElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) FontWeight(s string) *AnimateMotionElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) FontStyle(a AnimateMotionFontStyle) *AnimateMotionElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func AnimateMotionFontStyleCustom(s string) AnimateMotionFontStyle {
-	return AnimateMotionFontStyle(s)
 }
 
 func (e *AnimateMotionElement) TextAnchor(a AnimateMotionTextAnchor) *AnimateMotionElement {
@@ -905,40 +1001,14 @@ func AnimateMotionTextAnchorCustom(s string) AnimateMotionTextAnchor {
 	return AnimateMotionTextAnchor(s)
 }
 
-func (e *AnimateMotionElement) DominantBaseline(a AnimateMotionDominantBaseline) *AnimateMotionElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func AnimateMotionDominantBaselineCustom(s string) AnimateMotionDominantBaseline {
-	return AnimateMotionDominantBaseline(s)
-}
-
-func (e *AnimateMotionElement) AlignmentBaseline(a AnimateMotionAlignmentBaseline) *AnimateMotionElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func AnimateMotionAlignmentBaselineCustom(s string) AnimateMotionAlignmentBaseline {
-	return AnimateMotionAlignmentBaseline(s)
-}
-
-func (e *AnimateMotionElement) LetterSpacing(s string) *AnimateMotionElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *AnimateMotionElement) WordSpacing(s string) *AnimateMotionElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *AnimateMotionElement) TextDecoration(s string) *AnimateMotionElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) TextOverflow(s string) *AnimateMotionElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -953,24 +1023,10 @@ func AnimateMotionTextRenderingCustom(s string) AnimateMotionTextRendering {
 	return AnimateMotionTextRendering(s)
 }
 
-func (e *AnimateMotionElement) ImageRendering(a AnimateMotionImageRendering) *AnimateMotionElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *AnimateMotionElement) Transform(s string) *AnimateMotionElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func AnimateMotionImageRenderingCustom(s string) AnimateMotionImageRendering {
-	return AnimateMotionImageRendering(s)
-}
-
-func (e *AnimateMotionElement) Overflow(a AnimateMotionOverflow) *AnimateMotionElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func AnimateMotionOverflowCustom(s string) AnimateMotionOverflow {
-	return AnimateMotionOverflow(s)
 }
 
 func (e *AnimateMotionElement) TransformBox(a AnimateMotionTransformBox) *AnimateMotionElement {
@@ -983,18 +1039,46 @@ func AnimateMotionTransformBoxCustom(s string) AnimateMotionTransformBox {
 	return AnimateMotionTransformBox(s)
 }
 
-func (e *AnimateMotionElement) Direction(a AnimateMotionDirection) *AnimateMotionElement {
-	e.attributes.Set("direction", string(a))
+func (e *AnimateMotionElement) TransformOrigin(s string) *AnimateMotionElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func AnimateMotionDirectionCustom(s string) AnimateMotionDirection {
-	return AnimateMotionDirection(s)
-}
-
 func (e *AnimateMotionElement) UnicodeBidi(s string) *AnimateMotionElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) VectorEffect(a AnimateMotionVectorEffect) *AnimateMotionElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func AnimateMotionVectorEffectCustom(s string) AnimateMotionVectorEffect {
+	return AnimateMotionVectorEffect(s)
+}
+
+func (e *AnimateMotionElement) Visibility(a AnimateMotionVisibility) *AnimateMotionElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func AnimateMotionVisibilityCustom(s string) AnimateMotionVisibility {
+	return AnimateMotionVisibility(s)
+}
+
+func (e *AnimateMotionElement) WhiteSpace(s string) *AnimateMotionElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *AnimateMotionElement) WordSpacing(s string) *AnimateMotionElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -1009,8 +1093,20 @@ func AnimateMotionWritingModeCustom(s string) AnimateMotionWritingMode {
 	return AnimateMotionWritingMode(s)
 }
 
-func (e *AnimateMotionElement) WhiteSpace(s string) *AnimateMotionElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateMotionElement) XmlLang(s string) *AnimateMotionElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateMotionElement) XmlSpace(a AnimateMotionXmlSpace) *AnimateMotionElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

@@ -2,43 +2,224 @@
   "name": "HTML",
   "elements": [
     {
-      "tag": "html",
-      "description": "The html element represents the root of an HTML document."
-    },
-    {
-      "tag": "head",
-      "description": "The head element represents a collection of metadata for the Document."
-    },
-    {
-      "tag": "title",
-      "description": "The title element represents the document's title or name. Authors should use titles that identify their documents even when they are used out of context, for example in a user's history or bookmarks, or in search results. The document's title is often different from its first heading, since the first heading does not have to stand alone when taken out of context.",
-      "text": true
-    },
-    {
-      "tag": "base",
-      "description": "The base element allows authors to specify the document base URL for the purposes of parsing URLs, and the name of the default navigable for the purposes of following hyperlinks. The element does not represent any content beyond this information.",
+      "tag": "a",
+      "description": "If the a element has an href attribute, then it represents a hyperlink (a hypertext anchor) labeled by its contents.",
       "attributes": [
         {
-          "name": "href",
-          "description": "Document base URL",
-          "attribute_type": "AttributeTypeString"
+          "name": "download",
+          "description": "Whether to download the resource instead of navigating to it, and its filename if so",
+          "allowed": {},
+          "allow_empty": true,
+          "allow_custom": true,
+          "attribute_type": "AttributeTypeEnum"
         },
-        {
-          "name": "target",
-          "description": "Default navigable for hyperlink navigation and form submission",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "link",
-      "description": "The link element allows authors to link their document to other resources.",
-      "attributes": [
         {
           "name": "href",
           "description": "Address of the hyperlink",
+          "url": true,
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "hreflang",
+          "description": "Language of the linked resource",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "ping",
+          "description": "URLs to ping",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rel",
+          "description": "Relationship between the location in the document containing the hyperlink and the destination resource",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "target",
+          "description": "Navigable for hyperlink navigation",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Hint for the type of the referenced resource",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLAnchorElement",
+      "categories": [
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "abbr",
+      "description": "The abbr element represents an abbreviation or acronym, optionally with its expansion. The title attribute may be used to provide an expansion of the abbreviation. The attribute, if specified, must contain an expansion of the abbreviation, and nothing else.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "address",
+      "description": "The address element represents the contact information for its nearest article or body element ancestor. If that is the body element, then the contact information applies to the document as a whole.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "area",
+      "description": "The area element represents either a hyperlink with some text and a corresponding area on an image map, or a dead area on an image map.",
+      "attributes": [
+        {
+          "name": "alt",
+          "description": "Replacement text for use when images are not available",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "coords",
+          "description": "Coordinates for the shape to be created in an image map",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "download",
+          "description": "Whether to download the resource instead of navigating to it, and its filename if so",
+          "allowed": {},
+          "allow_empty": true,
+          "allow_custom": true,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "Address of the hyperlink",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "hreflang",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "ping",
+          "description": "URLs to ping",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rel",
+          "description": "Relationship between the location in the document containing the hyperlink and the destination resource",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "shape",
+          "description": "The kind of shape to be created in an image map",
+          "allowed": {
+            "circle": {},
+            "default": {},
+            "poly": {},
+            "rect": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "target",
+          "description": "Navigable for hyperlink navigation",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLAreaElement",
+      "categories": [
+        "flow",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "article",
+      "description": "The article element represents a complete, or self-contained, composition in a document, page, application, or site and that is, in principle, independently distributable or reusable, e.g. in syndication. This could be a forum post, a magazine or newspaper article, a blog entry, a user-submitted comment, an interactive widget or gadget, or any other independent item of content.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "sectioning"
+      ]
+    },
+    {
+      "tag": "aside",
+      "description": "The aside element represents a section of a page that consists of content that is tangentially related to the content around the aside element, and which could be considered separate from that content. Such sections are often represented as sidebars in printed typography.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "sectioning"
+      ]
+    },
+    {
+      "tag": "audio",
+      "description": "An audio element represents a sound or audio stream.",
+      "attributes": [
+        {
+          "name": "autoplay",
+          "description": "Hint that the media resource can be started automatically when the page is loaded",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "controls",
+          "description": "Show user agent controls",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "controlslist",
+          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "crossorigin",
@@ -52,149 +233,131 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "rel",
-          "description": "Relationship between the document containing the hyperlink and the destination resource",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "media",
-          "description": "Applicable media",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "integrity",
-          "description": "Integrity metadata used in Subresource Integrity checks [SRI]",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "hreflang",
-          "description": "Language of the linked resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "type",
-          "description": "Hint for the type of the referenced resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "sizes",
-          "description": "Sizes of the icons (for rel=\"icon\")",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "imagesrcset",
-          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc. (for rel=\"preload\")",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "imagesizes",
-          "description": "Image sizes for different page layouts (for rel=\"preload\")",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "as",
-          "description": "Potential destination for a preload request (for rel=\"preload\" and rel=\"modulepreload\")",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "blocking",
-          "description": "Whether the element is potentially render-blocking",
-          "allowed": {
-            "render": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "color",
-          "description": "Color to use when customizing a site's icon (for rel=\"mask-icon\")",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "disabled",
-          "description": "Whether the link is disabled",
+          "name": "disableremoteplayback",
           "attribute_type": "AttributeTypeBool"
         },
         {
-          "name": "fetchpriority",
-          "description": "Sets the priority for fetches initiated by the element",
+          "name": "loading",
+          "description": "Used when determining loading deferral",
+          "allowed": {
+            "eager": {},
+            "lazy": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "loop",
+          "description": "Whether to loop the media resource",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "muted",
+          "description": "Whether to mute the media resource by default",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "preload",
+          "description": "Hints how much buffering the media resource will likely need",
           "allowed": {
             "auto": {},
-            "high": {},
-            "low": {}
+            "metadata": {},
+            "none": {}
           },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "meta",
-      "description": "The meta element represents various kinds of metadata that cannot be expressed using the title, base, link, style, and script elements.",
-      "attributes": [
-        {
-          "name": "name",
-          "description": "Metadata name",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "http-equiv",
-          "description": "Pragma directive",
-          "allowed": {
-            "content-language": {},
-            "content-security-policy": {},
-            "content-type": {},
-            "default-style": {},
-            "refresh": {},
-            "set-cookie": {},
-            "x-ua-compatible": {}
-          },
-          "allow_empty": false,
+          "allow_empty": true,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "content",
-          "description": "Value of the element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "charset",
-          "description": "Character encoding declaration",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "media",
-          "description": "Applicable media",
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": true
+      "text": true,
+      "interface": "HTMLAudioElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
     },
     {
-      "tag": "style",
-      "description": "The style element allows authors to embed CSS style sheets in their documents. The style element is one of several inputs to the styling processing model. The element does not represent content for the user.",
+      "tag": "b",
+      "description": "The b element represents a span of text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood, such as key words in a document abstract, product names in a review, actionable words in interactive text-driven software, or an article lede.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "base",
+      "description": "The base element allows authors to specify the document base URL for the purposes of parsing URLs, and the name of the default navigable for the purposes of following hyperlinks. The element does not represent any content beyond this information.",
       "attributes": [
         {
-          "name": "media",
-          "description": "Applicable media",
+          "name": "href",
+          "description": "Document base URL",
+          "url": true,
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "blocking",
-          "description": "Whether the element is potentially render-blocking",
+          "name": "target",
+          "description": "Default navigable for hyperlink navigation and form submission",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "text": true
+      "void": true,
+      "interface": "HTMLBaseElement",
+      "categories": [
+        "metadata"
+      ]
+    },
+    {
+      "tag": "bdi",
+      "description": "The bdi element represents a span of text that is to be isolated from its surroundings for the purposes of bidirectional text formatting. [BIDI]",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "bdo",
+      "description": "The bdo element represents explicit text directionality formatting control for its children. It allows authors to override the Unicode bidirectional algorithm by explicitly specifying a direction override. [BIDI]",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "blockquote",
+      "description": "The blockquote element represents a section that is quoted from another source.",
+      "attributes": [
+        {
+          "name": "cite",
+          "description": "Content inside a blockquote must be quoted from another source, whose address, if it has one, may be cited in the cite attribute.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLQuoteElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
     },
     {
       "tag": "body",
@@ -237,10 +400,6 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "onpageswap",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "onpagehide",
           "attribute_type": "AttributeTypeString"
         },
@@ -250,6 +409,10 @@
         },
         {
           "name": "onpageshow",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "onpageswap",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -273,1311 +436,18 @@
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "text": true
-    },
-    {
-      "tag": "article",
-      "description": "The article element represents a complete, or self-contained, composition in a document, page, application, or site and that is, in principle, independently distributable or reusable, e.g. in syndication. This could be a forum post, a magazine or newspaper article, a blog entry, a user-submitted comment, an interactive widget or gadget, or any other independent item of content.",
-      "text": true
-    },
-    {
-      "tag": "section",
-      "description": "The section element represents a generic section of a document or application. A section, in this context, is a thematic grouping of content, typically with a heading.",
-      "text": true
-    },
-    {
-      "tag": "nav",
-      "description": "The nav element represents a section of a page that links to other pages or to parts within the page: a section with navigation links.",
-      "text": true
-    },
-    {
-      "tag": "aside",
-      "description": "The aside element represents a section of a page that consists of content that is tangentially related to the content around the aside element, and which could be considered separate from that content. Such sections are often represented as sidebars in printed typography.",
-      "text": true
-    },
-    {
-      "tag": "h1",
-      "description": "These elements represent headings for their sections.",
-      "text": true
-    },
-    {
-      "tag": "hgroup",
-      "description": "The hgroup element represents a heading and related content. The element may be used to group an h1–h6 element with one or more p elements containing content representing a subheading, alternative title, or tagline.",
-      "text": true
-    },
-    {
-      "tag": "header",
-      "description": "The header element represents a group of introductory or navigational aids.",
-      "text": true
-    },
-    {
-      "tag": "footer",
-      "description": "The footer element represents a footer for its nearest ancestor sectioning content element, or for the body element if there is no such ancestor. A footer typically contains information about its section such as who wrote it, links to related documents, copyright data, and the like.",
-      "text": true
-    },
-    {
-      "tag": "address",
-      "description": "The address element represents the contact information for its nearest article or body element ancestor. If that is the body element, then the contact information applies to the document as a whole.",
-      "text": true
-    },
-    {
-      "tag": "p",
-      "description": "The p element represents a paragraph.",
-      "text": true
-    },
-    {
-      "tag": "hr",
-      "description": "The hr element represents a paragraph-level thematic break, e.g., a scene change in a story, or a transition to another topic within a section of a reference book; alternatively, it represents a separator between a set of options of a select element.",
-      "void": true
-    },
-    {
-      "tag": "pre",
-      "description": "The pre element represents a block of preformatted text, in which structure is represented by typographic conventions rather than by elements.",
-      "text": true
-    },
-    {
-      "tag": "blockquote",
-      "description": "The blockquote element represents a section that is quoted from another source.",
-      "attributes": [
-        {
-          "name": "cite",
-          "description": "Content inside a blockquote must be quoted from another source, whose address, if it has one, may be cited in the cite attribute.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "ol",
-      "description": "The ol element represents a list of items, where the items have been intentionally ordered, such that changing the order would change the meaning of the document.",
-      "attributes": [
-        {
-          "name": "reversed",
-          "description": "Number the list backwards",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "start",
-          "description": "The start attribute, if present, must be a valid integer. It is used to determine the starting value of the list.",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "type",
-          "description": "The type attribute can be used to specify the kind of marker to use in the list, in the cases where that matters (e.g. because items are to be referenced by their number/letter).",
-          "attribute_type": "AttributeTypeChar"
-        }
-      ]
-    },
-    {
-      "tag": "ul",
-      "description": "The ul element represents a list of items, where the order of the items is not important — that is, where changing the order would not materially change the meaning of the document."
-    },
-    {
-      "tag": "menu",
-      "description": "The menu element represents a toolbar consisting of its contents, in the form of an unordered list of items (represented by li elements), each of which represents a command that the user can perform or activate."
-    },
-    {
-      "tag": "li",
-      "description": "The li element represents a list item. If its parent element is an ol, ul, or menu element, then the element is an item of the parent element's list, as defined for those elements. Otherwise, the list item has no defined list-related relationship to any other li element.",
-      "attributes": [
-        {
-          "name": "value",
-          "description": "If the element is not a child of an ul or menu element: value — Ordinal value of the list item",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "dl",
-      "description": "The dl element represents an association list consisting of zero or more name-value groups (a description list). A name-value group consists of one or more names (dt elements, possibly as children of a div element child) followed by one or more values (dd elements, possibly as children of a div element child), ignoring any nodes other than dt and dd element children, and dt and dd elements that are children of div element children. Within a single dl element, there should not be more than one dt element for each name."
-    },
-    {
-      "tag": "dt",
-      "description": "The dt element represents the term, or name, part of a term-description group in a description list (dl element).",
-      "text": true
-    },
-    {
-      "tag": "dd",
-      "description": "The dd element represents the description, definition, or value, part of a term-description group in a description list (dl element).",
-      "text": true
-    },
-    {
-      "tag": "figure",
-      "description": "The figure element represents some flow content, optionally with a caption, that is self-contained (like a complete sentence) and is typically referenced as a single unit from the main flow of the document.",
-      "text": true
-    },
-    {
-      "tag": "figcaption",
-      "description": "The figcaption element represents a caption or legend for the rest of the contents of the figcaption element's parent figure element, if any.",
-      "text": true
-    },
-    {
-      "tag": "main",
-      "description": "The main element represents the dominant contents of the document.",
-      "text": true
-    },
-    {
-      "tag": "search",
-      "description": "The search element represents a part of a document or application that contains a set of form controls or other content related to performing a search or filtering operation. This could be a search of the web site or application; a way of searching or filtering search results on the current web page; or a global or Internet-wide search function.",
-      "text": true
-    },
-    {
-      "tag": "div",
-      "description": "The div element has no special meaning at all. It represents its children. It can be used with the class, lang, and title attributes to mark up semantics common to a group of consecutive elements. It can also be used in a dl element, wrapping groups of dt and dd elements.",
-      "text": true
-    },
-    {
-      "tag": "a",
-      "description": "If the a element has an href attribute, then it represents a hyperlink (a hypertext anchor) labeled by its contents.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Address of the hyperlink",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "target",
-          "description": "Navigable for hyperlink navigation",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "download",
-          "description": "Whether to download the resource instead of navigating to it, and its filename if so",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "ping",
-          "description": "URLs to ping",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "rel",
-          "description": "Relationship between the location in the document containing the hyperlink and the destination resource",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "hreflang",
-          "description": "Language of the linked resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "type",
-          "description": "Hint for the type of the referenced resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "em",
-      "description": "The em element represents stress emphasis of its contents.",
-      "text": true
-    },
-    {
-      "tag": "strong",
-      "description": "The strong element represents strong importance, seriousness, or urgency for its contents.",
-      "text": true
-    },
-    {
-      "tag": "small",
-      "description": "The small element represents side comments such as small print.",
-      "text": true
-    },
-    {
-      "tag": "s",
-      "description": "The s element represents contents that are no longer accurate or no longer relevant.",
-      "text": true
-    },
-    {
-      "tag": "cite",
-      "description": "The cite element represents the title of a work (e.g. a book, a paper, an essay, a poem, a score, a song, a script, a film, a TV show, a game, a sculpture, a painting, a theatre production, a play, an opera, a musical, an exhibition, a legal case report, a computer program,  etc.). This can be a work that is being quoted or referenced in detail (i.e., a citation), or it can just be a work that is mentioned in passing.",
-      "text": true
-    },
-    {
-      "tag": "q",
-      "description": "The q element represents some phrasing content quoted from another source.",
-      "attributes": [
-        {
-          "name": "cite",
-          "description": "Link to the source of the quotation or more information about the edit",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "dfn",
-      "description": "The dfn element represents the defining instance of a term. The paragraph, description list group, or section that is the nearest ancestor of the dfn element must also contain the definition(s) for the term given by the dfn element.",
-      "text": true
-    },
-    {
-      "tag": "abbr",
-      "description": "The abbr element represents an abbreviation or acronym, optionally with its expansion. The title attribute may be used to provide an expansion of the abbreviation. The attribute, if specified, must contain an expansion of the abbreviation, and nothing else.",
-      "text": true
-    },
-    {
-      "tag": "ruby",
-      "description": "The ruby element allows one or more spans of phrasing content to be marked with ruby annotations. Ruby annotations are short runs of text presented alongside base text, primarily used in East Asian typography as a guide for pronunciation or to include other annotations. In Japanese, this form of typography is also known as furigana."
-    },
-    {
-      "tag": "rt",
-      "description": "The rt element marks the ruby text component of a ruby annotation. When it is the child of a ruby element, it doesn't represent anything itself, but the ruby element uses it as part of determining what it represents.",
-      "text": true
-    },
-    {
-      "tag": "rp",
-      "description": "The rp element can be used to provide parentheses or other content around a ruby text component of a ruby annotation, to be shown by user agents that don't support ruby annotations.",
-      "text": true
-    },
-    {
-      "tag": "data",
-      "description": "The data element represents its contents, along with a machine-readable form of those contents in the value attribute.",
-      "attributes": [
-        {
-          "name": "value",
-          "description": "Machine-readable value",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "time",
-      "description": "The time element represents its contents, along with a machine-readable form of those contents in the datetime attribute. The kind of content is limited to various kinds of dates, times, time-zone offsets, and durations, as described below.",
-      "attributes": [
-        {
-          "name": "datetime",
-          "description": "Machine-readable value",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "code",
-      "description": "The code element represents a fragment of computer code. This could be an XML element name, a filename, a computer program, or any other string that a computer would recognize.",
-      "text": true
-    },
-    {
-      "tag": "var",
-      "description": "The var element represents a variable. This could be an actual variable in a mathematical expression or programming context, an identifier representing a constant, a symbol identifying a physical quantity, a function parameter, or just be a term used as a placeholder in prose.",
-      "text": true
-    },
-    {
-      "tag": "samp",
-      "description": "The samp element represents sample or quoted output from another program or computing system.",
-      "text": true
-    },
-    {
-      "tag": "kbd",
-      "description": "The kbd element represents user input (typically keyboard input, although it may also be used to represent other input, such as voice commands).",
-      "text": true
-    },
-    {
-      "tag": "sub",
-      "description": "The sup element represents a superscript and the sub element represents a subscript.",
-      "text": true
-    },
-    {
-      "tag": "i",
-      "description": "The i element represents a span of text in an alternate voice or mood, or otherwise offset from the normal prose in a manner indicating a different quality of text, such as a taxonomic designation, a technical term, an idiomatic phrase from another language, transliteration, a thought, or a ship name in Western texts.",
-      "text": true
-    },
-    {
-      "tag": "b",
-      "description": "The b element represents a span of text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood, such as key words in a document abstract, product names in a review, actionable words in interactive text-driven software, or an article lede.",
-      "text": true
-    },
-    {
-      "tag": "u",
-      "description": "The u element represents a span of text with an unarticulated, though explicitly rendered, non-textual annotation, such as labeling the text as being a proper name in Chinese text (a Chinese proper name mark), or labeling the text as being misspelt.",
-      "text": true
-    },
-    {
-      "tag": "mark",
-      "description": "The mark element represents a run of text in one document marked or highlighted for reference purposes, due to its relevance in another context. When used in a quotation or other block of text referred to from the prose, it indicates a highlight that was not originally present but which has been added to bring the reader's attention to a part of the text that might not have been considered important by the original author when the block was originally written, but which is now under previously unexpected scrutiny. When used in the main prose of a document, it indicates a part of the document that has been highlighted due to its likely relevance to the user's current activity.",
-      "text": true
-    },
-    {
-      "tag": "bdi",
-      "description": "The bdi element represents a span of text that is to be isolated from its surroundings for the purposes of bidirectional text formatting. [BIDI]",
-      "text": true
-    },
-    {
-      "tag": "bdo",
-      "description": "The bdo element represents explicit text directionality formatting control for its children. It allows authors to override the Unicode bidirectional algorithm by explicitly specifying a direction override. [BIDI]",
-      "text": true
-    },
-    {
-      "tag": "span",
-      "description": "The span element doesn't mean anything on its own, but can be useful when used together with the global attributes, e.g. class, lang, or dir. It represents its children.",
-      "text": true
+      "text": true,
+      "interface": "HTMLBodyElement"
     },
     {
       "tag": "br",
       "description": "The br element represents a line break.",
-      "void": true
-    },
-    {
-      "tag": "wbr",
-      "description": "The wbr element represents a line break opportunity.",
-      "void": true
-    },
-    {
-      "tag": "ins",
-      "description": "The ins element represents an addition to the document.",
-      "attributes": [
-        {
-          "name": "cite",
-          "description": "Link to the source of the quotation or more information about the edit",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "datetime",
-          "description": "Date and (optionally) time of the change",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "del",
-      "description": "The del element represents a removal from the document.",
-      "attributes": [
-        {
-          "name": "cite",
-          "description": "Link to the source of the quotation or more information about the edit",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "datetime",
-          "description": "Date and (optionally) time of the change",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "picture",
-      "description": "The picture element is a container which provides multiple sources to its contained img element to allow authors to declaratively control or give hints to the user agent about which image resource to use, based on the screen pixel density, viewport size, image format, and other factors. It represents its children."
-    },
-    {
-      "tag": "source",
-      "description": "The source element allows authors to specify multiple alternative source sets for img elements or multiple alternative media resources for media elements. It does not represent anything on its own.",
-      "attributes": [
-        {
-          "name": "type",
-          "description": "Type of embedded resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "media",
-          "description": "Applicable media",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "srcset",
-          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "sizes",
-          "description": "Image sizes for different page layouts",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "img",
-      "description": "An img element represents an image.",
-      "attributes": [
-        {
-          "name": "alt",
-          "description": "Replacement text for use when images are not available",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "srcset",
-          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "sizes",
-          "description": "Image sizes for different page layouts",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "crossorigin",
-          "description": "How the element handles crossorigin requests",
-          "allowed": {
-            "anonymous": {},
-            "use-credentials": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "usemap",
-          "description": "Name of image map to use",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "ismap",
-          "description": "Whether the image is a server-side image map",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "decoding",
-          "description": "Decoding hint to use when processing this image for presentation",
-          "allowed": {
-            "async": {},
-            "auto": {},
-            "sync": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "loading",
-          "description": "Used when determining loading deferral",
-          "allowed": {
-            "eager": {},
-            "lazy": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "fetchpriority",
-          "description": "Sets the priority for fetches initiated by the element",
-          "allowed": {
-            "auto": {},
-            "high": {},
-            "low": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "iframe",
-      "description": "The iframe element represents its content navigable.",
-      "attributes": [
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "srcdoc",
-          "description": "A document to render in the iframe",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "name",
-          "description": "Name of content navigable",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "sandbox",
-          "description": "Security rules for nested content",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "allow",
-          "description": "Permissions policy to be applied to the iframe's contents",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "allowfullscreen",
-          "description": "Whether to allow the iframe's contents to use requestFullscreen()",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "loading",
-          "description": "Used when determining loading deferral",
-          "allowed": {
-            "eager": {},
-            "lazy": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
+      "void": true,
+      "interface": "HTMLBRElement",
+      "categories": [
+        "flow",
+        "phrasing"
       ]
-    },
-    {
-      "tag": "embed",
-      "description": "The embed element provides an integration point for an external application or interactive content.",
-      "attributes": [
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "type",
-          "description": "Type of embedded resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "object",
-      "description": "The object element can represent an external resource, which, depending on the type of the resource, will either be treated as an image or as a child navigable.",
-      "attributes": [
-        {
-          "name": "data",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "type",
-          "description": "Type of embedded resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "name",
-          "description": "Name of content navigable",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "form",
-          "description": "Associates the element with a form element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ]
-    },
-    {
-      "tag": "video",
-      "description": "A video element is used for playing videos or movies, and audio files with captions.",
-      "attributes": [
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "crossorigin",
-          "description": "How the element handles crossorigin requests",
-          "allowed": {
-            "anonymous": {},
-            "use-credentials": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "poster",
-          "description": "Poster frame to show prior to video playback",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preload",
-          "description": "Hints how much buffering the media resource will likely need",
-          "allowed": {
-            "auto": {},
-            "metadata": {},
-            "none": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "autoplay",
-          "description": "Hint that the media resource can be started automatically when the page is loaded",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "playsinline",
-          "description": "Encourage the user agent to display video content within the element's playback area",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "loop",
-          "description": "Whether to loop the media resource",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "muted",
-          "description": "Whether to mute the media resource by default",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "controls",
-          "description": "Show user agent controls",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ]
-    },
-    {
-      "tag": "audio",
-      "description": "An audio element represents a sound or audio stream.",
-      "attributes": [
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "crossorigin",
-          "description": "How the element handles crossorigin requests",
-          "allowed": {
-            "anonymous": {},
-            "use-credentials": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "preload",
-          "description": "Hints how much buffering the media resource will likely need",
-          "allowed": {
-            "auto": {},
-            "metadata": {},
-            "none": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "autoplay",
-          "description": "Hint that the media resource can be started automatically when the page is loaded",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "playsinline",
-          "description": "Encourage the user agent to display video content within the element's playback area",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "loop",
-          "description": "Whether to loop the media resource",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "muted",
-          "description": "Whether to mute the media resource by default",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "controls",
-          "description": "Show user agent controls",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ]
-    },
-    {
-      "tag": "track",
-      "description": "The track element allows authors to specify explicit external timed text tracks for media elements. It does not represent anything on its own.",
-      "attributes": [
-        {
-          "name": "kind",
-          "description": "The type of text track",
-          "allowed": {
-            "captions": {},
-            "chapters": {},
-            "descriptions": {},
-            "metadata": {},
-            "subtitles": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "srclang",
-          "description": "Language of the text track",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "label",
-          "description": "User-visible label",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "default",
-          "description": "Enable the track if no other text track is more suitable",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "map",
-      "description": "The map element, in conjunction with an img element and any area element descendants, defines an image map. The element represents its children.",
-      "attributes": [
-        {
-          "name": "name",
-          "description": "Name of image map to reference from the usemap attribute",
-          "attribute_type": "AttributeTypeString"
-        }
-      ]
-    },
-    {
-      "tag": "area",
-      "description": "The area element represents either a hyperlink with some text and a corresponding area on an image map, or a dead area on an image map.",
-      "attributes": [
-        {
-          "name": "alt",
-          "description": "Replacement text for use when images are not available",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "coords",
-          "description": "Coordinates for the shape to be created in an image map",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "shape",
-          "description": "The kind of shape to be created in an image map",
-          "allowed": {
-            "circle": {},
-            "default": {},
-            "poly": {},
-            "rect": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "href",
-          "description": "Address of the hyperlink",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "target",
-          "description": "Navigable for hyperlink navigation",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "download",
-          "description": "Whether to download the resource instead of navigating to it, and its filename if so",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "ping",
-          "description": "URLs to ping",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "rel",
-          "description": "Relationship between the location in the document containing the hyperlink and the destination resource",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "table",
-      "description": "The table element represents data with more than one dimension, in the form of a table."
-    },
-    {
-      "tag": "caption",
-      "description": "The caption element represents the title of the table that is its parent, if it has a parent and that is a table element.",
-      "text": true
-    },
-    {
-      "tag": "colgroup",
-      "description": "The colgroup element represents a group of one or more columns in the table that is its parent, if it has a parent and that is a table element.",
-      "attributes": [
-        {
-          "name": "span",
-          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "col",
-      "description": "If a col element has a parent and that is a colgroup element that itself has a parent that is a table element, then the col element represents one or more columns in the column group represented by that colgroup.",
-      "attributes": [
-        {
-          "name": "span",
-          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "void": true
-    },
-    {
-      "tag": "tbody",
-      "description": "The tbody element represents a block of rows that consist of a body of data for the parent table element, if the tbody element has a parent and it is a table."
-    },
-    {
-      "tag": "thead",
-      "description": "The thead element represents the block of rows that consist of the column labels (headers) and any ancillary non-header cells for the parent table element, if the thead element has a parent and it is a table."
-    },
-    {
-      "tag": "tfoot",
-      "description": "The tfoot element represents the block of rows that consist of the column summaries (footers) for the parent table element, if the tfoot element has a parent and it is a table."
-    },
-    {
-      "tag": "tr",
-      "description": "The tr element represents a row of cells in a table."
-    },
-    {
-      "tag": "td",
-      "description": "The td element represents a data cell in a table.",
-      "attributes": [
-        {
-          "name": "span",
-          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "rowspan",
-          "description": "Number of rows that the cell is to span where the number is \u003e 0 \u0026\u0026 \u003c= 65534",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "headers",
-          "description": "The header cells for this cell",
-          "attribute_type": "AttributeTypeSST"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "th",
-      "description": "The th element represents a header cell in a table.",
-      "attributes": [
-        {
-          "name": "span",
-          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "rowspan",
-          "description": "Number of rows that the cell is to span where the number is \u003e 0 \u0026\u0026 \u003c= 65534",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "headers",
-          "description": "The header cells for this cell",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "scope",
-          "description": "Specifies which cells the header cell applies to",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "abbr",
-          "description": "Alternative label to use for the header cell when referencing the cell in other contexts",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "form",
-      "description": "The form element represents a hyperlink that can be manipulated through a collection of form-associated elements, some of which can represent editable values that can be submitted to a server for processing.",
-      "attributes": [
-        {
-          "name": "accept-charset",
-          "description": "Character encodings to use for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "action",
-          "description": "URL to use for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "autocomplete",
-          "description": "Default setting for autofill feature for controls in the form",
-          "allowed": {
-            "off": {},
-            "on": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "enctype",
-          "description": "Entry list encoding type to use for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "method",
-          "description": "Variant to use for form submission",
-          "allowed": {
-            "dialog": {},
-            "get": {},
-            "post": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "name",
-          "description": "Name of form to use in the document.forms API",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "novalidate",
-          "description": "Bypass form control validation for form submission",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "target",
-          "description": "Navigable for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "rel",
-          "description": "The rel attribute on form elements controls what kinds of links the elements create.",
-          "attribute_type": "AttributeTypeSST"
-        }
-      ]
-    },
-    {
-      "tag": "label",
-      "description": "The label element represents a caption in a user interface. The caption can be associated with a specific form control, known as the label element's labeled control, either using the for attribute, or by putting the form control inside the label element itself.",
-      "attributes": [
-        {
-          "name": "for",
-          "description": "Associate the label with form control",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "input",
-      "description": "The input element represents a typed data field, usually with a form control to allow the user to edit the data.",
-      "attributes": [
-        {
-          "name": "accept",
-          "description": "Hint for expected file type in file upload controls",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "alpha",
-          "description": "Allow the color's alpha component to be set",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "alt",
-          "description": "Replacement text for use when images are not available",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "autocomplete",
-          "description": "Hint for form autofill feature",
-          "attribute_type": "AttributeTypeSST"
-        },
-        {
-          "name": "checked",
-          "description": "Hint for form autofill feature",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "colorspace",
-          "description": "The color space of the serialized color",
-          "allowed": {
-            "display-p3": {},
-            "limited-srgb": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "dirname",
-          "description": "Name of form control to use for sending the element's directionality in form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "disabled",
-          "description": "Whether the form control is disabled",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "form",
-          "description": "Associates the element with a form element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "formaction",
-          "description": "URL to use for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "formenctype",
-          "description": "Entry list encoding type to use for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "formmethod",
-          "description": "Variant to use for form submission",
-          "allowed": {
-            "dialog": {},
-            "get": {},
-            "post": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "formnovalidate",
-          "description": "Bypass form control validation for form submission",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "formtarget",
-          "description": "Navigable for form submission",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Vertical dimension",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "list",
-          "description": "List of autocomplete options",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "max",
-          "description": "Maximum value",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "maxlength",
-          "description": "Maximum length of value",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "min",
-          "description": "Minimum value",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "minlength",
-          "description": "Minimum length of value",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "multiple",
-          "description": "Whether to allow multiple values",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "name",
-          "description": "Name of the element to use for form submission and in the form.elements API",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "pattern",
-          "description": "Pattern to be matched by the form control's value",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "placeholder",
-          "description": "User-visible label to be placed within the form control",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "popovertarget",
-          "description": "Targets a popover element to toggle, show, or hide",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "popovertargetaction",
-          "description": "Indicates whether a targeted popover element is to be toggled, shown, or hidden",
-          "allowed": {
-            "hide": {},
-            "show": {},
-            "toggle": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "readonly",
-          "description": "Whether to allow the value to be edited by the user",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "required",
-          "description": "Whether the control is required for form submission",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "size",
-          "description": "Size of the control",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "src",
-          "description": "Address of the resource",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "step",
-          "description": "Granularity to be matched by the form control's value",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "type",
-          "description": "Type of form control",
-          "allowed": {
-            "button": {},
-            "checkbox": {},
-            "color": {},
-            "date": {},
-            "datetime-local": {},
-            "email": {},
-            "file": {},
-            "hidden": {},
-            "image": {},
-            "month": {},
-            "number": {},
-            "password": {},
-            "radio": {},
-            "range": {},
-            "reset": {},
-            "search": {},
-            "submit": {},
-            "tel": {},
-            "text": {},
-            "time": {},
-            "url": {},
-            "week": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "value",
-          "description": "Value of the form control",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
-        }
-      ],
-      "void": true
     },
     {
       "tag": "button",
@@ -1616,12 +486,20 @@
         {
           "name": "formaction",
           "description": "URL to use for form submission",
+          "url": true,
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "formenctype",
           "description": "Entry list encoding type to use for form submission",
-          "attribute_type": "AttributeTypeString"
+          "allowed": {
+            "application/x-www-form-urlencoded": {},
+            "multipart/form-data": {},
+            "text/plain": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
         },
         {
           "name": "formmethod",
@@ -1685,7 +563,1748 @@
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "text": true
+      "text": true,
+      "interface": "HTMLButtonElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "interactive",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "submittable"
+      ]
+    },
+    {
+      "tag": "canvas",
+      "description": "The canvas element provides scripts with a resolution-dependent bitmap canvas, which can be used for rendering graphs, game graphics, art, or other visual images on the fly.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLCanvasElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "caption",
+      "description": "The caption element represents the title of the table that is its parent, if it has a parent and that is a table element.",
+      "text": true,
+      "interface": "HTMLTableCaptionElement"
+    },
+    {
+      "tag": "cite",
+      "description": "The cite element represents the title of a work (e.g. a book, a paper, an essay, a poem, a score, a song, a script, a film, a TV show, a game, a sculpture, a painting, a theatre production, a play, an opera, a musical, an exhibition, a legal case report, a computer program,  etc.). This can be a work that is being quoted or referenced in detail (i.e., a citation), or it can just be a work that is mentioned in passing.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "code",
+      "description": "The code element represents a fragment of computer code. This could be an XML element name, a filename, a computer program, or any other string that a computer would recognize.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "col",
+      "description": "If a col element has a parent and that is a colgroup element that itself has a parent that is a table element, then the col element represents one or more columns in the column group represented by that colgroup.",
+      "attributes": [
+        {
+          "name": "span",
+          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLTableColElement"
+    },
+    {
+      "tag": "colgroup",
+      "description": "The colgroup element represents a group of one or more columns in the table that is its parent, if it has a parent and that is a table element.",
+      "attributes": [
+        {
+          "name": "span",
+          "description": "Number of columns spanned by the element where the number is \u003e 0 \u0026\u0026 \u003c= 1000",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "interface": "HTMLTableColElement"
+    },
+    {
+      "tag": "data",
+      "description": "The data element represents its contents, along with a machine-readable form of those contents in the value attribute.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "Machine-readable value",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLDataElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "datalist",
+      "description": "The datalist element represents a set of option elements that represent predefined options for other controls. In the rendering, the datalist element represents nothing and it, along with its children, should be hidden.",
+      "text": true,
+      "interface": "HTMLDataListElement",
+      "categories": [
+        "flow",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "dd",
+      "description": "The dd element represents the description, definition, or value, part of a term-description group in a description list (dl element).",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "del",
+      "description": "The del element represents a removal from the document.",
+      "attributes": [
+        {
+          "name": "cite",
+          "description": "Link to the source of the quotation or more information about the edit",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "datetime",
+          "description": "Date and (optionally) time of the change",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLModElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "details",
+      "description": "The details element represents a disclosure widget from which the user can obtain additional information or controls.",
+      "attributes": [
+        {
+          "name": "name",
+          "description": "Name of group of mutually-exclusive details elements",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "open",
+          "description": "Whether the details are visible",
+          "attribute_type": "AttributeTypeBool"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLDetailsElement",
+      "categories": [
+        "flow",
+        "interactive",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "dfn",
+      "description": "The dfn element represents the defining instance of a term. The paragraph, description list group, or section that is the nearest ancestor of the dfn element must also contain the definition(s) for the term given by the dfn element.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "dialog",
+      "description": "The dialog element represents a transitory part of an application, in the form of a small window (\"dialog box\"), which the user interacts with to perform a task or gather information. Once the user is done, the dialog can be automatically closed by the application, or manually closed by the user.",
+      "attributes": [
+        {
+          "name": "closedby",
+          "description": "Which user actions will close the dialog",
+          "allowed": {
+            "any": {},
+            "closerequest": {},
+            "none": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "open",
+          "description": "Whether the dialog box is showing",
+          "attribute_type": "AttributeTypeBool"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLDialogElement",
+      "categories": [
+        "flow"
+      ]
+    },
+    {
+      "tag": "div",
+      "description": "The div element has no special meaning at all. It represents its children. It can be used with the class, lang, and title attributes to mark up semantics common to a group of consecutive elements. It can also be used in a dl element, wrapping groups of dt and dd elements.",
+      "text": true,
+      "interface": "HTMLDivElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "dl",
+      "description": "The dl element represents an association list consisting of zero or more name-value groups (a description list). A name-value group consists of one or more names (dt elements, possibly as children of a div element child) followed by one or more values (dd elements, possibly as children of a div element child), ignoring any nodes other than dt and dd element children, and dt and dd elements that are children of div element children. Within a single dl element, there should not be more than one dt element for each name.",
+      "interface": "HTMLDListElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "dt",
+      "description": "The dt element represents the term, or name, part of a term-description group in a description list (dl element).",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "em",
+      "description": "The em element represents stress emphasis of its contents.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "embed",
+      "description": "The embed element provides an integration point for an external application or interactive content.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of embedded resource",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLEmbedElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "fieldset",
+      "description": "The fieldset element represents a set of form controls (or other content) grouped together, optionally with a caption. The caption is given by the first legend element that is a child of the fieldset element, if any. The remainder of the descendants form the group.",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Whether the descendant form controls, except any inside legend, are disabled",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "form",
+          "description": "Associates the element with a form element",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "name",
+          "description": "Name of the element to use in the form.elements API.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLFieldSetElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "listed",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "figcaption",
+      "description": "The figcaption element represents a caption or legend for the rest of the contents of the figcaption element's parent figure element, if any.",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "figure",
+      "description": "The figure element represents some flow content, optionally with a caption, that is self-contained (like a complete sentence) and is typically referenced as a single unit from the main flow of the document.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "footer",
+      "description": "The footer element represents a footer for its nearest ancestor sectioning content element, or for the body element if there is no such ancestor. A footer typically contains information about its section such as who wrote it, links to related documents, copyright data, and the like.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "form",
+      "description": "The form element represents a hyperlink that can be manipulated through a collection of form-associated elements, some of which can represent editable values that can be submitted to a server for processing.",
+      "attributes": [
+        {
+          "name": "accept-charset",
+          "description": "Character encodings to use for form submission",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "action",
+          "description": "URL to use for form submission",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "autocomplete",
+          "description": "Default setting for autofill feature for controls in the form",
+          "allowed": {
+            "off": {},
+            "on": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "enctype",
+          "description": "Entry list encoding type to use for form submission",
+          "allowed": {
+            "application/x-www-form-urlencoded": {},
+            "multipart/form-data": {},
+            "text/plain": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "method",
+          "description": "Variant to use for form submission",
+          "allowed": {
+            "dialog": {},
+            "get": {},
+            "post": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "name",
+          "description": "Name of form to use in the document.forms API",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "novalidate",
+          "description": "Bypass form control validation for form submission",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "rel",
+          "description": "The rel attribute on form elements controls what kinds of links the elements create.",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "target",
+          "description": "Navigable for form submission",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLFormElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h1",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h2",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h3",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h4",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h5",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "h6",
+      "description": "These elements represent headings for their sections.",
+      "text": true,
+      "interface": "HTMLHeadingElement",
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "head",
+      "description": "The head element represents a collection of metadata for the Document.",
+      "interface": "HTMLHeadElement"
+    },
+    {
+      "tag": "header",
+      "description": "The header element represents a group of introductory or navigational aids.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "hgroup",
+      "description": "The hgroup element represents a heading and related content. The element may be used to group an h1–h6 element with one or more p elements containing content representing a subheading, alternative title, or tagline.",
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "hr",
+      "description": "The hr element represents a paragraph-level thematic break, e.g., a scene change in a story, or a transition to another topic within a section of a reference book; alternatively, it represents a separator between a set of options of a select element.",
+      "void": true,
+      "interface": "HTMLHRElement",
+      "categories": [
+        "flow"
+      ]
+    },
+    {
+      "tag": "html",
+      "description": "The html element represents the root of an HTML document.",
+      "interface": "HTMLHtmlElement"
+    },
+    {
+      "tag": "i",
+      "description": "The i element represents a span of text in an alternate voice or mood, or otherwise offset from the normal prose in a manner indicating a different quality of text, such as a taxonomic designation, a technical term, an idiomatic phrase from another language, transliteration, a thought, or a ship name in Western texts.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "iframe",
+      "description": "The iframe element represents its content navigable.",
+      "attributes": [
+        {
+          "name": "allow",
+          "description": "Permissions policy to be applied to the iframe's contents",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "allowfullscreen",
+          "description": "Whether to allow the iframe's contents to use requestFullscreen()",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "loading",
+          "description": "Used when determining loading deferral",
+          "allowed": {
+            "eager": {},
+            "lazy": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "name",
+          "description": "Name of content navigable",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "sandbox",
+          "description": "Security rules for nested content",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "srcdoc",
+          "description": "A document to render in the iframe",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "interface": "HTMLIFrameElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "img",
+      "description": "An img element represents an image.",
+      "attributes": [
+        {
+          "name": "alt",
+          "description": "Replacement text for use when images are not available",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "controls",
+          "description": "Show user agent controls",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "crossorigin",
+          "description": "How the element handles crossorigin requests",
+          "allowed": {
+            "anonymous": {},
+            "use-credentials": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "decoding",
+          "description": "Decoding hint to use when processing this image for presentation",
+          "allowed": {
+            "async": {},
+            "auto": {},
+            "sync": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "fetchpriority",
+          "description": "Sets the priority for fetches initiated by the element",
+          "allowed": {
+            "auto": {},
+            "high": {},
+            "low": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "ismap",
+          "description": "Whether the image is a server-side image map",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "loading",
+          "description": "Used when determining loading deferral",
+          "allowed": {
+            "eager": {},
+            "lazy": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "sizes",
+          "description": "Image sizes for different page layouts",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "srcset",
+          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "usemap",
+          "description": "Name of image map to use",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLImageElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "form-associated",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "input",
+      "description": "The input element represents a typed data field, usually with a form control to allow the user to edit the data.",
+      "attributes": [
+        {
+          "name": "accept",
+          "description": "Hint for expected file type in file upload controls",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "alpha",
+          "description": "Allow the color's alpha component to be set",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "alt",
+          "description": "Replacement text for use when images are not available",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "autocomplete",
+          "description": "Hint for form autofill feature",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "capture",
+          "allowed": {
+            "environment": {},
+            "user": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "checked",
+          "description": "Hint for form autofill feature",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "colorspace",
+          "description": "The color space of the serialized color",
+          "allowed": {
+            "display-p3": {},
+            "limited-srgb": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "dirname",
+          "description": "Name of form control to use for sending the element's directionality in form submission",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "disabled",
+          "description": "Whether the form control is disabled",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "form",
+          "description": "Associates the element with a form element",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "formaction",
+          "description": "URL to use for form submission",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "formenctype",
+          "description": "Entry list encoding type to use for form submission",
+          "allowed": {
+            "application/x-www-form-urlencoded": {},
+            "multipart/form-data": {},
+            "text/plain": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "formmethod",
+          "description": "Variant to use for form submission",
+          "allowed": {
+            "dialog": {},
+            "get": {},
+            "post": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "formnovalidate",
+          "description": "Bypass form control validation for form submission",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "formtarget",
+          "description": "Navigable for form submission",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "list",
+          "description": "List of autocomplete options",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "maxlength",
+          "description": "Maximum length of value",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "minlength",
+          "description": "Minimum length of value",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "multiple",
+          "description": "Whether to allow multiple values",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "name",
+          "description": "Name of the element to use for form submission and in the form.elements API",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "pattern",
+          "description": "Pattern to be matched by the form control's value",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "placeholder",
+          "description": "User-visible label to be placed within the form control",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "popovertarget",
+          "description": "Targets a popover element to toggle, show, or hide",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "popovertargetaction",
+          "description": "Indicates whether a targeted popover element is to be toggled, shown, or hidden",
+          "allowed": {
+            "hide": {},
+            "show": {},
+            "toggle": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "readonly",
+          "description": "Whether to allow the value to be edited by the user",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "required",
+          "description": "Whether the control is required for form submission",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "size",
+          "description": "Size of the control",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "step",
+          "description": "Granularity to be matched by the form control's value",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of form control",
+          "allowed": {
+            "button": {},
+            "checkbox": {},
+            "color": {},
+            "date": {},
+            "datetime-local": {},
+            "email": {},
+            "file": {},
+            "hidden": {},
+            "image": {},
+            "month": {},
+            "number": {},
+            "password": {},
+            "radio": {},
+            "range": {},
+            "reset": {},
+            "search": {},
+            "submit": {},
+            "tel": {},
+            "text": {},
+            "time": {},
+            "url": {},
+            "week": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "value",
+          "description": "Value of the form control",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "webkitdirectory",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLInputElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "interactive",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "resettable",
+        "submittable"
+      ]
+    },
+    {
+      "tag": "ins",
+      "description": "The ins element represents an addition to the document.",
+      "attributes": [
+        {
+          "name": "cite",
+          "description": "Link to the source of the quotation or more information about the edit",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "datetime",
+          "description": "Date and (optionally) time of the change",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLModElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "kbd",
+      "description": "The kbd element represents user input (typically keyboard input, although it may also be used to represent other input, such as voice commands).",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "label",
+      "description": "The label element represents a caption in a user interface. The caption can be associated with a specific form control, known as the label element's labeled control, either using the for attribute, or by putting the form control inside the label element itself.",
+      "attributes": [
+        {
+          "name": "for",
+          "description": "Associate the label with form control",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLLabelElement",
+      "categories": [
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "legend",
+      "description": "The legend element represents a caption for the rest of the contents of the legend element's parent fieldset element, if any. Otherwise, if the legend has a parent optgroup element, then the legend represents the optgroup's label.",
+      "text": true,
+      "interface": "HTMLLegendElement"
+    },
+    {
+      "tag": "li",
+      "description": "The li element represents a list item. If its parent element is an ol, ul, or menu element, then the element is an item of the parent element's list, as defined for those elements. Otherwise, the list item has no defined list-related relationship to any other li element.",
+      "attributes": [
+        {
+          "name": "value",
+          "description": "If the element is not a child of an ul or menu element: value — Ordinal value of the list item",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLLIElement"
+    },
+    {
+      "tag": "link",
+      "description": "The link element allows authors to link their document to other resources.",
+      "attributes": [
+        {
+          "name": "as",
+          "description": "Potential destination for a preload request (for rel=\"preload\" and rel=\"modulepreload\")",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "blocking",
+          "description": "Whether the element is potentially render-blocking",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "color",
+          "description": "Color to use when customizing a site's icon (for rel=\"mask-icon\")",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "crossorigin",
+          "description": "How the element handles crossorigin requests",
+          "allowed": {
+            "anonymous": {},
+            "use-credentials": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "disabled",
+          "description": "Whether the link is disabled",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "fetchpriority",
+          "description": "Sets the priority for fetches initiated by the element",
+          "allowed": {
+            "auto": {},
+            "high": {},
+            "low": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "Address of the hyperlink",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "hreflang",
+          "description": "Language of the linked resource",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "imagesizes",
+          "description": "Image sizes for different page layouts (for rel=\"preload\")",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "imagesrcset",
+          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc. (for rel=\"preload\")",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "integrity",
+          "description": "Integrity metadata used in Subresource Integrity checks [SRI]",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "media",
+          "description": "Applicable media",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rel",
+          "description": "Relationship between the document containing the hyperlink and the destination resource",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "sizes",
+          "description": "Sizes of the icons (for rel=\"icon\")",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "type",
+          "description": "Hint for the type of the referenced resource",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLLinkElement",
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "main",
+      "description": "The main element represents the dominant contents of the document.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "map",
+      "description": "The map element, in conjunction with an img element and any area element descendants, defines an image map. The element represents its children.",
+      "attributes": [
+        {
+          "name": "name",
+          "description": "Name of image map to reference from the usemap attribute",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLMapElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "mark",
+      "description": "The mark element represents a run of text in one document marked or highlighted for reference purposes, due to its relevance in another context. When used in a quotation or other block of text referred to from the prose, it indicates a highlight that was not originally present but which has been added to bring the reader's attention to a part of the text that might not have been considered important by the original author when the block was originally written, but which is now under previously unexpected scrutiny. When used in the main prose of a document, it indicates a part of the document that has been highlighted due to its likely relevance to the user's current activity.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "menu",
+      "description": "The menu element represents a toolbar consisting of its contents, in the form of an unordered list of items (represented by li elements), each of which represents a command that the user can perform or activate.",
+      "interface": "HTMLMenuElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "meta",
+      "description": "The meta element represents various kinds of metadata that cannot be expressed using the title, base, link, style, and script elements.",
+      "attributes": [
+        {
+          "name": "charset",
+          "description": "Character encoding declaration",
+          "allowed": {
+            "utf-8": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "content",
+          "description": "Value of the element",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "http-equiv",
+          "description": "Pragma directive",
+          "allowed": {
+            "content-security-policy": {},
+            "content-type": {},
+            "default-style": {},
+            "refresh": {},
+            "x-ua-compatible": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "media",
+          "description": "Applicable media",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "name",
+          "description": "Metadata name",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLMetaElement",
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "meter",
+      "description": "The meter element represents a scalar measurement within a known range, or a fractional value; for example disk usage, the relevance of a query result, or the fraction of a voting population to have selected a particular candidate.",
+      "attributes": [
+        {
+          "name": "high",
+          "description": "Low limit of high range",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "low",
+          "description": "High limit of low range",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "max",
+          "description": "Upper bound of range",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "min",
+          "description": "Lower bound of range",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "optimum",
+          "description": "Optimum value in gauge",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "value",
+          "description": "Current value of the element",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLMeterElement",
+      "categories": [
+        "flow",
+        "labelable",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "nav",
+      "description": "The nav element represents a section of a page that links to other pages or to parts within the page: a section with navigation links.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "sectioning"
+      ]
+    },
+    {
+      "tag": "noscript",
+      "description": "The noscript element represents nothing if scripting is enabled, and represents its children if scripting is disabled. It is used to present different markup to user agents that support scripting and those that don't support scripting, by affecting how the document is parsed.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "object",
+      "description": "The object element can represent an external resource, which, depending on the type of the resource, will either be treated as an image or as a child navigable.",
+      "attributes": [
+        {
+          "name": "data",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "form",
+          "description": "Associates the element with a form element",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "name",
+          "description": "Name of content navigable",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of embedded resource",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLObjectElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "form-associated",
+        "interactive",
+        "listed",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "ol",
+      "description": "The ol element represents a list of items, where the items have been intentionally ordered, such that changing the order would change the meaning of the document.",
+      "attributes": [
+        {
+          "name": "reversed",
+          "description": "Number the list backwards",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "start",
+          "description": "The start attribute, if present, must be a valid integer. It is used to determine the starting value of the list.",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "type",
+          "description": "The type attribute can be used to specify the kind of marker to use in the list, in the cases where that matters (e.g. because items are to be referenced by their number/letter).",
+          "attribute_type": "AttributeTypeChar"
+        }
+      ],
+      "interface": "HTMLOListElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "optgroup",
+      "description": "The optgroup element represents a group of option elements with a common label.",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Whether the form control is disabled",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "label",
+          "description": "User-visible label",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "HTMLOptGroupElement"
+    },
+    {
+      "tag": "option",
+      "description": "The option element represents an option in a select element or as part of a list of suggestions in a datalist element.",
+      "attributes": [
+        {
+          "name": "disabled",
+          "description": "Whether the form control is disabled",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "label",
+          "description": "User-visible label",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "selected",
+          "description": "Whether the option is selected by default",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "value",
+          "description": "Value to be used for form submission",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLOptionElement"
+    },
+    {
+      "tag": "output",
+      "description": "The output element represents the result of a calculation performed by the application, or the result of a user action.",
+      "attributes": [
+        {
+          "name": "for",
+          "description": "Specifies controls from which the output was calculated",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "form",
+          "description": "Associates the element with a form element",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "name",
+          "description": "Name of the element to use in the form.elements API.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLOutputElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "resettable"
+      ]
+    },
+    {
+      "tag": "p",
+      "description": "The p element represents a paragraph.",
+      "text": true,
+      "interface": "HTMLParagraphElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "picture",
+      "description": "The picture element is a container which provides multiple sources to its contained img element to allow authors to declaratively control or give hints to the user agent about which image resource to use, based on the screen pixel density, viewport size, image format, and other factors. It represents its children.",
+      "interface": "HTMLPictureElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "pre",
+      "description": "The pre element represents a block of preformatted text, in which structure is represented by typographic conventions rather than by elements.",
+      "text": true,
+      "interface": "HTMLPreElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "progress",
+      "description": "The progress element represents the completion progress of a task. The progress is either indeterminate, indicating that progress is being made but that it is not clear how much more work remains to be done before the task is complete (e.g. because the task is waiting for a remote host to respond), or the progress is a number in the range zero to a maximum, giving the fraction of work that has so far been completed.",
+      "attributes": [
+        {
+          "name": "max",
+          "description": "Upper bound of range",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "value",
+          "description": "Current value of the element",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLProgressElement",
+      "categories": [
+        "flow",
+        "labelable",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "q",
+      "description": "The q element represents some phrasing content quoted from another source.",
+      "attributes": [
+        {
+          "name": "cite",
+          "description": "Link to the source of the quotation or more information about the edit",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLQuoteElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "rp",
+      "description": "The rp element can be used to provide parentheses or other content around a ruby text component of a ruby annotation, to be shown by user agents that don't support ruby annotations.",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "rt",
+      "description": "The rt element marks the ruby text component of a ruby annotation. When it is the child of a ruby element, it doesn't represent anything itself, but the ruby element uses it as part of determining what it represents.",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "ruby",
+      "description": "The ruby element allows one or more spans of phrasing content to be marked with ruby annotations. Ruby annotations are short runs of text presented alongside base text, primarily used in East Asian typography as a guide for pronunciation or to include other annotations. In Japanese, this form of typography is also known as furigana.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "s",
+      "description": "The s element represents contents that are no longer accurate or no longer relevant.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "samp",
+      "description": "The samp element represents sample or quoted output from another program or computing system.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "script",
+      "description": "The script element allows authors to include dynamic script, instructions to the user agent, and data blocks in their documents. The element does not represent content for the user.",
+      "attributes": [
+        {
+          "name": "async",
+          "description": "Execute script when available, without blocking while fetching",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "blocking",
+          "description": "Whether the element is potentially render-blocking",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "crossorigin",
+          "description": "How the element handles crossorigin requests",
+          "allowed": {
+            "anonymous": {},
+            "use-credentials": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "defer",
+          "description": "Defer script execution",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "fetchpriority",
+          "description": "Sets the priority for fetches initiated by the element",
+          "allowed": {
+            "auto": {},
+            "high": {},
+            "low": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "integrity",
+          "description": "Integrity metadata used in Subresource Integrity checks [SRI]",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "nomodule",
+          "description": "Prevents execution in user agents that support module scripts",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "referrerpolicy",
+          "description": "Referrer policy for fetches initiated by the element",
+          "allowed": {
+            "no-referrer": {},
+            "no-referrer-when-downgrade": {},
+            "origin": {},
+            "origin-when-cross-origin": {},
+            "same-origin": {},
+            "strict-origin": {},
+            "strict-origin-when-cross-origin": {},
+            "unsafe-url": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of script",
+          "allowed": {
+            "importmap": {},
+            "module": {},
+            "speculationrules": {}
+          },
+          "allow_empty": false,
+          "allow_custom": true,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "text": true,
+      "raw_text": true,
+      "interface": "HTMLScriptElement",
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing",
+        "script-supporting"
+      ]
+    },
+    {
+      "tag": "search",
+      "description": "The search element represents a part of a document or application that contains a set of form controls or other content related to performing a search or filtering operation. This could be a search of the web site or application; a way of searching or filtering search results on the current web page; or a global or Internet-wide search function.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "section",
+      "description": "The section element represents a generic section of a document or application. A section, in this context, is a thematic grouping of content, typically with a heading.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "sectioning"
+      ]
     },
     {
       "tag": "select",
@@ -1694,7 +2313,7 @@
         {
           "name": "autocomplete",
           "description": "Hint for form autofill feature",
-          "attribute_type": "AttributeTypeString"
+          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "disabled",
@@ -1726,55 +2345,268 @@
           "description": "Size of the control",
           "attribute_type": "AttributeTypeNumber"
         }
+      ],
+      "interface": "HTMLSelectElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "interactive",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "resettable",
+        "submittable"
       ]
     },
     {
-      "tag": "datalist",
-      "description": "The datalist element represents a set of option elements that represent predefined options for other controls. In the rendering, the datalist element represents nothing and it, along with its children, should be hidden.",
-      "text": true
+      "tag": "selectedcontent",
+      "description": "The selectedcontent element reflects the contents of a select element's currently selected option element. selectedcontent elements can be used to declaratively show the selected option element's contents within the select element's first child button element.",
+      "text": true,
+      "interface": "HTMLSelectedContentElement"
     },
     {
-      "tag": "optgroup",
-      "description": "The optgroup element represents a group of option elements with a common label.",
+      "tag": "slot",
+      "description": "The slot element defines a slot. It is typically used in a shadow tree. A slot element represents its assigned nodes, if any, and its contents otherwise.",
       "attributes": [
         {
-          "name": "disabled",
-          "description": "Whether the form control is disabled",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "label",
-          "description": "User-visible label",
-          "attribute_type": "AttributeTypeString"
-        }
-      ]
-    },
-    {
-      "tag": "option",
-      "description": "The option element represents an option in a select element or as part of a list of suggestions in a datalist element.",
-      "attributes": [
-        {
-          "name": "disabled",
-          "description": "Whether the form control is disabled",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "label",
-          "description": "User-visible label",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "selected",
-          "description": "Whether the option is selected by default",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "value",
-          "description": "Value to be used for form submission",
+          "name": "name",
+          "description": "Name of shadow tree slot",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "text": true
+      "text": true,
+      "interface": "HTMLSlotElement",
+      "categories": [
+        "flow",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "small",
+      "description": "The small element represents side comments such as small print.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "source",
+      "description": "The source element allows authors to specify multiple alternative source sets for img elements or multiple alternative media resources for media elements. It does not represent anything on its own.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Vertical dimension",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "media",
+          "description": "Applicable media",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "sizes",
+          "description": "Image sizes for different page layouts",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "srcset",
+          "description": "Images to use in different situations, e.g., high-resolution displays, small monitors, etc.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of embedded resource",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLSourceElement"
+    },
+    {
+      "tag": "span",
+      "description": "The span element doesn't mean anything on its own, but can be useful when used together with the global attributes, e.g. class, lang, or dir. It represents its children.",
+      "text": true,
+      "interface": "HTMLSpanElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "strong",
+      "description": "The strong element represents strong importance, seriousness, or urgency for its contents.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "style",
+      "description": "The style element allows authors to embed CSS style sheets in their documents. The style element is one of several inputs to the styling processing model. The element does not represent content for the user.",
+      "attributes": [
+        {
+          "name": "blocking",
+          "description": "Whether the element is potentially render-blocking",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "media",
+          "description": "Applicable media",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "raw_text": true,
+      "interface": "HTMLStyleElement",
+      "categories": [
+        "flow",
+        "metadata"
+      ]
+    },
+    {
+      "tag": "sub",
+      "description": "The sup element represents a superscript and the sub element represents a subscript.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "summary",
+      "description": "The summary element represents a summary, caption, or legend for the rest of the contents of the summary element's parent details element, if any.",
+      "text": true,
+      "interface": "HTMLElement"
+    },
+    {
+      "tag": "sup",
+      "description": "Superscript",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "table",
+      "description": "The table element represents data with more than one dimension, in the form of a table.",
+      "interface": "HTMLTableElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "tbody",
+      "description": "The tbody element represents a block of rows that consist of a body of data for the parent table element, if the tbody element has a parent and it is a table.",
+      "interface": "HTMLTableSectionElement"
+    },
+    {
+      "tag": "td",
+      "description": "The td element represents a data cell in a table.",
+      "attributes": [
+        {
+          "name": "colspan",
+          "description": "Number of columns that the cell is to span",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "headers",
+          "description": "The header cells for this cell",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "rowspan",
+          "description": "Number of rows that the cell is to span where the number is \u003e 0 \u0026\u0026 \u003c= 65534",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLTableCellElement"
+    },
+    {
+      "tag": "template",
+      "description": "The template element is used to declare fragments of HTML that can be cloned and inserted in the document by script.",
+      "attributes": [
+        {
+          "name": "for",
+          "description": "Updates existing content",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "shadowrootclonable",
+          "description": "Sets clonable on a declarative shadow root",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "shadowrootcustomelementregistry",
+          "description": "Enables declarative shadow roots to indicate they will use a custom element registry\n",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "shadowrootdelegatesfocus",
+          "description": "Sets delegates focus on a declarative shadow root",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "shadowrootmode",
+          "description": "Enables streaming declarative shadow roots",
+          "allowed": {
+            "closed": {},
+            "open": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "shadowrootserializable",
+          "description": "Sets serializable on a declarative shadow root",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "shadowrootslotassignment",
+          "description": "Sets slot assignment on a declarative shadow root",
+          "allowed": {
+            "manual": {},
+            "named": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLTemplateElement",
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing",
+        "script-supporting"
+      ]
     },
     {
       "tag": "textarea",
@@ -1783,7 +2615,7 @@
         {
           "name": "autocomplete",
           "description": "Hint for form autofill feature",
-          "attribute_type": "AttributeTypeString"
+          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "cols",
@@ -1838,7 +2670,7 @@
         {
           "name": "rows",
           "description": "Number of lines to show",
-          "attribute_type": "AttributeTypeString"
+          "attribute_type": "AttributeTypeNumber"
         },
         {
           "name": "wrap",
@@ -1852,198 +2684,197 @@
           "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "text": true
-    },
-    {
-      "tag": "output",
-      "description": "The output element represents the result of a calculation performed by the application, or the result of a user action.",
-      "attributes": [
-        {
-          "name": "for",
-          "description": "Specifies controls from which the output was calculated",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "form",
-          "description": "Associates the element with a form element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "name",
-          "description": "Name of the element to use in the form.elements API.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "progress",
-      "description": "The progress element represents the completion progress of a task. The progress is either indeterminate, indicating that progress is being made but that it is not clear how much more work remains to be done before the task is complete (e.g. because the task is waiting for a remote host to respond), or the progress is a number in the range zero to a maximum, giving the fraction of work that has so far been completed.",
-      "attributes": [
-        {
-          "name": "value",
-          "description": "Current value of the element",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "max",
-          "description": "Upper bound of range",
-          "attribute_type": "AttributeTypeFloat"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "meter",
-      "description": "The meter element represents a scalar measurement within a known range, or a fractional value; for example disk usage, the relevance of a query result, or the fraction of a voting population to have selected a particular candidate.",
-      "attributes": [
-        {
-          "name": "value",
-          "description": "Current value of the element",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "min",
-          "description": "Lower bound of range",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "max",
-          "description": "Upper bound of range",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "low",
-          "description": "High limit of low range",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "high",
-          "description": "Low limit of high range",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "optimum",
-          "description": "Optimum value in gauge",
-          "attribute_type": "AttributeTypeFloat"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "fieldset",
-      "description": "The fieldset element represents a set of form controls (or other content) grouped together, optionally with a caption. The caption is given by the first legend element that is a child of the fieldset element, if any. The remainder of the descendants form the group.",
-      "attributes": [
-        {
-          "name": "disabled",
-          "description": "Whether the descendant form controls, except any inside legend, are disabled",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "form",
-          "description": "Associates the element with a form element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "name",
-          "description": "Name of the element to use in the form.elements API.",
-          "attribute_type": "AttributeTypeString"
-        }
+      "text": true,
+      "interface": "HTMLTextAreaElement",
+      "categories": [
+        "flow",
+        "form-associated",
+        "interactive",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "resettable",
+        "submittable"
       ]
     },
     {
-      "tag": "legend",
-      "description": "The legend element represents a caption for the rest of the contents of the legend element's parent fieldset element, if any. Otherwise, if the legend has a parent optgroup element, then the legend represents the optgroup's label.",
-      "text": true
+      "tag": "tfoot",
+      "description": "The tfoot element represents the block of rows that consist of the column summaries (footers) for the parent table element, if the tfoot element has a parent and it is a table.",
+      "interface": "HTMLTableSectionElement"
     },
     {
-      "tag": "selectedcontent",
-      "description": "The selectedcontent element reflects the contents of a select element's currently selected option element. selectedcontent elements can be used to declaratively show the selected option element's contents within the select element's first child button element.",
-      "text": true
-    },
-    {
-      "tag": "details",
-      "description": "The details element represents a disclosure widget from which the user can obtain additional information or controls.",
+      "tag": "th",
+      "description": "The th element represents a header cell in a table.",
       "attributes": [
         {
-          "name": "name",
-          "description": "Name of group of mutually-exclusive details elements",
+          "name": "abbr",
+          "description": "Alternative label to use for the header cell when referencing the cell in other contexts",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "open",
-          "description": "Whether the details are visible",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ]
-    },
-    {
-      "tag": "summary",
-      "description": "The summary element represents a summary, caption, or legend for the rest of the contents of the summary element's parent details element, if any.",
-      "text": true
-    },
-    {
-      "tag": "dialog",
-      "description": "The dialog element represents a transitory part of an application, in the form of a small window (\"dialog box\"), which the user interacts with to perform a task or gather information. Once the user is done, the dialog can be automatically closed by the application, or manually closed by the user.",
-      "attributes": [
+          "name": "colspan",
+          "description": "Number of columns that the cell is to span",
+          "attribute_type": "AttributeTypeNumber"
+        },
         {
-          "name": "closedby",
-          "description": "Which user actions will close the dialog",
+          "name": "headers",
+          "description": "The header cells for this cell",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "rowspan",
+          "description": "Number of rows that the cell is to span where the number is \u003e 0 \u0026\u0026 \u003c= 65534",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "scope",
+          "description": "Specifies which cells the header cell applies to",
           "allowed": {
-            "any": {},
-            "closerequest": {},
-            "none": {}
+            "col": {},
+            "colgroup": {},
+            "row": {},
+            "rowgroup": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLTableCellElement",
+      "categories": [
+        "interactive"
+      ]
+    },
+    {
+      "tag": "thead",
+      "description": "The thead element represents the block of rows that consist of the column labels (headers) and any ancillary non-header cells for the parent table element, if the thead element has a parent and it is a table.",
+      "interface": "HTMLTableSectionElement"
+    },
+    {
+      "tag": "time",
+      "description": "The time element represents its contents, along with a machine-readable form of those contents in the datetime attribute. The kind of content is limited to various kinds of dates, times, time-zone offsets, and durations, as described below.",
+      "attributes": [
+        {
+          "name": "datetime",
+          "description": "Machine-readable value",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "HTMLTimeElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "title",
+      "description": "The title element represents the document's title or name. Authors should use titles that identify their documents even when they are used out of context, for example in a user's history or bookmarks, or in search results. The document's title is often different from its first heading, since the first heading does not have to stand alone when taken out of context.",
+      "text": true,
+      "interface": "HTMLTitleElement",
+      "categories": [
+        "metadata"
+      ]
+    },
+    {
+      "tag": "tr",
+      "description": "The tr element represents a row of cells in a table.",
+      "interface": "HTMLTableRowElement"
+    },
+    {
+      "tag": "track",
+      "description": "The track element allows authors to specify explicit external timed text tracks for media elements. It does not represent anything on its own.",
+      "attributes": [
+        {
+          "name": "default",
+          "description": "Enable the track if no other text track is more suitable",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "kind",
+          "description": "The type of text track",
+          "allowed": {
+            "captions": {},
+            "chapters": {},
+            "descriptions": {},
+            "metadata": {},
+            "subtitles": {}
           },
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "open",
-          "description": "Whether the dialog box is showing",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "script",
-      "description": "The script element allows authors to include dynamic script, instructions to the user agent, and data blocks in their documents. The element does not represent content for the user.",
-      "attributes": [
-        {
-          "name": "type",
-          "description": "Type of script",
+          "name": "label",
+          "description": "User-visible label",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "src",
           "description": "Address of the resource",
+          "url": true,
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "nomodule",
-          "description": "Prevents execution in user agents that support module scripts",
+          "name": "srclang",
+          "description": "Language of the text track",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "void": true,
+      "interface": "HTMLTrackElement"
+    },
+    {
+      "tag": "u",
+      "description": "The u element represents a span of text with an unarticulated, though explicitly rendered, non-textual annotation, such as labeling the text as being a proper name in Chinese text (a Chinese proper name mark), or labeling the text as being misspelt.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "ul",
+      "description": "The ul element represents a list of items, where the order of the items is not important — that is, where changing the order would not materially change the meaning of the document.",
+      "interface": "HTMLUListElement",
+      "categories": [
+        "flow",
+        "palpable"
+      ]
+    },
+    {
+      "tag": "var",
+      "description": "The var element represents a variable. This could be an actual variable in a mathematical expression or programming context, an identifier representing a constant, a symbol identifying a physical quantity, a function parameter, or just be a term used as a placeholder in prose.",
+      "text": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ]
+    },
+    {
+      "tag": "video",
+      "description": "A video element is used for playing videos or movies, and audio files with captions.",
+      "attributes": [
+        {
+          "name": "autoplay",
+          "description": "Hint that the media resource can be started automatically when the page is loaded",
           "attribute_type": "AttributeTypeBool"
         },
         {
-          "name": "async",
-          "description": "Execute script when available, without blocking while fetching",
+          "name": "controls",
+          "description": "Show user agent controls",
           "attribute_type": "AttributeTypeBool"
         },
         {
-          "name": "defer",
-          "description": "Defer script execution",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "blocking",
-          "description": "Whether the element is potentially render-blocking",
-          "allowed": {
-            "render": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
+          "name": "controlslist",
+          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "crossorigin",
@@ -2057,121 +2888,93 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "referrerpolicy",
-          "description": "Referrer policy for fetches initiated by the element",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "integrity",
-          "description": "Integrity metadata used in Subresource Integrity checks [SRI]",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "fetchpriority",
-          "description": "Sets the priority for fetches initiated by the element",
-          "allowed": {
-            "auto": {},
-            "high": {},
-            "low": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "noscript",
-      "description": "The noscript element represents nothing if scripting is enabled, and represents its children if scripting is disabled. It is used to present different markup to user agents that support scripting and those that don't support scripting, by affecting how the document is parsed.",
-      "text": true
-    },
-    {
-      "tag": "template",
-      "description": "The template element is used to declare fragments of HTML that can be cloned and inserted in the document by script.",
-      "attributes": [
-        {
-          "name": "shadowrootmode",
-          "description": "Enables streaming declarative shadow roots",
-          "allowed": {
-            "closed": {},
-            "open": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "shadowrootdelegatefocus",
-          "description": "Sets delegates focus on a declarative shadow root",
+          "name": "disablepictureinpicture",
           "attribute_type": "AttributeTypeBool"
         },
         {
-          "name": "shadowrootclonable",
-          "description": "Sets clonable on a declarative shadow root",
+          "name": "disableremoteplayback",
           "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "shadowrootserializable",
-          "description": "Sets serializable on a declarative shadow root",
-          "attribute_type": "AttributeTypeBool"
-        },
-        {
-          "name": "shadowrootcustomelementregistry",
-          "description": "Enables declarative shadow roots to indicate they will use a custom element registry\n",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "slot",
-      "description": "The slot element defines a slot. It is typically used in a shadow tree. A slot element represents its assigned nodes, if any, and its contents otherwise.",
-      "attributes": [
-        {
-          "name": "name",
-          "description": "Name of shadow tree slot",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "text": true
-    },
-    {
-      "tag": "canvas",
-      "description": "The canvas element provides scripts with a resolution-dependent bitmap canvas, which can be used for rendering graphs, game graphics, art, or other visual images on the fly.",
-      "attributes": [
-        {
-          "name": "width",
-          "description": "Horizontal dimension",
-          "attribute_type": "AttributeTypeNumber"
         },
         {
           "name": "height",
           "description": "Vertical dimension",
           "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "loading",
+          "description": "Used when determining loading deferral",
+          "allowed": {
+            "eager": {},
+            "lazy": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "loop",
+          "description": "Whether to loop the media resource",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "muted",
+          "description": "Whether to mute the media resource by default",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "playsinline",
+          "description": "Encourage the user agent to display video content within the element's playback area",
+          "attribute_type": "AttributeTypeBool"
+        },
+        {
+          "name": "poster",
+          "description": "Poster frame to show prior to video playback",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preload",
+          "description": "Hints how much buffering the media resource will likely need",
+          "allowed": {
+            "auto": {},
+            "metadata": {},
+            "none": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "src",
+          "description": "Address of the resource",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Horizontal dimension",
+          "attribute_type": "AttributeTypeNumber"
         }
       ],
-      "text": true
+      "text": true,
+      "interface": "HTMLVideoElement",
+      "categories": [
+        "embedded",
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ]
     },
     {
-      "tag": "h2",
-      "description": "These elements represent headings for their sections."
-    },
-    {
-      "tag": "h3",
-      "description": "These elements represent headings for their sections."
-    },
-    {
-      "tag": "h4",
-      "description": "These elements represent headings for their sections."
-    },
-    {
-      "tag": "h5",
-      "description": "These elements represent headings for their sections."
-    },
-    {
-      "tag": "h6",
-      "description": "These elements represent headings for their sections."
+      "tag": "wbr",
+      "description": "The wbr element represents a line break opportunity.",
+      "void": true,
+      "interface": "HTMLElement",
+      "categories": [
+        "flow",
+        "phrasing"
+      ]
     }
   ],
   "attributes": [
@@ -2276,6 +3079,20 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
+      "name": "exportparts",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "headingoffset",
+      "description": "Offsets heading levels for descendants",
+      "attribute_type": "AttributeTypeNumber"
+    },
+    {
+      "name": "headingreset",
+      "description": "Prevents a heading offset computation from traversing beyond the element with the attribute",
+      "attribute_type": "AttributeTypeBool"
+    },
+    {
       "name": "hidden",
       "description": "All HTML elements may have the hidden content attribute set.",
       "allowed": {
@@ -2314,8 +3131,14 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
+      "name": "is",
+      "description": "Creates a customized built-in element",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
       "name": "itemid",
       "description": "The itemid attribute, if specified, must have a value that is a valid URL potentially surrounded by spaces.",
+      "url": true,
       "attribute_type": "AttributeTypeString"
     },
     {
@@ -2349,9 +3172,20 @@
       "attribute_type": "AttributeTypeString"
     },
     {
+      "name": "part",
+      "attribute_type": "AttributeTypeSST"
+    },
+    {
       "name": "popover",
       "description": "All HTML elements may have the popover content attribute set. When specified, the element won't be rendered until it becomes shown, at which point it will be rendered on top of other page content.",
-      "attribute_type": "AttributeTypeString"
+      "allowed": {
+        "auto": {},
+        "hint": {},
+        "manual": {}
+      },
+      "allow_empty": true,
+      "allow_custom": false,
+      "attribute_type": "AttributeTypeEnum"
     },
     {
       "name": "role",

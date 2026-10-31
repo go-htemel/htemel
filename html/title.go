@@ -240,6 +240,15 @@ const (
 	TitleInputmodeUrl     TitleInputmode = "url"
 )
 
+type TitlePopover string
+
+const (
+	TitlePopoverAuto   TitlePopover = "auto"
+	TitlePopoverHint   TitlePopover = "hint"
+	TitlePopoverManual TitlePopover = "manual"
+	TitlePopoverEmpty  TitlePopover = ""
+)
+
 type TitleSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *TitleElement) Enterkeyhint(a TitleEnterkeyhint) *TitleElement {
 	return e
 }
 
+func (e *TitleElement) Exportparts(s string) *TitleElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TitleElement) Headingoffset(i int) *TitleElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TitleElement) Headingreset(b bool) *TitleElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TitleElement) Hidden(v ...TitleHidden) *TitleElement {
@@ -396,6 +425,14 @@ func (e *TitleElement) Inputmode(a TitleInputmode) *TitleElement {
 	return e
 }
 
+func (e *TitleElement) Is(s string) *TitleElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TitleElement) Itemid(s string) *TitleElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *TitleElement) Nonce(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Popover(s string) *TitleElement {
-	e.attributes.Set("popover", s)
+func (e *TitleElement) Part(s ...string) *TitleElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Popover(v ...TitlePopover) *TitleElement {
+	var val TitlePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

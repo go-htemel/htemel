@@ -164,134 +164,6 @@ func (e *PolylineElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PolylineXmlSpace string
-
-const (
-	PolylineXmlSpaceDefault  PolylineXmlSpace = "default"
-	PolylineXmlSpacePreserve PolylineXmlSpace = "preserve"
-)
-
-type PolylineFillRule string
-
-const (
-	PolylineFillRuleEvenodd PolylineFillRule = "evenodd"
-	PolylineFillRuleNonzero PolylineFillRule = "nonzero"
-)
-
-type PolylineStrokeLinecap string
-
-const (
-	PolylineStrokeLinecapButt   PolylineStrokeLinecap = "butt"
-	PolylineStrokeLinecapRound  PolylineStrokeLinecap = "round"
-	PolylineStrokeLinecapSquare PolylineStrokeLinecap = "square"
-)
-
-type PolylineStrokeLinejoin string
-
-const (
-	PolylineStrokeLinejoinArcs      PolylineStrokeLinejoin = "arcs"
-	PolylineStrokeLinejoinBevel     PolylineStrokeLinejoin = "bevel"
-	PolylineStrokeLinejoinMiter     PolylineStrokeLinejoin = "miter"
-	PolylineStrokeLinejoinMiterClip PolylineStrokeLinejoin = "miter-clip"
-	PolylineStrokeLinejoinRound     PolylineStrokeLinejoin = "round"
-)
-
-type PolylineVisibility string
-
-const (
-	PolylineVisibilityCollapse PolylineVisibility = "collapse"
-	PolylineVisibilityHidden   PolylineVisibility = "hidden"
-	PolylineVisibilityVisible  PolylineVisibility = "visible"
-)
-
-type PolylineClipRule string
-
-const (
-	PolylineClipRuleEvenodd PolylineClipRule = "evenodd"
-	PolylineClipRuleNonzero PolylineClipRule = "nonzero"
-)
-
-type PolylinePointerEvents string
-
-const (
-	PolylinePointerEventsAll            PolylinePointerEvents = "all"
-	PolylinePointerEventsAuto           PolylinePointerEvents = "auto"
-	PolylinePointerEventsBoundingBox    PolylinePointerEvents = "bounding-box"
-	PolylinePointerEventsFill           PolylinePointerEvents = "fill"
-	PolylinePointerEventsNone           PolylinePointerEvents = "none"
-	PolylinePointerEventsPainted        PolylinePointerEvents = "painted"
-	PolylinePointerEventsStroke         PolylinePointerEvents = "stroke"
-	PolylinePointerEventsVisible        PolylinePointerEvents = "visible"
-	PolylinePointerEventsVisibleFill    PolylinePointerEvents = "visibleFill"
-	PolylinePointerEventsVisiblePainted PolylinePointerEvents = "visiblePainted"
-	PolylinePointerEventsVisibleStroke  PolylinePointerEvents = "visibleStroke"
-)
-
-type PolylineVectorEffect string
-
-const (
-	PolylineVectorEffectFixedPosition    PolylineVectorEffect = "fixed-position"
-	PolylineVectorEffectNonRotation      PolylineVectorEffect = "non-rotation"
-	PolylineVectorEffectNonScalingSize   PolylineVectorEffect = "non-scaling-size"
-	PolylineVectorEffectNonScalingStroke PolylineVectorEffect = "non-scaling-stroke"
-	PolylineVectorEffectNone             PolylineVectorEffect = "none"
-)
-
-type PolylineShapeRendering string
-
-const (
-	PolylineShapeRenderingAuto               PolylineShapeRendering = "auto"
-	PolylineShapeRenderingCrispEdges         PolylineShapeRendering = "crispEdges"
-	PolylineShapeRenderingGeometricPrecision PolylineShapeRendering = "geometricPrecision"
-	PolylineShapeRenderingOptimizeSpeed      PolylineShapeRendering = "optimizeSpeed"
-)
-
-type PolylineColorInterpolation string
-
-const (
-	PolylineColorInterpolationAuto      PolylineColorInterpolation = "auto"
-	PolylineColorInterpolationLinearRGB PolylineColorInterpolation = "linearRGB"
-	PolylineColorInterpolationSRGB      PolylineColorInterpolation = "sRGB"
-)
-
-type PolylineColorInterpolationFilters string
-
-const (
-	PolylineColorInterpolationFiltersAuto      PolylineColorInterpolationFilters = "auto"
-	PolylineColorInterpolationFiltersLinearRGB PolylineColorInterpolationFilters = "linearRGB"
-	PolylineColorInterpolationFiltersSRGB      PolylineColorInterpolationFilters = "sRGB"
-)
-
-type PolylineFontStyle string
-
-const (
-	PolylineFontStyleItalic  PolylineFontStyle = "italic"
-	PolylineFontStyleNormal  PolylineFontStyle = "normal"
-	PolylineFontStyleOblique PolylineFontStyle = "oblique"
-)
-
-type PolylineTextAnchor string
-
-const (
-	PolylineTextAnchorEnd    PolylineTextAnchor = "end"
-	PolylineTextAnchorMiddle PolylineTextAnchor = "middle"
-	PolylineTextAnchorStart  PolylineTextAnchor = "start"
-)
-
-type PolylineDominantBaseline string
-
-const (
-	PolylineDominantBaselineAlphabetic   PolylineDominantBaseline = "alphabetic"
-	PolylineDominantBaselineAuto         PolylineDominantBaseline = "auto"
-	PolylineDominantBaselineCentral      PolylineDominantBaseline = "central"
-	PolylineDominantBaselineHanging      PolylineDominantBaseline = "hanging"
-	PolylineDominantBaselineIdeographic  PolylineDominantBaseline = "ideographic"
-	PolylineDominantBaselineMathematical PolylineDominantBaseline = "mathematical"
-	PolylineDominantBaselineMiddle       PolylineDominantBaseline = "middle"
-	PolylineDominantBaselineTextBottom   PolylineDominantBaseline = "text-bottom"
-	PolylineDominantBaselineTextTop      PolylineDominantBaseline = "text-top"
-)
-
 type PolylineAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	PolylineAlignmentBaselineTop            PolylineAlignmentBaseline = "top"
 )
 
-type PolylineTextRendering string
+type PolylineClipRule string
 
 const (
-	PolylineTextRenderingAuto               PolylineTextRendering = "auto"
-	PolylineTextRenderingGeometricPrecision PolylineTextRendering = "geometricPrecision"
-	PolylineTextRenderingOptimizeLegibility PolylineTextRendering = "optimizeLegibility"
-	PolylineTextRenderingOptimizeSpeed      PolylineTextRendering = "optimizeSpeed"
+	PolylineClipRuleEvenodd PolylineClipRule = "evenodd"
+	PolylineClipRuleNonzero PolylineClipRule = "nonzero"
+)
+
+type PolylineColorInterpolation string
+
+const (
+	PolylineColorInterpolationAuto      PolylineColorInterpolation = "auto"
+	PolylineColorInterpolationLinearRGB PolylineColorInterpolation = "linearRGB"
+	PolylineColorInterpolationSRGB      PolylineColorInterpolation = "sRGB"
+)
+
+type PolylineColorInterpolationFilters string
+
+const (
+	PolylineColorInterpolationFiltersAuto      PolylineColorInterpolationFilters = "auto"
+	PolylineColorInterpolationFiltersLinearRGB PolylineColorInterpolationFilters = "linearRGB"
+	PolylineColorInterpolationFiltersSRGB      PolylineColorInterpolationFilters = "sRGB"
+)
+
+type PolylineDirection string
+
+const (
+	PolylineDirectionLtr PolylineDirection = "ltr"
+	PolylineDirectionRtl PolylineDirection = "rtl"
+)
+
+type PolylineDominantBaseline string
+
+const (
+	PolylineDominantBaselineAlphabetic   PolylineDominantBaseline = "alphabetic"
+	PolylineDominantBaselineAuto         PolylineDominantBaseline = "auto"
+	PolylineDominantBaselineCentral      PolylineDominantBaseline = "central"
+	PolylineDominantBaselineHanging      PolylineDominantBaseline = "hanging"
+	PolylineDominantBaselineIdeographic  PolylineDominantBaseline = "ideographic"
+	PolylineDominantBaselineMathematical PolylineDominantBaseline = "mathematical"
+	PolylineDominantBaselineMiddle       PolylineDominantBaseline = "middle"
+	PolylineDominantBaselineTextBottom   PolylineDominantBaseline = "text-bottom"
+	PolylineDominantBaselineTextTop      PolylineDominantBaseline = "text-top"
+)
+
+type PolylineFillRule string
+
+const (
+	PolylineFillRuleEvenodd PolylineFillRule = "evenodd"
+	PolylineFillRuleNonzero PolylineFillRule = "nonzero"
+)
+
+type PolylineFontStyle string
+
+const (
+	PolylineFontStyleItalic  PolylineFontStyle = "italic"
+	PolylineFontStyleNormal  PolylineFontStyle = "normal"
+	PolylineFontStyleOblique PolylineFontStyle = "oblique"
 )
 
 type PolylineImageRendering string
@@ -345,6 +267,66 @@ const (
 	PolylineOverflowVisible PolylineOverflow = "visible"
 )
 
+type PolylinePointerEvents string
+
+const (
+	PolylinePointerEventsAll            PolylinePointerEvents = "all"
+	PolylinePointerEventsAuto           PolylinePointerEvents = "auto"
+	PolylinePointerEventsBoundingBox    PolylinePointerEvents = "bounding-box"
+	PolylinePointerEventsFill           PolylinePointerEvents = "fill"
+	PolylinePointerEventsNone           PolylinePointerEvents = "none"
+	PolylinePointerEventsPainted        PolylinePointerEvents = "painted"
+	PolylinePointerEventsStroke         PolylinePointerEvents = "stroke"
+	PolylinePointerEventsVisible        PolylinePointerEvents = "visible"
+	PolylinePointerEventsVisibleFill    PolylinePointerEvents = "visibleFill"
+	PolylinePointerEventsVisiblePainted PolylinePointerEvents = "visiblePainted"
+	PolylinePointerEventsVisibleStroke  PolylinePointerEvents = "visibleStroke"
+)
+
+type PolylineShapeRendering string
+
+const (
+	PolylineShapeRenderingAuto               PolylineShapeRendering = "auto"
+	PolylineShapeRenderingCrispEdges         PolylineShapeRendering = "crispEdges"
+	PolylineShapeRenderingGeometricPrecision PolylineShapeRendering = "geometricPrecision"
+	PolylineShapeRenderingOptimizeSpeed      PolylineShapeRendering = "optimizeSpeed"
+)
+
+type PolylineStrokeLinecap string
+
+const (
+	PolylineStrokeLinecapButt   PolylineStrokeLinecap = "butt"
+	PolylineStrokeLinecapRound  PolylineStrokeLinecap = "round"
+	PolylineStrokeLinecapSquare PolylineStrokeLinecap = "square"
+)
+
+type PolylineStrokeLinejoin string
+
+const (
+	PolylineStrokeLinejoinArcs      PolylineStrokeLinejoin = "arcs"
+	PolylineStrokeLinejoinBevel     PolylineStrokeLinejoin = "bevel"
+	PolylineStrokeLinejoinMiter     PolylineStrokeLinejoin = "miter"
+	PolylineStrokeLinejoinMiterClip PolylineStrokeLinejoin = "miter-clip"
+	PolylineStrokeLinejoinRound     PolylineStrokeLinejoin = "round"
+)
+
+type PolylineTextAnchor string
+
+const (
+	PolylineTextAnchorEnd    PolylineTextAnchor = "end"
+	PolylineTextAnchorMiddle PolylineTextAnchor = "middle"
+	PolylineTextAnchorStart  PolylineTextAnchor = "start"
+)
+
+type PolylineTextRendering string
+
+const (
+	PolylineTextRenderingAuto               PolylineTextRendering = "auto"
+	PolylineTextRenderingGeometricPrecision PolylineTextRendering = "geometricPrecision"
+	PolylineTextRenderingOptimizeLegibility PolylineTextRendering = "optimizeLegibility"
+	PolylineTextRenderingOptimizeSpeed      PolylineTextRendering = "optimizeSpeed"
+)
+
 type PolylineTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	PolylineTransformBoxViewBox    PolylineTransformBox = "view-box"
 )
 
-type PolylineDirection string
+type PolylineVectorEffect string
 
 const (
-	PolylineDirectionLtr PolylineDirection = "ltr"
-	PolylineDirectionRtl PolylineDirection = "rtl"
+	PolylineVectorEffectFixedPosition    PolylineVectorEffect = "fixed-position"
+	PolylineVectorEffectNonRotation      PolylineVectorEffect = "non-rotation"
+	PolylineVectorEffectNonScalingSize   PolylineVectorEffect = "non-scaling-size"
+	PolylineVectorEffectNonScalingStroke PolylineVectorEffect = "non-scaling-stroke"
+	PolylineVectorEffectNone             PolylineVectorEffect = "none"
+)
+
+type PolylineVisibility string
+
+const (
+	PolylineVisibilityCollapse PolylineVisibility = "collapse"
+	PolylineVisibilityHidden   PolylineVisibility = "hidden"
+	PolylineVisibilityVisible  PolylineVisibility = "visible"
 )
 
 type PolylineWritingMode string
@@ -378,32 +371,67 @@ const (
 	PolylineWritingModeVerticalRl   PolylineWritingMode = "vertical-rl"
 )
 
+type PolylineXmlSpace string
+
+const (
+	PolylineXmlSpaceDefault  PolylineXmlSpace = "default"
+	PolylineXmlSpacePreserve PolylineXmlSpace = "preserve"
+)
+
+func (e *PolylineElement) PathLength(f float64) *PolylineElement {
+	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PolylineElement) Points(s string) *PolylineElement {
 	e.attributes.Set("points", s)
 
 	return e
 }
 
-func (e *PolylineElement) PathLength(s string) *PolylineElement {
-	e.attributes.Set("pathLength", s)
+func (e *PolylineElement) SystemLanguage(s string) *PolylineElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *PolylineElement) Transform(s string) *PolylineElement {
-	e.attributes.Set("transform", s)
+func (e *PolylineElement) AlignmentBaseline(a PolylineAlignmentBaseline) *PolylineElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *PolylineElement) TransformOrigin(s string) *PolylineElement {
-	e.attributes.Set("transform-origin", s)
+func PolylineAlignmentBaselineCustom(s string) PolylineAlignmentBaseline {
+	return PolylineAlignmentBaseline(s)
+}
+
+func (e *PolylineElement) AriaUnsafe(name string, s string) *PolylineElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *PolylineElement) Id(s string) *PolylineElement {
-	e.attributes.Set("id", s)
+func (e *PolylineElement) Aria(name string, s string) *PolylineElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *PolylineElement) Autofocus(b bool) *PolylineElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *PolylineElement) BaselineShift(s string) *PolylineElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -414,40 +442,59 @@ func (e *PolylineElement) Class(s ...string) *PolylineElement {
 	return e
 }
 
-func (e *PolylineElement) Style(s string) *PolylineElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *PolylineElement) Clip(s string) *PolylineElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *PolylineElement) Tabindex(i int) *PolylineElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *PolylineElement) ClipPath(s string) *PolylineElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *PolylineElement) Lang(s string) *PolylineElement {
-	e.attributes.Set("lang", s)
+func (e *PolylineElement) ClipRule(a PolylineClipRule) *PolylineElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *PolylineElement) XmlLang(s string) *PolylineElement {
-	e.attributes.Set("xml:lang", s)
+func PolylineClipRuleCustom(s string) PolylineClipRule {
+	return PolylineClipRule(s)
+}
+
+func (e *PolylineElement) Color(s string) *PolylineElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *PolylineElement) XmlSpace(a PolylineXmlSpace) *PolylineElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *PolylineElement) ColorInterpolation(a PolylineColorInterpolation) *PolylineElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PolylineElement) Autofocus(b bool) *PolylineElement {
-	e.attributes.SetBool("autofocus", b)
+func PolylineColorInterpolationCustom(s string) PolylineColorInterpolation {
+	return PolylineColorInterpolation(s)
+}
+
+func (e *PolylineElement) ColorInterpolationFilters(a PolylineColorInterpolationFilters) *PolylineElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func PolylineColorInterpolationFiltersCustom(s string) PolylineColorInterpolationFilters {
+	return PolylineColorInterpolationFilters(s)
+}
+
+func (e *PolylineElement) Cursor(s string) *PolylineElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -468,20 +515,30 @@ func (e *PolylineElement) Data(name string, s string) *PolylineElement {
 	return e
 }
 
-func (e *PolylineElement) AriaUnsafe(name string, s string) *PolylineElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *PolylineElement) Direction(a PolylineDirection) *PolylineElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *PolylineElement) Aria(name string, s string) *PolylineElement {
-	tag := strings.ToLower("aria-" + name)
+func PolylineDirectionCustom(s string) PolylineDirection {
+	return PolylineDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *PolylineElement) Display(s string) *PolylineElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *PolylineElement) DominantBaseline(a PolylineDominantBaseline) *PolylineElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func PolylineDominantBaselineCustom(s string) PolylineDominantBaseline {
+	return PolylineDominantBaseline(s)
 }
 
 func (e *PolylineElement) Fill(s string) *PolylineElement {
@@ -506,20 +563,220 @@ func PolylineFillRuleCustom(s string) PolylineFillRule {
 	return PolylineFillRule(s)
 }
 
+func (e *PolylineElement) Filter(s string) *PolylineElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *PolylineElement) FloodColor(s string) *PolylineElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *PolylineElement) FloodOpacity(f float64) *PolylineElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PolylineElement) FontFamily(s string) *PolylineElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *PolylineElement) FontSize(s string) *PolylineElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *PolylineElement) FontSizeAdjust(s string) *PolylineElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *PolylineElement) FontStretch(s string) *PolylineElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *PolylineElement) FontStyle(a PolylineFontStyle) *PolylineElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func PolylineFontStyleCustom(s string) PolylineFontStyle {
+	return PolylineFontStyle(s)
+}
+
+func (e *PolylineElement) FontVariant(s string) *PolylineElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *PolylineElement) FontWeight(s string) *PolylineElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *PolylineElement) GlyphOrientationHorizontal(s string) *PolylineElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *PolylineElement) GlyphOrientationVertical(s string) *PolylineElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *PolylineElement) Id(s string) *PolylineElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *PolylineElement) ImageRendering(a PolylineImageRendering) *PolylineElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func PolylineImageRenderingCustom(s string) PolylineImageRendering {
+	return PolylineImageRendering(s)
+}
+
+func (e *PolylineElement) Lang(s string) *PolylineElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *PolylineElement) LetterSpacing(s string) *PolylineElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *PolylineElement) LightingColor(s string) *PolylineElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *PolylineElement) MarkerEnd(s string) *PolylineElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *PolylineElement) MarkerMid(s string) *PolylineElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *PolylineElement) MarkerStart(s string) *PolylineElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *PolylineElement) Mask(s string) *PolylineElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *PolylineElement) Opacity(f float64) *PolylineElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PolylineElement) Overflow(a PolylineOverflow) *PolylineElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func PolylineOverflowCustom(s string) PolylineOverflow {
+	return PolylineOverflow(s)
+}
+
+func (e *PolylineElement) PaintOrder(s string) *PolylineElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *PolylineElement) PointerEvents(a PolylinePointerEvents) *PolylineElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func PolylinePointerEventsCustom(s string) PolylinePointerEvents {
+	return PolylinePointerEvents(s)
+}
+
+func (e *PolylineElement) RequiredExtensions(s string) *PolylineElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *PolylineElement) ShapeRendering(a PolylineShapeRendering) *PolylineElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func PolylineShapeRenderingCustom(s string) PolylineShapeRendering {
+	return PolylineShapeRendering(s)
+}
+
+func (e *PolylineElement) StopColor(s string) *PolylineElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *PolylineElement) StopOpacity(f float64) *PolylineElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PolylineElement) Stroke(s string) *PolylineElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *PolylineElement) StrokeWidth(s string) *PolylineElement {
-	e.attributes.Set("stroke-width", s)
+func (e *PolylineElement) StrokeDasharray(s string) *PolylineElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *PolylineElement) StrokeOpacity(f float64) *PolylineElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PolylineElement) StrokeDashoffset(s string) *PolylineElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -550,210 +807,28 @@ func (e *PolylineElement) StrokeMiterlimit(f float64) *PolylineElement {
 	return e
 }
 
-func (e *PolylineElement) StrokeDasharray(s string) *PolylineElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *PolylineElement) StrokeOpacity(f float64) *PolylineElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *PolylineElement) StrokeDashoffset(s string) *PolylineElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *PolylineElement) StrokeWidth(s string) *PolylineElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *PolylineElement) Opacity(f float64) *PolylineElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PolylineElement) Style(s string) *PolylineElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *PolylineElement) Color(s string) *PolylineElement {
-	e.attributes.Set("color", s)
+func (e *PolylineElement) Tabindex(i int) *PolylineElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *PolylineElement) Display(s string) *PolylineElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *PolylineElement) Visibility(a PolylineVisibility) *PolylineElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func PolylineVisibilityCustom(s string) PolylineVisibility {
-	return PolylineVisibility(s)
-}
-
-func (e *PolylineElement) ClipPath(s string) *PolylineElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *PolylineElement) ClipRule(a PolylineClipRule) *PolylineElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func PolylineClipRuleCustom(s string) PolylineClipRule {
-	return PolylineClipRule(s)
-}
-
-func (e *PolylineElement) Mask(s string) *PolylineElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *PolylineElement) Filter(s string) *PolylineElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *PolylineElement) Cursor(s string) *PolylineElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *PolylineElement) PointerEvents(a PolylinePointerEvents) *PolylineElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func PolylinePointerEventsCustom(s string) PolylinePointerEvents {
-	return PolylinePointerEvents(s)
-}
-
-func (e *PolylineElement) VectorEffect(a PolylineVectorEffect) *PolylineElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func PolylineVectorEffectCustom(s string) PolylineVectorEffect {
-	return PolylineVectorEffect(s)
-}
-
-func (e *PolylineElement) PaintOrder(s string) *PolylineElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *PolylineElement) ShapeRendering(a PolylineShapeRendering) *PolylineElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func PolylineShapeRenderingCustom(s string) PolylineShapeRendering {
-	return PolylineShapeRendering(s)
-}
-
-func (e *PolylineElement) ColorInterpolation(a PolylineColorInterpolation) *PolylineElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func PolylineColorInterpolationCustom(s string) PolylineColorInterpolation {
-	return PolylineColorInterpolation(s)
-}
-
-func (e *PolylineElement) ColorInterpolationFilters(a PolylineColorInterpolationFilters) *PolylineElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func PolylineColorInterpolationFiltersCustom(s string) PolylineColorInterpolationFilters {
-	return PolylineColorInterpolationFilters(s)
-}
-
-func (e *PolylineElement) FloodColor(s string) *PolylineElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *PolylineElement) FloodOpacity(f float64) *PolylineElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PolylineElement) LightingColor(s string) *PolylineElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *PolylineElement) StopColor(s string) *PolylineElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *PolylineElement) StopOpacity(f float64) *PolylineElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PolylineElement) MarkerStart(s string) *PolylineElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *PolylineElement) MarkerMid(s string) *PolylineElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *PolylineElement) MarkerEnd(s string) *PolylineElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *PolylineElement) FontFamily(s string) *PolylineElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *PolylineElement) FontSize(s string) *PolylineElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *PolylineElement) FontWeight(s string) *PolylineElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *PolylineElement) FontStyle(a PolylineFontStyle) *PolylineElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func PolylineFontStyleCustom(s string) PolylineFontStyle {
-	return PolylineFontStyle(s)
 }
 
 func (e *PolylineElement) TextAnchor(a PolylineTextAnchor) *PolylineElement {
@@ -766,40 +841,14 @@ func PolylineTextAnchorCustom(s string) PolylineTextAnchor {
 	return PolylineTextAnchor(s)
 }
 
-func (e *PolylineElement) DominantBaseline(a PolylineDominantBaseline) *PolylineElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func PolylineDominantBaselineCustom(s string) PolylineDominantBaseline {
-	return PolylineDominantBaseline(s)
-}
-
-func (e *PolylineElement) AlignmentBaseline(a PolylineAlignmentBaseline) *PolylineElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func PolylineAlignmentBaselineCustom(s string) PolylineAlignmentBaseline {
-	return PolylineAlignmentBaseline(s)
-}
-
-func (e *PolylineElement) LetterSpacing(s string) *PolylineElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *PolylineElement) WordSpacing(s string) *PolylineElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *PolylineElement) TextDecoration(s string) *PolylineElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *PolylineElement) TextOverflow(s string) *PolylineElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -814,24 +863,10 @@ func PolylineTextRenderingCustom(s string) PolylineTextRendering {
 	return PolylineTextRendering(s)
 }
 
-func (e *PolylineElement) ImageRendering(a PolylineImageRendering) *PolylineElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *PolylineElement) Transform(s string) *PolylineElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func PolylineImageRenderingCustom(s string) PolylineImageRendering {
-	return PolylineImageRendering(s)
-}
-
-func (e *PolylineElement) Overflow(a PolylineOverflow) *PolylineElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func PolylineOverflowCustom(s string) PolylineOverflow {
-	return PolylineOverflow(s)
 }
 
 func (e *PolylineElement) TransformBox(a PolylineTransformBox) *PolylineElement {
@@ -844,18 +879,46 @@ func PolylineTransformBoxCustom(s string) PolylineTransformBox {
 	return PolylineTransformBox(s)
 }
 
-func (e *PolylineElement) Direction(a PolylineDirection) *PolylineElement {
-	e.attributes.Set("direction", string(a))
+func (e *PolylineElement) TransformOrigin(s string) *PolylineElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func PolylineDirectionCustom(s string) PolylineDirection {
-	return PolylineDirection(s)
-}
-
 func (e *PolylineElement) UnicodeBidi(s string) *PolylineElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *PolylineElement) VectorEffect(a PolylineVectorEffect) *PolylineElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func PolylineVectorEffectCustom(s string) PolylineVectorEffect {
+	return PolylineVectorEffect(s)
+}
+
+func (e *PolylineElement) Visibility(a PolylineVisibility) *PolylineElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func PolylineVisibilityCustom(s string) PolylineVisibility {
+	return PolylineVisibility(s)
+}
+
+func (e *PolylineElement) WhiteSpace(s string) *PolylineElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *PolylineElement) WordSpacing(s string) *PolylineElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -870,8 +933,20 @@ func PolylineWritingModeCustom(s string) PolylineWritingMode {
 	return PolylineWritingMode(s)
 }
 
-func (e *PolylineElement) WhiteSpace(s string) *PolylineElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *PolylineElement) XmlLang(s string) *PolylineElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *PolylineElement) XmlSpace(a PolylineXmlSpace) *PolylineElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

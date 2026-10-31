@@ -240,6 +240,15 @@ const (
 	NoscriptInputmodeUrl     NoscriptInputmode = "url"
 )
 
+type NoscriptPopover string
+
+const (
+	NoscriptPopoverAuto   NoscriptPopover = "auto"
+	NoscriptPopoverHint   NoscriptPopover = "hint"
+	NoscriptPopoverManual NoscriptPopover = "manual"
+	NoscriptPopoverEmpty  NoscriptPopover = ""
+)
+
 type NoscriptSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *NoscriptElement) Enterkeyhint(a NoscriptEnterkeyhint) *NoscriptElement 
 	return e
 }
 
+func (e *NoscriptElement) Exportparts(s string) *NoscriptElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *NoscriptElement) Headingoffset(i int) *NoscriptElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *NoscriptElement) Headingreset(b bool) *NoscriptElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *NoscriptElement) Hidden(v ...NoscriptHidden) *NoscriptElement {
@@ -396,6 +425,14 @@ func (e *NoscriptElement) Inputmode(a NoscriptInputmode) *NoscriptElement {
 	return e
 }
 
+func (e *NoscriptElement) Is(s string) *NoscriptElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *NoscriptElement) Itemid(s string) *NoscriptElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *NoscriptElement) Nonce(s string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Popover(s string) *NoscriptElement {
-	e.attributes.Set("popover", s)
+func (e *NoscriptElement) Part(s ...string) *NoscriptElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Popover(v ...NoscriptPopover) *NoscriptElement {
+	var val NoscriptPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

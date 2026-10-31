@@ -172,6 +172,13 @@ const (
 	VideoCrossoriginEmpty          VideoCrossorigin = ""
 )
 
+type VideoLoading string
+
+const (
+	VideoLoadingEager VideoLoading = "eager"
+	VideoLoadingLazy  VideoLoading = "lazy"
+)
+
 type VideoPreload string
 
 const (
@@ -257,6 +264,15 @@ const (
 	VideoInputmodeUrl     VideoInputmode = "url"
 )
 
+type VideoPopover string
+
+const (
+	VideoPopoverAuto   VideoPopover = "auto"
+	VideoPopoverHint   VideoPopover = "hint"
+	VideoPopoverManual VideoPopover = "manual"
+	VideoPopoverEmpty  VideoPopover = ""
+)
+
 type VideoSpellcheck string
 
 const (
@@ -281,8 +297,24 @@ const (
 	VideoWritingsuggestionsEmpty VideoWritingsuggestions = ""
 )
 
-func (e *VideoElement) Src(s string) *VideoElement {
-	e.attributes.Set("src", s)
+// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *VideoElement) Autoplay(b bool) *VideoElement {
+	e.attributes.SetBool("autoplay", b)
+
+	return e
+}
+
+// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *VideoElement) Controls(b bool) *VideoElement {
+	e.attributes.SetBool("controls", b)
+
+	return e
+}
+
+func (e *VideoElement) Controlslist(s ...string) *VideoElement {
+	e.attributes.Set("controlslist", strings.Join(s, " "))
 
 	return e
 }
@@ -299,36 +331,30 @@ func (e *VideoElement) Crossorigin(v ...VideoCrossorigin) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Poster(s string) *VideoElement {
-	e.attributes.Set("poster", s)
-
-	return e
-}
-
-// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Preload(v ...VideoPreload) *VideoElement {
-	var val VideoPreload
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("preload", string(val))
-
-	return e
-}
-
-// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
+// Disablepictureinpicture sets the boolean attribute "disablepictureinpicture". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
-func (e *VideoElement) Autoplay(b bool) *VideoElement {
-	e.attributes.SetBool("autoplay", b)
+func (e *VideoElement) Disablepictureinpicture(b bool) *VideoElement {
+	e.attributes.SetBool("disablepictureinpicture", b)
 
 	return e
 }
 
-// Playsinline sets the boolean attribute "playsinline". When b is true it renders bare;
+// Disableremoteplayback sets the boolean attribute "disableremoteplayback". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
-func (e *VideoElement) Playsinline(b bool) *VideoElement {
-	e.attributes.SetBool("playsinline", b)
+func (e *VideoElement) Disableremoteplayback(b bool) *VideoElement {
+	e.attributes.SetBool("disableremoteplayback", b)
+
+	return e
+}
+
+func (e *VideoElement) Height(i int) *VideoElement {
+	e.attributes.Set("height", strconv.Itoa(i))
+
+	return e
+}
+
+func (e *VideoElement) Loading(a VideoLoading) *VideoElement {
+	e.attributes.Set("loading", string(a))
 
 	return e
 }
@@ -349,22 +375,44 @@ func (e *VideoElement) Muted(b bool) *VideoElement {
 	return e
 }
 
-// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// Playsinline sets the boolean attribute "playsinline". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
-func (e *VideoElement) Controls(b bool) *VideoElement {
-	e.attributes.SetBool("controls", b)
+func (e *VideoElement) Playsinline(b bool) *VideoElement {
+	e.attributes.SetBool("playsinline", b)
+
+	return e
+}
+
+// Poster sets the "poster" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *VideoElement) Poster(s string) *VideoElement {
+	e.attributes.Set("poster", s)
+
+	return e
+}
+
+// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Preload(v ...VideoPreload) *VideoElement {
+	var val VideoPreload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("preload", string(val))
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *VideoElement) Src(s string) *VideoElement {
+	e.attributes.Set("src", s)
 
 	return e
 }
 
 func (e *VideoElement) Width(i int) *VideoElement {
 	e.attributes.Set("width", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *VideoElement) Height(i int) *VideoElement {
-	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -469,6 +517,26 @@ func (e *VideoElement) Enterkeyhint(a VideoEnterkeyhint) *VideoElement {
 	return e
 }
 
+func (e *VideoElement) Exportparts(s string) *VideoElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *VideoElement) Headingoffset(i int) *VideoElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *VideoElement) Headingreset(b bool) *VideoElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *VideoElement) Hidden(v ...VideoHidden) *VideoElement {
@@ -501,6 +569,14 @@ func (e *VideoElement) Inputmode(a VideoInputmode) *VideoElement {
 	return e
 }
 
+func (e *VideoElement) Is(s string) *VideoElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *VideoElement) Itemid(s string) *VideoElement {
 	e.attributes.Set("itemid", s)
 
@@ -545,8 +621,20 @@ func (e *VideoElement) Nonce(s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Popover(s string) *VideoElement {
-	e.attributes.Set("popover", s)
+func (e *VideoElement) Part(s ...string) *VideoElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Popover(v ...VideoPopover) *VideoElement {
+	var val VideoPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -240,6 +240,15 @@ const (
 	MainInputmodeUrl     MainInputmode = "url"
 )
 
+type MainPopover string
+
+const (
+	MainPopoverAuto   MainPopover = "auto"
+	MainPopoverHint   MainPopover = "hint"
+	MainPopoverManual MainPopover = "manual"
+	MainPopoverEmpty  MainPopover = ""
+)
+
 type MainSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *MainElement) Enterkeyhint(a MainEnterkeyhint) *MainElement {
 	return e
 }
 
+func (e *MainElement) Exportparts(s string) *MainElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *MainElement) Headingoffset(i int) *MainElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MainElement) Headingreset(b bool) *MainElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MainElement) Hidden(v ...MainHidden) *MainElement {
@@ -396,6 +425,14 @@ func (e *MainElement) Inputmode(a MainInputmode) *MainElement {
 	return e
 }
 
+func (e *MainElement) Is(s string) *MainElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *MainElement) Itemid(s string) *MainElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *MainElement) Nonce(s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Popover(s string) *MainElement {
-	e.attributes.Set("popover", s)
+func (e *MainElement) Part(s ...string) *MainElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Popover(v ...MainPopover) *MainElement {
+	var val MainPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -2,261 +2,19 @@
   "name": "svg",
   "elements": [
     {
-      "tag": "svg",
-      "description": "The svg element is the container that defines a new coordinate system and viewport, used as the outermost element of an SVG document fragment.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "viewBox",
-          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "zoomAndPan",
-          "description": "Whether the user agent may zoom and pan the document.",
-          "allowed": {
-            "disable": {},
-            "magnify": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "xmlns",
-          "description": "XML namespace declaration for SVG.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "version",
-          "description": "Deprecated SVG version indicator; it has no effect on rendering.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "g",
-      "description": "The g element is a container used to group other SVG elements.",
-      "attributes": [
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "defs",
-      "description": "The defs element stores graphical objects that are defined for later reuse but not rendered directly.",
-      "attributes": [
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "symbol",
-      "description": "The symbol element defines reusable graphical content that is only rendered when instantiated by a use element.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "viewBox",
-          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "refX",
-          "description": "X coordinate of the symbol's reference point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "refY",
-          "description": "Y coordinate of the symbol's reference point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "use",
-      "description": "The use element duplicates nodes from elsewhere in the document and renders them at a given position.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to the element or symbol to instantiate.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "switch",
-      "description": "The switch element renders the first direct child whose conditional processing attributes evaluate to true.",
-      "attributes": [
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
       "tag": "a",
       "description": "The a element creates a hyperlink around SVG content.",
       "attributes": [
-        {
-          "name": "href",
-          "description": "URL of the hyperlink target.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "target",
-          "description": "Where to display the linked URL.",
-          "attribute_type": "AttributeTypeString"
-        },
         {
           "name": "download",
           "description": "Indicates the linked resource should be downloaded, optionally with a filename.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "ping",
-          "description": "Space-separated URLs to notify when the link is followed.",
+          "name": "href",
+          "description": "URL of the hyperlink target.",
+          "url": true,
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "rel",
-          "description": "Relationship of the linked resource to the current document.",
-          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "hreflang",
@@ -264,15 +22,14 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "type",
-          "description": "MIME type hint of the linked resource.",
-          "attribute_type": "AttributeTypeString"
+          "name": "ping",
+          "description": "Space-separated URLs to notify when the link is followed.",
+          "attribute_type": "AttributeTypeSST"
         },
         {
           "name": "referrerpolicy",
           "description": "Referrer policy used when fetching the resource.",
           "allowed": {
-            "": {},
             "no-referrer": {},
             "no-referrer-when-downgrade": {},
             "origin": {},
@@ -287,115 +44,536 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
+          "name": "rel",
+          "description": "Relationship of the linked resource to the current document.",
+          "attribute_type": "AttributeTypeSST"
+        },
+        {
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
+          "name": "target",
+          "description": "Where to display the linked URL.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "MIME type hint of the linked resource.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:actuate",
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:show",
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:title",
+          "deprecated": true,
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false,
-      "text": true
+      "text": true,
+      "interface": "SVGAElement"
     },
     {
-      "tag": "title",
-      "description": "The title element provides a human-readable title or tooltip for its parent element.",
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "desc",
-      "description": "The desc element provides a longer human-readable description of its parent element.",
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "metadata",
-      "description": "The metadata element holds structured metadata about the SVG content.",
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "path",
-      "description": "The path element defines a shape by a series of connected lines and curves.",
+      "tag": "animate",
+      "description": "The animate element animates an attribute or property of its target over time.",
       "attributes": [
         {
-          "name": "d",
-          "description": "Path data describing the outline of the shape.",
+          "name": "accumulate",
+          "description": "Whether repeated animations accumulate.",
+          "allowed": {
+            "none": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "additive",
+          "description": "Whether the animation adds to the underlying value.",
+          "allowed": {
+            "replace": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "attributeName",
+          "description": "Name of the attribute or property to animate.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
+          "name": "attributeType",
+          "description": "Namespace of the target attribute.",
+          "allowed": {
+            "CSS": {},
+            "XML": {},
+            "auto": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "begin",
+          "description": "Times or events at which the animation begins.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
+          "name": "by",
+          "description": "Relative offset value for the animation.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
+          "name": "calcMode",
+          "description": "Interpolation mode of the animation.",
+          "allowed": {
+            "discrete": {},
+            "linear": {},
+            "paced": {},
+            "spline": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "dur",
+          "description": "Duration of one animation cycle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "end",
+          "description": "Times or events at which the animation ends.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "Paint used to fill the interior of the shape or text.",
+          "allowed": {
+            "freeze": {},
+            "remove": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "from",
+          "description": "Starting value of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "href",
+          "description": "Reference to the element to animate.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "keySplines",
+          "description": "Bezier control points for each keyTimes interval.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "keyTimes",
+          "description": "Semicolon-separated time values controlling pacing of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatCount",
+          "description": "Number of times the animation repeats.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatDur",
+          "description": "Total duration for repeating the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "restart",
+          "description": "Whether the animation can restart.",
+          "allowed": {
+            "always": {},
+            "never": {},
+            "whenNotActive": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "to",
+          "description": "Ending value of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "values",
+          "description": "Semicolon-separated list of values over the animation.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGAnimateElement"
     },
     {
-      "tag": "rect",
-      "description": "The rect element draws a rectangle, optionally with rounded corners.",
+      "tag": "animateMotion",
+      "description": "The animateMotion element moves an element along a motion path.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
+          "name": "accumulate",
+          "description": "Whether repeated animations accumulate.",
+          "allowed": {
+            "none": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "additive",
+          "description": "Whether the animation adds to the underlying value.",
+          "allowed": {
+            "replace": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "begin",
+          "description": "Times or events at which the animation begins.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "y",
-          "description": "Vertical position.",
+          "name": "by",
+          "description": "Relative offset value for the animation.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "width",
-          "description": "Width.",
+          "name": "calcMode",
+          "description": "Interpolation mode of the animation.",
+          "allowed": {
+            "discrete": {},
+            "linear": {},
+            "paced": {},
+            "spline": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "dur",
+          "description": "Duration of one animation cycle.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "height",
-          "description": "Height.",
+          "name": "end",
+          "description": "Times or events at which the animation ends.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "rx",
-          "description": "Horizontal corner radius.",
+          "name": "fill",
+          "description": "Paint used to fill the interior of the shape or text.",
+          "allowed": {
+            "freeze": {},
+            "remove": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "from",
+          "description": "Starting value of the animation.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "ry",
-          "description": "Vertical corner radius.",
+          "name": "href",
+          "description": "Reference to the element to animate.",
+          "url": true,
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
+          "name": "keyPoints",
+          "description": "Progress along the path at each keyTimes value.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
+          "name": "keySplines",
+          "description": "Bezier control points for each keyTimes interval.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
+          "name": "keyTimes",
+          "description": "Semicolon-separated time values controlling pacing of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "origin",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "path",
+          "description": "Motion path data.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatCount",
+          "description": "Number of times the animation repeats.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatDur",
+          "description": "Total duration for repeating the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "restart",
+          "description": "Whether the animation can restart.",
+          "allowed": {
+            "always": {},
+            "never": {},
+            "whenNotActive": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rotate",
+          "description": "Rotation applied along the path: auto, auto-reverse or an angle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "to",
+          "description": "Ending value of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "values",
+          "description": "Semicolon-separated list of values over the animation.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGAnimateMotionElement"
+    },
+    {
+      "tag": "animateTransform",
+      "description": "The animateTransform element animates a transform attribute on its target.",
+      "attributes": [
+        {
+          "name": "accumulate",
+          "description": "Whether repeated animations accumulate.",
+          "allowed": {
+            "none": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "additive",
+          "description": "Whether the animation adds to the underlying value.",
+          "allowed": {
+            "replace": {},
+            "sum": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "attributeName",
+          "description": "Name of the attribute or property to animate.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "attributeType",
+          "description": "Namespace of the target attribute.",
+          "allowed": {
+            "CSS": {},
+            "XML": {},
+            "auto": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "begin",
+          "description": "Times or events at which the animation begins.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "by",
+          "description": "Relative offset value for the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "calcMode",
+          "description": "Interpolation mode of the animation.",
+          "allowed": {
+            "discrete": {},
+            "linear": {},
+            "paced": {},
+            "spline": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "dur",
+          "description": "Duration of one animation cycle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "end",
+          "description": "Times or events at which the animation ends.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "Paint used to fill the interior of the shape or text.",
+          "allowed": {
+            "freeze": {},
+            "remove": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "from",
+          "description": "Starting value of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "href",
+          "description": "Reference to the element to animate.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "keySplines",
+          "description": "Bezier control points for each keyTimes interval.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "keyTimes",
+          "description": "Semicolon-separated time values controlling pacing of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatCount",
+          "description": "Number of times the animation repeats.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatDur",
+          "description": "Total duration for repeating the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "restart",
+          "description": "Whether the animation can restart.",
+          "allowed": {
+            "always": {},
+            "never": {},
+            "whenNotActive": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "to",
+          "description": "Ending value of the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "Type of transformation to animate.",
+          "allowed": {
+            "rotate": {},
+            "scale": {},
+            "skewX": {},
+            "skewY": {},
+            "translate": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "values",
+          "description": "Semicolon-separated list of values over the animation.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGAnimateTransformElement"
     },
     {
       "tag": "circle",
@@ -412,600 +590,21 @@
           "attribute_type": "AttributeTypeString"
         },
         {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
           "name": "r",
           "description": "Radius of the circle.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
-    },
-    {
-      "tag": "ellipse",
-      "description": "The ellipse element draws an ellipse from a center point and two radii.",
-      "attributes": [
-        {
-          "name": "cx",
-          "description": "X coordinate of the center.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "cy",
-          "description": "Y coordinate of the center.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "rx",
-          "description": "Horizontal radius.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "ry",
-          "description": "Vertical radius.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "line",
-      "description": "The line element draws a straight line between two points.",
-      "attributes": [
-        {
-          "name": "x1",
-          "description": "X coordinate of the start point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y1",
-          "description": "Y coordinate of the start point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x2",
-          "description": "X coordinate of the end point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y2",
-          "description": "Y coordinate of the end point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "polyline",
-      "description": "The polyline element draws an open shape of connected straight line segments.",
-      "attributes": [
-        {
-          "name": "points",
-          "description": "List of x,y coordinate pairs defining the vertices.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "polygon",
-      "description": "The polygon element draws a closed shape of connected straight line segments.",
-      "attributes": [
-        {
-          "name": "points",
-          "description": "List of x,y coordinate pairs defining the vertices.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "pathLength",
-          "description": "Total path length in user units, used to scale distance calculations.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "text",
-      "description": "The text element draws a graphics element consisting of text.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dx",
-          "description": "Horizontal shift(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dy",
-          "description": "Vertical shift(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "rotate",
-          "description": "Rotation(s) applied to individual glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "textLength",
-          "description": "Target length of the text advance.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "lengthAdjust",
-          "description": "How text is stretched or compressed to match textLength.",
-          "allowed": {
-            "spacing": {},
-            "spacingAndGlyphs": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "tspan",
-      "description": "The tspan element defines a subtext within a text element, allowing individual styling and positioning.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dx",
-          "description": "Horizontal shift(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dy",
-          "description": "Vertical shift(s) of the glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "rotate",
-          "description": "Rotation(s) applied to individual glyphs.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "textLength",
-          "description": "Target length of the text advance.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "lengthAdjust",
-          "description": "How text is stretched or compressed to match textLength.",
-          "allowed": {
-            "spacing": {},
-            "spacingAndGlyphs": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "textPath",
-      "description": "The textPath element lays out text along the shape of a path.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to the path element along which to lay out the text.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "startOffset",
-          "description": "Offset from the start of the path at which the text begins.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "method",
-          "description": "How glyphs are rendered along the path.",
-          "allowed": {
-            "align": {},
-            "stretch": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "spacing",
-          "description": "How space between glyphs is handled.",
-          "allowed": {
-            "auto": {},
-            "exact": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "side",
-          "description": "Which side of the path the text is placed on.",
-          "allowed": {
-            "left": {},
-            "right": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "path",
-          "description": "Inline path data along which to lay out the text.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "textLength",
-          "description": "Target length of the text advance.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "lengthAdjust",
-          "description": "How text is stretched or compressed to match textLength.",
-          "allowed": {
-            "spacing": {},
-            "spacingAndGlyphs": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "image",
-      "description": "The image element includes a raster or SVG image within the document.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "URL of the image file.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "crossorigin",
-          "description": "CORS mode used when fetching the resource.",
-          "allowed": {
-            "anonymous": {},
-            "use-credentials": {}
-          },
-          "allow_empty": true,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "decoding",
-          "description": "Hint for how the image should be decoded.",
-          "allowed": {
-            "async": {},
-            "auto": {},
-            "sync": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "foreignObject",
-      "description": "The foreignObject element includes content from a different XML namespace, such as HTML, in the SVG.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false,
-      "text": true
-    },
-    {
-      "tag": "marker",
-      "description": "The marker element defines a graphic drawn at the vertices of a shape.",
-      "attributes": [
-        {
-          "name": "markerWidth",
-          "description": "Width of the marker viewport.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "markerHeight",
-          "description": "Height of the marker viewport.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "markerUnits",
-          "description": "Coordinate system for markerWidth, markerHeight and the marker contents.",
-          "allowed": {
-            "strokeWidth": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "refX",
-          "description": "X coordinate of the marker's reference point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "refY",
-          "description": "Y coordinate of the marker's reference point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "orient",
-          "description": "Marker orientation: auto, auto-start-reverse or an angle.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "viewBox",
-          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "pattern",
-      "description": "The pattern element defines a graphics object that can be tiled to fill or stroke shapes.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to another pattern to inherit attributes and content from.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "patternUnits",
-          "description": "Coordinate system for the pattern tile geometry.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "patternContentUnits",
-          "description": "Coordinate system for the pattern contents.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "patternTransform",
-          "description": "Transform applied to the pattern.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "viewBox",
-          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
+      "interface": "SVGCircleElement"
     },
     {
       "tag": "clipPath",
@@ -1023,316 +622,72 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "transform",
-          "description": "List of transform functions applied to the element.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "transform-origin",
-          "description": "Origin point for the element's transformations.",
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGClipPathElement"
     },
     {
-      "tag": "mask",
-      "description": "The mask element defines an alpha mask for compositing the element it is applied to.",
+      "tag": "defs",
+      "description": "The defs element stores graphical objects that are defined for later reuse but not rendered directly.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "maskUnits",
-          "description": "Coordinate system for the mask geometry.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "maskContentUnits",
-          "description": "Coordinate system for the mask contents.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "mask-type",
-          "description": "Whether the mask uses luminance or alpha values.",
-          "allowed": {
-            "alpha": {},
-            "luminance": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "linearGradient",
-      "description": "The linearGradient element defines a linear gradient used to fill or stroke shapes.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to another gradient to inherit attributes and stops from.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "gradientUnits",
-          "description": "Coordinate system for the gradient geometry.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "gradientTransform",
-          "description": "Transform applied to the gradient.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "spreadMethod",
-          "description": "How the gradient continues beyond its start and end points.",
-          "allowed": {
-            "pad": {},
-            "reflect": {},
-            "repeat": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "x1",
-          "description": "X coordinate of the gradient vector start.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y1",
-          "description": "Y coordinate of the gradient vector start.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x2",
-          "description": "X coordinate of the gradient vector end.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y2",
-          "description": "Y coordinate of the gradient vector end.",
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGDefsElement"
     },
     {
-      "tag": "radialGradient",
-      "description": "The radialGradient element defines a radial gradient used to fill or stroke shapes.",
+      "tag": "desc",
+      "description": "The desc element provides a longer human-readable description of its parent element.",
+      "text": true,
+      "interface": "SVGDescElement"
+    },
+    {
+      "tag": "ellipse",
+      "description": "The ellipse element draws an ellipse from a center point and two radii.",
       "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to another gradient to inherit attributes and stops from.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "gradientUnits",
-          "description": "Coordinate system for the gradient geometry.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "gradientTransform",
-          "description": "Transform applied to the gradient.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "spreadMethod",
-          "description": "How the gradient continues beyond its start and end points.",
-          "allowed": {
-            "pad": {},
-            "reflect": {},
-            "repeat": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
         {
           "name": "cx",
-          "description": "X coordinate of the outer circle center.",
+          "description": "X coordinate of the center.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "cy",
-          "description": "Y coordinate of the outer circle center.",
+          "description": "Y coordinate of the center.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "r",
-          "description": "Radius of the outer circle.",
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "rx",
+          "description": "Horizontal radius.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "fx",
-          "description": "X coordinate of the focal point.",
+          "name": "ry",
+          "description": "Vertical radius.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "fy",
-          "description": "Y coordinate of the focal point.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "fr",
-          "description": "Radius of the focal circle.",
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
-    },
-    {
-      "tag": "stop",
-      "description": "The stop element defines a color and position within a gradient.",
-      "attributes": [
-        {
-          "name": "offset",
-          "description": "Position of the stop along the gradient vector (number or percentage).",
-          "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "filter",
-      "description": "The filter element defines a container for filter primitives that produce a graphical effect.",
-      "attributes": [
-        {
-          "name": "href",
-          "description": "Reference to another filter to inherit attributes from.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "filterUnits",
-          "description": "Coordinate system for the filter region.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "primitiveUnits",
-          "description": "Coordinate system for filter primitive attributes.",
-          "allowed": {
-            "objectBoundingBox": {},
-            "userSpaceOnUse": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
+      "interface": "SVGEllipseElement"
     },
     {
       "tag": "feBlend",
       "description": "The feBlend filter primitive composites two inputs using a blend mode.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1369,14 +724,17 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feColorMatrix",
-      "description": "The feColorMatrix filter primitive transforms colors using a matrix.",
-      "attributes": [
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -1386,25 +744,27 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
+        }
+      ],
+      "interface": "SVGFEBlendElement"
+    },
+    {
+      "tag": "feColorMatrix",
+      "description": "The feColorMatrix filter primitive transforms colors using a matrix.",
+      "attributes": [
         {
           "name": "height",
           "description": "Height.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
+          "name": "in",
+          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "in",
-          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1424,51 +784,49 @@
           "name": "values",
           "description": "Values for the matrix operation.",
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEColorMatrixElement"
     },
     {
       "tag": "feComponentTransfer",
       "description": "The feComponentTransfer filter primitive remaps each color channel using transfer functions.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "in",
           "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
           "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feComposite",
-      "description": "The feComposite filter primitive combines two inputs using a Porter-Duff or arithmetic operation.",
-      "attributes": [
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -1478,20 +836,17 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
+        }
+      ],
+      "interface": "SVGFEComponentTransferElement"
+    },
+    {
+      "tag": "feComposite",
+      "description": "The feComposite filter primitive combines two inputs using a Porter-Duff or arithmetic operation.",
+      "attributes": [
         {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1503,22 +858,6 @@
           "name": "in2",
           "description": "Second input for the filter primitive.",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "operator",
-          "description": "Compositing operation.",
-          "allowed": {
-            "arithmetic": {},
-            "atop": {},
-            "in": {},
-            "lighter": {},
-            "out": {},
-            "over": {},
-            "xor": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
         },
         {
           "name": "k1",
@@ -1539,14 +878,33 @@
           "name": "k4",
           "description": "Coefficient k4 for the arithmetic operator.",
           "attribute_type": "AttributeTypeFloat"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feConvolveMatrix",
-      "description": "The feConvolveMatrix filter primitive applies a matrix convolution to the input image.",
-      "attributes": [
+        },
+        {
+          "name": "operator",
+          "description": "Compositing operation.",
+          "allowed": {
+            "arithmetic": {},
+            "atop": {},
+            "in": {},
+            "lighter": {},
+            "out": {},
+            "over": {},
+            "xor": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -1556,56 +914,23 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "in",
-          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "order",
-          "description": "Size of the convolution kernel matrix.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "kernelMatrix",
-          "description": "List of numbers forming the convolution kernel.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "divisor",
-          "description": "Divisor applied to the convolution result.",
-          "attribute_type": "AttributeTypeFloat"
-        },
+        }
+      ],
+      "interface": "SVGFECompositeElement"
+    },
+    {
+      "tag": "feConvolveMatrix",
+      "description": "The feConvolveMatrix filter primitive applies a matrix convolution to the input image.",
+      "attributes": [
         {
           "name": "bias",
           "description": "Value added to each channel after convolution.",
           "attribute_type": "AttributeTypeFloat"
         },
         {
-          "name": "targetX",
-          "description": "X position of the target pixel within the kernel.",
-          "attribute_type": "AttributeTypeNumber"
-        },
-        {
-          "name": "targetY",
-          "description": "Y position of the target pixel within the kernel.",
-          "attribute_type": "AttributeTypeNumber"
+          "name": "divisor",
+          "description": "Divisor applied to the convolution result.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
           "name": "edgeMode",
@@ -1620,45 +945,8 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
-          "name": "kernelUnitLength",
-          "description": "Distance between samples of the filter kernel.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAlpha",
-          "description": "Whether the alpha channel is left unchanged by the convolution.",
-          "attribute_type": "AttributeTypeBool"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feDiffuseLighting",
-      "description": "The feDiffuseLighting filter primitive lights an image using the alpha channel as a bump map with diffuse reflection.",
-      "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1667,27 +955,51 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "surfaceScale",
-          "description": "Height of the surface when alpha is 1.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "diffuseConstant",
-          "description": "Diffuse reflection constant.",
-          "attribute_type": "AttributeTypeFloat"
+          "name": "kernelMatrix",
+          "description": "List of numbers forming the convolution kernel.",
+          "attribute_type": "AttributeTypeString"
         },
         {
           "name": "kernelUnitLength",
           "description": "Distance between samples of the filter kernel.",
           "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feDisplacementMap",
-      "description": "The feDisplacementMap filter primitive displaces an image using the pixel values of another.",
-      "attributes": [
+        },
+        {
+          "name": "order",
+          "description": "Size of the convolution kernel matrix.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preserveAlpha",
+          "description": "Whether the alpha channel is left unchanged by the convolution.",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "targetX",
+          "description": "X position of the target pixel within the kernel.",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "targetY",
+          "description": "Y position of the target pixel within the kernel.",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -1697,11 +1009,18 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
+        }
+      ],
+      "interface": "SVGFEConvolveMatrixElement"
+    },
+    {
+      "tag": "feDiffuseLighting",
+      "description": "The feDiffuseLighting filter primitive lights an image using the alpha channel as a bump map with diffuse reflection.",
+      "attributes": [
         {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
+          "name": "diffuseConstant",
+          "description": "Diffuse reflection constant.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
           "name": "height",
@@ -1709,8 +1028,50 @@
           "attribute_type": "AttributeTypeString"
         },
         {
+          "name": "in",
+          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "kernelUnitLength",
+          "description": "Distance between samples of the filter kernel.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "result",
           "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "surfaceScale",
+          "description": "Height of the surface when alpha is 1.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGFEDiffuseLightingElement"
+    },
+    {
+      "tag": "feDisplacementMap",
+      "description": "The feDisplacementMap filter primitive displaces an image using the pixel values of another.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1724,9 +1085,24 @@
           "attribute_type": "AttributeTypeString"
         },
         {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "scale",
           "description": "Displacement scale factor.",
           "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
         },
         {
           "name": "xChannelSelector",
@@ -1742,6 +1118,11 @@
           "attribute_type": "AttributeTypeEnum"
         },
         {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "yChannelSelector",
           "description": "Channel of in2 used for Y displacement.",
           "allowed": {
@@ -1755,7 +1136,7 @@
           "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "void": false
+      "interface": "SVGFEDisplacementMapElement"
     },
     {
       "tag": "feDistantLight",
@@ -1772,35 +1153,25 @@
           "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEDistantLightElement"
     },
     {
       "tag": "feDropShadow",
       "description": "The feDropShadow filter primitive creates a drop shadow of the input image.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
+          "name": "dx",
+          "description": "Horizontal offset of the shadow.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
+          "name": "dy",
+          "description": "Vertical offset of the shadow.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -1809,43 +1180,38 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "dx",
-          "description": "Horizontal offset of the shadow.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dy",
-          "description": "Vertical offset of the shadow.",
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "stdDeviation",
           "description": "Standard deviation of the blur, as one or two numbers.",
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEDropShadowElement"
     },
     {
       "tag": "feFlood",
       "description": "The feFlood filter primitive fills the filter region with a color and opacity.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
           "attribute_type": "AttributeTypeString"
@@ -1854,15 +1220,60 @@
           "name": "result",
           "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEFloodElement"
     },
     {
       "tag": "feFuncA",
       "description": "The feFuncA filter primitive defines the transfer function for the alpha channel of feComponentTransfer.",
       "attributes": [
         {
+          "name": "amplitude",
+          "description": "Amplitude of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "exponent",
+          "description": "Exponent of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "intercept",
+          "description": "Intercept of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "offset",
+          "description": "Offset of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "slope",
+          "description": "Slope of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "tableValues",
+          "description": "List of values defining the table or discrete function.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "type",
           "description": "Type of transfer function.",
           "allowed": {
@@ -1875,45 +1286,45 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "tableValues",
-          "description": "List of values defining the table or discrete function.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "slope",
-          "description": "Slope of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "intercept",
-          "description": "Intercept of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "amplitude",
-          "description": "Amplitude of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "exponent",
-          "description": "Exponent of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "offset",
-          "description": "Offset of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEFuncAElement"
     },
     {
       "tag": "feFuncB",
       "description": "The feFuncB filter primitive defines the transfer function for the blue channel of feComponentTransfer.",
       "attributes": [
         {
+          "name": "amplitude",
+          "description": "Amplitude of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "exponent",
+          "description": "Exponent of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "intercept",
+          "description": "Intercept of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "offset",
+          "description": "Offset of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "slope",
+          "description": "Slope of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "tableValues",
+          "description": "List of values defining the table or discrete function.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "type",
           "description": "Type of transfer function.",
           "allowed": {
@@ -1926,45 +1337,45 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "tableValues",
-          "description": "List of values defining the table or discrete function.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "slope",
-          "description": "Slope of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "intercept",
-          "description": "Intercept of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "amplitude",
-          "description": "Amplitude of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "exponent",
-          "description": "Exponent of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "offset",
-          "description": "Offset of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEFuncBElement"
     },
     {
       "tag": "feFuncG",
       "description": "The feFuncG filter primitive defines the transfer function for the green channel of feComponentTransfer.",
       "attributes": [
         {
+          "name": "amplitude",
+          "description": "Amplitude of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "exponent",
+          "description": "Exponent of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "intercept",
+          "description": "Intercept of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "offset",
+          "description": "Offset of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "slope",
+          "description": "Slope of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "tableValues",
+          "description": "List of values defining the table or discrete function.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "type",
           "description": "Type of transfer function.",
           "allowed": {
@@ -1977,45 +1388,45 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "tableValues",
-          "description": "List of values defining the table or discrete function.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "slope",
-          "description": "Slope of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "intercept",
-          "description": "Intercept of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "amplitude",
-          "description": "Amplitude of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "exponent",
-          "description": "Exponent of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "offset",
-          "description": "Offset of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEFuncGElement"
     },
     {
       "tag": "feFuncR",
       "description": "The feFuncR filter primitive defines the transfer function for the red channel of feComponentTransfer.",
       "attributes": [
         {
+          "name": "amplitude",
+          "description": "Amplitude of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "exponent",
+          "description": "Exponent of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "intercept",
+          "description": "Intercept of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "offset",
+          "description": "Offset of the gamma function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "slope",
+          "description": "Slope of the linear function.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "tableValues",
+          "description": "List of values defining the table or discrete function.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "type",
           "description": "Type of transfer function.",
           "allowed": {
@@ -2028,79 +1439,14 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "tableValues",
-          "description": "List of values defining the table or discrete function.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "slope",
-          "description": "Slope of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "intercept",
-          "description": "Intercept of the linear function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "amplitude",
-          "description": "Amplitude of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "exponent",
-          "description": "Exponent of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "offset",
-          "description": "Offset of the gamma function.",
-          "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEFuncRElement"
     },
     {
       "tag": "feGaussianBlur",
       "description": "The feGaussianBlur filter primitive blurs the input image with a Gaussian function.",
       "attributes": [
-        {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "in",
-          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "stdDeviation",
-          "description": "Standard deviation of the blur, as one or two numbers.",
-          "attribute_type": "AttributeTypeString"
-        },
         {
           "name": "edgeMode",
           "description": "How pixels beyond the input edge are extended.",
@@ -2112,14 +1458,32 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feImage",
-      "description": "The feImage filter primitive fetches an image or element reference and uses it as filter input.",
-      "attributes": [
+        },
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "in",
+          "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stdDeviation",
+          "description": "Standard deviation of the blur, as one or two numbers.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -2129,37 +1493,14 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "height",
-          "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "href",
-          "description": "URL or element reference of the image.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "preserveAspectRatio",
-          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
-          "attribute_type": "AttributeTypeString"
-        },
+        }
+      ],
+      "interface": "SVGFEGaussianBlurElement"
+    },
+    {
+      "tag": "feImage",
+      "description": "The feImage filter primitive fetches an image or element reference and uses it as filter input.",
+      "attributes": [
         {
           "name": "crossorigin",
           "description": "CORS mode used when fetching the resource.",
@@ -2170,22 +1511,26 @@
           "allow_empty": true,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feMerge",
-      "description": "The feMerge filter primitive composites its feMergeNode inputs in order.",
-      "attributes": [
+        },
         {
-          "name": "x",
-          "description": "Horizontal position.",
+          "name": "height",
+          "description": "Height.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "y",
-          "description": "Vertical position.",
+          "name": "href",
+          "description": "URL or element reference of the image.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2193,6 +1538,30 @@
           "description": "Width.",
           "attribute_type": "AttributeTypeString"
         },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGFEImageElement"
+    },
+    {
+      "tag": "feMerge",
+      "description": "The feMerge filter primitive composites its feMergeNode inputs in order.",
+      "attributes": [
         {
           "name": "height",
           "description": "Height.",
@@ -2202,9 +1571,24 @@
           "name": "result",
           "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEMergeElement"
     },
     {
       "tag": "feMergeNode",
@@ -2216,35 +1600,15 @@
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEMergeNodeElement"
     },
     {
       "tag": "feMorphology",
       "description": "The feMorphology filter primitive erodes or dilates the input image.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2267,14 +1631,17 @@
           "name": "radius",
           "description": "Radius of the operation, as one or two numbers.",
           "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feOffset",
-      "description": "The feOffset filter primitive offsets the input image.",
-      "attributes": [
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -2284,20 +1651,27 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGFEMorphologyElement"
+    },
+    {
+      "tag": "feOffset",
+      "description": "The feOffset filter primitive offsets the input image.",
+      "attributes": [
+        {
+          "name": "dx",
+          "description": "Horizontal offset.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
+          "name": "dy",
+          "description": "Vertical offset.",
+          "attribute_type": "AttributeTypeFloat"
         },
         {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2306,17 +1680,27 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "dx",
-          "description": "Horizontal offset.",
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "dy",
-          "description": "Vertical offset.",
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFEOffsetElement"
     },
     {
       "tag": "fePointLight",
@@ -2338,35 +1722,15 @@
           "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFEPointLightElement"
     },
     {
       "tag": "feSpecularLighting",
       "description": "The feSpecularLighting filter primitive lights an image using the alpha channel as a bump map with specular reflection.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2375,9 +1739,14 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "surfaceScale",
-          "description": "Height of the surface when alpha is 1.",
-          "attribute_type": "AttributeTypeFloat"
+          "name": "kernelUnitLength",
+          "description": "Distance between samples of the filter kernel.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
         },
         {
           "name": "specularConstant",
@@ -2390,30 +1759,35 @@
           "attribute_type": "AttributeTypeFloat"
         },
         {
-          "name": "kernelUnitLength",
-          "description": "Distance between samples of the filter kernel.",
+          "name": "surfaceScale",
+          "description": "Height of the surface when alpha is 1.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGFESpecularLightingElement"
     },
     {
       "tag": "feSpotLight",
       "description": "The feSpotLight filter primitive defines a spot light source for lighting filters.",
       "attributes": [
         {
-          "name": "x",
-          "description": "X location of the light.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "y",
-          "description": "Y location of the light.",
-          "attribute_type": "AttributeTypeFloat"
-        },
-        {
-          "name": "z",
-          "description": "Z location of the light.",
+          "name": "limitingConeAngle",
+          "description": "Angle of the cone limiting the light, in degrees.",
           "attribute_type": "AttributeTypeFloat"
         },
         {
@@ -2437,54 +1811,47 @@
           "attribute_type": "AttributeTypeFloat"
         },
         {
-          "name": "limitingConeAngle",
-          "description": "Angle of the cone limiting the light, in degrees.",
+          "name": "x",
+          "description": "X location of the light.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "y",
+          "description": "Y location of the light.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "z",
+          "description": "Z location of the light.",
           "attribute_type": "AttributeTypeFloat"
         }
       ],
-      "void": false
+      "interface": "SVGFESpotLightElement"
     },
     {
       "tag": "feTile",
       "description": "The feTile filter primitive fills the filter region with a tiled copy of the input.",
       "attributes": [
         {
-          "name": "x",
-          "description": "Horizontal position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "y",
-          "description": "Vertical position.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "width",
-          "description": "Width.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "height",
           "description": "Height.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "in",
           "description": "Input for the filter primitive (SourceGraphic, SourceAlpha, BackgroundImage, FillPaint, StrokePaint or a result name).",
           "attribute_type": "AttributeTypeString"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "feTurbulence",
-      "description": "The feTurbulence filter primitive generates Perlin noise.",
-      "attributes": [
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "x",
           "description": "Horizontal position.",
@@ -2494,10 +1861,17 @@
           "name": "y",
           "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
-        },
+        }
+      ],
+      "interface": "SVGFETileElement"
+    },
+    {
+      "tag": "feTurbulence",
+      "description": "The feTurbulence filter primitive generates Perlin noise.",
+      "attributes": [
         {
-          "name": "width",
-          "description": "Width.",
+          "name": "baseFrequency",
+          "description": "Base frequency of the noise, as one or two numbers.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2506,19 +1880,14 @@
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "result",
-          "description": "Name assigned to the output of this filter primitive.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "baseFrequency",
-          "description": "Base frequency of the noise, as one or two numbers.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
           "name": "numOctaves",
           "description": "Number of noise octaves.",
           "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "result",
+          "description": "Name assigned to the output of this filter primitive.",
+          "attribute_type": "AttributeTypeString"
         },
         {
           "name": "seed",
@@ -2546,52 +1915,128 @@
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        }
-      ],
-      "void": false
-    },
-    {
-      "tag": "style",
-      "description": "The style element embeds a CSS stylesheet within the SVG document.",
-      "attributes": [
+        },
         {
-          "name": "type",
-          "description": "MIME type of the stylesheet language.",
+          "name": "width",
+          "description": "Width.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "media",
-          "description": "Media query the stylesheet applies to.",
+          "name": "x",
+          "description": "Horizontal position.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "title",
-          "description": "Title for the alternate stylesheet set.",
+          "name": "y",
+          "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false,
-      "text": true
+      "interface": "SVGFETurbulenceElement"
     },
     {
-      "tag": "script",
-      "description": "The script element embeds or references an executable script.",
+      "tag": "filter",
+      "description": "The filter element defines a container for filter primitives that produce a graphical effect.",
       "attributes": [
         {
-          "name": "href",
-          "description": "URL of an external script.",
+          "name": "filterUnits",
+          "description": "Coordinate system for the filter region.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "primitiveUnits",
+          "description": "Coordinate system for filter primitive attributes.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "xlink:href",
           "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "type",
-          "description": "MIME type or module type of the script.",
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGFilterElement"
+    },
+    {
+      "tag": "foreignObject",
+      "description": "The foreignObject element includes content from a different XML namespace, such as HTML, in the SVG.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
           "attribute_type": "AttributeTypeString"
         },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "SVGForeignObjectElement"
+    },
+    {
+      "tag": "g",
+      "description": "The g element is a container used to group other SVG elements.",
+      "attributes": [
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGGElement"
+    },
+    {
+      "tag": "image",
+      "description": "The image element includes a raster or SVG image within the document.",
+      "attributes": [
         {
           "name": "crossorigin",
           "description": "CORS mode used when fetching the resource.",
@@ -2602,23 +2047,795 @@
           "allow_empty": true,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "decoding",
+          "description": "Hint for how the image should be decoded.",
+          "allowed": {
+            "async": {},
+            "auto": {},
+            "sync": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "href",
+          "description": "URL of the image file.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false,
-      "text": true
+      "interface": "SVGImageElement"
     },
     {
-      "tag": "view",
-      "description": "The view element defines a named view of the SVG that can be targeted by a URL fragment.",
+      "tag": "line",
+      "description": "The line element draws a straight line between two points.",
       "attributes": [
+        {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x1",
+          "description": "X coordinate of the start point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x2",
+          "description": "X coordinate of the end point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y1",
+          "description": "Y coordinate of the start point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y2",
+          "description": "Y coordinate of the end point.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGLineElement"
+    },
+    {
+      "tag": "linearGradient",
+      "description": "The linearGradient element defines a linear gradient used to fill or stroke shapes.",
+      "attributes": [
+        {
+          "name": "gradientTransform",
+          "description": "Transform applied to the gradient.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "gradientUnits",
+          "description": "Coordinate system for the gradient geometry.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "Reference to another gradient to inherit attributes and stops from.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "spreadMethod",
+          "description": "How the gradient continues beyond its start and end points.",
+          "allowed": {
+            "pad": {},
+            "reflect": {},
+            "repeat": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "x1",
+          "description": "X coordinate of the gradient vector start.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x2",
+          "description": "X coordinate of the gradient vector end.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y1",
+          "description": "Y coordinate of the gradient vector start.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y2",
+          "description": "Y coordinate of the gradient vector end.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGLinearGradientElement"
+    },
+    {
+      "tag": "marker",
+      "description": "The marker element defines a graphic drawn at the vertices of a shape.",
+      "attributes": [
+        {
+          "name": "markerHeight",
+          "description": "Height of the marker viewport.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "markerUnits",
+          "description": "Coordinate system for markerWidth, markerHeight and the marker contents.",
+          "allowed": {
+            "strokeWidth": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "markerWidth",
+          "description": "Width of the marker viewport.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "orient",
+          "description": "Marker orientation: auto, auto-start-reverse or an angle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "refX",
+          "description": "X coordinate of the marker's reference point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "refY",
+          "description": "Y coordinate of the marker's reference point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "viewBox",
+          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGMarkerElement"
+    },
+    {
+      "tag": "mask",
+      "description": "The mask element defines an alpha mask for compositing the element it is applied to.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "mask-type",
+          "description": "Whether the mask uses luminance or alpha values.",
+          "allowed": {
+            "alpha": {},
+            "luminance": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "maskContentUnits",
+          "description": "Coordinate system for the mask contents.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "maskUnits",
+          "description": "Coordinate system for the mask geometry.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGMaskElement"
+    },
+    {
+      "tag": "metadata",
+      "description": "The metadata element holds structured metadata about the SVG content.",
+      "text": true,
+      "interface": "SVGMetadataElement"
+    },
+    {
+      "tag": "mpath",
+      "description": "The mpath element references a path element to use as the motion path of animateMotion.",
+      "attributes": [
+        {
+          "name": "href",
+          "description": "Reference to the path element.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGMPathElement"
+    },
+    {
+      "tag": "path",
+      "description": "The path element defines a shape by a series of connected lines and curves.",
+      "attributes": [
+        {
+          "name": "d",
+          "description": "Path data describing the outline of the shape.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGPathElement"
+    },
+    {
+      "tag": "pattern",
+      "description": "The pattern element defines a graphics object that can be tiled to fill or stroke shapes.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "href",
+          "description": "Reference to another pattern to inherit attributes and content from.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "patternContentUnits",
+          "description": "Coordinate system for the pattern contents.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "patternTransform",
+          "description": "Transform applied to the pattern.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "patternUnits",
+          "description": "Coordinate system for the pattern tile geometry.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
         {
           "name": "viewBox",
           "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
           "attribute_type": "AttributeTypeString"
         },
         {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGPatternElement"
+    },
+    {
+      "tag": "polygon",
+      "description": "The polygon element draws a closed shape of connected straight line segments.",
+      "attributes": [
+        {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "points",
+          "description": "List of x,y coordinate pairs defining the vertices.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGPolygonElement"
+    },
+    {
+      "tag": "polyline",
+      "description": "The polyline element draws an open shape of connected straight line segments.",
+      "attributes": [
+        {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "points",
+          "description": "List of x,y coordinate pairs defining the vertices.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGPolylineElement"
+    },
+    {
+      "tag": "radialGradient",
+      "description": "The radialGradient element defines a radial gradient used to fill or stroke shapes.",
+      "attributes": [
+        {
+          "name": "cx",
+          "description": "X coordinate of the outer circle center.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "cy",
+          "description": "Y coordinate of the outer circle center.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fr",
+          "description": "Radius of the focal circle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fx",
+          "description": "X coordinate of the focal point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fy",
+          "description": "Y coordinate of the focal point.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "gradientTransform",
+          "description": "Transform applied to the gradient.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "gradientUnits",
+          "description": "Coordinate system for the gradient geometry.",
+          "allowed": {
+            "objectBoundingBox": {},
+            "userSpaceOnUse": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "Reference to another gradient to inherit attributes and stops from.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "r",
+          "description": "Radius of the outer circle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "spreadMethod",
+          "description": "How the gradient continues beyond its start and end points.",
+          "allowed": {
+            "pad": {},
+            "reflect": {},
+            "repeat": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGRadialGradientElement"
+    },
+    {
+      "tag": "rect",
+      "description": "The rect element draws a rectangle, optionally with rounded corners.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "pathLength",
+          "description": "Total path length in user units, used to scale distance calculations.",
+          "attribute_type": "AttributeTypeFloat"
+        },
+        {
+          "name": "rx",
+          "description": "Horizontal corner radius.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "ry",
+          "description": "Vertical corner radius.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGRectElement"
+    },
+    {
+      "tag": "script",
+      "description": "The script element embeds or references an executable script.",
+      "attributes": [
+        {
+          "name": "crossorigin",
+          "description": "CORS mode used when fetching the resource.",
+          "allowed": {
+            "anonymous": {},
+            "use-credentials": {}
+          },
+          "allow_empty": true,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "URL of an external script.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "MIME type or module type of the script.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "SVGScriptElement"
+    },
+    {
+      "tag": "set",
+      "description": "The set element sets an attribute to a given value for a specified duration.",
+      "attributes": [
+        {
+          "name": "attributeName",
+          "description": "Name of the attribute or property to animate.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "attributeType",
+          "description": "Namespace of the target attribute.",
+          "allowed": {
+            "CSS": {},
+            "XML": {},
+            "auto": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "begin",
+          "description": "Times or events at which the animation begins.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "dur",
+          "description": "Duration of one animation cycle.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "end",
+          "description": "Times or events at which the animation ends.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "Paint used to fill the interior of the shape or text.",
+          "allowed": {
+            "freeze": {},
+            "remove": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "href",
+          "description": "Reference to the element to animate.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "max",
+          "description": "Maximum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "min",
+          "description": "Minimum value of the active duration.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatCount",
+          "description": "Number of times the animation repeats.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "repeatDur",
+          "description": "Total duration for repeating the animation.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "restart",
+          "description": "Whether the animation can restart.",
+          "allowed": {
+            "always": {},
+            "never": {},
+            "whenNotActive": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "to",
+          "description": "Value to set the attribute to.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGSetElement"
+    },
+    {
+      "tag": "stop",
+      "description": "The stop element defines a color and position within a gradient.",
+      "attributes": [
+        {
+          "name": "offset",
+          "description": "Position of the stop along the gradient vector (number or percentage).",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGStopElement"
+    },
+    {
+      "tag": "style",
+      "description": "The style element embeds a CSS stylesheet within the SVG document.",
+      "attributes": [
+        {
+          "name": "media",
+          "description": "Media query the stylesheet applies to.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "title",
+          "description": "Title for the alternate stylesheet set.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "description": "MIME type of the stylesheet language.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "SVGStyleElement"
+    },
+    {
+      "tag": "svg",
+      "description": "The svg element is the container that defines a new coordinate system and viewport, used as the outermost element of an SVG document fragment.",
+      "attributes": [
+        {
+          "name": "baseProfile",
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "preserveAspectRatio",
           "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "version",
+          "description": "Deprecated SVG version indicator; it has no effect on rendering.",
+          "deprecated": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "viewBox",
+          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
         },
         {
@@ -2630,569 +2847,374 @@
           },
           "allow_empty": false,
           "allow_custom": false,
+          "deprecated": true,
           "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "void": false
+      "interface": "SVGSVGElement"
     },
     {
-      "tag": "animate",
-      "description": "The animate element animates an attribute or property of its target over time.",
+      "tag": "switch",
+      "description": "The switch element renders the first direct child whose conditional processing attributes evaluate to true.",
       "attributes": [
         {
-          "name": "href",
-          "description": "Reference to the element to animate.",
+          "name": "systemLanguage",
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "begin",
-          "description": "Times or events at which the animation begins.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dur",
-          "description": "Duration of one animation cycle.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "end",
-          "description": "Times or events at which the animation ends.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "min",
-          "description": "Minimum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "max",
-          "description": "Maximum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "restart",
-          "description": "Whether the animation can restart.",
-          "allowed": {
-            "always": {},
-            "never": {},
-            "whenNotActive": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "repeatCount",
-          "description": "Number of times the animation repeats.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "repeatDur",
-          "description": "Total duration for repeating the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeName",
-          "description": "Name of the attribute or property to animate.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeType",
-          "description": "Namespace of the target attribute.",
-          "allowed": {
-            "CSS": {},
-            "XML": {},
-            "auto": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "from",
-          "description": "Starting value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "to",
-          "description": "Ending value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "by",
-          "description": "Relative offset value for the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "values",
-          "description": "Semicolon-separated list of values over the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "calcMode",
-          "description": "Interpolation mode of the animation.",
-          "allowed": {
-            "discrete": {},
-            "linear": {},
-            "paced": {},
-            "spline": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "keyTimes",
-          "description": "Semicolon-separated time values controlling pacing of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "keySplines",
-          "description": "Bezier control points for each keyTimes interval.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "additive",
-          "description": "Whether the animation adds to the underlying value.",
-          "allowed": {
-            "replace": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "accumulate",
-          "description": "Whether repeated animations accumulate.",
-          "allowed": {
-            "none": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "void": false
+      "interface": "SVGSwitchElement"
     },
     {
-      "tag": "animateMotion",
-      "description": "The animateMotion element moves an element along a motion path.",
+      "tag": "symbol",
+      "description": "The symbol element defines reusable graphical content that is only rendered when instantiated by a use element.",
       "attributes": [
         {
-          "name": "href",
-          "description": "Reference to the element to animate.",
+          "name": "height",
+          "description": "Height.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "begin",
-          "description": "Times or events at which the animation begins.",
+          "name": "refX",
+          "description": "X coordinate of the symbol's reference point.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "dur",
-          "description": "Duration of one animation cycle.",
+          "name": "refY",
+          "description": "Y coordinate of the symbol's reference point.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "end",
-          "description": "Times or events at which the animation ends.",
+          "name": "viewBox",
+          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "min",
-          "description": "Minimum value of the active duration.",
+          "name": "width",
+          "description": "Width.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "max",
-          "description": "Maximum value of the active duration.",
+          "name": "x",
+          "description": "Horizontal position.",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "restart",
-          "description": "Whether the animation can restart.",
+          "name": "y",
+          "description": "Vertical position.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "SVGSymbolElement"
+    },
+    {
+      "tag": "text",
+      "description": "The text element draws a graphics element consisting of text.",
+      "attributes": [
+        {
+          "name": "dx",
+          "description": "Horizontal shift(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "dy",
+          "description": "Vertical shift(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "lengthAdjust",
+          "description": "How text is stretched or compressed to match textLength.",
           "allowed": {
-            "always": {},
-            "never": {},
-            "whenNotActive": {}
+            "spacing": {},
+            "spacingAndGlyphs": {}
           },
           "allow_empty": false,
           "allow_custom": false,
           "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "repeatCount",
-          "description": "Number of times the animation repeats.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "repeatDur",
-          "description": "Total duration for repeating the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "from",
-          "description": "Starting value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "to",
-          "description": "Ending value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "by",
-          "description": "Relative offset value for the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "values",
-          "description": "Semicolon-separated list of values over the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "calcMode",
-          "description": "Interpolation mode of the animation.",
-          "allowed": {
-            "discrete": {},
-            "linear": {},
-            "paced": {},
-            "spline": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "keyTimes",
-          "description": "Semicolon-separated time values controlling pacing of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "keySplines",
-          "description": "Bezier control points for each keyTimes interval.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "additive",
-          "description": "Whether the animation adds to the underlying value.",
-          "allowed": {
-            "replace": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "accumulate",
-          "description": "Whether repeated animations accumulate.",
-          "allowed": {
-            "none": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "path",
-          "description": "Motion path data.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "keyPoints",
-          "description": "Progress along the path at each keyTimes value.",
-          "attribute_type": "AttributeTypeString"
         },
         {
           "name": "rotate",
-          "description": "Rotation applied along the path: auto, auto-reverse or an angle.",
+          "description": "Rotation(s) applied to individual glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "textLength",
+          "description": "Target length of the text advance.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position(s) of the glyphs.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "text": true,
+      "interface": "SVGTextElement"
     },
     {
-      "tag": "animateTransform",
-      "description": "The animateTransform element animates a transform attribute on its target.",
+      "tag": "textPath",
+      "description": "The textPath element lays out text along the shape of a path.",
       "attributes": [
         {
           "name": "href",
-          "description": "Reference to the element to animate.",
+          "description": "Reference to the path element along which to lay out the text.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "lengthAdjust",
+          "description": "How text is stretched or compressed to match textLength.",
+          "allowed": {
+            "spacing": {},
+            "spacingAndGlyphs": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "method",
+          "description": "How glyphs are rendered along the path.",
+          "allowed": {
+            "align": {},
+            "stretch": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "side",
+          "description": "Which side of the path the text is placed on.",
+          "allowed": {
+            "left": {},
+            "right": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "spacing",
+          "description": "How space between glyphs is handled.",
+          "allowed": {
+            "auto": {},
+            "exact": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "startOffset",
+          "description": "Offset from the start of the path at which the text begins.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "textLength",
+          "description": "Target length of the text advance.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "xlink:href",
           "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
           "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "begin",
-          "description": "Times or events at which the animation begins.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dur",
-          "description": "Duration of one animation cycle.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "end",
-          "description": "Times or events at which the animation ends.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "min",
-          "description": "Minimum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "max",
-          "description": "Maximum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "restart",
-          "description": "Whether the animation can restart.",
-          "allowed": {
-            "always": {},
-            "never": {},
-            "whenNotActive": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "repeatCount",
-          "description": "Number of times the animation repeats.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "repeatDur",
-          "description": "Total duration for repeating the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeName",
-          "description": "Name of the attribute or property to animate.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeType",
-          "description": "Namespace of the target attribute.",
-          "allowed": {
-            "CSS": {},
-            "XML": {},
-            "auto": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "from",
-          "description": "Starting value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "to",
-          "description": "Ending value of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "by",
-          "description": "Relative offset value for the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "values",
-          "description": "Semicolon-separated list of values over the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "calcMode",
-          "description": "Interpolation mode of the animation.",
-          "allowed": {
-            "discrete": {},
-            "linear": {},
-            "paced": {},
-            "spline": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "keyTimes",
-          "description": "Semicolon-separated time values controlling pacing of the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "keySplines",
-          "description": "Bezier control points for each keyTimes interval.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "additive",
-          "description": "Whether the animation adds to the underlying value.",
-          "allowed": {
-            "replace": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "accumulate",
-          "description": "Whether repeated animations accumulate.",
-          "allowed": {
-            "none": {},
-            "sum": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "type",
-          "description": "Type of transformation to animate.",
-          "allowed": {
-            "rotate": {},
-            "scale": {},
-            "skewX": {},
-            "skewY": {},
-            "translate": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "void": false
+      "text": true,
+      "interface": "SVGTextPathElement"
     },
     {
-      "tag": "set",
-      "description": "The set element sets an attribute to a given value for a specified duration.",
+      "tag": "title",
+      "description": "The title element provides a human-readable title or tooltip for its parent element.",
+      "text": true,
+      "interface": "SVGTitleElement"
+    },
+    {
+      "tag": "tspan",
+      "description": "The tspan element defines a subtext within a text element, allowing individual styling and positioning.",
       "attributes": [
         {
+          "name": "dx",
+          "description": "Horizontal shift(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "dy",
+          "description": "Vertical shift(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "lengthAdjust",
+          "description": "How text is stretched or compressed to match textLength.",
+          "allowed": {
+            "spacing": {},
+            "spacingAndGlyphs": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rotate",
+          "description": "Rotation(s) applied to individual glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "textLength",
+          "description": "Target length of the text advance.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "Vertical position(s) of the glyphs.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "text": true,
+      "interface": "SVGTSpanElement"
+    },
+    {
+      "tag": "use",
+      "description": "The use element duplicates nodes from elsewhere in the document and renders them at a given position.",
+      "attributes": [
+        {
+          "name": "height",
+          "description": "Height.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
           "name": "href",
-          "description": "Reference to the element to animate.",
+          "description": "Reference to the element or symbol to instantiate.",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "systemLanguage",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "Width.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x",
+          "description": "Horizontal position.",
           "attribute_type": "AttributeTypeString"
         },
         {
           "name": "xlink:href",
           "description": "Deprecated alias of href",
+          "url": true,
+          "deprecated": true,
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "begin",
-          "description": "Times or events at which the animation begins.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "dur",
-          "description": "Duration of one animation cycle.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "end",
-          "description": "Times or events at which the animation ends.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "min",
-          "description": "Minimum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "max",
-          "description": "Maximum value of the active duration.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "restart",
-          "description": "Whether the animation can restart.",
-          "allowed": {
-            "always": {},
-            "never": {},
-            "whenNotActive": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "repeatCount",
-          "description": "Number of times the animation repeats.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "repeatDur",
-          "description": "Total duration for repeating the animation.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeName",
-          "description": "Name of the attribute or property to animate.",
-          "attribute_type": "AttributeTypeString"
-        },
-        {
-          "name": "attributeType",
-          "description": "Namespace of the target attribute.",
-          "allowed": {
-            "CSS": {},
-            "XML": {},
-            "auto": {}
-          },
-          "allow_empty": false,
-          "allow_custom": false,
-          "attribute_type": "AttributeTypeEnum"
-        },
-        {
-          "name": "to",
-          "description": "Value to set the attribute to.",
+          "name": "y",
+          "description": "Vertical position.",
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "void": false
+      "interface": "SVGUseElement"
     },
     {
-      "tag": "mpath",
-      "description": "The mpath element references a path element to use as the motion path of animateMotion.",
+      "tag": "view",
+      "description": "The view element defines a named view of the SVG that can be targeted by a URL fragment.",
       "attributes": [
         {
-          "name": "href",
-          "description": "Reference to the path element.",
+          "name": "preserveAspectRatio",
+          "description": "How the content is scaled and aligned to fit its viewport (alignment plus optional meet or slice).",
           "attribute_type": "AttributeTypeString"
         },
         {
-          "name": "xlink:href",
-          "description": "Deprecated alias of href",
+          "name": "viewBox",
+          "description": "Position and dimensions (min-x min-y width height) of the viewport in user space.",
           "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "zoomAndPan",
+          "description": "Whether the user agent may zoom and pan the document.",
+          "allowed": {
+            "disable": {},
+            "magnify": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "deprecated": true,
+          "attribute_type": "AttributeTypeEnum"
         }
       ],
-      "void": false
+      "interface": "SVGViewElement"
     }
   ],
   "attributes": [
     {
-      "name": "id",
-      "description": "Unique identifier for the element.",
+      "name": "alignment-baseline",
+      "description": "Baseline of the element that is aligned with the parent's dominant baseline.",
+      "allowed": {
+        "after-edge": {},
+        "alphabetic": {},
+        "auto": {},
+        "baseline": {},
+        "before-edge": {},
+        "bottom": {},
+        "center": {},
+        "central": {},
+        "hanging": {},
+        "ideographic": {},
+        "mathematical": {},
+        "middle": {},
+        "text-after-edge": {},
+        "text-before-edge": {},
+        "text-bottom": {},
+        "text-top": {},
+        "top": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "aria",
+      "description": "The aria attribute is a custom attribute whose name starts with the string \"aria-\", has at least one character after the hyphen, is a valid attribute local name, and contains no ASCII upper alphas.",
+      "attribute_type": "AttributeTypePrefixedCustom"
+    },
+    {
+      "name": "autofocus",
+      "description": "Indicates the element should be focused when the page loads.",
+      "attribute_type": "AttributeTypeBool"
+    },
+    {
+      "name": "baseline-shift",
       "attribute_type": "AttributeTypeString"
     },
     {
@@ -3201,40 +3223,59 @@
       "attribute_type": "AttributeTypeSST"
     },
     {
-      "name": "style",
-      "description": "Inline CSS declarations applied to the element.",
+      "name": "clip",
+      "deprecated": true,
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "tabindex",
-      "description": "Position of the element in the sequential keyboard focus order.",
-      "attribute_type": "AttributeTypeNumber"
-    },
-    {
-      "name": "lang",
-      "description": "Primary language of the element's contents (BCP 47 tag).",
+      "name": "clip-path",
+      "description": "Reference to a clipping path or basic shape restricting the visible region.",
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "xml:lang",
-      "description": "Deprecated alias of lang.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "xml:space",
-      "description": "Deprecated way to control whitespace handling; use the CSS white-space property instead.",
+      "name": "clip-rule",
+      "description": "Algorithm used to determine the inside of a clip path shape.",
       "allowed": {
-        "default": {},
-        "preserve": {}
+        "evenodd": {},
+        "nonzero": {}
       },
       "allow_empty": false,
-      "allow_custom": false,
+      "allow_custom": true,
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "autofocus",
-      "description": "Indicates the element should be focused when the page loads.",
-      "attribute_type": "AttributeTypeBool"
+      "name": "color",
+      "description": "Current color, used by currentColor in paint values.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "color-interpolation",
+      "description": "Color space used for gradient interpolation and compositing.",
+      "allowed": {
+        "auto": {},
+        "linearRGB": {},
+        "sRGB": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "color-interpolation-filters",
+      "description": "Color space used for filter effect operations.",
+      "allowed": {
+        "auto": {},
+        "linearRGB": {},
+        "sRGB": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "cursor",
+      "description": "Mouse cursor shown when hovering the element.",
+      "attribute_type": "AttributeTypeString"
     },
     {
       "name": "data",
@@ -3242,9 +3283,38 @@
       "attribute_type": "AttributeTypePrefixedCustom"
     },
     {
-      "name": "aria",
-      "description": "The aria attribute is a custom attribute whose name starts with the string \"aria-\", has at least one character after the hyphen, is a valid attribute local name, and contains no ASCII upper alphas.",
-      "attribute_type": "AttributeTypePrefixedCustom"
+      "name": "direction",
+      "description": "Base writing direction of text.",
+      "allowed": {
+        "ltr": {},
+        "rtl": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "display",
+      "description": "Controls whether and how the element is rendered.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "dominant-baseline",
+      "description": "Dominant baseline used to align the text's content.",
+      "allowed": {
+        "alphabetic": {},
+        "auto": {},
+        "central": {},
+        "hanging": {},
+        "ideographic": {},
+        "mathematical": {},
+        "middle": {},
+        "text-bottom": {},
+        "text-top": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
     },
     {
       "name": "fill",
@@ -3268,19 +3338,210 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
+      "name": "filter",
+      "description": "Reference to or list of filter effects applied to the element.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "flood-color",
+      "description": "Color used by feFlood and feDropShadow.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "flood-opacity",
+      "description": "Opacity of the flood color.",
+      "attribute_type": "AttributeTypeFloat"
+    },
+    {
+      "name": "font-family",
+      "description": "Prioritized list of font family names or generic families.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "font-size",
+      "description": "Size of the font used for text.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "font-size-adjust",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "font-stretch",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "font-style",
+      "description": "Style of the font face.",
+      "allowed": {
+        "italic": {},
+        "normal": {},
+        "oblique": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "font-variant",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "font-weight",
+      "description": "Weight (boldness) of the font.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "glyph-orientation-horizontal",
+      "deprecated": true,
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "glyph-orientation-vertical",
+      "deprecated": true,
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "id",
+      "description": "Unique identifier for the element.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "image-rendering",
+      "description": "Hint about how images should be scaled.",
+      "allowed": {
+        "auto": {},
+        "crisp-edges": {},
+        "high-quality": {},
+        "optimizeQuality": {},
+        "optimizeSpeed": {},
+        "pixelated": {},
+        "smooth": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "lang",
+      "description": "Primary language of the element's contents (BCP 47 tag).",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "letter-spacing",
+      "description": "Spacing between text characters.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "lighting-color",
+      "description": "Color of the light source for lighting filter primitives.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "marker-end",
+      "description": "Marker drawn at the last vertex of the shape.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "marker-mid",
+      "description": "Marker drawn at every vertex other than the first and last.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "marker-start",
+      "description": "Marker drawn at the first vertex of the shape.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "mask",
+      "description": "Reference to a mask applied to the element.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "opacity",
+      "description": "Overall opacity of the element and its content.",
+      "attribute_type": "AttributeTypeFloat"
+    },
+    {
+      "name": "overflow",
+      "description": "How content outside the element's viewport is handled.",
+      "allowed": {
+        "auto": {},
+        "clip": {},
+        "hidden": {},
+        "scroll": {},
+        "visible": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "paint-order",
+      "description": "Order in which fill, stroke and markers are painted.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "pointer-events",
+      "description": "Conditions under which the element can be the target of pointer events.",
+      "allowed": {
+        "all": {},
+        "auto": {},
+        "bounding-box": {},
+        "fill": {},
+        "none": {},
+        "painted": {},
+        "stroke": {},
+        "visible": {},
+        "visibleFill": {},
+        "visiblePainted": {},
+        "visibleStroke": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "requiredExtensions",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "shape-rendering",
+      "description": "Hint about the tradeoff between speed and geometric precision when rendering shapes.",
+      "allowed": {
+        "auto": {},
+        "crispEdges": {},
+        "geometricPrecision": {},
+        "optimizeSpeed": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "stop-color",
+      "description": "Color of a gradient stop.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "stop-opacity",
+      "description": "Opacity of a gradient stop.",
+      "attribute_type": "AttributeTypeFloat"
+    },
+    {
       "name": "stroke",
       "description": "Paint used to draw the outline of the shape or text.",
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "stroke-width",
-      "description": "Width of the stroke.",
+      "name": "stroke-dasharray",
+      "description": "Pattern of dashes and gaps used to draw the stroke.",
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "stroke-opacity",
-      "description": "Opacity of the stroke paint.",
-      "attribute_type": "AttributeTypeFloat"
+      "name": "stroke-dashoffset",
+      "description": "Offset into the dash pattern at which the stroke starts.",
+      "attribute_type": "AttributeTypeString"
     },
     {
       "name": "stroke-linecap",
@@ -3314,215 +3575,24 @@
       "attribute_type": "AttributeTypeFloat"
     },
     {
-      "name": "stroke-dasharray",
-      "description": "Pattern of dashes and gaps used to draw the stroke.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "stroke-dashoffset",
-      "description": "Offset into the dash pattern at which the stroke starts.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "opacity",
-      "description": "Overall opacity of the element and its content.",
+      "name": "stroke-opacity",
+      "description": "Opacity of the stroke paint.",
       "attribute_type": "AttributeTypeFloat"
     },
     {
-      "name": "color",
-      "description": "Current color, used by currentColor in paint values.",
+      "name": "stroke-width",
+      "description": "Width of the stroke.",
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "display",
-      "description": "Controls whether and how the element is rendered.",
+      "name": "style",
+      "description": "Inline CSS declarations applied to the element.",
       "attribute_type": "AttributeTypeString"
     },
     {
-      "name": "visibility",
-      "description": "Controls whether the element is visible without affecting layout.",
-      "allowed": {
-        "collapse": {},
-        "hidden": {},
-        "visible": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "clip-path",
-      "description": "Reference to a clipping path or basic shape restricting the visible region.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "clip-rule",
-      "description": "Algorithm used to determine the inside of a clip path shape.",
-      "allowed": {
-        "evenodd": {},
-        "nonzero": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "mask",
-      "description": "Reference to a mask applied to the element.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "filter",
-      "description": "Reference to or list of filter effects applied to the element.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "cursor",
-      "description": "Mouse cursor shown when hovering the element.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "pointer-events",
-      "description": "Conditions under which the element can be the target of pointer events.",
-      "allowed": {
-        "all": {},
-        "auto": {},
-        "bounding-box": {},
-        "fill": {},
-        "none": {},
-        "painted": {},
-        "stroke": {},
-        "visible": {},
-        "visibleFill": {},
-        "visiblePainted": {},
-        "visibleStroke": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "vector-effect",
-      "description": "Modifies how the element's geometry is transformed for painting.",
-      "allowed": {
-        "fixed-position": {},
-        "non-rotation": {},
-        "non-scaling-size": {},
-        "non-scaling-stroke": {},
-        "none": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "paint-order",
-      "description": "Order in which fill, stroke and markers are painted.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "shape-rendering",
-      "description": "Hint about the tradeoff between speed and geometric precision when rendering shapes.",
-      "allowed": {
-        "auto": {},
-        "crispEdges": {},
-        "geometricPrecision": {},
-        "optimizeSpeed": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "color-interpolation",
-      "description": "Color space used for gradient interpolation and compositing.",
-      "allowed": {
-        "auto": {},
-        "linearRGB": {},
-        "sRGB": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "color-interpolation-filters",
-      "description": "Color space used for filter effect operations.",
-      "allowed": {
-        "auto": {},
-        "linearRGB": {},
-        "sRGB": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "flood-color",
-      "description": "Color used by feFlood and feDropShadow.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "flood-opacity",
-      "description": "Opacity of the flood color.",
-      "attribute_type": "AttributeTypeFloat"
-    },
-    {
-      "name": "lighting-color",
-      "description": "Color of the light source for lighting filter primitives.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "stop-color",
-      "description": "Color of a gradient stop.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "stop-opacity",
-      "description": "Opacity of a gradient stop.",
-      "attribute_type": "AttributeTypeFloat"
-    },
-    {
-      "name": "marker-start",
-      "description": "Marker drawn at the first vertex of the shape.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "marker-mid",
-      "description": "Marker drawn at every vertex other than the first and last.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "marker-end",
-      "description": "Marker drawn at the last vertex of the shape.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "font-family",
-      "description": "Prioritized list of font family names or generic families.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "font-size",
-      "description": "Size of the font used for text.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "font-weight",
-      "description": "Weight (boldness) of the font.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "font-style",
-      "description": "Style of the font face.",
-      "allowed": {
-        "italic": {},
-        "normal": {},
-        "oblique": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
+      "name": "tabindex",
+      "description": "Position of the element in the sequential keyboard focus order.",
+      "attribute_type": "AttributeTypeNumber"
     },
     {
       "name": "text-anchor",
@@ -3537,62 +3607,12 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "dominant-baseline",
-      "description": "Dominant baseline used to align the text's content.",
-      "allowed": {
-        "alphabetic": {},
-        "auto": {},
-        "central": {},
-        "hanging": {},
-        "ideographic": {},
-        "mathematical": {},
-        "middle": {},
-        "text-bottom": {},
-        "text-top": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "alignment-baseline",
-      "description": "Baseline of the element that is aligned with the parent's dominant baseline.",
-      "allowed": {
-        "after-edge": {},
-        "alphabetic": {},
-        "auto": {},
-        "baseline": {},
-        "before-edge": {},
-        "bottom": {},
-        "center": {},
-        "central": {},
-        "hanging": {},
-        "ideographic": {},
-        "mathematical": {},
-        "middle": {},
-        "text-after-edge": {},
-        "text-before-edge": {},
-        "text-bottom": {},
-        "text-top": {},
-        "top": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "letter-spacing",
-      "description": "Spacing between text characters.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
-      "name": "word-spacing",
-      "description": "Spacing between words.",
-      "attribute_type": "AttributeTypeString"
-    },
-    {
       "name": "text-decoration",
       "description": "Decoration lines (underline, overline, line-through) applied to text.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "text-overflow",
       "attribute_type": "AttributeTypeString"
     },
     {
@@ -3609,34 +3629,8 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "image-rendering",
-      "description": "Hint about how images should be scaled.",
-      "allowed": {
-        "auto": {},
-        "crisp-edges": {},
-        "high-quality": {},
-        "optimizeQuality": {},
-        "optimizeSpeed": {},
-        "pixelated": {},
-        "smooth": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
-    },
-    {
-      "name": "overflow",
-      "description": "How content outside the element's viewport is handled.",
-      "allowed": {
-        "auto": {},
-        "clip": {},
-        "hidden": {},
-        "scroll": {},
-        "visible": {}
-      },
-      "allow_empty": false,
-      "allow_custom": true,
-      "attribute_type": "AttributeTypeEnum"
+      "name": "transform",
+      "attribute_type": "AttributeTypeString"
     },
     {
       "name": "transform-box",
@@ -3653,19 +3647,48 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "direction",
-      "description": "Base writing direction of text.",
+      "name": "transform-origin",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "unicode-bidi",
+      "description": "Controls bidirectional text embedding and override behavior.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "vector-effect",
+      "description": "Modifies how the element's geometry is transformed for painting.",
       "allowed": {
-        "ltr": {},
-        "rtl": {}
+        "fixed-position": {},
+        "non-rotation": {},
+        "non-scaling-size": {},
+        "non-scaling-stroke": {},
+        "none": {}
       },
       "allow_empty": false,
       "allow_custom": true,
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "unicode-bidi",
-      "description": "Controls bidirectional text embedding and override behavior.",
+      "name": "visibility",
+      "description": "Controls whether the element is visible without affecting layout.",
+      "allowed": {
+        "collapse": {},
+        "hidden": {},
+        "visible": {}
+      },
+      "allow_empty": false,
+      "allow_custom": true,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "white-space",
+      "description": "How white space inside text is handled.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "word-spacing",
+      "description": "Spacing between words.",
       "attribute_type": "AttributeTypeString"
     },
     {
@@ -3689,9 +3712,22 @@
       "attribute_type": "AttributeTypeEnum"
     },
     {
-      "name": "white-space",
-      "description": "How white space inside text is handled.",
+      "name": "xml:lang",
+      "description": "Deprecated alias of lang.",
+      "deprecated": true,
       "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "xml:space",
+      "description": "Deprecated way to control whitespace handling; use the CSS white-space property instead.",
+      "allowed": {
+        "default": {},
+        "preserve": {}
+      },
+      "allow_empty": false,
+      "allow_custom": false,
+      "deprecated": true,
+      "attribute_type": "AttributeTypeEnum"
     }
   ]
 }

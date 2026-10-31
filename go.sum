@@ -1,5 +1,5 @@
-github.com/go-htemel/spec v0.2.0 h1:u15BTJQG5+G4boneYeCp64GWY/4o6BrMxX29hdfEBG8=
-github.com/go-htemel/spec v0.2.0/go.mod h1:Hzvd+mtlrpxRT+GJLCW5RBYfT4mM7GfgldEU/P3Q+fc=
+github.com/go-htemel/spec v0.3.0 h1:nZ7knv/wI8LXgZdFmMFryP9Pe2mFIk3Vinn37ixxqYk=
+github.com/go-htemel/spec v0.3.0/go.mod h1:Hzvd+mtlrpxRT+GJLCW5RBYfT4mM7GfgldEU/P3Q+fc=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 golang.org/x/mod v0.26.0 h1:EGMPT//Ezu+ylkCijjPc+f4Aih7sZvaAr+O3EHBxvZg=

@@ -240,6 +240,15 @@ const (
 	QInputmodeUrl     QInputmode = "url"
 )
 
+type QPopover string
+
+const (
+	QPopoverAuto   QPopover = "auto"
+	QPopoverHint   QPopover = "hint"
+	QPopoverManual QPopover = "manual"
+	QPopoverEmpty  QPopover = ""
+)
+
 type QSpellcheck string
 
 const (
@@ -264,6 +273,8 @@ const (
 	QWritingsuggestionsEmpty QWritingsuggestions = ""
 )
 
+// Cite sets the "cite" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *QElement) Cite(s string) *QElement {
 	e.attributes.Set("cite", s)
 
@@ -370,6 +381,26 @@ func (e *QElement) Enterkeyhint(a QEnterkeyhint) *QElement {
 	return e
 }
 
+func (e *QElement) Exportparts(s string) *QElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *QElement) Headingoffset(i int) *QElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *QElement) Headingreset(b bool) *QElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *QElement) Hidden(v ...QHidden) *QElement {
@@ -402,6 +433,14 @@ func (e *QElement) Inputmode(a QInputmode) *QElement {
 	return e
 }
 
+func (e *QElement) Is(s string) *QElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *QElement) Itemid(s string) *QElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +485,20 @@ func (e *QElement) Nonce(s string) *QElement {
 	return e
 }
 
-func (e *QElement) Popover(s string) *QElement {
-	e.attributes.Set("popover", s)
+func (e *QElement) Part(s ...string) *QElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Popover(v ...QPopover) *QElement {
+	var val QPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

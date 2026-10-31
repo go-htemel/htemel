@@ -247,6 +247,15 @@ const (
 	TextareaInputmodeUrl     TextareaInputmode = "url"
 )
 
+type TextareaPopover string
+
+const (
+	TextareaPopoverAuto   TextareaPopover = "auto"
+	TextareaPopoverHint   TextareaPopover = "hint"
+	TextareaPopoverManual TextareaPopover = "manual"
+	TextareaPopoverEmpty  TextareaPopover = ""
+)
+
 type TextareaSpellcheck string
 
 const (
@@ -271,8 +280,8 @@ const (
 	TextareaWritingsuggestionsEmpty TextareaWritingsuggestions = ""
 )
 
-func (e *TextareaElement) Autocomplete(s string) *TextareaElement {
-	e.attributes.Set("autocomplete", s)
+func (e *TextareaElement) Autocomplete(s ...string) *TextareaElement {
+	e.attributes.Set("autocomplete", strings.Join(s, " "))
 
 	return e
 }
@@ -343,8 +352,8 @@ func (e *TextareaElement) Required(b bool) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Rows(s string) *TextareaElement {
-	e.attributes.Set("rows", s)
+func (e *TextareaElement) Rows(i int) *TextareaElement {
+	e.attributes.Set("rows", strconv.Itoa(i))
 
 	return e
 }
@@ -455,6 +464,26 @@ func (e *TextareaElement) Enterkeyhint(a TextareaEnterkeyhint) *TextareaElement 
 	return e
 }
 
+func (e *TextareaElement) Exportparts(s string) *TextareaElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TextareaElement) Headingoffset(i int) *TextareaElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TextareaElement) Headingreset(b bool) *TextareaElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TextareaElement) Hidden(v ...TextareaHidden) *TextareaElement {
@@ -487,6 +516,14 @@ func (e *TextareaElement) Inputmode(a TextareaInputmode) *TextareaElement {
 	return e
 }
 
+func (e *TextareaElement) Is(s string) *TextareaElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TextareaElement) Itemid(s string) *TextareaElement {
 	e.attributes.Set("itemid", s)
 
@@ -531,8 +568,20 @@ func (e *TextareaElement) Nonce(s string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Popover(s string) *TextareaElement {
-	e.attributes.Set("popover", s)
+func (e *TextareaElement) Part(s ...string) *TextareaElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Popover(v ...TextareaPopover) *TextareaElement {
+	var val TextareaPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

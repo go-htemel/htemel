@@ -240,6 +240,15 @@ const (
 	DetailsInputmodeUrl     DetailsInputmode = "url"
 )
 
+type DetailsPopover string
+
+const (
+	DetailsPopoverAuto   DetailsPopover = "auto"
+	DetailsPopoverHint   DetailsPopover = "hint"
+	DetailsPopoverManual DetailsPopover = "manual"
+	DetailsPopoverEmpty  DetailsPopover = ""
+)
+
 type DetailsSpellcheck string
 
 const (
@@ -378,6 +387,26 @@ func (e *DetailsElement) Enterkeyhint(a DetailsEnterkeyhint) *DetailsElement {
 	return e
 }
 
+func (e *DetailsElement) Exportparts(s string) *DetailsElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *DetailsElement) Headingoffset(i int) *DetailsElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DetailsElement) Headingreset(b bool) *DetailsElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DetailsElement) Hidden(v ...DetailsHidden) *DetailsElement {
@@ -410,6 +439,14 @@ func (e *DetailsElement) Inputmode(a DetailsInputmode) *DetailsElement {
 	return e
 }
 
+func (e *DetailsElement) Is(s string) *DetailsElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DetailsElement) Itemid(s string) *DetailsElement {
 	e.attributes.Set("itemid", s)
 
@@ -454,8 +491,20 @@ func (e *DetailsElement) Nonce(s string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Popover(s string) *DetailsElement {
-	e.attributes.Set("popover", s)
+func (e *DetailsElement) Part(s ...string) *DetailsElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Popover(v ...DetailsPopover) *DetailsElement {
+	var val DetailsPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

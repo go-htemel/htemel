@@ -164,134 +164,6 @@ func (e *ForeignObjectElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ForeignObjectXmlSpace string
-
-const (
-	ForeignObjectXmlSpaceDefault  ForeignObjectXmlSpace = "default"
-	ForeignObjectXmlSpacePreserve ForeignObjectXmlSpace = "preserve"
-)
-
-type ForeignObjectFillRule string
-
-const (
-	ForeignObjectFillRuleEvenodd ForeignObjectFillRule = "evenodd"
-	ForeignObjectFillRuleNonzero ForeignObjectFillRule = "nonzero"
-)
-
-type ForeignObjectStrokeLinecap string
-
-const (
-	ForeignObjectStrokeLinecapButt   ForeignObjectStrokeLinecap = "butt"
-	ForeignObjectStrokeLinecapRound  ForeignObjectStrokeLinecap = "round"
-	ForeignObjectStrokeLinecapSquare ForeignObjectStrokeLinecap = "square"
-)
-
-type ForeignObjectStrokeLinejoin string
-
-const (
-	ForeignObjectStrokeLinejoinArcs      ForeignObjectStrokeLinejoin = "arcs"
-	ForeignObjectStrokeLinejoinBevel     ForeignObjectStrokeLinejoin = "bevel"
-	ForeignObjectStrokeLinejoinMiter     ForeignObjectStrokeLinejoin = "miter"
-	ForeignObjectStrokeLinejoinMiterClip ForeignObjectStrokeLinejoin = "miter-clip"
-	ForeignObjectStrokeLinejoinRound     ForeignObjectStrokeLinejoin = "round"
-)
-
-type ForeignObjectVisibility string
-
-const (
-	ForeignObjectVisibilityCollapse ForeignObjectVisibility = "collapse"
-	ForeignObjectVisibilityHidden   ForeignObjectVisibility = "hidden"
-	ForeignObjectVisibilityVisible  ForeignObjectVisibility = "visible"
-)
-
-type ForeignObjectClipRule string
-
-const (
-	ForeignObjectClipRuleEvenodd ForeignObjectClipRule = "evenodd"
-	ForeignObjectClipRuleNonzero ForeignObjectClipRule = "nonzero"
-)
-
-type ForeignObjectPointerEvents string
-
-const (
-	ForeignObjectPointerEventsAll            ForeignObjectPointerEvents = "all"
-	ForeignObjectPointerEventsAuto           ForeignObjectPointerEvents = "auto"
-	ForeignObjectPointerEventsBoundingBox    ForeignObjectPointerEvents = "bounding-box"
-	ForeignObjectPointerEventsFill           ForeignObjectPointerEvents = "fill"
-	ForeignObjectPointerEventsNone           ForeignObjectPointerEvents = "none"
-	ForeignObjectPointerEventsPainted        ForeignObjectPointerEvents = "painted"
-	ForeignObjectPointerEventsStroke         ForeignObjectPointerEvents = "stroke"
-	ForeignObjectPointerEventsVisible        ForeignObjectPointerEvents = "visible"
-	ForeignObjectPointerEventsVisibleFill    ForeignObjectPointerEvents = "visibleFill"
-	ForeignObjectPointerEventsVisiblePainted ForeignObjectPointerEvents = "visiblePainted"
-	ForeignObjectPointerEventsVisibleStroke  ForeignObjectPointerEvents = "visibleStroke"
-)
-
-type ForeignObjectVectorEffect string
-
-const (
-	ForeignObjectVectorEffectFixedPosition    ForeignObjectVectorEffect = "fixed-position"
-	ForeignObjectVectorEffectNonRotation      ForeignObjectVectorEffect = "non-rotation"
-	ForeignObjectVectorEffectNonScalingSize   ForeignObjectVectorEffect = "non-scaling-size"
-	ForeignObjectVectorEffectNonScalingStroke ForeignObjectVectorEffect = "non-scaling-stroke"
-	ForeignObjectVectorEffectNone             ForeignObjectVectorEffect = "none"
-)
-
-type ForeignObjectShapeRendering string
-
-const (
-	ForeignObjectShapeRenderingAuto               ForeignObjectShapeRendering = "auto"
-	ForeignObjectShapeRenderingCrispEdges         ForeignObjectShapeRendering = "crispEdges"
-	ForeignObjectShapeRenderingGeometricPrecision ForeignObjectShapeRendering = "geometricPrecision"
-	ForeignObjectShapeRenderingOptimizeSpeed      ForeignObjectShapeRendering = "optimizeSpeed"
-)
-
-type ForeignObjectColorInterpolation string
-
-const (
-	ForeignObjectColorInterpolationAuto      ForeignObjectColorInterpolation = "auto"
-	ForeignObjectColorInterpolationLinearRGB ForeignObjectColorInterpolation = "linearRGB"
-	ForeignObjectColorInterpolationSRGB      ForeignObjectColorInterpolation = "sRGB"
-)
-
-type ForeignObjectColorInterpolationFilters string
-
-const (
-	ForeignObjectColorInterpolationFiltersAuto      ForeignObjectColorInterpolationFilters = "auto"
-	ForeignObjectColorInterpolationFiltersLinearRGB ForeignObjectColorInterpolationFilters = "linearRGB"
-	ForeignObjectColorInterpolationFiltersSRGB      ForeignObjectColorInterpolationFilters = "sRGB"
-)
-
-type ForeignObjectFontStyle string
-
-const (
-	ForeignObjectFontStyleItalic  ForeignObjectFontStyle = "italic"
-	ForeignObjectFontStyleNormal  ForeignObjectFontStyle = "normal"
-	ForeignObjectFontStyleOblique ForeignObjectFontStyle = "oblique"
-)
-
-type ForeignObjectTextAnchor string
-
-const (
-	ForeignObjectTextAnchorEnd    ForeignObjectTextAnchor = "end"
-	ForeignObjectTextAnchorMiddle ForeignObjectTextAnchor = "middle"
-	ForeignObjectTextAnchorStart  ForeignObjectTextAnchor = "start"
-)
-
-type ForeignObjectDominantBaseline string
-
-const (
-	ForeignObjectDominantBaselineAlphabetic   ForeignObjectDominantBaseline = "alphabetic"
-	ForeignObjectDominantBaselineAuto         ForeignObjectDominantBaseline = "auto"
-	ForeignObjectDominantBaselineCentral      ForeignObjectDominantBaseline = "central"
-	ForeignObjectDominantBaselineHanging      ForeignObjectDominantBaseline = "hanging"
-	ForeignObjectDominantBaselineIdeographic  ForeignObjectDominantBaseline = "ideographic"
-	ForeignObjectDominantBaselineMathematical ForeignObjectDominantBaseline = "mathematical"
-	ForeignObjectDominantBaselineMiddle       ForeignObjectDominantBaseline = "middle"
-	ForeignObjectDominantBaselineTextBottom   ForeignObjectDominantBaseline = "text-bottom"
-	ForeignObjectDominantBaselineTextTop      ForeignObjectDominantBaseline = "text-top"
-)
-
 type ForeignObjectAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	ForeignObjectAlignmentBaselineTop            ForeignObjectAlignmentBaseline = "top"
 )
 
-type ForeignObjectTextRendering string
+type ForeignObjectClipRule string
 
 const (
-	ForeignObjectTextRenderingAuto               ForeignObjectTextRendering = "auto"
-	ForeignObjectTextRenderingGeometricPrecision ForeignObjectTextRendering = "geometricPrecision"
-	ForeignObjectTextRenderingOptimizeLegibility ForeignObjectTextRendering = "optimizeLegibility"
-	ForeignObjectTextRenderingOptimizeSpeed      ForeignObjectTextRendering = "optimizeSpeed"
+	ForeignObjectClipRuleEvenodd ForeignObjectClipRule = "evenodd"
+	ForeignObjectClipRuleNonzero ForeignObjectClipRule = "nonzero"
+)
+
+type ForeignObjectColorInterpolation string
+
+const (
+	ForeignObjectColorInterpolationAuto      ForeignObjectColorInterpolation = "auto"
+	ForeignObjectColorInterpolationLinearRGB ForeignObjectColorInterpolation = "linearRGB"
+	ForeignObjectColorInterpolationSRGB      ForeignObjectColorInterpolation = "sRGB"
+)
+
+type ForeignObjectColorInterpolationFilters string
+
+const (
+	ForeignObjectColorInterpolationFiltersAuto      ForeignObjectColorInterpolationFilters = "auto"
+	ForeignObjectColorInterpolationFiltersLinearRGB ForeignObjectColorInterpolationFilters = "linearRGB"
+	ForeignObjectColorInterpolationFiltersSRGB      ForeignObjectColorInterpolationFilters = "sRGB"
+)
+
+type ForeignObjectDirection string
+
+const (
+	ForeignObjectDirectionLtr ForeignObjectDirection = "ltr"
+	ForeignObjectDirectionRtl ForeignObjectDirection = "rtl"
+)
+
+type ForeignObjectDominantBaseline string
+
+const (
+	ForeignObjectDominantBaselineAlphabetic   ForeignObjectDominantBaseline = "alphabetic"
+	ForeignObjectDominantBaselineAuto         ForeignObjectDominantBaseline = "auto"
+	ForeignObjectDominantBaselineCentral      ForeignObjectDominantBaseline = "central"
+	ForeignObjectDominantBaselineHanging      ForeignObjectDominantBaseline = "hanging"
+	ForeignObjectDominantBaselineIdeographic  ForeignObjectDominantBaseline = "ideographic"
+	ForeignObjectDominantBaselineMathematical ForeignObjectDominantBaseline = "mathematical"
+	ForeignObjectDominantBaselineMiddle       ForeignObjectDominantBaseline = "middle"
+	ForeignObjectDominantBaselineTextBottom   ForeignObjectDominantBaseline = "text-bottom"
+	ForeignObjectDominantBaselineTextTop      ForeignObjectDominantBaseline = "text-top"
+)
+
+type ForeignObjectFillRule string
+
+const (
+	ForeignObjectFillRuleEvenodd ForeignObjectFillRule = "evenodd"
+	ForeignObjectFillRuleNonzero ForeignObjectFillRule = "nonzero"
+)
+
+type ForeignObjectFontStyle string
+
+const (
+	ForeignObjectFontStyleItalic  ForeignObjectFontStyle = "italic"
+	ForeignObjectFontStyleNormal  ForeignObjectFontStyle = "normal"
+	ForeignObjectFontStyleOblique ForeignObjectFontStyle = "oblique"
 )
 
 type ForeignObjectImageRendering string
@@ -345,6 +267,66 @@ const (
 	ForeignObjectOverflowVisible ForeignObjectOverflow = "visible"
 )
 
+type ForeignObjectPointerEvents string
+
+const (
+	ForeignObjectPointerEventsAll            ForeignObjectPointerEvents = "all"
+	ForeignObjectPointerEventsAuto           ForeignObjectPointerEvents = "auto"
+	ForeignObjectPointerEventsBoundingBox    ForeignObjectPointerEvents = "bounding-box"
+	ForeignObjectPointerEventsFill           ForeignObjectPointerEvents = "fill"
+	ForeignObjectPointerEventsNone           ForeignObjectPointerEvents = "none"
+	ForeignObjectPointerEventsPainted        ForeignObjectPointerEvents = "painted"
+	ForeignObjectPointerEventsStroke         ForeignObjectPointerEvents = "stroke"
+	ForeignObjectPointerEventsVisible        ForeignObjectPointerEvents = "visible"
+	ForeignObjectPointerEventsVisibleFill    ForeignObjectPointerEvents = "visibleFill"
+	ForeignObjectPointerEventsVisiblePainted ForeignObjectPointerEvents = "visiblePainted"
+	ForeignObjectPointerEventsVisibleStroke  ForeignObjectPointerEvents = "visibleStroke"
+)
+
+type ForeignObjectShapeRendering string
+
+const (
+	ForeignObjectShapeRenderingAuto               ForeignObjectShapeRendering = "auto"
+	ForeignObjectShapeRenderingCrispEdges         ForeignObjectShapeRendering = "crispEdges"
+	ForeignObjectShapeRenderingGeometricPrecision ForeignObjectShapeRendering = "geometricPrecision"
+	ForeignObjectShapeRenderingOptimizeSpeed      ForeignObjectShapeRendering = "optimizeSpeed"
+)
+
+type ForeignObjectStrokeLinecap string
+
+const (
+	ForeignObjectStrokeLinecapButt   ForeignObjectStrokeLinecap = "butt"
+	ForeignObjectStrokeLinecapRound  ForeignObjectStrokeLinecap = "round"
+	ForeignObjectStrokeLinecapSquare ForeignObjectStrokeLinecap = "square"
+)
+
+type ForeignObjectStrokeLinejoin string
+
+const (
+	ForeignObjectStrokeLinejoinArcs      ForeignObjectStrokeLinejoin = "arcs"
+	ForeignObjectStrokeLinejoinBevel     ForeignObjectStrokeLinejoin = "bevel"
+	ForeignObjectStrokeLinejoinMiter     ForeignObjectStrokeLinejoin = "miter"
+	ForeignObjectStrokeLinejoinMiterClip ForeignObjectStrokeLinejoin = "miter-clip"
+	ForeignObjectStrokeLinejoinRound     ForeignObjectStrokeLinejoin = "round"
+)
+
+type ForeignObjectTextAnchor string
+
+const (
+	ForeignObjectTextAnchorEnd    ForeignObjectTextAnchor = "end"
+	ForeignObjectTextAnchorMiddle ForeignObjectTextAnchor = "middle"
+	ForeignObjectTextAnchorStart  ForeignObjectTextAnchor = "start"
+)
+
+type ForeignObjectTextRendering string
+
+const (
+	ForeignObjectTextRenderingAuto               ForeignObjectTextRendering = "auto"
+	ForeignObjectTextRenderingGeometricPrecision ForeignObjectTextRendering = "geometricPrecision"
+	ForeignObjectTextRenderingOptimizeLegibility ForeignObjectTextRendering = "optimizeLegibility"
+	ForeignObjectTextRenderingOptimizeSpeed      ForeignObjectTextRendering = "optimizeSpeed"
+)
+
 type ForeignObjectTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	ForeignObjectTransformBoxViewBox    ForeignObjectTransformBox = "view-box"
 )
 
-type ForeignObjectDirection string
+type ForeignObjectVectorEffect string
 
 const (
-	ForeignObjectDirectionLtr ForeignObjectDirection = "ltr"
-	ForeignObjectDirectionRtl ForeignObjectDirection = "rtl"
+	ForeignObjectVectorEffectFixedPosition    ForeignObjectVectorEffect = "fixed-position"
+	ForeignObjectVectorEffectNonRotation      ForeignObjectVectorEffect = "non-rotation"
+	ForeignObjectVectorEffectNonScalingSize   ForeignObjectVectorEffect = "non-scaling-size"
+	ForeignObjectVectorEffectNonScalingStroke ForeignObjectVectorEffect = "non-scaling-stroke"
+	ForeignObjectVectorEffectNone             ForeignObjectVectorEffect = "none"
+)
+
+type ForeignObjectVisibility string
+
+const (
+	ForeignObjectVisibilityCollapse ForeignObjectVisibility = "collapse"
+	ForeignObjectVisibilityHidden   ForeignObjectVisibility = "hidden"
+	ForeignObjectVisibilityVisible  ForeignObjectVisibility = "visible"
 )
 
 type ForeignObjectWritingMode string
@@ -378,6 +371,31 @@ const (
 	ForeignObjectWritingModeVerticalRl   ForeignObjectWritingMode = "vertical-rl"
 )
 
+type ForeignObjectXmlSpace string
+
+const (
+	ForeignObjectXmlSpaceDefault  ForeignObjectXmlSpace = "default"
+	ForeignObjectXmlSpacePreserve ForeignObjectXmlSpace = "preserve"
+)
+
+func (e *ForeignObjectElement) Height(s string) *ForeignObjectElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) SystemLanguage(s string) *ForeignObjectElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) Width(s string) *ForeignObjectElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *ForeignObjectElement) X(s string) *ForeignObjectElement {
 	e.attributes.Set("x", s)
 
@@ -390,32 +408,42 @@ func (e *ForeignObjectElement) Y(s string) *ForeignObjectElement {
 	return e
 }
 
-func (e *ForeignObjectElement) Width(s string) *ForeignObjectElement {
-	e.attributes.Set("width", s)
+func (e *ForeignObjectElement) AlignmentBaseline(a ForeignObjectAlignmentBaseline) *ForeignObjectElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *ForeignObjectElement) Height(s string) *ForeignObjectElement {
-	e.attributes.Set("height", s)
+func ForeignObjectAlignmentBaselineCustom(s string) ForeignObjectAlignmentBaseline {
+	return ForeignObjectAlignmentBaseline(s)
+}
+
+func (e *ForeignObjectElement) AriaUnsafe(name string, s string) *ForeignObjectElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Transform(s string) *ForeignObjectElement {
-	e.attributes.Set("transform", s)
+func (e *ForeignObjectElement) Aria(name string, s string) *ForeignObjectElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) TransformOrigin(s string) *ForeignObjectElement {
-	e.attributes.Set("transform-origin", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ForeignObjectElement) Autofocus(b bool) *ForeignObjectElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Id(s string) *ForeignObjectElement {
-	e.attributes.Set("id", s)
+func (e *ForeignObjectElement) BaselineShift(s string) *ForeignObjectElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -426,40 +454,59 @@ func (e *ForeignObjectElement) Class(s ...string) *ForeignObjectElement {
 	return e
 }
 
-func (e *ForeignObjectElement) Style(s string) *ForeignObjectElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *ForeignObjectElement) Clip(s string) *ForeignObjectElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Tabindex(i int) *ForeignObjectElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *ForeignObjectElement) ClipPath(s string) *ForeignObjectElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Lang(s string) *ForeignObjectElement {
-	e.attributes.Set("lang", s)
+func (e *ForeignObjectElement) ClipRule(a ForeignObjectClipRule) *ForeignObjectElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *ForeignObjectElement) XmlLang(s string) *ForeignObjectElement {
-	e.attributes.Set("xml:lang", s)
+func ForeignObjectClipRuleCustom(s string) ForeignObjectClipRule {
+	return ForeignObjectClipRule(s)
+}
+
+func (e *ForeignObjectElement) Color(s string) *ForeignObjectElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) XmlSpace(a ForeignObjectXmlSpace) *ForeignObjectElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *ForeignObjectElement) ColorInterpolation(a ForeignObjectColorInterpolation) *ForeignObjectElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ForeignObjectElement) Autofocus(b bool) *ForeignObjectElement {
-	e.attributes.SetBool("autofocus", b)
+func ForeignObjectColorInterpolationCustom(s string) ForeignObjectColorInterpolation {
+	return ForeignObjectColorInterpolation(s)
+}
+
+func (e *ForeignObjectElement) ColorInterpolationFilters(a ForeignObjectColorInterpolationFilters) *ForeignObjectElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func ForeignObjectColorInterpolationFiltersCustom(s string) ForeignObjectColorInterpolationFilters {
+	return ForeignObjectColorInterpolationFilters(s)
+}
+
+func (e *ForeignObjectElement) Cursor(s string) *ForeignObjectElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -480,20 +527,30 @@ func (e *ForeignObjectElement) Data(name string, s string) *ForeignObjectElement
 	return e
 }
 
-func (e *ForeignObjectElement) AriaUnsafe(name string, s string) *ForeignObjectElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *ForeignObjectElement) Direction(a ForeignObjectDirection) *ForeignObjectElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *ForeignObjectElement) Aria(name string, s string) *ForeignObjectElement {
-	tag := strings.ToLower("aria-" + name)
+func ForeignObjectDirectionCustom(s string) ForeignObjectDirection {
+	return ForeignObjectDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *ForeignObjectElement) Display(s string) *ForeignObjectElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *ForeignObjectElement) DominantBaseline(a ForeignObjectDominantBaseline) *ForeignObjectElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func ForeignObjectDominantBaselineCustom(s string) ForeignObjectDominantBaseline {
+	return ForeignObjectDominantBaseline(s)
 }
 
 func (e *ForeignObjectElement) Fill(s string) *ForeignObjectElement {
@@ -518,20 +575,220 @@ func ForeignObjectFillRuleCustom(s string) ForeignObjectFillRule {
 	return ForeignObjectFillRule(s)
 }
 
+func (e *ForeignObjectElement) Filter(s string) *ForeignObjectElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FloodColor(s string) *ForeignObjectElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FloodOpacity(f float64) *ForeignObjectElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontFamily(s string) *ForeignObjectElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontSize(s string) *ForeignObjectElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontSizeAdjust(s string) *ForeignObjectElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontStretch(s string) *ForeignObjectElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontStyle(a ForeignObjectFontStyle) *ForeignObjectElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func ForeignObjectFontStyleCustom(s string) ForeignObjectFontStyle {
+	return ForeignObjectFontStyle(s)
+}
+
+func (e *ForeignObjectElement) FontVariant(s string) *ForeignObjectElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) FontWeight(s string) *ForeignObjectElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *ForeignObjectElement) GlyphOrientationHorizontal(s string) *ForeignObjectElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *ForeignObjectElement) GlyphOrientationVertical(s string) *ForeignObjectElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) Id(s string) *ForeignObjectElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) ImageRendering(a ForeignObjectImageRendering) *ForeignObjectElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func ForeignObjectImageRenderingCustom(s string) ForeignObjectImageRendering {
+	return ForeignObjectImageRendering(s)
+}
+
+func (e *ForeignObjectElement) Lang(s string) *ForeignObjectElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) LetterSpacing(s string) *ForeignObjectElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) LightingColor(s string) *ForeignObjectElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) MarkerEnd(s string) *ForeignObjectElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) MarkerMid(s string) *ForeignObjectElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) MarkerStart(s string) *ForeignObjectElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) Mask(s string) *ForeignObjectElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) Opacity(f float64) *ForeignObjectElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ForeignObjectElement) Overflow(a ForeignObjectOverflow) *ForeignObjectElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func ForeignObjectOverflowCustom(s string) ForeignObjectOverflow {
+	return ForeignObjectOverflow(s)
+}
+
+func (e *ForeignObjectElement) PaintOrder(s string) *ForeignObjectElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) PointerEvents(a ForeignObjectPointerEvents) *ForeignObjectElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func ForeignObjectPointerEventsCustom(s string) ForeignObjectPointerEvents {
+	return ForeignObjectPointerEvents(s)
+}
+
+func (e *ForeignObjectElement) RequiredExtensions(s string) *ForeignObjectElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) ShapeRendering(a ForeignObjectShapeRendering) *ForeignObjectElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func ForeignObjectShapeRenderingCustom(s string) ForeignObjectShapeRendering {
+	return ForeignObjectShapeRendering(s)
+}
+
+func (e *ForeignObjectElement) StopColor(s string) *ForeignObjectElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) StopOpacity(f float64) *ForeignObjectElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *ForeignObjectElement) Stroke(s string) *ForeignObjectElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) StrokeWidth(s string) *ForeignObjectElement {
-	e.attributes.Set("stroke-width", s)
+func (e *ForeignObjectElement) StrokeDasharray(s string) *ForeignObjectElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) StrokeOpacity(f float64) *ForeignObjectElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ForeignObjectElement) StrokeDashoffset(s string) *ForeignObjectElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -562,210 +819,28 @@ func (e *ForeignObjectElement) StrokeMiterlimit(f float64) *ForeignObjectElement
 	return e
 }
 
-func (e *ForeignObjectElement) StrokeDasharray(s string) *ForeignObjectElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *ForeignObjectElement) StrokeOpacity(f float64) *ForeignObjectElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *ForeignObjectElement) StrokeDashoffset(s string) *ForeignObjectElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *ForeignObjectElement) StrokeWidth(s string) *ForeignObjectElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Opacity(f float64) *ForeignObjectElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ForeignObjectElement) Style(s string) *ForeignObjectElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *ForeignObjectElement) Color(s string) *ForeignObjectElement {
-	e.attributes.Set("color", s)
+func (e *ForeignObjectElement) Tabindex(i int) *ForeignObjectElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *ForeignObjectElement) Display(s string) *ForeignObjectElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) Visibility(a ForeignObjectVisibility) *ForeignObjectElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func ForeignObjectVisibilityCustom(s string) ForeignObjectVisibility {
-	return ForeignObjectVisibility(s)
-}
-
-func (e *ForeignObjectElement) ClipPath(s string) *ForeignObjectElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) ClipRule(a ForeignObjectClipRule) *ForeignObjectElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func ForeignObjectClipRuleCustom(s string) ForeignObjectClipRule {
-	return ForeignObjectClipRule(s)
-}
-
-func (e *ForeignObjectElement) Mask(s string) *ForeignObjectElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) Filter(s string) *ForeignObjectElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) Cursor(s string) *ForeignObjectElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) PointerEvents(a ForeignObjectPointerEvents) *ForeignObjectElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func ForeignObjectPointerEventsCustom(s string) ForeignObjectPointerEvents {
-	return ForeignObjectPointerEvents(s)
-}
-
-func (e *ForeignObjectElement) VectorEffect(a ForeignObjectVectorEffect) *ForeignObjectElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func ForeignObjectVectorEffectCustom(s string) ForeignObjectVectorEffect {
-	return ForeignObjectVectorEffect(s)
-}
-
-func (e *ForeignObjectElement) PaintOrder(s string) *ForeignObjectElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) ShapeRendering(a ForeignObjectShapeRendering) *ForeignObjectElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func ForeignObjectShapeRenderingCustom(s string) ForeignObjectShapeRendering {
-	return ForeignObjectShapeRendering(s)
-}
-
-func (e *ForeignObjectElement) ColorInterpolation(a ForeignObjectColorInterpolation) *ForeignObjectElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func ForeignObjectColorInterpolationCustom(s string) ForeignObjectColorInterpolation {
-	return ForeignObjectColorInterpolation(s)
-}
-
-func (e *ForeignObjectElement) ColorInterpolationFilters(a ForeignObjectColorInterpolationFilters) *ForeignObjectElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func ForeignObjectColorInterpolationFiltersCustom(s string) ForeignObjectColorInterpolationFilters {
-	return ForeignObjectColorInterpolationFilters(s)
-}
-
-func (e *ForeignObjectElement) FloodColor(s string) *ForeignObjectElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) FloodOpacity(f float64) *ForeignObjectElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ForeignObjectElement) LightingColor(s string) *ForeignObjectElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) StopColor(s string) *ForeignObjectElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) StopOpacity(f float64) *ForeignObjectElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ForeignObjectElement) MarkerStart(s string) *ForeignObjectElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) MarkerMid(s string) *ForeignObjectElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) MarkerEnd(s string) *ForeignObjectElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) FontFamily(s string) *ForeignObjectElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) FontSize(s string) *ForeignObjectElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) FontWeight(s string) *ForeignObjectElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) FontStyle(a ForeignObjectFontStyle) *ForeignObjectElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func ForeignObjectFontStyleCustom(s string) ForeignObjectFontStyle {
-	return ForeignObjectFontStyle(s)
 }
 
 func (e *ForeignObjectElement) TextAnchor(a ForeignObjectTextAnchor) *ForeignObjectElement {
@@ -778,40 +853,14 @@ func ForeignObjectTextAnchorCustom(s string) ForeignObjectTextAnchor {
 	return ForeignObjectTextAnchor(s)
 }
 
-func (e *ForeignObjectElement) DominantBaseline(a ForeignObjectDominantBaseline) *ForeignObjectElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func ForeignObjectDominantBaselineCustom(s string) ForeignObjectDominantBaseline {
-	return ForeignObjectDominantBaseline(s)
-}
-
-func (e *ForeignObjectElement) AlignmentBaseline(a ForeignObjectAlignmentBaseline) *ForeignObjectElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func ForeignObjectAlignmentBaselineCustom(s string) ForeignObjectAlignmentBaseline {
-	return ForeignObjectAlignmentBaseline(s)
-}
-
-func (e *ForeignObjectElement) LetterSpacing(s string) *ForeignObjectElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *ForeignObjectElement) WordSpacing(s string) *ForeignObjectElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *ForeignObjectElement) TextDecoration(s string) *ForeignObjectElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) TextOverflow(s string) *ForeignObjectElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -826,24 +875,10 @@ func ForeignObjectTextRenderingCustom(s string) ForeignObjectTextRendering {
 	return ForeignObjectTextRendering(s)
 }
 
-func (e *ForeignObjectElement) ImageRendering(a ForeignObjectImageRendering) *ForeignObjectElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *ForeignObjectElement) Transform(s string) *ForeignObjectElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func ForeignObjectImageRenderingCustom(s string) ForeignObjectImageRendering {
-	return ForeignObjectImageRendering(s)
-}
-
-func (e *ForeignObjectElement) Overflow(a ForeignObjectOverflow) *ForeignObjectElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func ForeignObjectOverflowCustom(s string) ForeignObjectOverflow {
-	return ForeignObjectOverflow(s)
 }
 
 func (e *ForeignObjectElement) TransformBox(a ForeignObjectTransformBox) *ForeignObjectElement {
@@ -856,18 +891,46 @@ func ForeignObjectTransformBoxCustom(s string) ForeignObjectTransformBox {
 	return ForeignObjectTransformBox(s)
 }
 
-func (e *ForeignObjectElement) Direction(a ForeignObjectDirection) *ForeignObjectElement {
-	e.attributes.Set("direction", string(a))
+func (e *ForeignObjectElement) TransformOrigin(s string) *ForeignObjectElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func ForeignObjectDirectionCustom(s string) ForeignObjectDirection {
-	return ForeignObjectDirection(s)
-}
-
 func (e *ForeignObjectElement) UnicodeBidi(s string) *ForeignObjectElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) VectorEffect(a ForeignObjectVectorEffect) *ForeignObjectElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func ForeignObjectVectorEffectCustom(s string) ForeignObjectVectorEffect {
+	return ForeignObjectVectorEffect(s)
+}
+
+func (e *ForeignObjectElement) Visibility(a ForeignObjectVisibility) *ForeignObjectElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func ForeignObjectVisibilityCustom(s string) ForeignObjectVisibility {
+	return ForeignObjectVisibility(s)
+}
+
+func (e *ForeignObjectElement) WhiteSpace(s string) *ForeignObjectElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *ForeignObjectElement) WordSpacing(s string) *ForeignObjectElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -882,8 +945,20 @@ func ForeignObjectWritingModeCustom(s string) ForeignObjectWritingMode {
 	return ForeignObjectWritingMode(s)
 }
 
-func (e *ForeignObjectElement) WhiteSpace(s string) *ForeignObjectElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *ForeignObjectElement) XmlLang(s string) *ForeignObjectElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *ForeignObjectElement) XmlSpace(a ForeignObjectXmlSpace) *ForeignObjectElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

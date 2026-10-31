@@ -164,134 +164,6 @@ func (e *MpathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MpathXmlSpace string
-
-const (
-	MpathXmlSpaceDefault  MpathXmlSpace = "default"
-	MpathXmlSpacePreserve MpathXmlSpace = "preserve"
-)
-
-type MpathFillRule string
-
-const (
-	MpathFillRuleEvenodd MpathFillRule = "evenodd"
-	MpathFillRuleNonzero MpathFillRule = "nonzero"
-)
-
-type MpathStrokeLinecap string
-
-const (
-	MpathStrokeLinecapButt   MpathStrokeLinecap = "butt"
-	MpathStrokeLinecapRound  MpathStrokeLinecap = "round"
-	MpathStrokeLinecapSquare MpathStrokeLinecap = "square"
-)
-
-type MpathStrokeLinejoin string
-
-const (
-	MpathStrokeLinejoinArcs      MpathStrokeLinejoin = "arcs"
-	MpathStrokeLinejoinBevel     MpathStrokeLinejoin = "bevel"
-	MpathStrokeLinejoinMiter     MpathStrokeLinejoin = "miter"
-	MpathStrokeLinejoinMiterClip MpathStrokeLinejoin = "miter-clip"
-	MpathStrokeLinejoinRound     MpathStrokeLinejoin = "round"
-)
-
-type MpathVisibility string
-
-const (
-	MpathVisibilityCollapse MpathVisibility = "collapse"
-	MpathVisibilityHidden   MpathVisibility = "hidden"
-	MpathVisibilityVisible  MpathVisibility = "visible"
-)
-
-type MpathClipRule string
-
-const (
-	MpathClipRuleEvenodd MpathClipRule = "evenodd"
-	MpathClipRuleNonzero MpathClipRule = "nonzero"
-)
-
-type MpathPointerEvents string
-
-const (
-	MpathPointerEventsAll            MpathPointerEvents = "all"
-	MpathPointerEventsAuto           MpathPointerEvents = "auto"
-	MpathPointerEventsBoundingBox    MpathPointerEvents = "bounding-box"
-	MpathPointerEventsFill           MpathPointerEvents = "fill"
-	MpathPointerEventsNone           MpathPointerEvents = "none"
-	MpathPointerEventsPainted        MpathPointerEvents = "painted"
-	MpathPointerEventsStroke         MpathPointerEvents = "stroke"
-	MpathPointerEventsVisible        MpathPointerEvents = "visible"
-	MpathPointerEventsVisibleFill    MpathPointerEvents = "visibleFill"
-	MpathPointerEventsVisiblePainted MpathPointerEvents = "visiblePainted"
-	MpathPointerEventsVisibleStroke  MpathPointerEvents = "visibleStroke"
-)
-
-type MpathVectorEffect string
-
-const (
-	MpathVectorEffectFixedPosition    MpathVectorEffect = "fixed-position"
-	MpathVectorEffectNonRotation      MpathVectorEffect = "non-rotation"
-	MpathVectorEffectNonScalingSize   MpathVectorEffect = "non-scaling-size"
-	MpathVectorEffectNonScalingStroke MpathVectorEffect = "non-scaling-stroke"
-	MpathVectorEffectNone             MpathVectorEffect = "none"
-)
-
-type MpathShapeRendering string
-
-const (
-	MpathShapeRenderingAuto               MpathShapeRendering = "auto"
-	MpathShapeRenderingCrispEdges         MpathShapeRendering = "crispEdges"
-	MpathShapeRenderingGeometricPrecision MpathShapeRendering = "geometricPrecision"
-	MpathShapeRenderingOptimizeSpeed      MpathShapeRendering = "optimizeSpeed"
-)
-
-type MpathColorInterpolation string
-
-const (
-	MpathColorInterpolationAuto      MpathColorInterpolation = "auto"
-	MpathColorInterpolationLinearRGB MpathColorInterpolation = "linearRGB"
-	MpathColorInterpolationSRGB      MpathColorInterpolation = "sRGB"
-)
-
-type MpathColorInterpolationFilters string
-
-const (
-	MpathColorInterpolationFiltersAuto      MpathColorInterpolationFilters = "auto"
-	MpathColorInterpolationFiltersLinearRGB MpathColorInterpolationFilters = "linearRGB"
-	MpathColorInterpolationFiltersSRGB      MpathColorInterpolationFilters = "sRGB"
-)
-
-type MpathFontStyle string
-
-const (
-	MpathFontStyleItalic  MpathFontStyle = "italic"
-	MpathFontStyleNormal  MpathFontStyle = "normal"
-	MpathFontStyleOblique MpathFontStyle = "oblique"
-)
-
-type MpathTextAnchor string
-
-const (
-	MpathTextAnchorEnd    MpathTextAnchor = "end"
-	MpathTextAnchorMiddle MpathTextAnchor = "middle"
-	MpathTextAnchorStart  MpathTextAnchor = "start"
-)
-
-type MpathDominantBaseline string
-
-const (
-	MpathDominantBaselineAlphabetic   MpathDominantBaseline = "alphabetic"
-	MpathDominantBaselineAuto         MpathDominantBaseline = "auto"
-	MpathDominantBaselineCentral      MpathDominantBaseline = "central"
-	MpathDominantBaselineHanging      MpathDominantBaseline = "hanging"
-	MpathDominantBaselineIdeographic  MpathDominantBaseline = "ideographic"
-	MpathDominantBaselineMathematical MpathDominantBaseline = "mathematical"
-	MpathDominantBaselineMiddle       MpathDominantBaseline = "middle"
-	MpathDominantBaselineTextBottom   MpathDominantBaseline = "text-bottom"
-	MpathDominantBaselineTextTop      MpathDominantBaseline = "text-top"
-)
-
 type MpathAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	MpathAlignmentBaselineTop            MpathAlignmentBaseline = "top"
 )
 
-type MpathTextRendering string
+type MpathClipRule string
 
 const (
-	MpathTextRenderingAuto               MpathTextRendering = "auto"
-	MpathTextRenderingGeometricPrecision MpathTextRendering = "geometricPrecision"
-	MpathTextRenderingOptimizeLegibility MpathTextRendering = "optimizeLegibility"
-	MpathTextRenderingOptimizeSpeed      MpathTextRendering = "optimizeSpeed"
+	MpathClipRuleEvenodd MpathClipRule = "evenodd"
+	MpathClipRuleNonzero MpathClipRule = "nonzero"
+)
+
+type MpathColorInterpolation string
+
+const (
+	MpathColorInterpolationAuto      MpathColorInterpolation = "auto"
+	MpathColorInterpolationLinearRGB MpathColorInterpolation = "linearRGB"
+	MpathColorInterpolationSRGB      MpathColorInterpolation = "sRGB"
+)
+
+type MpathColorInterpolationFilters string
+
+const (
+	MpathColorInterpolationFiltersAuto      MpathColorInterpolationFilters = "auto"
+	MpathColorInterpolationFiltersLinearRGB MpathColorInterpolationFilters = "linearRGB"
+	MpathColorInterpolationFiltersSRGB      MpathColorInterpolationFilters = "sRGB"
+)
+
+type MpathDirection string
+
+const (
+	MpathDirectionLtr MpathDirection = "ltr"
+	MpathDirectionRtl MpathDirection = "rtl"
+)
+
+type MpathDominantBaseline string
+
+const (
+	MpathDominantBaselineAlphabetic   MpathDominantBaseline = "alphabetic"
+	MpathDominantBaselineAuto         MpathDominantBaseline = "auto"
+	MpathDominantBaselineCentral      MpathDominantBaseline = "central"
+	MpathDominantBaselineHanging      MpathDominantBaseline = "hanging"
+	MpathDominantBaselineIdeographic  MpathDominantBaseline = "ideographic"
+	MpathDominantBaselineMathematical MpathDominantBaseline = "mathematical"
+	MpathDominantBaselineMiddle       MpathDominantBaseline = "middle"
+	MpathDominantBaselineTextBottom   MpathDominantBaseline = "text-bottom"
+	MpathDominantBaselineTextTop      MpathDominantBaseline = "text-top"
+)
+
+type MpathFillRule string
+
+const (
+	MpathFillRuleEvenodd MpathFillRule = "evenodd"
+	MpathFillRuleNonzero MpathFillRule = "nonzero"
+)
+
+type MpathFontStyle string
+
+const (
+	MpathFontStyleItalic  MpathFontStyle = "italic"
+	MpathFontStyleNormal  MpathFontStyle = "normal"
+	MpathFontStyleOblique MpathFontStyle = "oblique"
 )
 
 type MpathImageRendering string
@@ -345,6 +267,66 @@ const (
 	MpathOverflowVisible MpathOverflow = "visible"
 )
 
+type MpathPointerEvents string
+
+const (
+	MpathPointerEventsAll            MpathPointerEvents = "all"
+	MpathPointerEventsAuto           MpathPointerEvents = "auto"
+	MpathPointerEventsBoundingBox    MpathPointerEvents = "bounding-box"
+	MpathPointerEventsFill           MpathPointerEvents = "fill"
+	MpathPointerEventsNone           MpathPointerEvents = "none"
+	MpathPointerEventsPainted        MpathPointerEvents = "painted"
+	MpathPointerEventsStroke         MpathPointerEvents = "stroke"
+	MpathPointerEventsVisible        MpathPointerEvents = "visible"
+	MpathPointerEventsVisibleFill    MpathPointerEvents = "visibleFill"
+	MpathPointerEventsVisiblePainted MpathPointerEvents = "visiblePainted"
+	MpathPointerEventsVisibleStroke  MpathPointerEvents = "visibleStroke"
+)
+
+type MpathShapeRendering string
+
+const (
+	MpathShapeRenderingAuto               MpathShapeRendering = "auto"
+	MpathShapeRenderingCrispEdges         MpathShapeRendering = "crispEdges"
+	MpathShapeRenderingGeometricPrecision MpathShapeRendering = "geometricPrecision"
+	MpathShapeRenderingOptimizeSpeed      MpathShapeRendering = "optimizeSpeed"
+)
+
+type MpathStrokeLinecap string
+
+const (
+	MpathStrokeLinecapButt   MpathStrokeLinecap = "butt"
+	MpathStrokeLinecapRound  MpathStrokeLinecap = "round"
+	MpathStrokeLinecapSquare MpathStrokeLinecap = "square"
+)
+
+type MpathStrokeLinejoin string
+
+const (
+	MpathStrokeLinejoinArcs      MpathStrokeLinejoin = "arcs"
+	MpathStrokeLinejoinBevel     MpathStrokeLinejoin = "bevel"
+	MpathStrokeLinejoinMiter     MpathStrokeLinejoin = "miter"
+	MpathStrokeLinejoinMiterClip MpathStrokeLinejoin = "miter-clip"
+	MpathStrokeLinejoinRound     MpathStrokeLinejoin = "round"
+)
+
+type MpathTextAnchor string
+
+const (
+	MpathTextAnchorEnd    MpathTextAnchor = "end"
+	MpathTextAnchorMiddle MpathTextAnchor = "middle"
+	MpathTextAnchorStart  MpathTextAnchor = "start"
+)
+
+type MpathTextRendering string
+
+const (
+	MpathTextRenderingAuto               MpathTextRendering = "auto"
+	MpathTextRenderingGeometricPrecision MpathTextRendering = "geometricPrecision"
+	MpathTextRenderingOptimizeLegibility MpathTextRendering = "optimizeLegibility"
+	MpathTextRenderingOptimizeSpeed      MpathTextRendering = "optimizeSpeed"
+)
+
 type MpathTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	MpathTransformBoxViewBox    MpathTransformBox = "view-box"
 )
 
-type MpathDirection string
+type MpathVectorEffect string
 
 const (
-	MpathDirectionLtr MpathDirection = "ltr"
-	MpathDirectionRtl MpathDirection = "rtl"
+	MpathVectorEffectFixedPosition    MpathVectorEffect = "fixed-position"
+	MpathVectorEffectNonRotation      MpathVectorEffect = "non-rotation"
+	MpathVectorEffectNonScalingSize   MpathVectorEffect = "non-scaling-size"
+	MpathVectorEffectNonScalingStroke MpathVectorEffect = "non-scaling-stroke"
+	MpathVectorEffectNone             MpathVectorEffect = "none"
+)
+
+type MpathVisibility string
+
+const (
+	MpathVisibilityCollapse MpathVisibility = "collapse"
+	MpathVisibilityHidden   MpathVisibility = "hidden"
+	MpathVisibilityVisible  MpathVisibility = "visible"
 )
 
 type MpathWritingMode string
@@ -378,20 +371,67 @@ const (
 	MpathWritingModeVerticalRl   MpathWritingMode = "vertical-rl"
 )
 
+type MpathXmlSpace string
+
+const (
+	MpathXmlSpaceDefault  MpathXmlSpace = "default"
+	MpathXmlSpacePreserve MpathXmlSpace = "preserve"
+)
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *MpathElement) Href(s string) *MpathElement {
 	e.attributes.Set("href", s)
 
 	return e
 }
 
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
 func (e *MpathElement) XlinkHref(s string) *MpathElement {
 	e.attributes.Set("xlink:href", s)
 
 	return e
 }
 
-func (e *MpathElement) Id(s string) *MpathElement {
-	e.attributes.Set("id", s)
+func (e *MpathElement) AlignmentBaseline(a MpathAlignmentBaseline) *MpathElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func MpathAlignmentBaselineCustom(s string) MpathAlignmentBaseline {
+	return MpathAlignmentBaseline(s)
+}
+
+func (e *MpathElement) AriaUnsafe(name string, s string) *MpathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *MpathElement) Aria(name string, s string) *MpathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MpathElement) Autofocus(b bool) *MpathElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *MpathElement) BaselineShift(s string) *MpathElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -402,40 +442,59 @@ func (e *MpathElement) Class(s ...string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) Style(s string) *MpathElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *MpathElement) Clip(s string) *MpathElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *MpathElement) Tabindex(i int) *MpathElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *MpathElement) ClipPath(s string) *MpathElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *MpathElement) Lang(s string) *MpathElement {
-	e.attributes.Set("lang", s)
+func (e *MpathElement) ClipRule(a MpathClipRule) *MpathElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *MpathElement) XmlLang(s string) *MpathElement {
-	e.attributes.Set("xml:lang", s)
+func MpathClipRuleCustom(s string) MpathClipRule {
+	return MpathClipRule(s)
+}
+
+func (e *MpathElement) Color(s string) *MpathElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *MpathElement) XmlSpace(a MpathXmlSpace) *MpathElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *MpathElement) ColorInterpolation(a MpathColorInterpolation) *MpathElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *MpathElement) Autofocus(b bool) *MpathElement {
-	e.attributes.SetBool("autofocus", b)
+func MpathColorInterpolationCustom(s string) MpathColorInterpolation {
+	return MpathColorInterpolation(s)
+}
+
+func (e *MpathElement) ColorInterpolationFilters(a MpathColorInterpolationFilters) *MpathElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func MpathColorInterpolationFiltersCustom(s string) MpathColorInterpolationFilters {
+	return MpathColorInterpolationFilters(s)
+}
+
+func (e *MpathElement) Cursor(s string) *MpathElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -456,20 +515,30 @@ func (e *MpathElement) Data(name string, s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) AriaUnsafe(name string, s string) *MpathElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *MpathElement) Direction(a MpathDirection) *MpathElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *MpathElement) Aria(name string, s string) *MpathElement {
-	tag := strings.ToLower("aria-" + name)
+func MpathDirectionCustom(s string) MpathDirection {
+	return MpathDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *MpathElement) Display(s string) *MpathElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *MpathElement) DominantBaseline(a MpathDominantBaseline) *MpathElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func MpathDominantBaselineCustom(s string) MpathDominantBaseline {
+	return MpathDominantBaseline(s)
 }
 
 func (e *MpathElement) Fill(s string) *MpathElement {
@@ -494,20 +563,220 @@ func MpathFillRuleCustom(s string) MpathFillRule {
 	return MpathFillRule(s)
 }
 
+func (e *MpathElement) Filter(s string) *MpathElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *MpathElement) FloodColor(s string) *MpathElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *MpathElement) FloodOpacity(f float64) *MpathElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MpathElement) FontFamily(s string) *MpathElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *MpathElement) FontSize(s string) *MpathElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *MpathElement) FontSizeAdjust(s string) *MpathElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *MpathElement) FontStretch(s string) *MpathElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *MpathElement) FontStyle(a MpathFontStyle) *MpathElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func MpathFontStyleCustom(s string) MpathFontStyle {
+	return MpathFontStyle(s)
+}
+
+func (e *MpathElement) FontVariant(s string) *MpathElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *MpathElement) FontWeight(s string) *MpathElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *MpathElement) GlyphOrientationHorizontal(s string) *MpathElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *MpathElement) GlyphOrientationVertical(s string) *MpathElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *MpathElement) Id(s string) *MpathElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *MpathElement) ImageRendering(a MpathImageRendering) *MpathElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func MpathImageRenderingCustom(s string) MpathImageRendering {
+	return MpathImageRendering(s)
+}
+
+func (e *MpathElement) Lang(s string) *MpathElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *MpathElement) LetterSpacing(s string) *MpathElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *MpathElement) LightingColor(s string) *MpathElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *MpathElement) MarkerEnd(s string) *MpathElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *MpathElement) MarkerMid(s string) *MpathElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *MpathElement) MarkerStart(s string) *MpathElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *MpathElement) Mask(s string) *MpathElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *MpathElement) Opacity(f float64) *MpathElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MpathElement) Overflow(a MpathOverflow) *MpathElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func MpathOverflowCustom(s string) MpathOverflow {
+	return MpathOverflow(s)
+}
+
+func (e *MpathElement) PaintOrder(s string) *MpathElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *MpathElement) PointerEvents(a MpathPointerEvents) *MpathElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func MpathPointerEventsCustom(s string) MpathPointerEvents {
+	return MpathPointerEvents(s)
+}
+
+func (e *MpathElement) RequiredExtensions(s string) *MpathElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *MpathElement) ShapeRendering(a MpathShapeRendering) *MpathElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func MpathShapeRenderingCustom(s string) MpathShapeRendering {
+	return MpathShapeRendering(s)
+}
+
+func (e *MpathElement) StopColor(s string) *MpathElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *MpathElement) StopOpacity(f float64) *MpathElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *MpathElement) Stroke(s string) *MpathElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *MpathElement) StrokeWidth(s string) *MpathElement {
-	e.attributes.Set("stroke-width", s)
+func (e *MpathElement) StrokeDasharray(s string) *MpathElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *MpathElement) StrokeOpacity(f float64) *MpathElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MpathElement) StrokeDashoffset(s string) *MpathElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -538,210 +807,28 @@ func (e *MpathElement) StrokeMiterlimit(f float64) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) StrokeDasharray(s string) *MpathElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *MpathElement) StrokeOpacity(f float64) *MpathElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *MpathElement) StrokeDashoffset(s string) *MpathElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *MpathElement) StrokeWidth(s string) *MpathElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *MpathElement) Opacity(f float64) *MpathElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MpathElement) Style(s string) *MpathElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *MpathElement) Color(s string) *MpathElement {
-	e.attributes.Set("color", s)
+func (e *MpathElement) Tabindex(i int) *MpathElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *MpathElement) Display(s string) *MpathElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *MpathElement) Visibility(a MpathVisibility) *MpathElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func MpathVisibilityCustom(s string) MpathVisibility {
-	return MpathVisibility(s)
-}
-
-func (e *MpathElement) ClipPath(s string) *MpathElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *MpathElement) ClipRule(a MpathClipRule) *MpathElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func MpathClipRuleCustom(s string) MpathClipRule {
-	return MpathClipRule(s)
-}
-
-func (e *MpathElement) Mask(s string) *MpathElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *MpathElement) Filter(s string) *MpathElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *MpathElement) Cursor(s string) *MpathElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *MpathElement) PointerEvents(a MpathPointerEvents) *MpathElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func MpathPointerEventsCustom(s string) MpathPointerEvents {
-	return MpathPointerEvents(s)
-}
-
-func (e *MpathElement) VectorEffect(a MpathVectorEffect) *MpathElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func MpathVectorEffectCustom(s string) MpathVectorEffect {
-	return MpathVectorEffect(s)
-}
-
-func (e *MpathElement) PaintOrder(s string) *MpathElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *MpathElement) ShapeRendering(a MpathShapeRendering) *MpathElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func MpathShapeRenderingCustom(s string) MpathShapeRendering {
-	return MpathShapeRendering(s)
-}
-
-func (e *MpathElement) ColorInterpolation(a MpathColorInterpolation) *MpathElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func MpathColorInterpolationCustom(s string) MpathColorInterpolation {
-	return MpathColorInterpolation(s)
-}
-
-func (e *MpathElement) ColorInterpolationFilters(a MpathColorInterpolationFilters) *MpathElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func MpathColorInterpolationFiltersCustom(s string) MpathColorInterpolationFilters {
-	return MpathColorInterpolationFilters(s)
-}
-
-func (e *MpathElement) FloodColor(s string) *MpathElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *MpathElement) FloodOpacity(f float64) *MpathElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MpathElement) LightingColor(s string) *MpathElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *MpathElement) StopColor(s string) *MpathElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *MpathElement) StopOpacity(f float64) *MpathElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MpathElement) MarkerStart(s string) *MpathElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *MpathElement) MarkerMid(s string) *MpathElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *MpathElement) MarkerEnd(s string) *MpathElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *MpathElement) FontFamily(s string) *MpathElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *MpathElement) FontSize(s string) *MpathElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *MpathElement) FontWeight(s string) *MpathElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *MpathElement) FontStyle(a MpathFontStyle) *MpathElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func MpathFontStyleCustom(s string) MpathFontStyle {
-	return MpathFontStyle(s)
 }
 
 func (e *MpathElement) TextAnchor(a MpathTextAnchor) *MpathElement {
@@ -754,40 +841,14 @@ func MpathTextAnchorCustom(s string) MpathTextAnchor {
 	return MpathTextAnchor(s)
 }
 
-func (e *MpathElement) DominantBaseline(a MpathDominantBaseline) *MpathElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func MpathDominantBaselineCustom(s string) MpathDominantBaseline {
-	return MpathDominantBaseline(s)
-}
-
-func (e *MpathElement) AlignmentBaseline(a MpathAlignmentBaseline) *MpathElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func MpathAlignmentBaselineCustom(s string) MpathAlignmentBaseline {
-	return MpathAlignmentBaseline(s)
-}
-
-func (e *MpathElement) LetterSpacing(s string) *MpathElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *MpathElement) WordSpacing(s string) *MpathElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *MpathElement) TextDecoration(s string) *MpathElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *MpathElement) TextOverflow(s string) *MpathElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -802,24 +863,10 @@ func MpathTextRenderingCustom(s string) MpathTextRendering {
 	return MpathTextRendering(s)
 }
 
-func (e *MpathElement) ImageRendering(a MpathImageRendering) *MpathElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *MpathElement) Transform(s string) *MpathElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func MpathImageRenderingCustom(s string) MpathImageRendering {
-	return MpathImageRendering(s)
-}
-
-func (e *MpathElement) Overflow(a MpathOverflow) *MpathElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func MpathOverflowCustom(s string) MpathOverflow {
-	return MpathOverflow(s)
 }
 
 func (e *MpathElement) TransformBox(a MpathTransformBox) *MpathElement {
@@ -832,18 +879,46 @@ func MpathTransformBoxCustom(s string) MpathTransformBox {
 	return MpathTransformBox(s)
 }
 
-func (e *MpathElement) Direction(a MpathDirection) *MpathElement {
-	e.attributes.Set("direction", string(a))
+func (e *MpathElement) TransformOrigin(s string) *MpathElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func MpathDirectionCustom(s string) MpathDirection {
-	return MpathDirection(s)
-}
-
 func (e *MpathElement) UnicodeBidi(s string) *MpathElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *MpathElement) VectorEffect(a MpathVectorEffect) *MpathElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func MpathVectorEffectCustom(s string) MpathVectorEffect {
+	return MpathVectorEffect(s)
+}
+
+func (e *MpathElement) Visibility(a MpathVisibility) *MpathElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func MpathVisibilityCustom(s string) MpathVisibility {
+	return MpathVisibility(s)
+}
+
+func (e *MpathElement) WhiteSpace(s string) *MpathElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *MpathElement) WordSpacing(s string) *MpathElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -858,8 +933,20 @@ func MpathWritingModeCustom(s string) MpathWritingMode {
 	return MpathWritingMode(s)
 }
 
-func (e *MpathElement) WhiteSpace(s string) *MpathElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *MpathElement) XmlLang(s string) *MpathElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *MpathElement) XmlSpace(a MpathXmlSpace) *MpathElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

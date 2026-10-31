@@ -240,6 +240,15 @@ const (
 	SectionInputmodeUrl     SectionInputmode = "url"
 )
 
+type SectionPopover string
+
+const (
+	SectionPopoverAuto   SectionPopover = "auto"
+	SectionPopoverHint   SectionPopover = "hint"
+	SectionPopoverManual SectionPopover = "manual"
+	SectionPopoverEmpty  SectionPopover = ""
+)
+
 type SectionSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SectionElement) Enterkeyhint(a SectionEnterkeyhint) *SectionElement {
 	return e
 }
 
+func (e *SectionElement) Exportparts(s string) *SectionElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SectionElement) Headingoffset(i int) *SectionElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SectionElement) Headingreset(b bool) *SectionElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SectionElement) Hidden(v ...SectionHidden) *SectionElement {
@@ -396,6 +425,14 @@ func (e *SectionElement) Inputmode(a SectionInputmode) *SectionElement {
 	return e
 }
 
+func (e *SectionElement) Is(s string) *SectionElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SectionElement) Itemid(s string) *SectionElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SectionElement) Nonce(s string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Popover(s string) *SectionElement {
-	e.attributes.Set("popover", s)
+func (e *SectionElement) Part(s ...string) *SectionElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Popover(v ...SectionPopover) *SectionElement {
+	var val SectionPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

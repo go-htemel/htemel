@@ -1,0 +1,409 @@
+{
+  "name": "mathml",
+  "elements": [
+    {
+      "tag": "a",
+      "attributes": [
+        {
+          "name": "href",
+          "url": true,
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "hreflang",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "target",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "type",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "annotation",
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "annotation-xml",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "maction",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "math",
+      "attributes": [
+        {
+          "name": "display",
+          "allowed": {
+            "block": {},
+            "inline": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "merror",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mfrac",
+      "attributes": [
+        {
+          "name": "linethickness",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mi",
+      "attributes": [
+        {
+          "name": "mathvariant",
+          "allowed": {
+            "normal": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mmultiscripts",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mn",
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mo",
+      "attributes": [
+        {
+          "name": "form",
+          "allowed": {
+            "infix": {},
+            "postfix": {},
+            "prefix": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "largeop",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "lspace",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "maxsize",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "minsize",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "movablelimits",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "rspace",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stretchy",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "symmetric",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mover",
+      "attributes": [
+        {
+          "name": "accent",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mpadded",
+      "attributes": [
+        {
+          "name": "depth",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "lspace",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "voffset",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mphantom",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mprescripts",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mroot",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mrow",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "ms",
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mspace",
+      "attributes": [
+        {
+          "name": "depth",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "attribute_type": "AttributeTypeString"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "msqrt",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mstyle",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "msub",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "msubsup",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "msup",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mtable",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mtd",
+      "attributes": [
+        {
+          "name": "columnspan",
+          "attribute_type": "AttributeTypeNumber"
+        },
+        {
+          "name": "rowspan",
+          "attribute_type": "AttributeTypeNumber"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mtext",
+      "text": true,
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "mtr",
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "munder",
+      "attributes": [
+        {
+          "name": "accentunder",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "munderover",
+      "attributes": [
+        {
+          "name": "accent",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "accentunder",
+          "allowed": {
+            "false": {},
+            "true": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ],
+      "interface": "MathMLElement"
+    },
+    {
+      "tag": "semantics",
+      "interface": "MathMLElement"
+    }
+  ],
+  "attributes": [
+    {
+      "name": "autofocus",
+      "attribute_type": "AttributeTypeBool"
+    },
+    {
+      "name": "class",
+      "attribute_type": "AttributeTypeSST"
+    },
+    {
+      "name": "data",
+      "attribute_type": "AttributeTypePrefixedCustom"
+    },
+    {
+      "name": "dir",
+      "allowed": {
+        "ltr": {},
+        "rtl": {}
+      },
+      "allow_empty": false,
+      "allow_custom": false,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "displaystyle",
+      "allowed": {
+        "false": {},
+        "true": {}
+      },
+      "allow_empty": false,
+      "allow_custom": false,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "id",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "mathbackground",
+      "deprecated": true,
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "mathcolor",
+      "deprecated": true,
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "mathsize",
+      "deprecated": true,
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "scriptlevel",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "style",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "tabindex",
+      "attribute_type": "AttributeTypeNumber"
+    }
+  ]
+}

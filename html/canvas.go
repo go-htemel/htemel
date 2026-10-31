@@ -240,6 +240,15 @@ const (
 	CanvasInputmodeUrl     CanvasInputmode = "url"
 )
 
+type CanvasPopover string
+
+const (
+	CanvasPopoverAuto   CanvasPopover = "auto"
+	CanvasPopoverHint   CanvasPopover = "hint"
+	CanvasPopoverManual CanvasPopover = "manual"
+	CanvasPopoverEmpty  CanvasPopover = ""
+)
+
 type CanvasSpellcheck string
 
 const (
@@ -264,14 +273,14 @@ const (
 	CanvasWritingsuggestionsEmpty CanvasWritingsuggestions = ""
 )
 
-func (e *CanvasElement) Width(i int) *CanvasElement {
-	e.attributes.Set("width", strconv.Itoa(i))
+func (e *CanvasElement) Height(i int) *CanvasElement {
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
 
-func (e *CanvasElement) Height(i int) *CanvasElement {
-	e.attributes.Set("height", strconv.Itoa(i))
+func (e *CanvasElement) Width(i int) *CanvasElement {
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
@@ -376,6 +385,26 @@ func (e *CanvasElement) Enterkeyhint(a CanvasEnterkeyhint) *CanvasElement {
 	return e
 }
 
+func (e *CanvasElement) Exportparts(s string) *CanvasElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *CanvasElement) Headingoffset(i int) *CanvasElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *CanvasElement) Headingreset(b bool) *CanvasElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *CanvasElement) Hidden(v ...CanvasHidden) *CanvasElement {
@@ -408,6 +437,14 @@ func (e *CanvasElement) Inputmode(a CanvasInputmode) *CanvasElement {
 	return e
 }
 
+func (e *CanvasElement) Is(s string) *CanvasElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *CanvasElement) Itemid(s string) *CanvasElement {
 	e.attributes.Set("itemid", s)
 
@@ -452,8 +489,20 @@ func (e *CanvasElement) Nonce(s string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Popover(s string) *CanvasElement {
-	e.attributes.Set("popover", s)
+func (e *CanvasElement) Part(s ...string) *CanvasElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Popover(v ...CanvasPopover) *CanvasElement {
+	var val CanvasPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

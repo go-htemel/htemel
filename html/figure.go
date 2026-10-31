@@ -240,6 +240,15 @@ const (
 	FigureInputmodeUrl     FigureInputmode = "url"
 )
 
+type FigurePopover string
+
+const (
+	FigurePopoverAuto   FigurePopover = "auto"
+	FigurePopoverHint   FigurePopover = "hint"
+	FigurePopoverManual FigurePopover = "manual"
+	FigurePopoverEmpty  FigurePopover = ""
+)
+
 type FigureSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *FigureElement) Enterkeyhint(a FigureEnterkeyhint) *FigureElement {
 	return e
 }
 
+func (e *FigureElement) Exportparts(s string) *FigureElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *FigureElement) Headingoffset(i int) *FigureElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FigureElement) Headingreset(b bool) *FigureElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FigureElement) Hidden(v ...FigureHidden) *FigureElement {
@@ -396,6 +425,14 @@ func (e *FigureElement) Inputmode(a FigureInputmode) *FigureElement {
 	return e
 }
 
+func (e *FigureElement) Is(s string) *FigureElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FigureElement) Itemid(s string) *FigureElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *FigureElement) Nonce(s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Popover(s string) *FigureElement {
-	e.attributes.Set("popover", s)
+func (e *FigureElement) Part(s ...string) *FigureElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Popover(v ...FigurePopover) *FigureElement {
+	var val FigurePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

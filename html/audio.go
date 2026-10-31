@@ -172,6 +172,13 @@ const (
 	AudioCrossoriginEmpty          AudioCrossorigin = ""
 )
 
+type AudioLoading string
+
+const (
+	AudioLoadingEager AudioLoading = "eager"
+	AudioLoadingLazy  AudioLoading = "lazy"
+)
+
 type AudioPreload string
 
 const (
@@ -257,6 +264,15 @@ const (
 	AudioInputmodeUrl     AudioInputmode = "url"
 )
 
+type AudioPopover string
+
+const (
+	AudioPopoverAuto   AudioPopover = "auto"
+	AudioPopoverHint   AudioPopover = "hint"
+	AudioPopoverManual AudioPopover = "manual"
+	AudioPopoverEmpty  AudioPopover = ""
+)
+
 type AudioSpellcheck string
 
 const (
@@ -281,8 +297,24 @@ const (
 	AudioWritingsuggestionsEmpty AudioWritingsuggestions = ""
 )
 
-func (e *AudioElement) Src(s string) *AudioElement {
-	e.attributes.Set("src", s)
+// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AudioElement) Autoplay(b bool) *AudioElement {
+	e.attributes.SetBool("autoplay", b)
+
+	return e
+}
+
+// Controls sets the boolean attribute "controls". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AudioElement) Controls(b bool) *AudioElement {
+	e.attributes.SetBool("controls", b)
+
+	return e
+}
+
+func (e *AudioElement) Controlslist(s ...string) *AudioElement {
+	e.attributes.Set("controlslist", strings.Join(s, " "))
 
 	return e
 }
@@ -299,30 +331,16 @@ func (e *AudioElement) Crossorigin(v ...AudioCrossorigin) *AudioElement {
 	return e
 }
 
-// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
-// bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Preload(v ...AudioPreload) *AudioElement {
-	var val AudioPreload
-	if len(v) > 0 {
-		val = v[len(v)-1]
-	}
-	e.attributes.Set("preload", string(val))
+// Disableremoteplayback sets the boolean attribute "disableremoteplayback". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AudioElement) Disableremoteplayback(b bool) *AudioElement {
+	e.attributes.SetBool("disableremoteplayback", b)
 
 	return e
 }
 
-// Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Autoplay(b bool) *AudioElement {
-	e.attributes.SetBool("autoplay", b)
-
-	return e
-}
-
-// Playsinline sets the boolean attribute "playsinline". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Playsinline(b bool) *AudioElement {
-	e.attributes.SetBool("playsinline", b)
+func (e *AudioElement) Loading(a AudioLoading) *AudioElement {
+	e.attributes.Set("loading", string(a))
 
 	return e
 }
@@ -343,10 +361,22 @@ func (e *AudioElement) Muted(b bool) *AudioElement {
 	return e
 }
 
-// Controls sets the boolean attribute "controls". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AudioElement) Controls(b bool) *AudioElement {
-	e.attributes.SetBool("controls", b)
+// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Preload(v ...AudioPreload) *AudioElement {
+	var val AudioPreload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("preload", string(val))
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *AudioElement) Src(s string) *AudioElement {
+	e.attributes.Set("src", s)
 
 	return e
 }
@@ -451,6 +481,26 @@ func (e *AudioElement) Enterkeyhint(a AudioEnterkeyhint) *AudioElement {
 	return e
 }
 
+func (e *AudioElement) Exportparts(s string) *AudioElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *AudioElement) Headingoffset(i int) *AudioElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AudioElement) Headingreset(b bool) *AudioElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AudioElement) Hidden(v ...AudioHidden) *AudioElement {
@@ -483,6 +533,14 @@ func (e *AudioElement) Inputmode(a AudioInputmode) *AudioElement {
 	return e
 }
 
+func (e *AudioElement) Is(s string) *AudioElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AudioElement) Itemid(s string) *AudioElement {
 	e.attributes.Set("itemid", s)
 
@@ -527,8 +585,20 @@ func (e *AudioElement) Nonce(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Popover(s string) *AudioElement {
-	e.attributes.Set("popover", s)
+func (e *AudioElement) Part(s ...string) *AudioElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Popover(v ...AudioPopover) *AudioElement {
+	var val AudioPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

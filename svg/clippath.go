@@ -171,134 +171,6 @@ const (
 	ClipPathClipPathUnitsUserSpaceOnUse    ClipPathClipPathUnits = "userSpaceOnUse"
 )
 
-type ClipPathXmlSpace string
-
-const (
-	ClipPathXmlSpaceDefault  ClipPathXmlSpace = "default"
-	ClipPathXmlSpacePreserve ClipPathXmlSpace = "preserve"
-)
-
-type ClipPathFillRule string
-
-const (
-	ClipPathFillRuleEvenodd ClipPathFillRule = "evenodd"
-	ClipPathFillRuleNonzero ClipPathFillRule = "nonzero"
-)
-
-type ClipPathStrokeLinecap string
-
-const (
-	ClipPathStrokeLinecapButt   ClipPathStrokeLinecap = "butt"
-	ClipPathStrokeLinecapRound  ClipPathStrokeLinecap = "round"
-	ClipPathStrokeLinecapSquare ClipPathStrokeLinecap = "square"
-)
-
-type ClipPathStrokeLinejoin string
-
-const (
-	ClipPathStrokeLinejoinArcs      ClipPathStrokeLinejoin = "arcs"
-	ClipPathStrokeLinejoinBevel     ClipPathStrokeLinejoin = "bevel"
-	ClipPathStrokeLinejoinMiter     ClipPathStrokeLinejoin = "miter"
-	ClipPathStrokeLinejoinMiterClip ClipPathStrokeLinejoin = "miter-clip"
-	ClipPathStrokeLinejoinRound     ClipPathStrokeLinejoin = "round"
-)
-
-type ClipPathVisibility string
-
-const (
-	ClipPathVisibilityCollapse ClipPathVisibility = "collapse"
-	ClipPathVisibilityHidden   ClipPathVisibility = "hidden"
-	ClipPathVisibilityVisible  ClipPathVisibility = "visible"
-)
-
-type ClipPathClipRule string
-
-const (
-	ClipPathClipRuleEvenodd ClipPathClipRule = "evenodd"
-	ClipPathClipRuleNonzero ClipPathClipRule = "nonzero"
-)
-
-type ClipPathPointerEvents string
-
-const (
-	ClipPathPointerEventsAll            ClipPathPointerEvents = "all"
-	ClipPathPointerEventsAuto           ClipPathPointerEvents = "auto"
-	ClipPathPointerEventsBoundingBox    ClipPathPointerEvents = "bounding-box"
-	ClipPathPointerEventsFill           ClipPathPointerEvents = "fill"
-	ClipPathPointerEventsNone           ClipPathPointerEvents = "none"
-	ClipPathPointerEventsPainted        ClipPathPointerEvents = "painted"
-	ClipPathPointerEventsStroke         ClipPathPointerEvents = "stroke"
-	ClipPathPointerEventsVisible        ClipPathPointerEvents = "visible"
-	ClipPathPointerEventsVisibleFill    ClipPathPointerEvents = "visibleFill"
-	ClipPathPointerEventsVisiblePainted ClipPathPointerEvents = "visiblePainted"
-	ClipPathPointerEventsVisibleStroke  ClipPathPointerEvents = "visibleStroke"
-)
-
-type ClipPathVectorEffect string
-
-const (
-	ClipPathVectorEffectFixedPosition    ClipPathVectorEffect = "fixed-position"
-	ClipPathVectorEffectNonRotation      ClipPathVectorEffect = "non-rotation"
-	ClipPathVectorEffectNonScalingSize   ClipPathVectorEffect = "non-scaling-size"
-	ClipPathVectorEffectNonScalingStroke ClipPathVectorEffect = "non-scaling-stroke"
-	ClipPathVectorEffectNone             ClipPathVectorEffect = "none"
-)
-
-type ClipPathShapeRendering string
-
-const (
-	ClipPathShapeRenderingAuto               ClipPathShapeRendering = "auto"
-	ClipPathShapeRenderingCrispEdges         ClipPathShapeRendering = "crispEdges"
-	ClipPathShapeRenderingGeometricPrecision ClipPathShapeRendering = "geometricPrecision"
-	ClipPathShapeRenderingOptimizeSpeed      ClipPathShapeRendering = "optimizeSpeed"
-)
-
-type ClipPathColorInterpolation string
-
-const (
-	ClipPathColorInterpolationAuto      ClipPathColorInterpolation = "auto"
-	ClipPathColorInterpolationLinearRGB ClipPathColorInterpolation = "linearRGB"
-	ClipPathColorInterpolationSRGB      ClipPathColorInterpolation = "sRGB"
-)
-
-type ClipPathColorInterpolationFilters string
-
-const (
-	ClipPathColorInterpolationFiltersAuto      ClipPathColorInterpolationFilters = "auto"
-	ClipPathColorInterpolationFiltersLinearRGB ClipPathColorInterpolationFilters = "linearRGB"
-	ClipPathColorInterpolationFiltersSRGB      ClipPathColorInterpolationFilters = "sRGB"
-)
-
-type ClipPathFontStyle string
-
-const (
-	ClipPathFontStyleItalic  ClipPathFontStyle = "italic"
-	ClipPathFontStyleNormal  ClipPathFontStyle = "normal"
-	ClipPathFontStyleOblique ClipPathFontStyle = "oblique"
-)
-
-type ClipPathTextAnchor string
-
-const (
-	ClipPathTextAnchorEnd    ClipPathTextAnchor = "end"
-	ClipPathTextAnchorMiddle ClipPathTextAnchor = "middle"
-	ClipPathTextAnchorStart  ClipPathTextAnchor = "start"
-)
-
-type ClipPathDominantBaseline string
-
-const (
-	ClipPathDominantBaselineAlphabetic   ClipPathDominantBaseline = "alphabetic"
-	ClipPathDominantBaselineAuto         ClipPathDominantBaseline = "auto"
-	ClipPathDominantBaselineCentral      ClipPathDominantBaseline = "central"
-	ClipPathDominantBaselineHanging      ClipPathDominantBaseline = "hanging"
-	ClipPathDominantBaselineIdeographic  ClipPathDominantBaseline = "ideographic"
-	ClipPathDominantBaselineMathematical ClipPathDominantBaseline = "mathematical"
-	ClipPathDominantBaselineMiddle       ClipPathDominantBaseline = "middle"
-	ClipPathDominantBaselineTextBottom   ClipPathDominantBaseline = "text-bottom"
-	ClipPathDominantBaselineTextTop      ClipPathDominantBaseline = "text-top"
-)
-
 type ClipPathAlignmentBaseline string
 
 const (
@@ -321,13 +193,63 @@ const (
 	ClipPathAlignmentBaselineTop            ClipPathAlignmentBaseline = "top"
 )
 
-type ClipPathTextRendering string
+type ClipPathClipRule string
 
 const (
-	ClipPathTextRenderingAuto               ClipPathTextRendering = "auto"
-	ClipPathTextRenderingGeometricPrecision ClipPathTextRendering = "geometricPrecision"
-	ClipPathTextRenderingOptimizeLegibility ClipPathTextRendering = "optimizeLegibility"
-	ClipPathTextRenderingOptimizeSpeed      ClipPathTextRendering = "optimizeSpeed"
+	ClipPathClipRuleEvenodd ClipPathClipRule = "evenodd"
+	ClipPathClipRuleNonzero ClipPathClipRule = "nonzero"
+)
+
+type ClipPathColorInterpolation string
+
+const (
+	ClipPathColorInterpolationAuto      ClipPathColorInterpolation = "auto"
+	ClipPathColorInterpolationLinearRGB ClipPathColorInterpolation = "linearRGB"
+	ClipPathColorInterpolationSRGB      ClipPathColorInterpolation = "sRGB"
+)
+
+type ClipPathColorInterpolationFilters string
+
+const (
+	ClipPathColorInterpolationFiltersAuto      ClipPathColorInterpolationFilters = "auto"
+	ClipPathColorInterpolationFiltersLinearRGB ClipPathColorInterpolationFilters = "linearRGB"
+	ClipPathColorInterpolationFiltersSRGB      ClipPathColorInterpolationFilters = "sRGB"
+)
+
+type ClipPathDirection string
+
+const (
+	ClipPathDirectionLtr ClipPathDirection = "ltr"
+	ClipPathDirectionRtl ClipPathDirection = "rtl"
+)
+
+type ClipPathDominantBaseline string
+
+const (
+	ClipPathDominantBaselineAlphabetic   ClipPathDominantBaseline = "alphabetic"
+	ClipPathDominantBaselineAuto         ClipPathDominantBaseline = "auto"
+	ClipPathDominantBaselineCentral      ClipPathDominantBaseline = "central"
+	ClipPathDominantBaselineHanging      ClipPathDominantBaseline = "hanging"
+	ClipPathDominantBaselineIdeographic  ClipPathDominantBaseline = "ideographic"
+	ClipPathDominantBaselineMathematical ClipPathDominantBaseline = "mathematical"
+	ClipPathDominantBaselineMiddle       ClipPathDominantBaseline = "middle"
+	ClipPathDominantBaselineTextBottom   ClipPathDominantBaseline = "text-bottom"
+	ClipPathDominantBaselineTextTop      ClipPathDominantBaseline = "text-top"
+)
+
+type ClipPathFillRule string
+
+const (
+	ClipPathFillRuleEvenodd ClipPathFillRule = "evenodd"
+	ClipPathFillRuleNonzero ClipPathFillRule = "nonzero"
+)
+
+type ClipPathFontStyle string
+
+const (
+	ClipPathFontStyleItalic  ClipPathFontStyle = "italic"
+	ClipPathFontStyleNormal  ClipPathFontStyle = "normal"
+	ClipPathFontStyleOblique ClipPathFontStyle = "oblique"
 )
 
 type ClipPathImageRendering string
@@ -352,6 +274,66 @@ const (
 	ClipPathOverflowVisible ClipPathOverflow = "visible"
 )
 
+type ClipPathPointerEvents string
+
+const (
+	ClipPathPointerEventsAll            ClipPathPointerEvents = "all"
+	ClipPathPointerEventsAuto           ClipPathPointerEvents = "auto"
+	ClipPathPointerEventsBoundingBox    ClipPathPointerEvents = "bounding-box"
+	ClipPathPointerEventsFill           ClipPathPointerEvents = "fill"
+	ClipPathPointerEventsNone           ClipPathPointerEvents = "none"
+	ClipPathPointerEventsPainted        ClipPathPointerEvents = "painted"
+	ClipPathPointerEventsStroke         ClipPathPointerEvents = "stroke"
+	ClipPathPointerEventsVisible        ClipPathPointerEvents = "visible"
+	ClipPathPointerEventsVisibleFill    ClipPathPointerEvents = "visibleFill"
+	ClipPathPointerEventsVisiblePainted ClipPathPointerEvents = "visiblePainted"
+	ClipPathPointerEventsVisibleStroke  ClipPathPointerEvents = "visibleStroke"
+)
+
+type ClipPathShapeRendering string
+
+const (
+	ClipPathShapeRenderingAuto               ClipPathShapeRendering = "auto"
+	ClipPathShapeRenderingCrispEdges         ClipPathShapeRendering = "crispEdges"
+	ClipPathShapeRenderingGeometricPrecision ClipPathShapeRendering = "geometricPrecision"
+	ClipPathShapeRenderingOptimizeSpeed      ClipPathShapeRendering = "optimizeSpeed"
+)
+
+type ClipPathStrokeLinecap string
+
+const (
+	ClipPathStrokeLinecapButt   ClipPathStrokeLinecap = "butt"
+	ClipPathStrokeLinecapRound  ClipPathStrokeLinecap = "round"
+	ClipPathStrokeLinecapSquare ClipPathStrokeLinecap = "square"
+)
+
+type ClipPathStrokeLinejoin string
+
+const (
+	ClipPathStrokeLinejoinArcs      ClipPathStrokeLinejoin = "arcs"
+	ClipPathStrokeLinejoinBevel     ClipPathStrokeLinejoin = "bevel"
+	ClipPathStrokeLinejoinMiter     ClipPathStrokeLinejoin = "miter"
+	ClipPathStrokeLinejoinMiterClip ClipPathStrokeLinejoin = "miter-clip"
+	ClipPathStrokeLinejoinRound     ClipPathStrokeLinejoin = "round"
+)
+
+type ClipPathTextAnchor string
+
+const (
+	ClipPathTextAnchorEnd    ClipPathTextAnchor = "end"
+	ClipPathTextAnchorMiddle ClipPathTextAnchor = "middle"
+	ClipPathTextAnchorStart  ClipPathTextAnchor = "start"
+)
+
+type ClipPathTextRendering string
+
+const (
+	ClipPathTextRenderingAuto               ClipPathTextRendering = "auto"
+	ClipPathTextRenderingGeometricPrecision ClipPathTextRendering = "geometricPrecision"
+	ClipPathTextRenderingOptimizeLegibility ClipPathTextRendering = "optimizeLegibility"
+	ClipPathTextRenderingOptimizeSpeed      ClipPathTextRendering = "optimizeSpeed"
+)
+
 type ClipPathTransformBox string
 
 const (
@@ -362,11 +344,22 @@ const (
 	ClipPathTransformBoxViewBox    ClipPathTransformBox = "view-box"
 )
 
-type ClipPathDirection string
+type ClipPathVectorEffect string
 
 const (
-	ClipPathDirectionLtr ClipPathDirection = "ltr"
-	ClipPathDirectionRtl ClipPathDirection = "rtl"
+	ClipPathVectorEffectFixedPosition    ClipPathVectorEffect = "fixed-position"
+	ClipPathVectorEffectNonRotation      ClipPathVectorEffect = "non-rotation"
+	ClipPathVectorEffectNonScalingSize   ClipPathVectorEffect = "non-scaling-size"
+	ClipPathVectorEffectNonScalingStroke ClipPathVectorEffect = "non-scaling-stroke"
+	ClipPathVectorEffectNone             ClipPathVectorEffect = "none"
+)
+
+type ClipPathVisibility string
+
+const (
+	ClipPathVisibilityCollapse ClipPathVisibility = "collapse"
+	ClipPathVisibilityHidden   ClipPathVisibility = "hidden"
+	ClipPathVisibilityVisible  ClipPathVisibility = "visible"
 )
 
 type ClipPathWritingMode string
@@ -385,26 +378,61 @@ const (
 	ClipPathWritingModeVerticalRl   ClipPathWritingMode = "vertical-rl"
 )
 
+type ClipPathXmlSpace string
+
+const (
+	ClipPathXmlSpaceDefault  ClipPathXmlSpace = "default"
+	ClipPathXmlSpacePreserve ClipPathXmlSpace = "preserve"
+)
+
 func (e *ClipPathElement) ClipPathUnits(a ClipPathClipPathUnits) *ClipPathElement {
 	e.attributes.Set("clipPathUnits", string(a))
 
 	return e
 }
 
-func (e *ClipPathElement) Transform(s string) *ClipPathElement {
-	e.attributes.Set("transform", s)
+func (e *ClipPathElement) SystemLanguage(s string) *ClipPathElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *ClipPathElement) TransformOrigin(s string) *ClipPathElement {
-	e.attributes.Set("transform-origin", s)
+func (e *ClipPathElement) AlignmentBaseline(a ClipPathAlignmentBaseline) *ClipPathElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *ClipPathElement) Id(s string) *ClipPathElement {
-	e.attributes.Set("id", s)
+func ClipPathAlignmentBaselineCustom(s string) ClipPathAlignmentBaseline {
+	return ClipPathAlignmentBaseline(s)
+}
+
+func (e *ClipPathElement) AriaUnsafe(name string, s string) *ClipPathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *ClipPathElement) Aria(name string, s string) *ClipPathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ClipPathElement) Autofocus(b bool) *ClipPathElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *ClipPathElement) BaselineShift(s string) *ClipPathElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -415,40 +443,59 @@ func (e *ClipPathElement) Class(s ...string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) Style(s string) *ClipPathElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *ClipPathElement) Clip(s string) *ClipPathElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *ClipPathElement) Tabindex(i int) *ClipPathElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *ClipPathElement) ClipPath(s string) *ClipPathElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *ClipPathElement) Lang(s string) *ClipPathElement {
-	e.attributes.Set("lang", s)
+func (e *ClipPathElement) ClipRule(a ClipPathClipRule) *ClipPathElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *ClipPathElement) XmlLang(s string) *ClipPathElement {
-	e.attributes.Set("xml:lang", s)
+func ClipPathClipRuleCustom(s string) ClipPathClipRule {
+	return ClipPathClipRule(s)
+}
+
+func (e *ClipPathElement) Color(s string) *ClipPathElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *ClipPathElement) XmlSpace(a ClipPathXmlSpace) *ClipPathElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *ClipPathElement) ColorInterpolation(a ClipPathColorInterpolation) *ClipPathElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ClipPathElement) Autofocus(b bool) *ClipPathElement {
-	e.attributes.SetBool("autofocus", b)
+func ClipPathColorInterpolationCustom(s string) ClipPathColorInterpolation {
+	return ClipPathColorInterpolation(s)
+}
+
+func (e *ClipPathElement) ColorInterpolationFilters(a ClipPathColorInterpolationFilters) *ClipPathElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func ClipPathColorInterpolationFiltersCustom(s string) ClipPathColorInterpolationFilters {
+	return ClipPathColorInterpolationFilters(s)
+}
+
+func (e *ClipPathElement) Cursor(s string) *ClipPathElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -469,20 +516,30 @@ func (e *ClipPathElement) Data(name string, s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) AriaUnsafe(name string, s string) *ClipPathElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *ClipPathElement) Direction(a ClipPathDirection) *ClipPathElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *ClipPathElement) Aria(name string, s string) *ClipPathElement {
-	tag := strings.ToLower("aria-" + name)
+func ClipPathDirectionCustom(s string) ClipPathDirection {
+	return ClipPathDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *ClipPathElement) Display(s string) *ClipPathElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *ClipPathElement) DominantBaseline(a ClipPathDominantBaseline) *ClipPathElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func ClipPathDominantBaselineCustom(s string) ClipPathDominantBaseline {
+	return ClipPathDominantBaseline(s)
 }
 
 func (e *ClipPathElement) Fill(s string) *ClipPathElement {
@@ -507,20 +564,220 @@ func ClipPathFillRuleCustom(s string) ClipPathFillRule {
 	return ClipPathFillRule(s)
 }
 
+func (e *ClipPathElement) Filter(s string) *ClipPathElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FloodColor(s string) *ClipPathElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FloodOpacity(f float64) *ClipPathElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ClipPathElement) FontFamily(s string) *ClipPathElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FontSize(s string) *ClipPathElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FontSizeAdjust(s string) *ClipPathElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FontStretch(s string) *ClipPathElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FontStyle(a ClipPathFontStyle) *ClipPathElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func ClipPathFontStyleCustom(s string) ClipPathFontStyle {
+	return ClipPathFontStyle(s)
+}
+
+func (e *ClipPathElement) FontVariant(s string) *ClipPathElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *ClipPathElement) FontWeight(s string) *ClipPathElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *ClipPathElement) GlyphOrientationHorizontal(s string) *ClipPathElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *ClipPathElement) GlyphOrientationVertical(s string) *ClipPathElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *ClipPathElement) Id(s string) *ClipPathElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *ClipPathElement) ImageRendering(a ClipPathImageRendering) *ClipPathElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func ClipPathImageRenderingCustom(s string) ClipPathImageRendering {
+	return ClipPathImageRendering(s)
+}
+
+func (e *ClipPathElement) Lang(s string) *ClipPathElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *ClipPathElement) LetterSpacing(s string) *ClipPathElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *ClipPathElement) LightingColor(s string) *ClipPathElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *ClipPathElement) MarkerEnd(s string) *ClipPathElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *ClipPathElement) MarkerMid(s string) *ClipPathElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *ClipPathElement) MarkerStart(s string) *ClipPathElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *ClipPathElement) Mask(s string) *ClipPathElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *ClipPathElement) Opacity(f float64) *ClipPathElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ClipPathElement) Overflow(a ClipPathOverflow) *ClipPathElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func ClipPathOverflowCustom(s string) ClipPathOverflow {
+	return ClipPathOverflow(s)
+}
+
+func (e *ClipPathElement) PaintOrder(s string) *ClipPathElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *ClipPathElement) PointerEvents(a ClipPathPointerEvents) *ClipPathElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func ClipPathPointerEventsCustom(s string) ClipPathPointerEvents {
+	return ClipPathPointerEvents(s)
+}
+
+func (e *ClipPathElement) RequiredExtensions(s string) *ClipPathElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *ClipPathElement) ShapeRendering(a ClipPathShapeRendering) *ClipPathElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func ClipPathShapeRenderingCustom(s string) ClipPathShapeRendering {
+	return ClipPathShapeRendering(s)
+}
+
+func (e *ClipPathElement) StopColor(s string) *ClipPathElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *ClipPathElement) StopOpacity(f float64) *ClipPathElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *ClipPathElement) Stroke(s string) *ClipPathElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *ClipPathElement) StrokeWidth(s string) *ClipPathElement {
-	e.attributes.Set("stroke-width", s)
+func (e *ClipPathElement) StrokeDasharray(s string) *ClipPathElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *ClipPathElement) StrokeOpacity(f float64) *ClipPathElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ClipPathElement) StrokeDashoffset(s string) *ClipPathElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -551,210 +808,28 @@ func (e *ClipPathElement) StrokeMiterlimit(f float64) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) StrokeDasharray(s string) *ClipPathElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *ClipPathElement) StrokeOpacity(f float64) *ClipPathElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *ClipPathElement) StrokeDashoffset(s string) *ClipPathElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *ClipPathElement) StrokeWidth(s string) *ClipPathElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *ClipPathElement) Opacity(f float64) *ClipPathElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ClipPathElement) Style(s string) *ClipPathElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *ClipPathElement) Color(s string) *ClipPathElement {
-	e.attributes.Set("color", s)
+func (e *ClipPathElement) Tabindex(i int) *ClipPathElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *ClipPathElement) Display(s string) *ClipPathElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *ClipPathElement) Visibility(a ClipPathVisibility) *ClipPathElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func ClipPathVisibilityCustom(s string) ClipPathVisibility {
-	return ClipPathVisibility(s)
-}
-
-func (e *ClipPathElement) ClipPath(s string) *ClipPathElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *ClipPathElement) ClipRule(a ClipPathClipRule) *ClipPathElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func ClipPathClipRuleCustom(s string) ClipPathClipRule {
-	return ClipPathClipRule(s)
-}
-
-func (e *ClipPathElement) Mask(s string) *ClipPathElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *ClipPathElement) Filter(s string) *ClipPathElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *ClipPathElement) Cursor(s string) *ClipPathElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *ClipPathElement) PointerEvents(a ClipPathPointerEvents) *ClipPathElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func ClipPathPointerEventsCustom(s string) ClipPathPointerEvents {
-	return ClipPathPointerEvents(s)
-}
-
-func (e *ClipPathElement) VectorEffect(a ClipPathVectorEffect) *ClipPathElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func ClipPathVectorEffectCustom(s string) ClipPathVectorEffect {
-	return ClipPathVectorEffect(s)
-}
-
-func (e *ClipPathElement) PaintOrder(s string) *ClipPathElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *ClipPathElement) ShapeRendering(a ClipPathShapeRendering) *ClipPathElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func ClipPathShapeRenderingCustom(s string) ClipPathShapeRendering {
-	return ClipPathShapeRendering(s)
-}
-
-func (e *ClipPathElement) ColorInterpolation(a ClipPathColorInterpolation) *ClipPathElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func ClipPathColorInterpolationCustom(s string) ClipPathColorInterpolation {
-	return ClipPathColorInterpolation(s)
-}
-
-func (e *ClipPathElement) ColorInterpolationFilters(a ClipPathColorInterpolationFilters) *ClipPathElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func ClipPathColorInterpolationFiltersCustom(s string) ClipPathColorInterpolationFilters {
-	return ClipPathColorInterpolationFilters(s)
-}
-
-func (e *ClipPathElement) FloodColor(s string) *ClipPathElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *ClipPathElement) FloodOpacity(f float64) *ClipPathElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ClipPathElement) LightingColor(s string) *ClipPathElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *ClipPathElement) StopColor(s string) *ClipPathElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *ClipPathElement) StopOpacity(f float64) *ClipPathElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ClipPathElement) MarkerStart(s string) *ClipPathElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *ClipPathElement) MarkerMid(s string) *ClipPathElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *ClipPathElement) MarkerEnd(s string) *ClipPathElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *ClipPathElement) FontFamily(s string) *ClipPathElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *ClipPathElement) FontSize(s string) *ClipPathElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *ClipPathElement) FontWeight(s string) *ClipPathElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *ClipPathElement) FontStyle(a ClipPathFontStyle) *ClipPathElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func ClipPathFontStyleCustom(s string) ClipPathFontStyle {
-	return ClipPathFontStyle(s)
 }
 
 func (e *ClipPathElement) TextAnchor(a ClipPathTextAnchor) *ClipPathElement {
@@ -767,40 +842,14 @@ func ClipPathTextAnchorCustom(s string) ClipPathTextAnchor {
 	return ClipPathTextAnchor(s)
 }
 
-func (e *ClipPathElement) DominantBaseline(a ClipPathDominantBaseline) *ClipPathElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func ClipPathDominantBaselineCustom(s string) ClipPathDominantBaseline {
-	return ClipPathDominantBaseline(s)
-}
-
-func (e *ClipPathElement) AlignmentBaseline(a ClipPathAlignmentBaseline) *ClipPathElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func ClipPathAlignmentBaselineCustom(s string) ClipPathAlignmentBaseline {
-	return ClipPathAlignmentBaseline(s)
-}
-
-func (e *ClipPathElement) LetterSpacing(s string) *ClipPathElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *ClipPathElement) WordSpacing(s string) *ClipPathElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *ClipPathElement) TextDecoration(s string) *ClipPathElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *ClipPathElement) TextOverflow(s string) *ClipPathElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -815,24 +864,10 @@ func ClipPathTextRenderingCustom(s string) ClipPathTextRendering {
 	return ClipPathTextRendering(s)
 }
 
-func (e *ClipPathElement) ImageRendering(a ClipPathImageRendering) *ClipPathElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *ClipPathElement) Transform(s string) *ClipPathElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func ClipPathImageRenderingCustom(s string) ClipPathImageRendering {
-	return ClipPathImageRendering(s)
-}
-
-func (e *ClipPathElement) Overflow(a ClipPathOverflow) *ClipPathElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func ClipPathOverflowCustom(s string) ClipPathOverflow {
-	return ClipPathOverflow(s)
 }
 
 func (e *ClipPathElement) TransformBox(a ClipPathTransformBox) *ClipPathElement {
@@ -845,18 +880,46 @@ func ClipPathTransformBoxCustom(s string) ClipPathTransformBox {
 	return ClipPathTransformBox(s)
 }
 
-func (e *ClipPathElement) Direction(a ClipPathDirection) *ClipPathElement {
-	e.attributes.Set("direction", string(a))
+func (e *ClipPathElement) TransformOrigin(s string) *ClipPathElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func ClipPathDirectionCustom(s string) ClipPathDirection {
-	return ClipPathDirection(s)
-}
-
 func (e *ClipPathElement) UnicodeBidi(s string) *ClipPathElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *ClipPathElement) VectorEffect(a ClipPathVectorEffect) *ClipPathElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func ClipPathVectorEffectCustom(s string) ClipPathVectorEffect {
+	return ClipPathVectorEffect(s)
+}
+
+func (e *ClipPathElement) Visibility(a ClipPathVisibility) *ClipPathElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func ClipPathVisibilityCustom(s string) ClipPathVisibility {
+	return ClipPathVisibility(s)
+}
+
+func (e *ClipPathElement) WhiteSpace(s string) *ClipPathElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *ClipPathElement) WordSpacing(s string) *ClipPathElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -871,8 +934,20 @@ func ClipPathWritingModeCustom(s string) ClipPathWritingMode {
 	return ClipPathWritingMode(s)
 }
 
-func (e *ClipPathElement) WhiteSpace(s string) *ClipPathElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *ClipPathElement) XmlLang(s string) *ClipPathElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *ClipPathElement) XmlSpace(a ClipPathXmlSpace) *ClipPathElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

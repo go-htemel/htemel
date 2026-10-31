@@ -175,134 +175,6 @@ const (
 	ScriptCrossoriginEmpty          ScriptCrossorigin = ""
 )
 
-type ScriptXmlSpace string
-
-const (
-	ScriptXmlSpaceDefault  ScriptXmlSpace = "default"
-	ScriptXmlSpacePreserve ScriptXmlSpace = "preserve"
-)
-
-type ScriptFillRule string
-
-const (
-	ScriptFillRuleEvenodd ScriptFillRule = "evenodd"
-	ScriptFillRuleNonzero ScriptFillRule = "nonzero"
-)
-
-type ScriptStrokeLinecap string
-
-const (
-	ScriptStrokeLinecapButt   ScriptStrokeLinecap = "butt"
-	ScriptStrokeLinecapRound  ScriptStrokeLinecap = "round"
-	ScriptStrokeLinecapSquare ScriptStrokeLinecap = "square"
-)
-
-type ScriptStrokeLinejoin string
-
-const (
-	ScriptStrokeLinejoinArcs      ScriptStrokeLinejoin = "arcs"
-	ScriptStrokeLinejoinBevel     ScriptStrokeLinejoin = "bevel"
-	ScriptStrokeLinejoinMiter     ScriptStrokeLinejoin = "miter"
-	ScriptStrokeLinejoinMiterClip ScriptStrokeLinejoin = "miter-clip"
-	ScriptStrokeLinejoinRound     ScriptStrokeLinejoin = "round"
-)
-
-type ScriptVisibility string
-
-const (
-	ScriptVisibilityCollapse ScriptVisibility = "collapse"
-	ScriptVisibilityHidden   ScriptVisibility = "hidden"
-	ScriptVisibilityVisible  ScriptVisibility = "visible"
-)
-
-type ScriptClipRule string
-
-const (
-	ScriptClipRuleEvenodd ScriptClipRule = "evenodd"
-	ScriptClipRuleNonzero ScriptClipRule = "nonzero"
-)
-
-type ScriptPointerEvents string
-
-const (
-	ScriptPointerEventsAll            ScriptPointerEvents = "all"
-	ScriptPointerEventsAuto           ScriptPointerEvents = "auto"
-	ScriptPointerEventsBoundingBox    ScriptPointerEvents = "bounding-box"
-	ScriptPointerEventsFill           ScriptPointerEvents = "fill"
-	ScriptPointerEventsNone           ScriptPointerEvents = "none"
-	ScriptPointerEventsPainted        ScriptPointerEvents = "painted"
-	ScriptPointerEventsStroke         ScriptPointerEvents = "stroke"
-	ScriptPointerEventsVisible        ScriptPointerEvents = "visible"
-	ScriptPointerEventsVisibleFill    ScriptPointerEvents = "visibleFill"
-	ScriptPointerEventsVisiblePainted ScriptPointerEvents = "visiblePainted"
-	ScriptPointerEventsVisibleStroke  ScriptPointerEvents = "visibleStroke"
-)
-
-type ScriptVectorEffect string
-
-const (
-	ScriptVectorEffectFixedPosition    ScriptVectorEffect = "fixed-position"
-	ScriptVectorEffectNonRotation      ScriptVectorEffect = "non-rotation"
-	ScriptVectorEffectNonScalingSize   ScriptVectorEffect = "non-scaling-size"
-	ScriptVectorEffectNonScalingStroke ScriptVectorEffect = "non-scaling-stroke"
-	ScriptVectorEffectNone             ScriptVectorEffect = "none"
-)
-
-type ScriptShapeRendering string
-
-const (
-	ScriptShapeRenderingAuto               ScriptShapeRendering = "auto"
-	ScriptShapeRenderingCrispEdges         ScriptShapeRendering = "crispEdges"
-	ScriptShapeRenderingGeometricPrecision ScriptShapeRendering = "geometricPrecision"
-	ScriptShapeRenderingOptimizeSpeed      ScriptShapeRendering = "optimizeSpeed"
-)
-
-type ScriptColorInterpolation string
-
-const (
-	ScriptColorInterpolationAuto      ScriptColorInterpolation = "auto"
-	ScriptColorInterpolationLinearRGB ScriptColorInterpolation = "linearRGB"
-	ScriptColorInterpolationSRGB      ScriptColorInterpolation = "sRGB"
-)
-
-type ScriptColorInterpolationFilters string
-
-const (
-	ScriptColorInterpolationFiltersAuto      ScriptColorInterpolationFilters = "auto"
-	ScriptColorInterpolationFiltersLinearRGB ScriptColorInterpolationFilters = "linearRGB"
-	ScriptColorInterpolationFiltersSRGB      ScriptColorInterpolationFilters = "sRGB"
-)
-
-type ScriptFontStyle string
-
-const (
-	ScriptFontStyleItalic  ScriptFontStyle = "italic"
-	ScriptFontStyleNormal  ScriptFontStyle = "normal"
-	ScriptFontStyleOblique ScriptFontStyle = "oblique"
-)
-
-type ScriptTextAnchor string
-
-const (
-	ScriptTextAnchorEnd    ScriptTextAnchor = "end"
-	ScriptTextAnchorMiddle ScriptTextAnchor = "middle"
-	ScriptTextAnchorStart  ScriptTextAnchor = "start"
-)
-
-type ScriptDominantBaseline string
-
-const (
-	ScriptDominantBaselineAlphabetic   ScriptDominantBaseline = "alphabetic"
-	ScriptDominantBaselineAuto         ScriptDominantBaseline = "auto"
-	ScriptDominantBaselineCentral      ScriptDominantBaseline = "central"
-	ScriptDominantBaselineHanging      ScriptDominantBaseline = "hanging"
-	ScriptDominantBaselineIdeographic  ScriptDominantBaseline = "ideographic"
-	ScriptDominantBaselineMathematical ScriptDominantBaseline = "mathematical"
-	ScriptDominantBaselineMiddle       ScriptDominantBaseline = "middle"
-	ScriptDominantBaselineTextBottom   ScriptDominantBaseline = "text-bottom"
-	ScriptDominantBaselineTextTop      ScriptDominantBaseline = "text-top"
-)
-
 type ScriptAlignmentBaseline string
 
 const (
@@ -325,13 +197,63 @@ const (
 	ScriptAlignmentBaselineTop            ScriptAlignmentBaseline = "top"
 )
 
-type ScriptTextRendering string
+type ScriptClipRule string
 
 const (
-	ScriptTextRenderingAuto               ScriptTextRendering = "auto"
-	ScriptTextRenderingGeometricPrecision ScriptTextRendering = "geometricPrecision"
-	ScriptTextRenderingOptimizeLegibility ScriptTextRendering = "optimizeLegibility"
-	ScriptTextRenderingOptimizeSpeed      ScriptTextRendering = "optimizeSpeed"
+	ScriptClipRuleEvenodd ScriptClipRule = "evenodd"
+	ScriptClipRuleNonzero ScriptClipRule = "nonzero"
+)
+
+type ScriptColorInterpolation string
+
+const (
+	ScriptColorInterpolationAuto      ScriptColorInterpolation = "auto"
+	ScriptColorInterpolationLinearRGB ScriptColorInterpolation = "linearRGB"
+	ScriptColorInterpolationSRGB      ScriptColorInterpolation = "sRGB"
+)
+
+type ScriptColorInterpolationFilters string
+
+const (
+	ScriptColorInterpolationFiltersAuto      ScriptColorInterpolationFilters = "auto"
+	ScriptColorInterpolationFiltersLinearRGB ScriptColorInterpolationFilters = "linearRGB"
+	ScriptColorInterpolationFiltersSRGB      ScriptColorInterpolationFilters = "sRGB"
+)
+
+type ScriptDirection string
+
+const (
+	ScriptDirectionLtr ScriptDirection = "ltr"
+	ScriptDirectionRtl ScriptDirection = "rtl"
+)
+
+type ScriptDominantBaseline string
+
+const (
+	ScriptDominantBaselineAlphabetic   ScriptDominantBaseline = "alphabetic"
+	ScriptDominantBaselineAuto         ScriptDominantBaseline = "auto"
+	ScriptDominantBaselineCentral      ScriptDominantBaseline = "central"
+	ScriptDominantBaselineHanging      ScriptDominantBaseline = "hanging"
+	ScriptDominantBaselineIdeographic  ScriptDominantBaseline = "ideographic"
+	ScriptDominantBaselineMathematical ScriptDominantBaseline = "mathematical"
+	ScriptDominantBaselineMiddle       ScriptDominantBaseline = "middle"
+	ScriptDominantBaselineTextBottom   ScriptDominantBaseline = "text-bottom"
+	ScriptDominantBaselineTextTop      ScriptDominantBaseline = "text-top"
+)
+
+type ScriptFillRule string
+
+const (
+	ScriptFillRuleEvenodd ScriptFillRule = "evenodd"
+	ScriptFillRuleNonzero ScriptFillRule = "nonzero"
+)
+
+type ScriptFontStyle string
+
+const (
+	ScriptFontStyleItalic  ScriptFontStyle = "italic"
+	ScriptFontStyleNormal  ScriptFontStyle = "normal"
+	ScriptFontStyleOblique ScriptFontStyle = "oblique"
 )
 
 type ScriptImageRendering string
@@ -356,6 +278,66 @@ const (
 	ScriptOverflowVisible ScriptOverflow = "visible"
 )
 
+type ScriptPointerEvents string
+
+const (
+	ScriptPointerEventsAll            ScriptPointerEvents = "all"
+	ScriptPointerEventsAuto           ScriptPointerEvents = "auto"
+	ScriptPointerEventsBoundingBox    ScriptPointerEvents = "bounding-box"
+	ScriptPointerEventsFill           ScriptPointerEvents = "fill"
+	ScriptPointerEventsNone           ScriptPointerEvents = "none"
+	ScriptPointerEventsPainted        ScriptPointerEvents = "painted"
+	ScriptPointerEventsStroke         ScriptPointerEvents = "stroke"
+	ScriptPointerEventsVisible        ScriptPointerEvents = "visible"
+	ScriptPointerEventsVisibleFill    ScriptPointerEvents = "visibleFill"
+	ScriptPointerEventsVisiblePainted ScriptPointerEvents = "visiblePainted"
+	ScriptPointerEventsVisibleStroke  ScriptPointerEvents = "visibleStroke"
+)
+
+type ScriptShapeRendering string
+
+const (
+	ScriptShapeRenderingAuto               ScriptShapeRendering = "auto"
+	ScriptShapeRenderingCrispEdges         ScriptShapeRendering = "crispEdges"
+	ScriptShapeRenderingGeometricPrecision ScriptShapeRendering = "geometricPrecision"
+	ScriptShapeRenderingOptimizeSpeed      ScriptShapeRendering = "optimizeSpeed"
+)
+
+type ScriptStrokeLinecap string
+
+const (
+	ScriptStrokeLinecapButt   ScriptStrokeLinecap = "butt"
+	ScriptStrokeLinecapRound  ScriptStrokeLinecap = "round"
+	ScriptStrokeLinecapSquare ScriptStrokeLinecap = "square"
+)
+
+type ScriptStrokeLinejoin string
+
+const (
+	ScriptStrokeLinejoinArcs      ScriptStrokeLinejoin = "arcs"
+	ScriptStrokeLinejoinBevel     ScriptStrokeLinejoin = "bevel"
+	ScriptStrokeLinejoinMiter     ScriptStrokeLinejoin = "miter"
+	ScriptStrokeLinejoinMiterClip ScriptStrokeLinejoin = "miter-clip"
+	ScriptStrokeLinejoinRound     ScriptStrokeLinejoin = "round"
+)
+
+type ScriptTextAnchor string
+
+const (
+	ScriptTextAnchorEnd    ScriptTextAnchor = "end"
+	ScriptTextAnchorMiddle ScriptTextAnchor = "middle"
+	ScriptTextAnchorStart  ScriptTextAnchor = "start"
+)
+
+type ScriptTextRendering string
+
+const (
+	ScriptTextRenderingAuto               ScriptTextRendering = "auto"
+	ScriptTextRenderingGeometricPrecision ScriptTextRendering = "geometricPrecision"
+	ScriptTextRenderingOptimizeLegibility ScriptTextRendering = "optimizeLegibility"
+	ScriptTextRenderingOptimizeSpeed      ScriptTextRendering = "optimizeSpeed"
+)
+
 type ScriptTransformBox string
 
 const (
@@ -366,11 +348,22 @@ const (
 	ScriptTransformBoxViewBox    ScriptTransformBox = "view-box"
 )
 
-type ScriptDirection string
+type ScriptVectorEffect string
 
 const (
-	ScriptDirectionLtr ScriptDirection = "ltr"
-	ScriptDirectionRtl ScriptDirection = "rtl"
+	ScriptVectorEffectFixedPosition    ScriptVectorEffect = "fixed-position"
+	ScriptVectorEffectNonRotation      ScriptVectorEffect = "non-rotation"
+	ScriptVectorEffectNonScalingSize   ScriptVectorEffect = "non-scaling-size"
+	ScriptVectorEffectNonScalingStroke ScriptVectorEffect = "non-scaling-stroke"
+	ScriptVectorEffectNone             ScriptVectorEffect = "none"
+)
+
+type ScriptVisibility string
+
+const (
+	ScriptVisibilityCollapse ScriptVisibility = "collapse"
+	ScriptVisibilityHidden   ScriptVisibility = "hidden"
+	ScriptVisibilityVisible  ScriptVisibility = "visible"
 )
 
 type ScriptWritingMode string
@@ -389,23 +382,12 @@ const (
 	ScriptWritingModeVerticalRl   ScriptWritingMode = "vertical-rl"
 )
 
-func (e *ScriptElement) Href(s string) *ScriptElement {
-	e.attributes.Set("href", s)
+type ScriptXmlSpace string
 
-	return e
-}
-
-func (e *ScriptElement) XlinkHref(s string) *ScriptElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *ScriptElement) Type(s string) *ScriptElement {
-	e.attributes.Set("type", s)
-
-	return e
-}
+const (
+	ScriptXmlSpaceDefault  ScriptXmlSpace = "default"
+	ScriptXmlSpacePreserve ScriptXmlSpace = "preserve"
+)
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
@@ -419,8 +401,66 @@ func (e *ScriptElement) Crossorigin(v ...ScriptCrossorigin) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Id(s string) *ScriptElement {
-	e.attributes.Set("id", s)
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *ScriptElement) Href(s string) *ScriptElement {
+	e.attributes.Set("href", s)
+
+	return e
+}
+
+func (e *ScriptElement) Type(s string) *ScriptElement {
+	e.attributes.Set("type", s)
+
+	return e
+}
+
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) XlinkHref(s string) *ScriptElement {
+	e.attributes.Set("xlink:href", s)
+
+	return e
+}
+
+func (e *ScriptElement) AlignmentBaseline(a ScriptAlignmentBaseline) *ScriptElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func ScriptAlignmentBaselineCustom(s string) ScriptAlignmentBaseline {
+	return ScriptAlignmentBaseline(s)
+}
+
+func (e *ScriptElement) AriaUnsafe(name string, s string) *ScriptElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *ScriptElement) Aria(name string, s string) *ScriptElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ScriptElement) Autofocus(b bool) *ScriptElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *ScriptElement) BaselineShift(s string) *ScriptElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -431,40 +471,59 @@ func (e *ScriptElement) Class(s ...string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Style(s string) *ScriptElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) Clip(s string) *ScriptElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *ScriptElement) Tabindex(i int) *ScriptElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *ScriptElement) ClipPath(s string) *ScriptElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *ScriptElement) Lang(s string) *ScriptElement {
-	e.attributes.Set("lang", s)
+func (e *ScriptElement) ClipRule(a ScriptClipRule) *ScriptElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *ScriptElement) XmlLang(s string) *ScriptElement {
-	e.attributes.Set("xml:lang", s)
+func ScriptClipRuleCustom(s string) ScriptClipRule {
+	return ScriptClipRule(s)
+}
+
+func (e *ScriptElement) Color(s string) *ScriptElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *ScriptElement) XmlSpace(a ScriptXmlSpace) *ScriptElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *ScriptElement) ColorInterpolation(a ScriptColorInterpolation) *ScriptElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ScriptElement) Autofocus(b bool) *ScriptElement {
-	e.attributes.SetBool("autofocus", b)
+func ScriptColorInterpolationCustom(s string) ScriptColorInterpolation {
+	return ScriptColorInterpolation(s)
+}
+
+func (e *ScriptElement) ColorInterpolationFilters(a ScriptColorInterpolationFilters) *ScriptElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func ScriptColorInterpolationFiltersCustom(s string) ScriptColorInterpolationFilters {
+	return ScriptColorInterpolationFilters(s)
+}
+
+func (e *ScriptElement) Cursor(s string) *ScriptElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -485,20 +544,30 @@ func (e *ScriptElement) Data(name string, s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) AriaUnsafe(name string, s string) *ScriptElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *ScriptElement) Direction(a ScriptDirection) *ScriptElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *ScriptElement) Aria(name string, s string) *ScriptElement {
-	tag := strings.ToLower("aria-" + name)
+func ScriptDirectionCustom(s string) ScriptDirection {
+	return ScriptDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *ScriptElement) Display(s string) *ScriptElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *ScriptElement) DominantBaseline(a ScriptDominantBaseline) *ScriptElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func ScriptDominantBaselineCustom(s string) ScriptDominantBaseline {
+	return ScriptDominantBaseline(s)
 }
 
 func (e *ScriptElement) Fill(s string) *ScriptElement {
@@ -523,20 +592,220 @@ func ScriptFillRuleCustom(s string) ScriptFillRule {
 	return ScriptFillRule(s)
 }
 
+func (e *ScriptElement) Filter(s string) *ScriptElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *ScriptElement) FloodColor(s string) *ScriptElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *ScriptElement) FloodOpacity(f float64) *ScriptElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ScriptElement) FontFamily(s string) *ScriptElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *ScriptElement) FontSize(s string) *ScriptElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *ScriptElement) FontSizeAdjust(s string) *ScriptElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *ScriptElement) FontStretch(s string) *ScriptElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *ScriptElement) FontStyle(a ScriptFontStyle) *ScriptElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func ScriptFontStyleCustom(s string) ScriptFontStyle {
+	return ScriptFontStyle(s)
+}
+
+func (e *ScriptElement) FontVariant(s string) *ScriptElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *ScriptElement) FontWeight(s string) *ScriptElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) GlyphOrientationHorizontal(s string) *ScriptElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) GlyphOrientationVertical(s string) *ScriptElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *ScriptElement) Id(s string) *ScriptElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *ScriptElement) ImageRendering(a ScriptImageRendering) *ScriptElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func ScriptImageRenderingCustom(s string) ScriptImageRendering {
+	return ScriptImageRendering(s)
+}
+
+func (e *ScriptElement) Lang(s string) *ScriptElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *ScriptElement) LetterSpacing(s string) *ScriptElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *ScriptElement) LightingColor(s string) *ScriptElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *ScriptElement) MarkerEnd(s string) *ScriptElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *ScriptElement) MarkerMid(s string) *ScriptElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *ScriptElement) MarkerStart(s string) *ScriptElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *ScriptElement) Mask(s string) *ScriptElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *ScriptElement) Opacity(f float64) *ScriptElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ScriptElement) Overflow(a ScriptOverflow) *ScriptElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func ScriptOverflowCustom(s string) ScriptOverflow {
+	return ScriptOverflow(s)
+}
+
+func (e *ScriptElement) PaintOrder(s string) *ScriptElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *ScriptElement) PointerEvents(a ScriptPointerEvents) *ScriptElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func ScriptPointerEventsCustom(s string) ScriptPointerEvents {
+	return ScriptPointerEvents(s)
+}
+
+func (e *ScriptElement) RequiredExtensions(s string) *ScriptElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *ScriptElement) ShapeRendering(a ScriptShapeRendering) *ScriptElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func ScriptShapeRenderingCustom(s string) ScriptShapeRendering {
+	return ScriptShapeRendering(s)
+}
+
+func (e *ScriptElement) StopColor(s string) *ScriptElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *ScriptElement) StopOpacity(f float64) *ScriptElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *ScriptElement) Stroke(s string) *ScriptElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *ScriptElement) StrokeWidth(s string) *ScriptElement {
-	e.attributes.Set("stroke-width", s)
+func (e *ScriptElement) StrokeDasharray(s string) *ScriptElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *ScriptElement) StrokeOpacity(f float64) *ScriptElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ScriptElement) StrokeDashoffset(s string) *ScriptElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -567,210 +836,28 @@ func (e *ScriptElement) StrokeMiterlimit(f float64) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) StrokeDasharray(s string) *ScriptElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *ScriptElement) StrokeOpacity(f float64) *ScriptElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *ScriptElement) StrokeDashoffset(s string) *ScriptElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *ScriptElement) StrokeWidth(s string) *ScriptElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *ScriptElement) Opacity(f float64) *ScriptElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ScriptElement) Style(s string) *ScriptElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *ScriptElement) Color(s string) *ScriptElement {
-	e.attributes.Set("color", s)
+func (e *ScriptElement) Tabindex(i int) *ScriptElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *ScriptElement) Display(s string) *ScriptElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *ScriptElement) Visibility(a ScriptVisibility) *ScriptElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func ScriptVisibilityCustom(s string) ScriptVisibility {
-	return ScriptVisibility(s)
-}
-
-func (e *ScriptElement) ClipPath(s string) *ScriptElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *ScriptElement) ClipRule(a ScriptClipRule) *ScriptElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func ScriptClipRuleCustom(s string) ScriptClipRule {
-	return ScriptClipRule(s)
-}
-
-func (e *ScriptElement) Mask(s string) *ScriptElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *ScriptElement) Filter(s string) *ScriptElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *ScriptElement) Cursor(s string) *ScriptElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *ScriptElement) PointerEvents(a ScriptPointerEvents) *ScriptElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func ScriptPointerEventsCustom(s string) ScriptPointerEvents {
-	return ScriptPointerEvents(s)
-}
-
-func (e *ScriptElement) VectorEffect(a ScriptVectorEffect) *ScriptElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func ScriptVectorEffectCustom(s string) ScriptVectorEffect {
-	return ScriptVectorEffect(s)
-}
-
-func (e *ScriptElement) PaintOrder(s string) *ScriptElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *ScriptElement) ShapeRendering(a ScriptShapeRendering) *ScriptElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func ScriptShapeRenderingCustom(s string) ScriptShapeRendering {
-	return ScriptShapeRendering(s)
-}
-
-func (e *ScriptElement) ColorInterpolation(a ScriptColorInterpolation) *ScriptElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func ScriptColorInterpolationCustom(s string) ScriptColorInterpolation {
-	return ScriptColorInterpolation(s)
-}
-
-func (e *ScriptElement) ColorInterpolationFilters(a ScriptColorInterpolationFilters) *ScriptElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func ScriptColorInterpolationFiltersCustom(s string) ScriptColorInterpolationFilters {
-	return ScriptColorInterpolationFilters(s)
-}
-
-func (e *ScriptElement) FloodColor(s string) *ScriptElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *ScriptElement) FloodOpacity(f float64) *ScriptElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ScriptElement) LightingColor(s string) *ScriptElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *ScriptElement) StopColor(s string) *ScriptElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *ScriptElement) StopOpacity(f float64) *ScriptElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ScriptElement) MarkerStart(s string) *ScriptElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *ScriptElement) MarkerMid(s string) *ScriptElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *ScriptElement) MarkerEnd(s string) *ScriptElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *ScriptElement) FontFamily(s string) *ScriptElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *ScriptElement) FontSize(s string) *ScriptElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *ScriptElement) FontWeight(s string) *ScriptElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *ScriptElement) FontStyle(a ScriptFontStyle) *ScriptElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func ScriptFontStyleCustom(s string) ScriptFontStyle {
-	return ScriptFontStyle(s)
 }
 
 func (e *ScriptElement) TextAnchor(a ScriptTextAnchor) *ScriptElement {
@@ -783,40 +870,14 @@ func ScriptTextAnchorCustom(s string) ScriptTextAnchor {
 	return ScriptTextAnchor(s)
 }
 
-func (e *ScriptElement) DominantBaseline(a ScriptDominantBaseline) *ScriptElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func ScriptDominantBaselineCustom(s string) ScriptDominantBaseline {
-	return ScriptDominantBaseline(s)
-}
-
-func (e *ScriptElement) AlignmentBaseline(a ScriptAlignmentBaseline) *ScriptElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func ScriptAlignmentBaselineCustom(s string) ScriptAlignmentBaseline {
-	return ScriptAlignmentBaseline(s)
-}
-
-func (e *ScriptElement) LetterSpacing(s string) *ScriptElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *ScriptElement) WordSpacing(s string) *ScriptElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *ScriptElement) TextDecoration(s string) *ScriptElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *ScriptElement) TextOverflow(s string) *ScriptElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -831,24 +892,10 @@ func ScriptTextRenderingCustom(s string) ScriptTextRendering {
 	return ScriptTextRendering(s)
 }
 
-func (e *ScriptElement) ImageRendering(a ScriptImageRendering) *ScriptElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *ScriptElement) Transform(s string) *ScriptElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func ScriptImageRenderingCustom(s string) ScriptImageRendering {
-	return ScriptImageRendering(s)
-}
-
-func (e *ScriptElement) Overflow(a ScriptOverflow) *ScriptElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func ScriptOverflowCustom(s string) ScriptOverflow {
-	return ScriptOverflow(s)
 }
 
 func (e *ScriptElement) TransformBox(a ScriptTransformBox) *ScriptElement {
@@ -861,18 +908,46 @@ func ScriptTransformBoxCustom(s string) ScriptTransformBox {
 	return ScriptTransformBox(s)
 }
 
-func (e *ScriptElement) Direction(a ScriptDirection) *ScriptElement {
-	e.attributes.Set("direction", string(a))
+func (e *ScriptElement) TransformOrigin(s string) *ScriptElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func ScriptDirectionCustom(s string) ScriptDirection {
-	return ScriptDirection(s)
-}
-
 func (e *ScriptElement) UnicodeBidi(s string) *ScriptElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *ScriptElement) VectorEffect(a ScriptVectorEffect) *ScriptElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func ScriptVectorEffectCustom(s string) ScriptVectorEffect {
+	return ScriptVectorEffect(s)
+}
+
+func (e *ScriptElement) Visibility(a ScriptVisibility) *ScriptElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func ScriptVisibilityCustom(s string) ScriptVisibility {
+	return ScriptVisibility(s)
+}
+
+func (e *ScriptElement) WhiteSpace(s string) *ScriptElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *ScriptElement) WordSpacing(s string) *ScriptElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -887,8 +962,20 @@ func ScriptWritingModeCustom(s string) ScriptWritingMode {
 	return ScriptWritingMode(s)
 }
 
-func (e *ScriptElement) WhiteSpace(s string) *ScriptElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) XmlLang(s string) *ScriptElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *ScriptElement) XmlSpace(a ScriptXmlSpace) *ScriptElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

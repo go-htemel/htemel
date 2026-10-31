@@ -164,134 +164,6 @@ func (e *PathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PathXmlSpace string
-
-const (
-	PathXmlSpaceDefault  PathXmlSpace = "default"
-	PathXmlSpacePreserve PathXmlSpace = "preserve"
-)
-
-type PathFillRule string
-
-const (
-	PathFillRuleEvenodd PathFillRule = "evenodd"
-	PathFillRuleNonzero PathFillRule = "nonzero"
-)
-
-type PathStrokeLinecap string
-
-const (
-	PathStrokeLinecapButt   PathStrokeLinecap = "butt"
-	PathStrokeLinecapRound  PathStrokeLinecap = "round"
-	PathStrokeLinecapSquare PathStrokeLinecap = "square"
-)
-
-type PathStrokeLinejoin string
-
-const (
-	PathStrokeLinejoinArcs      PathStrokeLinejoin = "arcs"
-	PathStrokeLinejoinBevel     PathStrokeLinejoin = "bevel"
-	PathStrokeLinejoinMiter     PathStrokeLinejoin = "miter"
-	PathStrokeLinejoinMiterClip PathStrokeLinejoin = "miter-clip"
-	PathStrokeLinejoinRound     PathStrokeLinejoin = "round"
-)
-
-type PathVisibility string
-
-const (
-	PathVisibilityCollapse PathVisibility = "collapse"
-	PathVisibilityHidden   PathVisibility = "hidden"
-	PathVisibilityVisible  PathVisibility = "visible"
-)
-
-type PathClipRule string
-
-const (
-	PathClipRuleEvenodd PathClipRule = "evenodd"
-	PathClipRuleNonzero PathClipRule = "nonzero"
-)
-
-type PathPointerEvents string
-
-const (
-	PathPointerEventsAll            PathPointerEvents = "all"
-	PathPointerEventsAuto           PathPointerEvents = "auto"
-	PathPointerEventsBoundingBox    PathPointerEvents = "bounding-box"
-	PathPointerEventsFill           PathPointerEvents = "fill"
-	PathPointerEventsNone           PathPointerEvents = "none"
-	PathPointerEventsPainted        PathPointerEvents = "painted"
-	PathPointerEventsStroke         PathPointerEvents = "stroke"
-	PathPointerEventsVisible        PathPointerEvents = "visible"
-	PathPointerEventsVisibleFill    PathPointerEvents = "visibleFill"
-	PathPointerEventsVisiblePainted PathPointerEvents = "visiblePainted"
-	PathPointerEventsVisibleStroke  PathPointerEvents = "visibleStroke"
-)
-
-type PathVectorEffect string
-
-const (
-	PathVectorEffectFixedPosition    PathVectorEffect = "fixed-position"
-	PathVectorEffectNonRotation      PathVectorEffect = "non-rotation"
-	PathVectorEffectNonScalingSize   PathVectorEffect = "non-scaling-size"
-	PathVectorEffectNonScalingStroke PathVectorEffect = "non-scaling-stroke"
-	PathVectorEffectNone             PathVectorEffect = "none"
-)
-
-type PathShapeRendering string
-
-const (
-	PathShapeRenderingAuto               PathShapeRendering = "auto"
-	PathShapeRenderingCrispEdges         PathShapeRendering = "crispEdges"
-	PathShapeRenderingGeometricPrecision PathShapeRendering = "geometricPrecision"
-	PathShapeRenderingOptimizeSpeed      PathShapeRendering = "optimizeSpeed"
-)
-
-type PathColorInterpolation string
-
-const (
-	PathColorInterpolationAuto      PathColorInterpolation = "auto"
-	PathColorInterpolationLinearRGB PathColorInterpolation = "linearRGB"
-	PathColorInterpolationSRGB      PathColorInterpolation = "sRGB"
-)
-
-type PathColorInterpolationFilters string
-
-const (
-	PathColorInterpolationFiltersAuto      PathColorInterpolationFilters = "auto"
-	PathColorInterpolationFiltersLinearRGB PathColorInterpolationFilters = "linearRGB"
-	PathColorInterpolationFiltersSRGB      PathColorInterpolationFilters = "sRGB"
-)
-
-type PathFontStyle string
-
-const (
-	PathFontStyleItalic  PathFontStyle = "italic"
-	PathFontStyleNormal  PathFontStyle = "normal"
-	PathFontStyleOblique PathFontStyle = "oblique"
-)
-
-type PathTextAnchor string
-
-const (
-	PathTextAnchorEnd    PathTextAnchor = "end"
-	PathTextAnchorMiddle PathTextAnchor = "middle"
-	PathTextAnchorStart  PathTextAnchor = "start"
-)
-
-type PathDominantBaseline string
-
-const (
-	PathDominantBaselineAlphabetic   PathDominantBaseline = "alphabetic"
-	PathDominantBaselineAuto         PathDominantBaseline = "auto"
-	PathDominantBaselineCentral      PathDominantBaseline = "central"
-	PathDominantBaselineHanging      PathDominantBaseline = "hanging"
-	PathDominantBaselineIdeographic  PathDominantBaseline = "ideographic"
-	PathDominantBaselineMathematical PathDominantBaseline = "mathematical"
-	PathDominantBaselineMiddle       PathDominantBaseline = "middle"
-	PathDominantBaselineTextBottom   PathDominantBaseline = "text-bottom"
-	PathDominantBaselineTextTop      PathDominantBaseline = "text-top"
-)
-
 type PathAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	PathAlignmentBaselineTop            PathAlignmentBaseline = "top"
 )
 
-type PathTextRendering string
+type PathClipRule string
 
 const (
-	PathTextRenderingAuto               PathTextRendering = "auto"
-	PathTextRenderingGeometricPrecision PathTextRendering = "geometricPrecision"
-	PathTextRenderingOptimizeLegibility PathTextRendering = "optimizeLegibility"
-	PathTextRenderingOptimizeSpeed      PathTextRendering = "optimizeSpeed"
+	PathClipRuleEvenodd PathClipRule = "evenodd"
+	PathClipRuleNonzero PathClipRule = "nonzero"
+)
+
+type PathColorInterpolation string
+
+const (
+	PathColorInterpolationAuto      PathColorInterpolation = "auto"
+	PathColorInterpolationLinearRGB PathColorInterpolation = "linearRGB"
+	PathColorInterpolationSRGB      PathColorInterpolation = "sRGB"
+)
+
+type PathColorInterpolationFilters string
+
+const (
+	PathColorInterpolationFiltersAuto      PathColorInterpolationFilters = "auto"
+	PathColorInterpolationFiltersLinearRGB PathColorInterpolationFilters = "linearRGB"
+	PathColorInterpolationFiltersSRGB      PathColorInterpolationFilters = "sRGB"
+)
+
+type PathDirection string
+
+const (
+	PathDirectionLtr PathDirection = "ltr"
+	PathDirectionRtl PathDirection = "rtl"
+)
+
+type PathDominantBaseline string
+
+const (
+	PathDominantBaselineAlphabetic   PathDominantBaseline = "alphabetic"
+	PathDominantBaselineAuto         PathDominantBaseline = "auto"
+	PathDominantBaselineCentral      PathDominantBaseline = "central"
+	PathDominantBaselineHanging      PathDominantBaseline = "hanging"
+	PathDominantBaselineIdeographic  PathDominantBaseline = "ideographic"
+	PathDominantBaselineMathematical PathDominantBaseline = "mathematical"
+	PathDominantBaselineMiddle       PathDominantBaseline = "middle"
+	PathDominantBaselineTextBottom   PathDominantBaseline = "text-bottom"
+	PathDominantBaselineTextTop      PathDominantBaseline = "text-top"
+)
+
+type PathFillRule string
+
+const (
+	PathFillRuleEvenodd PathFillRule = "evenodd"
+	PathFillRuleNonzero PathFillRule = "nonzero"
+)
+
+type PathFontStyle string
+
+const (
+	PathFontStyleItalic  PathFontStyle = "italic"
+	PathFontStyleNormal  PathFontStyle = "normal"
+	PathFontStyleOblique PathFontStyle = "oblique"
 )
 
 type PathImageRendering string
@@ -345,6 +267,66 @@ const (
 	PathOverflowVisible PathOverflow = "visible"
 )
 
+type PathPointerEvents string
+
+const (
+	PathPointerEventsAll            PathPointerEvents = "all"
+	PathPointerEventsAuto           PathPointerEvents = "auto"
+	PathPointerEventsBoundingBox    PathPointerEvents = "bounding-box"
+	PathPointerEventsFill           PathPointerEvents = "fill"
+	PathPointerEventsNone           PathPointerEvents = "none"
+	PathPointerEventsPainted        PathPointerEvents = "painted"
+	PathPointerEventsStroke         PathPointerEvents = "stroke"
+	PathPointerEventsVisible        PathPointerEvents = "visible"
+	PathPointerEventsVisibleFill    PathPointerEvents = "visibleFill"
+	PathPointerEventsVisiblePainted PathPointerEvents = "visiblePainted"
+	PathPointerEventsVisibleStroke  PathPointerEvents = "visibleStroke"
+)
+
+type PathShapeRendering string
+
+const (
+	PathShapeRenderingAuto               PathShapeRendering = "auto"
+	PathShapeRenderingCrispEdges         PathShapeRendering = "crispEdges"
+	PathShapeRenderingGeometricPrecision PathShapeRendering = "geometricPrecision"
+	PathShapeRenderingOptimizeSpeed      PathShapeRendering = "optimizeSpeed"
+)
+
+type PathStrokeLinecap string
+
+const (
+	PathStrokeLinecapButt   PathStrokeLinecap = "butt"
+	PathStrokeLinecapRound  PathStrokeLinecap = "round"
+	PathStrokeLinecapSquare PathStrokeLinecap = "square"
+)
+
+type PathStrokeLinejoin string
+
+const (
+	PathStrokeLinejoinArcs      PathStrokeLinejoin = "arcs"
+	PathStrokeLinejoinBevel     PathStrokeLinejoin = "bevel"
+	PathStrokeLinejoinMiter     PathStrokeLinejoin = "miter"
+	PathStrokeLinejoinMiterClip PathStrokeLinejoin = "miter-clip"
+	PathStrokeLinejoinRound     PathStrokeLinejoin = "round"
+)
+
+type PathTextAnchor string
+
+const (
+	PathTextAnchorEnd    PathTextAnchor = "end"
+	PathTextAnchorMiddle PathTextAnchor = "middle"
+	PathTextAnchorStart  PathTextAnchor = "start"
+)
+
+type PathTextRendering string
+
+const (
+	PathTextRenderingAuto               PathTextRendering = "auto"
+	PathTextRenderingGeometricPrecision PathTextRendering = "geometricPrecision"
+	PathTextRenderingOptimizeLegibility PathTextRendering = "optimizeLegibility"
+	PathTextRenderingOptimizeSpeed      PathTextRendering = "optimizeSpeed"
+)
+
 type PathTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	PathTransformBoxViewBox    PathTransformBox = "view-box"
 )
 
-type PathDirection string
+type PathVectorEffect string
 
 const (
-	PathDirectionLtr PathDirection = "ltr"
-	PathDirectionRtl PathDirection = "rtl"
+	PathVectorEffectFixedPosition    PathVectorEffect = "fixed-position"
+	PathVectorEffectNonRotation      PathVectorEffect = "non-rotation"
+	PathVectorEffectNonScalingSize   PathVectorEffect = "non-scaling-size"
+	PathVectorEffectNonScalingStroke PathVectorEffect = "non-scaling-stroke"
+	PathVectorEffectNone             PathVectorEffect = "none"
+)
+
+type PathVisibility string
+
+const (
+	PathVisibilityCollapse PathVisibility = "collapse"
+	PathVisibilityHidden   PathVisibility = "hidden"
+	PathVisibilityVisible  PathVisibility = "visible"
 )
 
 type PathWritingMode string
@@ -378,32 +371,67 @@ const (
 	PathWritingModeVerticalRl   PathWritingMode = "vertical-rl"
 )
 
+type PathXmlSpace string
+
+const (
+	PathXmlSpaceDefault  PathXmlSpace = "default"
+	PathXmlSpacePreserve PathXmlSpace = "preserve"
+)
+
 func (e *PathElement) D(s string) *PathElement {
 	e.attributes.Set("d", s)
 
 	return e
 }
 
-func (e *PathElement) PathLength(s string) *PathElement {
-	e.attributes.Set("pathLength", s)
+func (e *PathElement) PathLength(f float64) *PathElement {
+	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *PathElement) Transform(s string) *PathElement {
-	e.attributes.Set("transform", s)
+func (e *PathElement) SystemLanguage(s string) *PathElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *PathElement) TransformOrigin(s string) *PathElement {
-	e.attributes.Set("transform-origin", s)
+func (e *PathElement) AlignmentBaseline(a PathAlignmentBaseline) *PathElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *PathElement) Id(s string) *PathElement {
-	e.attributes.Set("id", s)
+func PathAlignmentBaselineCustom(s string) PathAlignmentBaseline {
+	return PathAlignmentBaseline(s)
+}
+
+func (e *PathElement) AriaUnsafe(name string, s string) *PathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *PathElement) Aria(name string, s string) *PathElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *PathElement) Autofocus(b bool) *PathElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *PathElement) BaselineShift(s string) *PathElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -414,40 +442,59 @@ func (e *PathElement) Class(s ...string) *PathElement {
 	return e
 }
 
-func (e *PathElement) Style(s string) *PathElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *PathElement) Clip(s string) *PathElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *PathElement) Tabindex(i int) *PathElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *PathElement) ClipPath(s string) *PathElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *PathElement) Lang(s string) *PathElement {
-	e.attributes.Set("lang", s)
+func (e *PathElement) ClipRule(a PathClipRule) *PathElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *PathElement) XmlLang(s string) *PathElement {
-	e.attributes.Set("xml:lang", s)
+func PathClipRuleCustom(s string) PathClipRule {
+	return PathClipRule(s)
+}
+
+func (e *PathElement) Color(s string) *PathElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *PathElement) XmlSpace(a PathXmlSpace) *PathElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *PathElement) ColorInterpolation(a PathColorInterpolation) *PathElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PathElement) Autofocus(b bool) *PathElement {
-	e.attributes.SetBool("autofocus", b)
+func PathColorInterpolationCustom(s string) PathColorInterpolation {
+	return PathColorInterpolation(s)
+}
+
+func (e *PathElement) ColorInterpolationFilters(a PathColorInterpolationFilters) *PathElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func PathColorInterpolationFiltersCustom(s string) PathColorInterpolationFilters {
+	return PathColorInterpolationFilters(s)
+}
+
+func (e *PathElement) Cursor(s string) *PathElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -468,20 +515,30 @@ func (e *PathElement) Data(name string, s string) *PathElement {
 	return e
 }
 
-func (e *PathElement) AriaUnsafe(name string, s string) *PathElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *PathElement) Direction(a PathDirection) *PathElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *PathElement) Aria(name string, s string) *PathElement {
-	tag := strings.ToLower("aria-" + name)
+func PathDirectionCustom(s string) PathDirection {
+	return PathDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *PathElement) Display(s string) *PathElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *PathElement) DominantBaseline(a PathDominantBaseline) *PathElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func PathDominantBaselineCustom(s string) PathDominantBaseline {
+	return PathDominantBaseline(s)
 }
 
 func (e *PathElement) Fill(s string) *PathElement {
@@ -506,20 +563,220 @@ func PathFillRuleCustom(s string) PathFillRule {
 	return PathFillRule(s)
 }
 
+func (e *PathElement) Filter(s string) *PathElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *PathElement) FloodColor(s string) *PathElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *PathElement) FloodOpacity(f float64) *PathElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PathElement) FontFamily(s string) *PathElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *PathElement) FontSize(s string) *PathElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *PathElement) FontSizeAdjust(s string) *PathElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *PathElement) FontStretch(s string) *PathElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *PathElement) FontStyle(a PathFontStyle) *PathElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func PathFontStyleCustom(s string) PathFontStyle {
+	return PathFontStyle(s)
+}
+
+func (e *PathElement) FontVariant(s string) *PathElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *PathElement) FontWeight(s string) *PathElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *PathElement) GlyphOrientationHorizontal(s string) *PathElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *PathElement) GlyphOrientationVertical(s string) *PathElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *PathElement) Id(s string) *PathElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *PathElement) ImageRendering(a PathImageRendering) *PathElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func PathImageRenderingCustom(s string) PathImageRendering {
+	return PathImageRendering(s)
+}
+
+func (e *PathElement) Lang(s string) *PathElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *PathElement) LetterSpacing(s string) *PathElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *PathElement) LightingColor(s string) *PathElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *PathElement) MarkerEnd(s string) *PathElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *PathElement) MarkerMid(s string) *PathElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *PathElement) MarkerStart(s string) *PathElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *PathElement) Mask(s string) *PathElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *PathElement) Opacity(f float64) *PathElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PathElement) Overflow(a PathOverflow) *PathElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func PathOverflowCustom(s string) PathOverflow {
+	return PathOverflow(s)
+}
+
+func (e *PathElement) PaintOrder(s string) *PathElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *PathElement) PointerEvents(a PathPointerEvents) *PathElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func PathPointerEventsCustom(s string) PathPointerEvents {
+	return PathPointerEvents(s)
+}
+
+func (e *PathElement) RequiredExtensions(s string) *PathElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *PathElement) ShapeRendering(a PathShapeRendering) *PathElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func PathShapeRenderingCustom(s string) PathShapeRendering {
+	return PathShapeRendering(s)
+}
+
+func (e *PathElement) StopColor(s string) *PathElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *PathElement) StopOpacity(f float64) *PathElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PathElement) Stroke(s string) *PathElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *PathElement) StrokeWidth(s string) *PathElement {
-	e.attributes.Set("stroke-width", s)
+func (e *PathElement) StrokeDasharray(s string) *PathElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *PathElement) StrokeOpacity(f float64) *PathElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PathElement) StrokeDashoffset(s string) *PathElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -550,210 +807,28 @@ func (e *PathElement) StrokeMiterlimit(f float64) *PathElement {
 	return e
 }
 
-func (e *PathElement) StrokeDasharray(s string) *PathElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *PathElement) StrokeOpacity(f float64) *PathElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *PathElement) StrokeDashoffset(s string) *PathElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *PathElement) StrokeWidth(s string) *PathElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *PathElement) Opacity(f float64) *PathElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PathElement) Style(s string) *PathElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *PathElement) Color(s string) *PathElement {
-	e.attributes.Set("color", s)
+func (e *PathElement) Tabindex(i int) *PathElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *PathElement) Display(s string) *PathElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *PathElement) Visibility(a PathVisibility) *PathElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func PathVisibilityCustom(s string) PathVisibility {
-	return PathVisibility(s)
-}
-
-func (e *PathElement) ClipPath(s string) *PathElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *PathElement) ClipRule(a PathClipRule) *PathElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func PathClipRuleCustom(s string) PathClipRule {
-	return PathClipRule(s)
-}
-
-func (e *PathElement) Mask(s string) *PathElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *PathElement) Filter(s string) *PathElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *PathElement) Cursor(s string) *PathElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *PathElement) PointerEvents(a PathPointerEvents) *PathElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func PathPointerEventsCustom(s string) PathPointerEvents {
-	return PathPointerEvents(s)
-}
-
-func (e *PathElement) VectorEffect(a PathVectorEffect) *PathElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func PathVectorEffectCustom(s string) PathVectorEffect {
-	return PathVectorEffect(s)
-}
-
-func (e *PathElement) PaintOrder(s string) *PathElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *PathElement) ShapeRendering(a PathShapeRendering) *PathElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func PathShapeRenderingCustom(s string) PathShapeRendering {
-	return PathShapeRendering(s)
-}
-
-func (e *PathElement) ColorInterpolation(a PathColorInterpolation) *PathElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func PathColorInterpolationCustom(s string) PathColorInterpolation {
-	return PathColorInterpolation(s)
-}
-
-func (e *PathElement) ColorInterpolationFilters(a PathColorInterpolationFilters) *PathElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func PathColorInterpolationFiltersCustom(s string) PathColorInterpolationFilters {
-	return PathColorInterpolationFilters(s)
-}
-
-func (e *PathElement) FloodColor(s string) *PathElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *PathElement) FloodOpacity(f float64) *PathElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PathElement) LightingColor(s string) *PathElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *PathElement) StopColor(s string) *PathElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *PathElement) StopOpacity(f float64) *PathElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PathElement) MarkerStart(s string) *PathElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *PathElement) MarkerMid(s string) *PathElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *PathElement) MarkerEnd(s string) *PathElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *PathElement) FontFamily(s string) *PathElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *PathElement) FontSize(s string) *PathElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *PathElement) FontWeight(s string) *PathElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *PathElement) FontStyle(a PathFontStyle) *PathElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func PathFontStyleCustom(s string) PathFontStyle {
-	return PathFontStyle(s)
 }
 
 func (e *PathElement) TextAnchor(a PathTextAnchor) *PathElement {
@@ -766,40 +841,14 @@ func PathTextAnchorCustom(s string) PathTextAnchor {
 	return PathTextAnchor(s)
 }
 
-func (e *PathElement) DominantBaseline(a PathDominantBaseline) *PathElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func PathDominantBaselineCustom(s string) PathDominantBaseline {
-	return PathDominantBaseline(s)
-}
-
-func (e *PathElement) AlignmentBaseline(a PathAlignmentBaseline) *PathElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func PathAlignmentBaselineCustom(s string) PathAlignmentBaseline {
-	return PathAlignmentBaseline(s)
-}
-
-func (e *PathElement) LetterSpacing(s string) *PathElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *PathElement) WordSpacing(s string) *PathElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *PathElement) TextDecoration(s string) *PathElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *PathElement) TextOverflow(s string) *PathElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -814,24 +863,10 @@ func PathTextRenderingCustom(s string) PathTextRendering {
 	return PathTextRendering(s)
 }
 
-func (e *PathElement) ImageRendering(a PathImageRendering) *PathElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *PathElement) Transform(s string) *PathElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func PathImageRenderingCustom(s string) PathImageRendering {
-	return PathImageRendering(s)
-}
-
-func (e *PathElement) Overflow(a PathOverflow) *PathElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func PathOverflowCustom(s string) PathOverflow {
-	return PathOverflow(s)
 }
 
 func (e *PathElement) TransformBox(a PathTransformBox) *PathElement {
@@ -844,18 +879,46 @@ func PathTransformBoxCustom(s string) PathTransformBox {
 	return PathTransformBox(s)
 }
 
-func (e *PathElement) Direction(a PathDirection) *PathElement {
-	e.attributes.Set("direction", string(a))
+func (e *PathElement) TransformOrigin(s string) *PathElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func PathDirectionCustom(s string) PathDirection {
-	return PathDirection(s)
-}
-
 func (e *PathElement) UnicodeBidi(s string) *PathElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *PathElement) VectorEffect(a PathVectorEffect) *PathElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func PathVectorEffectCustom(s string) PathVectorEffect {
+	return PathVectorEffect(s)
+}
+
+func (e *PathElement) Visibility(a PathVisibility) *PathElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func PathVisibilityCustom(s string) PathVisibility {
+	return PathVisibility(s)
+}
+
+func (e *PathElement) WhiteSpace(s string) *PathElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *PathElement) WordSpacing(s string) *PathElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -870,8 +933,20 @@ func PathWritingModeCustom(s string) PathWritingMode {
 	return PathWritingMode(s)
 }
 
-func (e *PathElement) WhiteSpace(s string) *PathElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *PathElement) XmlLang(s string) *PathElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *PathElement) XmlSpace(a PathXmlSpace) *PathElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

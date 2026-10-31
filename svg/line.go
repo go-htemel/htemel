@@ -164,134 +164,6 @@ func (e *LineElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LineXmlSpace string
-
-const (
-	LineXmlSpaceDefault  LineXmlSpace = "default"
-	LineXmlSpacePreserve LineXmlSpace = "preserve"
-)
-
-type LineFillRule string
-
-const (
-	LineFillRuleEvenodd LineFillRule = "evenodd"
-	LineFillRuleNonzero LineFillRule = "nonzero"
-)
-
-type LineStrokeLinecap string
-
-const (
-	LineStrokeLinecapButt   LineStrokeLinecap = "butt"
-	LineStrokeLinecapRound  LineStrokeLinecap = "round"
-	LineStrokeLinecapSquare LineStrokeLinecap = "square"
-)
-
-type LineStrokeLinejoin string
-
-const (
-	LineStrokeLinejoinArcs      LineStrokeLinejoin = "arcs"
-	LineStrokeLinejoinBevel     LineStrokeLinejoin = "bevel"
-	LineStrokeLinejoinMiter     LineStrokeLinejoin = "miter"
-	LineStrokeLinejoinMiterClip LineStrokeLinejoin = "miter-clip"
-	LineStrokeLinejoinRound     LineStrokeLinejoin = "round"
-)
-
-type LineVisibility string
-
-const (
-	LineVisibilityCollapse LineVisibility = "collapse"
-	LineVisibilityHidden   LineVisibility = "hidden"
-	LineVisibilityVisible  LineVisibility = "visible"
-)
-
-type LineClipRule string
-
-const (
-	LineClipRuleEvenodd LineClipRule = "evenodd"
-	LineClipRuleNonzero LineClipRule = "nonzero"
-)
-
-type LinePointerEvents string
-
-const (
-	LinePointerEventsAll            LinePointerEvents = "all"
-	LinePointerEventsAuto           LinePointerEvents = "auto"
-	LinePointerEventsBoundingBox    LinePointerEvents = "bounding-box"
-	LinePointerEventsFill           LinePointerEvents = "fill"
-	LinePointerEventsNone           LinePointerEvents = "none"
-	LinePointerEventsPainted        LinePointerEvents = "painted"
-	LinePointerEventsStroke         LinePointerEvents = "stroke"
-	LinePointerEventsVisible        LinePointerEvents = "visible"
-	LinePointerEventsVisibleFill    LinePointerEvents = "visibleFill"
-	LinePointerEventsVisiblePainted LinePointerEvents = "visiblePainted"
-	LinePointerEventsVisibleStroke  LinePointerEvents = "visibleStroke"
-)
-
-type LineVectorEffect string
-
-const (
-	LineVectorEffectFixedPosition    LineVectorEffect = "fixed-position"
-	LineVectorEffectNonRotation      LineVectorEffect = "non-rotation"
-	LineVectorEffectNonScalingSize   LineVectorEffect = "non-scaling-size"
-	LineVectorEffectNonScalingStroke LineVectorEffect = "non-scaling-stroke"
-	LineVectorEffectNone             LineVectorEffect = "none"
-)
-
-type LineShapeRendering string
-
-const (
-	LineShapeRenderingAuto               LineShapeRendering = "auto"
-	LineShapeRenderingCrispEdges         LineShapeRendering = "crispEdges"
-	LineShapeRenderingGeometricPrecision LineShapeRendering = "geometricPrecision"
-	LineShapeRenderingOptimizeSpeed      LineShapeRendering = "optimizeSpeed"
-)
-
-type LineColorInterpolation string
-
-const (
-	LineColorInterpolationAuto      LineColorInterpolation = "auto"
-	LineColorInterpolationLinearRGB LineColorInterpolation = "linearRGB"
-	LineColorInterpolationSRGB      LineColorInterpolation = "sRGB"
-)
-
-type LineColorInterpolationFilters string
-
-const (
-	LineColorInterpolationFiltersAuto      LineColorInterpolationFilters = "auto"
-	LineColorInterpolationFiltersLinearRGB LineColorInterpolationFilters = "linearRGB"
-	LineColorInterpolationFiltersSRGB      LineColorInterpolationFilters = "sRGB"
-)
-
-type LineFontStyle string
-
-const (
-	LineFontStyleItalic  LineFontStyle = "italic"
-	LineFontStyleNormal  LineFontStyle = "normal"
-	LineFontStyleOblique LineFontStyle = "oblique"
-)
-
-type LineTextAnchor string
-
-const (
-	LineTextAnchorEnd    LineTextAnchor = "end"
-	LineTextAnchorMiddle LineTextAnchor = "middle"
-	LineTextAnchorStart  LineTextAnchor = "start"
-)
-
-type LineDominantBaseline string
-
-const (
-	LineDominantBaselineAlphabetic   LineDominantBaseline = "alphabetic"
-	LineDominantBaselineAuto         LineDominantBaseline = "auto"
-	LineDominantBaselineCentral      LineDominantBaseline = "central"
-	LineDominantBaselineHanging      LineDominantBaseline = "hanging"
-	LineDominantBaselineIdeographic  LineDominantBaseline = "ideographic"
-	LineDominantBaselineMathematical LineDominantBaseline = "mathematical"
-	LineDominantBaselineMiddle       LineDominantBaseline = "middle"
-	LineDominantBaselineTextBottom   LineDominantBaseline = "text-bottom"
-	LineDominantBaselineTextTop      LineDominantBaseline = "text-top"
-)
-
 type LineAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	LineAlignmentBaselineTop            LineAlignmentBaseline = "top"
 )
 
-type LineTextRendering string
+type LineClipRule string
 
 const (
-	LineTextRenderingAuto               LineTextRendering = "auto"
-	LineTextRenderingGeometricPrecision LineTextRendering = "geometricPrecision"
-	LineTextRenderingOptimizeLegibility LineTextRendering = "optimizeLegibility"
-	LineTextRenderingOptimizeSpeed      LineTextRendering = "optimizeSpeed"
+	LineClipRuleEvenodd LineClipRule = "evenodd"
+	LineClipRuleNonzero LineClipRule = "nonzero"
+)
+
+type LineColorInterpolation string
+
+const (
+	LineColorInterpolationAuto      LineColorInterpolation = "auto"
+	LineColorInterpolationLinearRGB LineColorInterpolation = "linearRGB"
+	LineColorInterpolationSRGB      LineColorInterpolation = "sRGB"
+)
+
+type LineColorInterpolationFilters string
+
+const (
+	LineColorInterpolationFiltersAuto      LineColorInterpolationFilters = "auto"
+	LineColorInterpolationFiltersLinearRGB LineColorInterpolationFilters = "linearRGB"
+	LineColorInterpolationFiltersSRGB      LineColorInterpolationFilters = "sRGB"
+)
+
+type LineDirection string
+
+const (
+	LineDirectionLtr LineDirection = "ltr"
+	LineDirectionRtl LineDirection = "rtl"
+)
+
+type LineDominantBaseline string
+
+const (
+	LineDominantBaselineAlphabetic   LineDominantBaseline = "alphabetic"
+	LineDominantBaselineAuto         LineDominantBaseline = "auto"
+	LineDominantBaselineCentral      LineDominantBaseline = "central"
+	LineDominantBaselineHanging      LineDominantBaseline = "hanging"
+	LineDominantBaselineIdeographic  LineDominantBaseline = "ideographic"
+	LineDominantBaselineMathematical LineDominantBaseline = "mathematical"
+	LineDominantBaselineMiddle       LineDominantBaseline = "middle"
+	LineDominantBaselineTextBottom   LineDominantBaseline = "text-bottom"
+	LineDominantBaselineTextTop      LineDominantBaseline = "text-top"
+)
+
+type LineFillRule string
+
+const (
+	LineFillRuleEvenodd LineFillRule = "evenodd"
+	LineFillRuleNonzero LineFillRule = "nonzero"
+)
+
+type LineFontStyle string
+
+const (
+	LineFontStyleItalic  LineFontStyle = "italic"
+	LineFontStyleNormal  LineFontStyle = "normal"
+	LineFontStyleOblique LineFontStyle = "oblique"
 )
 
 type LineImageRendering string
@@ -345,6 +267,66 @@ const (
 	LineOverflowVisible LineOverflow = "visible"
 )
 
+type LinePointerEvents string
+
+const (
+	LinePointerEventsAll            LinePointerEvents = "all"
+	LinePointerEventsAuto           LinePointerEvents = "auto"
+	LinePointerEventsBoundingBox    LinePointerEvents = "bounding-box"
+	LinePointerEventsFill           LinePointerEvents = "fill"
+	LinePointerEventsNone           LinePointerEvents = "none"
+	LinePointerEventsPainted        LinePointerEvents = "painted"
+	LinePointerEventsStroke         LinePointerEvents = "stroke"
+	LinePointerEventsVisible        LinePointerEvents = "visible"
+	LinePointerEventsVisibleFill    LinePointerEvents = "visibleFill"
+	LinePointerEventsVisiblePainted LinePointerEvents = "visiblePainted"
+	LinePointerEventsVisibleStroke  LinePointerEvents = "visibleStroke"
+)
+
+type LineShapeRendering string
+
+const (
+	LineShapeRenderingAuto               LineShapeRendering = "auto"
+	LineShapeRenderingCrispEdges         LineShapeRendering = "crispEdges"
+	LineShapeRenderingGeometricPrecision LineShapeRendering = "geometricPrecision"
+	LineShapeRenderingOptimizeSpeed      LineShapeRendering = "optimizeSpeed"
+)
+
+type LineStrokeLinecap string
+
+const (
+	LineStrokeLinecapButt   LineStrokeLinecap = "butt"
+	LineStrokeLinecapRound  LineStrokeLinecap = "round"
+	LineStrokeLinecapSquare LineStrokeLinecap = "square"
+)
+
+type LineStrokeLinejoin string
+
+const (
+	LineStrokeLinejoinArcs      LineStrokeLinejoin = "arcs"
+	LineStrokeLinejoinBevel     LineStrokeLinejoin = "bevel"
+	LineStrokeLinejoinMiter     LineStrokeLinejoin = "miter"
+	LineStrokeLinejoinMiterClip LineStrokeLinejoin = "miter-clip"
+	LineStrokeLinejoinRound     LineStrokeLinejoin = "round"
+)
+
+type LineTextAnchor string
+
+const (
+	LineTextAnchorEnd    LineTextAnchor = "end"
+	LineTextAnchorMiddle LineTextAnchor = "middle"
+	LineTextAnchorStart  LineTextAnchor = "start"
+)
+
+type LineTextRendering string
+
+const (
+	LineTextRenderingAuto               LineTextRendering = "auto"
+	LineTextRenderingGeometricPrecision LineTextRendering = "geometricPrecision"
+	LineTextRenderingOptimizeLegibility LineTextRendering = "optimizeLegibility"
+	LineTextRenderingOptimizeSpeed      LineTextRendering = "optimizeSpeed"
+)
+
 type LineTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	LineTransformBoxViewBox    LineTransformBox = "view-box"
 )
 
-type LineDirection string
+type LineVectorEffect string
 
 const (
-	LineDirectionLtr LineDirection = "ltr"
-	LineDirectionRtl LineDirection = "rtl"
+	LineVectorEffectFixedPosition    LineVectorEffect = "fixed-position"
+	LineVectorEffectNonRotation      LineVectorEffect = "non-rotation"
+	LineVectorEffectNonScalingSize   LineVectorEffect = "non-scaling-size"
+	LineVectorEffectNonScalingStroke LineVectorEffect = "non-scaling-stroke"
+	LineVectorEffectNone             LineVectorEffect = "none"
+)
+
+type LineVisibility string
+
+const (
+	LineVisibilityCollapse LineVisibility = "collapse"
+	LineVisibilityHidden   LineVisibility = "hidden"
+	LineVisibilityVisible  LineVisibility = "visible"
 )
 
 type LineWritingMode string
@@ -378,14 +371,27 @@ const (
 	LineWritingModeVerticalRl   LineWritingMode = "vertical-rl"
 )
 
-func (e *LineElement) X1(s string) *LineElement {
-	e.attributes.Set("x1", s)
+type LineXmlSpace string
+
+const (
+	LineXmlSpaceDefault  LineXmlSpace = "default"
+	LineXmlSpacePreserve LineXmlSpace = "preserve"
+)
+
+func (e *LineElement) PathLength(f float64) *LineElement {
+	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *LineElement) Y1(s string) *LineElement {
-	e.attributes.Set("y1", s)
+func (e *LineElement) SystemLanguage(s string) *LineElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *LineElement) X1(s string) *LineElement {
+	e.attributes.Set("x1", s)
 
 	return e
 }
@@ -396,32 +402,54 @@ func (e *LineElement) X2(s string) *LineElement {
 	return e
 }
 
+func (e *LineElement) Y1(s string) *LineElement {
+	e.attributes.Set("y1", s)
+
+	return e
+}
+
 func (e *LineElement) Y2(s string) *LineElement {
 	e.attributes.Set("y2", s)
 
 	return e
 }
 
-func (e *LineElement) PathLength(s string) *LineElement {
-	e.attributes.Set("pathLength", s)
+func (e *LineElement) AlignmentBaseline(a LineAlignmentBaseline) *LineElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *LineElement) Transform(s string) *LineElement {
-	e.attributes.Set("transform", s)
+func LineAlignmentBaselineCustom(s string) LineAlignmentBaseline {
+	return LineAlignmentBaseline(s)
+}
+
+func (e *LineElement) AriaUnsafe(name string, s string) *LineElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *LineElement) TransformOrigin(s string) *LineElement {
-	e.attributes.Set("transform-origin", s)
+func (e *LineElement) Aria(name string, s string) *LineElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *LineElement) Id(s string) *LineElement {
-	e.attributes.Set("id", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *LineElement) Autofocus(b bool) *LineElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *LineElement) BaselineShift(s string) *LineElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -432,40 +460,59 @@ func (e *LineElement) Class(s ...string) *LineElement {
 	return e
 }
 
-func (e *LineElement) Style(s string) *LineElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *LineElement) Clip(s string) *LineElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *LineElement) Tabindex(i int) *LineElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *LineElement) ClipPath(s string) *LineElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *LineElement) Lang(s string) *LineElement {
-	e.attributes.Set("lang", s)
+func (e *LineElement) ClipRule(a LineClipRule) *LineElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *LineElement) XmlLang(s string) *LineElement {
-	e.attributes.Set("xml:lang", s)
+func LineClipRuleCustom(s string) LineClipRule {
+	return LineClipRule(s)
+}
+
+func (e *LineElement) Color(s string) *LineElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *LineElement) XmlSpace(a LineXmlSpace) *LineElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *LineElement) ColorInterpolation(a LineColorInterpolation) *LineElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *LineElement) Autofocus(b bool) *LineElement {
-	e.attributes.SetBool("autofocus", b)
+func LineColorInterpolationCustom(s string) LineColorInterpolation {
+	return LineColorInterpolation(s)
+}
+
+func (e *LineElement) ColorInterpolationFilters(a LineColorInterpolationFilters) *LineElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func LineColorInterpolationFiltersCustom(s string) LineColorInterpolationFilters {
+	return LineColorInterpolationFilters(s)
+}
+
+func (e *LineElement) Cursor(s string) *LineElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -486,20 +533,30 @@ func (e *LineElement) Data(name string, s string) *LineElement {
 	return e
 }
 
-func (e *LineElement) AriaUnsafe(name string, s string) *LineElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *LineElement) Direction(a LineDirection) *LineElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *LineElement) Aria(name string, s string) *LineElement {
-	tag := strings.ToLower("aria-" + name)
+func LineDirectionCustom(s string) LineDirection {
+	return LineDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *LineElement) Display(s string) *LineElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *LineElement) DominantBaseline(a LineDominantBaseline) *LineElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func LineDominantBaselineCustom(s string) LineDominantBaseline {
+	return LineDominantBaseline(s)
 }
 
 func (e *LineElement) Fill(s string) *LineElement {
@@ -524,20 +581,220 @@ func LineFillRuleCustom(s string) LineFillRule {
 	return LineFillRule(s)
 }
 
+func (e *LineElement) Filter(s string) *LineElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *LineElement) FloodColor(s string) *LineElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *LineElement) FloodOpacity(f float64) *LineElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *LineElement) FontFamily(s string) *LineElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *LineElement) FontSize(s string) *LineElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *LineElement) FontSizeAdjust(s string) *LineElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *LineElement) FontStretch(s string) *LineElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *LineElement) FontStyle(a LineFontStyle) *LineElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func LineFontStyleCustom(s string) LineFontStyle {
+	return LineFontStyle(s)
+}
+
+func (e *LineElement) FontVariant(s string) *LineElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *LineElement) FontWeight(s string) *LineElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *LineElement) GlyphOrientationHorizontal(s string) *LineElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *LineElement) GlyphOrientationVertical(s string) *LineElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *LineElement) Id(s string) *LineElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *LineElement) ImageRendering(a LineImageRendering) *LineElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func LineImageRenderingCustom(s string) LineImageRendering {
+	return LineImageRendering(s)
+}
+
+func (e *LineElement) Lang(s string) *LineElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *LineElement) LetterSpacing(s string) *LineElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *LineElement) LightingColor(s string) *LineElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *LineElement) MarkerEnd(s string) *LineElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *LineElement) MarkerMid(s string) *LineElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *LineElement) MarkerStart(s string) *LineElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *LineElement) Mask(s string) *LineElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *LineElement) Opacity(f float64) *LineElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *LineElement) Overflow(a LineOverflow) *LineElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func LineOverflowCustom(s string) LineOverflow {
+	return LineOverflow(s)
+}
+
+func (e *LineElement) PaintOrder(s string) *LineElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *LineElement) PointerEvents(a LinePointerEvents) *LineElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func LinePointerEventsCustom(s string) LinePointerEvents {
+	return LinePointerEvents(s)
+}
+
+func (e *LineElement) RequiredExtensions(s string) *LineElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *LineElement) ShapeRendering(a LineShapeRendering) *LineElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func LineShapeRenderingCustom(s string) LineShapeRendering {
+	return LineShapeRendering(s)
+}
+
+func (e *LineElement) StopColor(s string) *LineElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *LineElement) StopOpacity(f float64) *LineElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *LineElement) Stroke(s string) *LineElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *LineElement) StrokeWidth(s string) *LineElement {
-	e.attributes.Set("stroke-width", s)
+func (e *LineElement) StrokeDasharray(s string) *LineElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *LineElement) StrokeOpacity(f float64) *LineElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *LineElement) StrokeDashoffset(s string) *LineElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -568,210 +825,28 @@ func (e *LineElement) StrokeMiterlimit(f float64) *LineElement {
 	return e
 }
 
-func (e *LineElement) StrokeDasharray(s string) *LineElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *LineElement) StrokeOpacity(f float64) *LineElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *LineElement) StrokeDashoffset(s string) *LineElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *LineElement) StrokeWidth(s string) *LineElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *LineElement) Opacity(f float64) *LineElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *LineElement) Style(s string) *LineElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *LineElement) Color(s string) *LineElement {
-	e.attributes.Set("color", s)
+func (e *LineElement) Tabindex(i int) *LineElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *LineElement) Display(s string) *LineElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *LineElement) Visibility(a LineVisibility) *LineElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func LineVisibilityCustom(s string) LineVisibility {
-	return LineVisibility(s)
-}
-
-func (e *LineElement) ClipPath(s string) *LineElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *LineElement) ClipRule(a LineClipRule) *LineElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func LineClipRuleCustom(s string) LineClipRule {
-	return LineClipRule(s)
-}
-
-func (e *LineElement) Mask(s string) *LineElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *LineElement) Filter(s string) *LineElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *LineElement) Cursor(s string) *LineElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *LineElement) PointerEvents(a LinePointerEvents) *LineElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func LinePointerEventsCustom(s string) LinePointerEvents {
-	return LinePointerEvents(s)
-}
-
-func (e *LineElement) VectorEffect(a LineVectorEffect) *LineElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func LineVectorEffectCustom(s string) LineVectorEffect {
-	return LineVectorEffect(s)
-}
-
-func (e *LineElement) PaintOrder(s string) *LineElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *LineElement) ShapeRendering(a LineShapeRendering) *LineElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func LineShapeRenderingCustom(s string) LineShapeRendering {
-	return LineShapeRendering(s)
-}
-
-func (e *LineElement) ColorInterpolation(a LineColorInterpolation) *LineElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func LineColorInterpolationCustom(s string) LineColorInterpolation {
-	return LineColorInterpolation(s)
-}
-
-func (e *LineElement) ColorInterpolationFilters(a LineColorInterpolationFilters) *LineElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func LineColorInterpolationFiltersCustom(s string) LineColorInterpolationFilters {
-	return LineColorInterpolationFilters(s)
-}
-
-func (e *LineElement) FloodColor(s string) *LineElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *LineElement) FloodOpacity(f float64) *LineElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *LineElement) LightingColor(s string) *LineElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *LineElement) StopColor(s string) *LineElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *LineElement) StopOpacity(f float64) *LineElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *LineElement) MarkerStart(s string) *LineElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *LineElement) MarkerMid(s string) *LineElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *LineElement) MarkerEnd(s string) *LineElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *LineElement) FontFamily(s string) *LineElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *LineElement) FontSize(s string) *LineElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *LineElement) FontWeight(s string) *LineElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *LineElement) FontStyle(a LineFontStyle) *LineElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func LineFontStyleCustom(s string) LineFontStyle {
-	return LineFontStyle(s)
 }
 
 func (e *LineElement) TextAnchor(a LineTextAnchor) *LineElement {
@@ -784,40 +859,14 @@ func LineTextAnchorCustom(s string) LineTextAnchor {
 	return LineTextAnchor(s)
 }
 
-func (e *LineElement) DominantBaseline(a LineDominantBaseline) *LineElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func LineDominantBaselineCustom(s string) LineDominantBaseline {
-	return LineDominantBaseline(s)
-}
-
-func (e *LineElement) AlignmentBaseline(a LineAlignmentBaseline) *LineElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func LineAlignmentBaselineCustom(s string) LineAlignmentBaseline {
-	return LineAlignmentBaseline(s)
-}
-
-func (e *LineElement) LetterSpacing(s string) *LineElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *LineElement) WordSpacing(s string) *LineElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *LineElement) TextDecoration(s string) *LineElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *LineElement) TextOverflow(s string) *LineElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -832,24 +881,10 @@ func LineTextRenderingCustom(s string) LineTextRendering {
 	return LineTextRendering(s)
 }
 
-func (e *LineElement) ImageRendering(a LineImageRendering) *LineElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *LineElement) Transform(s string) *LineElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func LineImageRenderingCustom(s string) LineImageRendering {
-	return LineImageRendering(s)
-}
-
-func (e *LineElement) Overflow(a LineOverflow) *LineElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func LineOverflowCustom(s string) LineOverflow {
-	return LineOverflow(s)
 }
 
 func (e *LineElement) TransformBox(a LineTransformBox) *LineElement {
@@ -862,18 +897,46 @@ func LineTransformBoxCustom(s string) LineTransformBox {
 	return LineTransformBox(s)
 }
 
-func (e *LineElement) Direction(a LineDirection) *LineElement {
-	e.attributes.Set("direction", string(a))
+func (e *LineElement) TransformOrigin(s string) *LineElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func LineDirectionCustom(s string) LineDirection {
-	return LineDirection(s)
-}
-
 func (e *LineElement) UnicodeBidi(s string) *LineElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *LineElement) VectorEffect(a LineVectorEffect) *LineElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func LineVectorEffectCustom(s string) LineVectorEffect {
+	return LineVectorEffect(s)
+}
+
+func (e *LineElement) Visibility(a LineVisibility) *LineElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func LineVisibilityCustom(s string) LineVisibility {
+	return LineVisibility(s)
+}
+
+func (e *LineElement) WhiteSpace(s string) *LineElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *LineElement) WordSpacing(s string) *LineElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -888,8 +951,20 @@ func LineWritingModeCustom(s string) LineWritingMode {
 	return LineWritingMode(s)
 }
 
-func (e *LineElement) WhiteSpace(s string) *LineElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *LineElement) XmlLang(s string) *LineElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *LineElement) XmlSpace(a LineXmlSpace) *LineElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

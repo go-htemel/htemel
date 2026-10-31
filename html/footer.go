@@ -240,6 +240,15 @@ const (
 	FooterInputmodeUrl     FooterInputmode = "url"
 )
 
+type FooterPopover string
+
+const (
+	FooterPopoverAuto   FooterPopover = "auto"
+	FooterPopoverHint   FooterPopover = "hint"
+	FooterPopoverManual FooterPopover = "manual"
+	FooterPopoverEmpty  FooterPopover = ""
+)
+
 type FooterSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *FooterElement) Enterkeyhint(a FooterEnterkeyhint) *FooterElement {
 	return e
 }
 
+func (e *FooterElement) Exportparts(s string) *FooterElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *FooterElement) Headingoffset(i int) *FooterElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FooterElement) Headingreset(b bool) *FooterElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FooterElement) Hidden(v ...FooterHidden) *FooterElement {
@@ -396,6 +425,14 @@ func (e *FooterElement) Inputmode(a FooterInputmode) *FooterElement {
 	return e
 }
 
+func (e *FooterElement) Is(s string) *FooterElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FooterElement) Itemid(s string) *FooterElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *FooterElement) Nonce(s string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Popover(s string) *FooterElement {
-	e.attributes.Set("popover", s)
+func (e *FooterElement) Part(s ...string) *FooterElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Popover(v ...FooterPopover) *FooterElement {
+	var val FooterPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

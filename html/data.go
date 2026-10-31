@@ -240,6 +240,15 @@ const (
 	DataInputmodeUrl     DataInputmode = "url"
 )
 
+type DataPopover string
+
+const (
+	DataPopoverAuto   DataPopover = "auto"
+	DataPopoverHint   DataPopover = "hint"
+	DataPopoverManual DataPopover = "manual"
+	DataPopoverEmpty  DataPopover = ""
+)
+
 type DataSpellcheck string
 
 const (
@@ -370,6 +379,26 @@ func (e *DataElement) Enterkeyhint(a DataEnterkeyhint) *DataElement {
 	return e
 }
 
+func (e *DataElement) Exportparts(s string) *DataElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *DataElement) Headingoffset(i int) *DataElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *DataElement) Headingreset(b bool) *DataElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *DataElement) Hidden(v ...DataHidden) *DataElement {
@@ -402,6 +431,14 @@ func (e *DataElement) Inputmode(a DataInputmode) *DataElement {
 	return e
 }
 
+func (e *DataElement) Is(s string) *DataElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *DataElement) Itemid(s string) *DataElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +483,20 @@ func (e *DataElement) Nonce(s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Popover(s string) *DataElement {
-	e.attributes.Set("popover", s)
+func (e *DataElement) Part(s ...string) *DataElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Popover(v ...DataPopover) *DataElement {
+	var val DataPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

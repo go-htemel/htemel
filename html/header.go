@@ -240,6 +240,15 @@ const (
 	HeaderInputmodeUrl     HeaderInputmode = "url"
 )
 
+type HeaderPopover string
+
+const (
+	HeaderPopoverAuto   HeaderPopover = "auto"
+	HeaderPopoverHint   HeaderPopover = "hint"
+	HeaderPopoverManual HeaderPopover = "manual"
+	HeaderPopoverEmpty  HeaderPopover = ""
+)
+
 type HeaderSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *HeaderElement) Enterkeyhint(a HeaderEnterkeyhint) *HeaderElement {
 	return e
 }
 
+func (e *HeaderElement) Exportparts(s string) *HeaderElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *HeaderElement) Headingoffset(i int) *HeaderElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *HeaderElement) Headingreset(b bool) *HeaderElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *HeaderElement) Hidden(v ...HeaderHidden) *HeaderElement {
@@ -396,6 +425,14 @@ func (e *HeaderElement) Inputmode(a HeaderInputmode) *HeaderElement {
 	return e
 }
 
+func (e *HeaderElement) Is(s string) *HeaderElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *HeaderElement) Itemid(s string) *HeaderElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *HeaderElement) Nonce(s string) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Popover(s string) *HeaderElement {
-	e.attributes.Set("popover", s)
+func (e *HeaderElement) Part(s ...string) *HeaderElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeaderElement) Popover(v ...HeaderPopover) *HeaderElement {
+	var val HeaderPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

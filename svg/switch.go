@@ -164,134 +164,6 @@ func (e *SwitchElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SwitchXmlSpace string
-
-const (
-	SwitchXmlSpaceDefault  SwitchXmlSpace = "default"
-	SwitchXmlSpacePreserve SwitchXmlSpace = "preserve"
-)
-
-type SwitchFillRule string
-
-const (
-	SwitchFillRuleEvenodd SwitchFillRule = "evenodd"
-	SwitchFillRuleNonzero SwitchFillRule = "nonzero"
-)
-
-type SwitchStrokeLinecap string
-
-const (
-	SwitchStrokeLinecapButt   SwitchStrokeLinecap = "butt"
-	SwitchStrokeLinecapRound  SwitchStrokeLinecap = "round"
-	SwitchStrokeLinecapSquare SwitchStrokeLinecap = "square"
-)
-
-type SwitchStrokeLinejoin string
-
-const (
-	SwitchStrokeLinejoinArcs      SwitchStrokeLinejoin = "arcs"
-	SwitchStrokeLinejoinBevel     SwitchStrokeLinejoin = "bevel"
-	SwitchStrokeLinejoinMiter     SwitchStrokeLinejoin = "miter"
-	SwitchStrokeLinejoinMiterClip SwitchStrokeLinejoin = "miter-clip"
-	SwitchStrokeLinejoinRound     SwitchStrokeLinejoin = "round"
-)
-
-type SwitchVisibility string
-
-const (
-	SwitchVisibilityCollapse SwitchVisibility = "collapse"
-	SwitchVisibilityHidden   SwitchVisibility = "hidden"
-	SwitchVisibilityVisible  SwitchVisibility = "visible"
-)
-
-type SwitchClipRule string
-
-const (
-	SwitchClipRuleEvenodd SwitchClipRule = "evenodd"
-	SwitchClipRuleNonzero SwitchClipRule = "nonzero"
-)
-
-type SwitchPointerEvents string
-
-const (
-	SwitchPointerEventsAll            SwitchPointerEvents = "all"
-	SwitchPointerEventsAuto           SwitchPointerEvents = "auto"
-	SwitchPointerEventsBoundingBox    SwitchPointerEvents = "bounding-box"
-	SwitchPointerEventsFill           SwitchPointerEvents = "fill"
-	SwitchPointerEventsNone           SwitchPointerEvents = "none"
-	SwitchPointerEventsPainted        SwitchPointerEvents = "painted"
-	SwitchPointerEventsStroke         SwitchPointerEvents = "stroke"
-	SwitchPointerEventsVisible        SwitchPointerEvents = "visible"
-	SwitchPointerEventsVisibleFill    SwitchPointerEvents = "visibleFill"
-	SwitchPointerEventsVisiblePainted SwitchPointerEvents = "visiblePainted"
-	SwitchPointerEventsVisibleStroke  SwitchPointerEvents = "visibleStroke"
-)
-
-type SwitchVectorEffect string
-
-const (
-	SwitchVectorEffectFixedPosition    SwitchVectorEffect = "fixed-position"
-	SwitchVectorEffectNonRotation      SwitchVectorEffect = "non-rotation"
-	SwitchVectorEffectNonScalingSize   SwitchVectorEffect = "non-scaling-size"
-	SwitchVectorEffectNonScalingStroke SwitchVectorEffect = "non-scaling-stroke"
-	SwitchVectorEffectNone             SwitchVectorEffect = "none"
-)
-
-type SwitchShapeRendering string
-
-const (
-	SwitchShapeRenderingAuto               SwitchShapeRendering = "auto"
-	SwitchShapeRenderingCrispEdges         SwitchShapeRendering = "crispEdges"
-	SwitchShapeRenderingGeometricPrecision SwitchShapeRendering = "geometricPrecision"
-	SwitchShapeRenderingOptimizeSpeed      SwitchShapeRendering = "optimizeSpeed"
-)
-
-type SwitchColorInterpolation string
-
-const (
-	SwitchColorInterpolationAuto      SwitchColorInterpolation = "auto"
-	SwitchColorInterpolationLinearRGB SwitchColorInterpolation = "linearRGB"
-	SwitchColorInterpolationSRGB      SwitchColorInterpolation = "sRGB"
-)
-
-type SwitchColorInterpolationFilters string
-
-const (
-	SwitchColorInterpolationFiltersAuto      SwitchColorInterpolationFilters = "auto"
-	SwitchColorInterpolationFiltersLinearRGB SwitchColorInterpolationFilters = "linearRGB"
-	SwitchColorInterpolationFiltersSRGB      SwitchColorInterpolationFilters = "sRGB"
-)
-
-type SwitchFontStyle string
-
-const (
-	SwitchFontStyleItalic  SwitchFontStyle = "italic"
-	SwitchFontStyleNormal  SwitchFontStyle = "normal"
-	SwitchFontStyleOblique SwitchFontStyle = "oblique"
-)
-
-type SwitchTextAnchor string
-
-const (
-	SwitchTextAnchorEnd    SwitchTextAnchor = "end"
-	SwitchTextAnchorMiddle SwitchTextAnchor = "middle"
-	SwitchTextAnchorStart  SwitchTextAnchor = "start"
-)
-
-type SwitchDominantBaseline string
-
-const (
-	SwitchDominantBaselineAlphabetic   SwitchDominantBaseline = "alphabetic"
-	SwitchDominantBaselineAuto         SwitchDominantBaseline = "auto"
-	SwitchDominantBaselineCentral      SwitchDominantBaseline = "central"
-	SwitchDominantBaselineHanging      SwitchDominantBaseline = "hanging"
-	SwitchDominantBaselineIdeographic  SwitchDominantBaseline = "ideographic"
-	SwitchDominantBaselineMathematical SwitchDominantBaseline = "mathematical"
-	SwitchDominantBaselineMiddle       SwitchDominantBaseline = "middle"
-	SwitchDominantBaselineTextBottom   SwitchDominantBaseline = "text-bottom"
-	SwitchDominantBaselineTextTop      SwitchDominantBaseline = "text-top"
-)
-
 type SwitchAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	SwitchAlignmentBaselineTop            SwitchAlignmentBaseline = "top"
 )
 
-type SwitchTextRendering string
+type SwitchClipRule string
 
 const (
-	SwitchTextRenderingAuto               SwitchTextRendering = "auto"
-	SwitchTextRenderingGeometricPrecision SwitchTextRendering = "geometricPrecision"
-	SwitchTextRenderingOptimizeLegibility SwitchTextRendering = "optimizeLegibility"
-	SwitchTextRenderingOptimizeSpeed      SwitchTextRendering = "optimizeSpeed"
+	SwitchClipRuleEvenodd SwitchClipRule = "evenodd"
+	SwitchClipRuleNonzero SwitchClipRule = "nonzero"
+)
+
+type SwitchColorInterpolation string
+
+const (
+	SwitchColorInterpolationAuto      SwitchColorInterpolation = "auto"
+	SwitchColorInterpolationLinearRGB SwitchColorInterpolation = "linearRGB"
+	SwitchColorInterpolationSRGB      SwitchColorInterpolation = "sRGB"
+)
+
+type SwitchColorInterpolationFilters string
+
+const (
+	SwitchColorInterpolationFiltersAuto      SwitchColorInterpolationFilters = "auto"
+	SwitchColorInterpolationFiltersLinearRGB SwitchColorInterpolationFilters = "linearRGB"
+	SwitchColorInterpolationFiltersSRGB      SwitchColorInterpolationFilters = "sRGB"
+)
+
+type SwitchDirection string
+
+const (
+	SwitchDirectionLtr SwitchDirection = "ltr"
+	SwitchDirectionRtl SwitchDirection = "rtl"
+)
+
+type SwitchDominantBaseline string
+
+const (
+	SwitchDominantBaselineAlphabetic   SwitchDominantBaseline = "alphabetic"
+	SwitchDominantBaselineAuto         SwitchDominantBaseline = "auto"
+	SwitchDominantBaselineCentral      SwitchDominantBaseline = "central"
+	SwitchDominantBaselineHanging      SwitchDominantBaseline = "hanging"
+	SwitchDominantBaselineIdeographic  SwitchDominantBaseline = "ideographic"
+	SwitchDominantBaselineMathematical SwitchDominantBaseline = "mathematical"
+	SwitchDominantBaselineMiddle       SwitchDominantBaseline = "middle"
+	SwitchDominantBaselineTextBottom   SwitchDominantBaseline = "text-bottom"
+	SwitchDominantBaselineTextTop      SwitchDominantBaseline = "text-top"
+)
+
+type SwitchFillRule string
+
+const (
+	SwitchFillRuleEvenodd SwitchFillRule = "evenodd"
+	SwitchFillRuleNonzero SwitchFillRule = "nonzero"
+)
+
+type SwitchFontStyle string
+
+const (
+	SwitchFontStyleItalic  SwitchFontStyle = "italic"
+	SwitchFontStyleNormal  SwitchFontStyle = "normal"
+	SwitchFontStyleOblique SwitchFontStyle = "oblique"
 )
 
 type SwitchImageRendering string
@@ -345,6 +267,66 @@ const (
 	SwitchOverflowVisible SwitchOverflow = "visible"
 )
 
+type SwitchPointerEvents string
+
+const (
+	SwitchPointerEventsAll            SwitchPointerEvents = "all"
+	SwitchPointerEventsAuto           SwitchPointerEvents = "auto"
+	SwitchPointerEventsBoundingBox    SwitchPointerEvents = "bounding-box"
+	SwitchPointerEventsFill           SwitchPointerEvents = "fill"
+	SwitchPointerEventsNone           SwitchPointerEvents = "none"
+	SwitchPointerEventsPainted        SwitchPointerEvents = "painted"
+	SwitchPointerEventsStroke         SwitchPointerEvents = "stroke"
+	SwitchPointerEventsVisible        SwitchPointerEvents = "visible"
+	SwitchPointerEventsVisibleFill    SwitchPointerEvents = "visibleFill"
+	SwitchPointerEventsVisiblePainted SwitchPointerEvents = "visiblePainted"
+	SwitchPointerEventsVisibleStroke  SwitchPointerEvents = "visibleStroke"
+)
+
+type SwitchShapeRendering string
+
+const (
+	SwitchShapeRenderingAuto               SwitchShapeRendering = "auto"
+	SwitchShapeRenderingCrispEdges         SwitchShapeRendering = "crispEdges"
+	SwitchShapeRenderingGeometricPrecision SwitchShapeRendering = "geometricPrecision"
+	SwitchShapeRenderingOptimizeSpeed      SwitchShapeRendering = "optimizeSpeed"
+)
+
+type SwitchStrokeLinecap string
+
+const (
+	SwitchStrokeLinecapButt   SwitchStrokeLinecap = "butt"
+	SwitchStrokeLinecapRound  SwitchStrokeLinecap = "round"
+	SwitchStrokeLinecapSquare SwitchStrokeLinecap = "square"
+)
+
+type SwitchStrokeLinejoin string
+
+const (
+	SwitchStrokeLinejoinArcs      SwitchStrokeLinejoin = "arcs"
+	SwitchStrokeLinejoinBevel     SwitchStrokeLinejoin = "bevel"
+	SwitchStrokeLinejoinMiter     SwitchStrokeLinejoin = "miter"
+	SwitchStrokeLinejoinMiterClip SwitchStrokeLinejoin = "miter-clip"
+	SwitchStrokeLinejoinRound     SwitchStrokeLinejoin = "round"
+)
+
+type SwitchTextAnchor string
+
+const (
+	SwitchTextAnchorEnd    SwitchTextAnchor = "end"
+	SwitchTextAnchorMiddle SwitchTextAnchor = "middle"
+	SwitchTextAnchorStart  SwitchTextAnchor = "start"
+)
+
+type SwitchTextRendering string
+
+const (
+	SwitchTextRenderingAuto               SwitchTextRendering = "auto"
+	SwitchTextRenderingGeometricPrecision SwitchTextRendering = "geometricPrecision"
+	SwitchTextRenderingOptimizeLegibility SwitchTextRendering = "optimizeLegibility"
+	SwitchTextRenderingOptimizeSpeed      SwitchTextRendering = "optimizeSpeed"
+)
+
 type SwitchTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	SwitchTransformBoxViewBox    SwitchTransformBox = "view-box"
 )
 
-type SwitchDirection string
+type SwitchVectorEffect string
 
 const (
-	SwitchDirectionLtr SwitchDirection = "ltr"
-	SwitchDirectionRtl SwitchDirection = "rtl"
+	SwitchVectorEffectFixedPosition    SwitchVectorEffect = "fixed-position"
+	SwitchVectorEffectNonRotation      SwitchVectorEffect = "non-rotation"
+	SwitchVectorEffectNonScalingSize   SwitchVectorEffect = "non-scaling-size"
+	SwitchVectorEffectNonScalingStroke SwitchVectorEffect = "non-scaling-stroke"
+	SwitchVectorEffectNone             SwitchVectorEffect = "none"
+)
+
+type SwitchVisibility string
+
+const (
+	SwitchVisibilityCollapse SwitchVisibility = "collapse"
+	SwitchVisibilityHidden   SwitchVisibility = "hidden"
+	SwitchVisibilityVisible  SwitchVisibility = "visible"
 )
 
 type SwitchWritingMode string
@@ -378,20 +371,55 @@ const (
 	SwitchWritingModeVerticalRl   SwitchWritingMode = "vertical-rl"
 )
 
-func (e *SwitchElement) Transform(s string) *SwitchElement {
-	e.attributes.Set("transform", s)
+type SwitchXmlSpace string
+
+const (
+	SwitchXmlSpaceDefault  SwitchXmlSpace = "default"
+	SwitchXmlSpacePreserve SwitchXmlSpace = "preserve"
+)
+
+func (e *SwitchElement) SystemLanguage(s string) *SwitchElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *SwitchElement) TransformOrigin(s string) *SwitchElement {
-	e.attributes.Set("transform-origin", s)
+func (e *SwitchElement) AlignmentBaseline(a SwitchAlignmentBaseline) *SwitchElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *SwitchElement) Id(s string) *SwitchElement {
-	e.attributes.Set("id", s)
+func SwitchAlignmentBaselineCustom(s string) SwitchAlignmentBaseline {
+	return SwitchAlignmentBaseline(s)
+}
+
+func (e *SwitchElement) AriaUnsafe(name string, s string) *SwitchElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *SwitchElement) Aria(name string, s string) *SwitchElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SwitchElement) Autofocus(b bool) *SwitchElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *SwitchElement) BaselineShift(s string) *SwitchElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -402,40 +430,59 @@ func (e *SwitchElement) Class(s ...string) *SwitchElement {
 	return e
 }
 
-func (e *SwitchElement) Style(s string) *SwitchElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *SwitchElement) Clip(s string) *SwitchElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *SwitchElement) Tabindex(i int) *SwitchElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *SwitchElement) ClipPath(s string) *SwitchElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *SwitchElement) Lang(s string) *SwitchElement {
-	e.attributes.Set("lang", s)
+func (e *SwitchElement) ClipRule(a SwitchClipRule) *SwitchElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *SwitchElement) XmlLang(s string) *SwitchElement {
-	e.attributes.Set("xml:lang", s)
+func SwitchClipRuleCustom(s string) SwitchClipRule {
+	return SwitchClipRule(s)
+}
+
+func (e *SwitchElement) Color(s string) *SwitchElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *SwitchElement) XmlSpace(a SwitchXmlSpace) *SwitchElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *SwitchElement) ColorInterpolation(a SwitchColorInterpolation) *SwitchElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SwitchElement) Autofocus(b bool) *SwitchElement {
-	e.attributes.SetBool("autofocus", b)
+func SwitchColorInterpolationCustom(s string) SwitchColorInterpolation {
+	return SwitchColorInterpolation(s)
+}
+
+func (e *SwitchElement) ColorInterpolationFilters(a SwitchColorInterpolationFilters) *SwitchElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func SwitchColorInterpolationFiltersCustom(s string) SwitchColorInterpolationFilters {
+	return SwitchColorInterpolationFilters(s)
+}
+
+func (e *SwitchElement) Cursor(s string) *SwitchElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -456,20 +503,30 @@ func (e *SwitchElement) Data(name string, s string) *SwitchElement {
 	return e
 }
 
-func (e *SwitchElement) AriaUnsafe(name string, s string) *SwitchElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *SwitchElement) Direction(a SwitchDirection) *SwitchElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *SwitchElement) Aria(name string, s string) *SwitchElement {
-	tag := strings.ToLower("aria-" + name)
+func SwitchDirectionCustom(s string) SwitchDirection {
+	return SwitchDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *SwitchElement) Display(s string) *SwitchElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *SwitchElement) DominantBaseline(a SwitchDominantBaseline) *SwitchElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func SwitchDominantBaselineCustom(s string) SwitchDominantBaseline {
+	return SwitchDominantBaseline(s)
 }
 
 func (e *SwitchElement) Fill(s string) *SwitchElement {
@@ -494,20 +551,220 @@ func SwitchFillRuleCustom(s string) SwitchFillRule {
 	return SwitchFillRule(s)
 }
 
+func (e *SwitchElement) Filter(s string) *SwitchElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *SwitchElement) FloodColor(s string) *SwitchElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *SwitchElement) FloodOpacity(f float64) *SwitchElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *SwitchElement) FontFamily(s string) *SwitchElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *SwitchElement) FontSize(s string) *SwitchElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *SwitchElement) FontSizeAdjust(s string) *SwitchElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *SwitchElement) FontStretch(s string) *SwitchElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *SwitchElement) FontStyle(a SwitchFontStyle) *SwitchElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func SwitchFontStyleCustom(s string) SwitchFontStyle {
+	return SwitchFontStyle(s)
+}
+
+func (e *SwitchElement) FontVariant(s string) *SwitchElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *SwitchElement) FontWeight(s string) *SwitchElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *SwitchElement) GlyphOrientationHorizontal(s string) *SwitchElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *SwitchElement) GlyphOrientationVertical(s string) *SwitchElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *SwitchElement) Id(s string) *SwitchElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *SwitchElement) ImageRendering(a SwitchImageRendering) *SwitchElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func SwitchImageRenderingCustom(s string) SwitchImageRendering {
+	return SwitchImageRendering(s)
+}
+
+func (e *SwitchElement) Lang(s string) *SwitchElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *SwitchElement) LetterSpacing(s string) *SwitchElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *SwitchElement) LightingColor(s string) *SwitchElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *SwitchElement) MarkerEnd(s string) *SwitchElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *SwitchElement) MarkerMid(s string) *SwitchElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *SwitchElement) MarkerStart(s string) *SwitchElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *SwitchElement) Mask(s string) *SwitchElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *SwitchElement) Opacity(f float64) *SwitchElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *SwitchElement) Overflow(a SwitchOverflow) *SwitchElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func SwitchOverflowCustom(s string) SwitchOverflow {
+	return SwitchOverflow(s)
+}
+
+func (e *SwitchElement) PaintOrder(s string) *SwitchElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *SwitchElement) PointerEvents(a SwitchPointerEvents) *SwitchElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func SwitchPointerEventsCustom(s string) SwitchPointerEvents {
+	return SwitchPointerEvents(s)
+}
+
+func (e *SwitchElement) RequiredExtensions(s string) *SwitchElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *SwitchElement) ShapeRendering(a SwitchShapeRendering) *SwitchElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func SwitchShapeRenderingCustom(s string) SwitchShapeRendering {
+	return SwitchShapeRendering(s)
+}
+
+func (e *SwitchElement) StopColor(s string) *SwitchElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *SwitchElement) StopOpacity(f float64) *SwitchElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *SwitchElement) Stroke(s string) *SwitchElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *SwitchElement) StrokeWidth(s string) *SwitchElement {
-	e.attributes.Set("stroke-width", s)
+func (e *SwitchElement) StrokeDasharray(s string) *SwitchElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *SwitchElement) StrokeOpacity(f float64) *SwitchElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *SwitchElement) StrokeDashoffset(s string) *SwitchElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -538,210 +795,28 @@ func (e *SwitchElement) StrokeMiterlimit(f float64) *SwitchElement {
 	return e
 }
 
-func (e *SwitchElement) StrokeDasharray(s string) *SwitchElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *SwitchElement) StrokeOpacity(f float64) *SwitchElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *SwitchElement) StrokeDashoffset(s string) *SwitchElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *SwitchElement) StrokeWidth(s string) *SwitchElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *SwitchElement) Opacity(f float64) *SwitchElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *SwitchElement) Style(s string) *SwitchElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *SwitchElement) Color(s string) *SwitchElement {
-	e.attributes.Set("color", s)
+func (e *SwitchElement) Tabindex(i int) *SwitchElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *SwitchElement) Display(s string) *SwitchElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *SwitchElement) Visibility(a SwitchVisibility) *SwitchElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func SwitchVisibilityCustom(s string) SwitchVisibility {
-	return SwitchVisibility(s)
-}
-
-func (e *SwitchElement) ClipPath(s string) *SwitchElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *SwitchElement) ClipRule(a SwitchClipRule) *SwitchElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func SwitchClipRuleCustom(s string) SwitchClipRule {
-	return SwitchClipRule(s)
-}
-
-func (e *SwitchElement) Mask(s string) *SwitchElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *SwitchElement) Filter(s string) *SwitchElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *SwitchElement) Cursor(s string) *SwitchElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *SwitchElement) PointerEvents(a SwitchPointerEvents) *SwitchElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func SwitchPointerEventsCustom(s string) SwitchPointerEvents {
-	return SwitchPointerEvents(s)
-}
-
-func (e *SwitchElement) VectorEffect(a SwitchVectorEffect) *SwitchElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func SwitchVectorEffectCustom(s string) SwitchVectorEffect {
-	return SwitchVectorEffect(s)
-}
-
-func (e *SwitchElement) PaintOrder(s string) *SwitchElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *SwitchElement) ShapeRendering(a SwitchShapeRendering) *SwitchElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func SwitchShapeRenderingCustom(s string) SwitchShapeRendering {
-	return SwitchShapeRendering(s)
-}
-
-func (e *SwitchElement) ColorInterpolation(a SwitchColorInterpolation) *SwitchElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func SwitchColorInterpolationCustom(s string) SwitchColorInterpolation {
-	return SwitchColorInterpolation(s)
-}
-
-func (e *SwitchElement) ColorInterpolationFilters(a SwitchColorInterpolationFilters) *SwitchElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func SwitchColorInterpolationFiltersCustom(s string) SwitchColorInterpolationFilters {
-	return SwitchColorInterpolationFilters(s)
-}
-
-func (e *SwitchElement) FloodColor(s string) *SwitchElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *SwitchElement) FloodOpacity(f float64) *SwitchElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *SwitchElement) LightingColor(s string) *SwitchElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *SwitchElement) StopColor(s string) *SwitchElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *SwitchElement) StopOpacity(f float64) *SwitchElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *SwitchElement) MarkerStart(s string) *SwitchElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *SwitchElement) MarkerMid(s string) *SwitchElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *SwitchElement) MarkerEnd(s string) *SwitchElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *SwitchElement) FontFamily(s string) *SwitchElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *SwitchElement) FontSize(s string) *SwitchElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *SwitchElement) FontWeight(s string) *SwitchElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *SwitchElement) FontStyle(a SwitchFontStyle) *SwitchElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func SwitchFontStyleCustom(s string) SwitchFontStyle {
-	return SwitchFontStyle(s)
 }
 
 func (e *SwitchElement) TextAnchor(a SwitchTextAnchor) *SwitchElement {
@@ -754,40 +829,14 @@ func SwitchTextAnchorCustom(s string) SwitchTextAnchor {
 	return SwitchTextAnchor(s)
 }
 
-func (e *SwitchElement) DominantBaseline(a SwitchDominantBaseline) *SwitchElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func SwitchDominantBaselineCustom(s string) SwitchDominantBaseline {
-	return SwitchDominantBaseline(s)
-}
-
-func (e *SwitchElement) AlignmentBaseline(a SwitchAlignmentBaseline) *SwitchElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func SwitchAlignmentBaselineCustom(s string) SwitchAlignmentBaseline {
-	return SwitchAlignmentBaseline(s)
-}
-
-func (e *SwitchElement) LetterSpacing(s string) *SwitchElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *SwitchElement) WordSpacing(s string) *SwitchElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *SwitchElement) TextDecoration(s string) *SwitchElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *SwitchElement) TextOverflow(s string) *SwitchElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -802,24 +851,10 @@ func SwitchTextRenderingCustom(s string) SwitchTextRendering {
 	return SwitchTextRendering(s)
 }
 
-func (e *SwitchElement) ImageRendering(a SwitchImageRendering) *SwitchElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *SwitchElement) Transform(s string) *SwitchElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func SwitchImageRenderingCustom(s string) SwitchImageRendering {
-	return SwitchImageRendering(s)
-}
-
-func (e *SwitchElement) Overflow(a SwitchOverflow) *SwitchElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func SwitchOverflowCustom(s string) SwitchOverflow {
-	return SwitchOverflow(s)
 }
 
 func (e *SwitchElement) TransformBox(a SwitchTransformBox) *SwitchElement {
@@ -832,18 +867,46 @@ func SwitchTransformBoxCustom(s string) SwitchTransformBox {
 	return SwitchTransformBox(s)
 }
 
-func (e *SwitchElement) Direction(a SwitchDirection) *SwitchElement {
-	e.attributes.Set("direction", string(a))
+func (e *SwitchElement) TransformOrigin(s string) *SwitchElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func SwitchDirectionCustom(s string) SwitchDirection {
-	return SwitchDirection(s)
-}
-
 func (e *SwitchElement) UnicodeBidi(s string) *SwitchElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *SwitchElement) VectorEffect(a SwitchVectorEffect) *SwitchElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func SwitchVectorEffectCustom(s string) SwitchVectorEffect {
+	return SwitchVectorEffect(s)
+}
+
+func (e *SwitchElement) Visibility(a SwitchVisibility) *SwitchElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func SwitchVisibilityCustom(s string) SwitchVisibility {
+	return SwitchVisibility(s)
+}
+
+func (e *SwitchElement) WhiteSpace(s string) *SwitchElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *SwitchElement) WordSpacing(s string) *SwitchElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -858,8 +921,20 @@ func SwitchWritingModeCustom(s string) SwitchWritingMode {
 	return SwitchWritingMode(s)
 }
 
-func (e *SwitchElement) WhiteSpace(s string) *SwitchElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *SwitchElement) XmlLang(s string) *SwitchElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *SwitchElement) XmlSpace(a SwitchXmlSpace) *SwitchElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

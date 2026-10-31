@@ -171,134 +171,6 @@ const (
 	ViewZoomAndPanMagnify ViewZoomAndPan = "magnify"
 )
 
-type ViewXmlSpace string
-
-const (
-	ViewXmlSpaceDefault  ViewXmlSpace = "default"
-	ViewXmlSpacePreserve ViewXmlSpace = "preserve"
-)
-
-type ViewFillRule string
-
-const (
-	ViewFillRuleEvenodd ViewFillRule = "evenodd"
-	ViewFillRuleNonzero ViewFillRule = "nonzero"
-)
-
-type ViewStrokeLinecap string
-
-const (
-	ViewStrokeLinecapButt   ViewStrokeLinecap = "butt"
-	ViewStrokeLinecapRound  ViewStrokeLinecap = "round"
-	ViewStrokeLinecapSquare ViewStrokeLinecap = "square"
-)
-
-type ViewStrokeLinejoin string
-
-const (
-	ViewStrokeLinejoinArcs      ViewStrokeLinejoin = "arcs"
-	ViewStrokeLinejoinBevel     ViewStrokeLinejoin = "bevel"
-	ViewStrokeLinejoinMiter     ViewStrokeLinejoin = "miter"
-	ViewStrokeLinejoinMiterClip ViewStrokeLinejoin = "miter-clip"
-	ViewStrokeLinejoinRound     ViewStrokeLinejoin = "round"
-)
-
-type ViewVisibility string
-
-const (
-	ViewVisibilityCollapse ViewVisibility = "collapse"
-	ViewVisibilityHidden   ViewVisibility = "hidden"
-	ViewVisibilityVisible  ViewVisibility = "visible"
-)
-
-type ViewClipRule string
-
-const (
-	ViewClipRuleEvenodd ViewClipRule = "evenodd"
-	ViewClipRuleNonzero ViewClipRule = "nonzero"
-)
-
-type ViewPointerEvents string
-
-const (
-	ViewPointerEventsAll            ViewPointerEvents = "all"
-	ViewPointerEventsAuto           ViewPointerEvents = "auto"
-	ViewPointerEventsBoundingBox    ViewPointerEvents = "bounding-box"
-	ViewPointerEventsFill           ViewPointerEvents = "fill"
-	ViewPointerEventsNone           ViewPointerEvents = "none"
-	ViewPointerEventsPainted        ViewPointerEvents = "painted"
-	ViewPointerEventsStroke         ViewPointerEvents = "stroke"
-	ViewPointerEventsVisible        ViewPointerEvents = "visible"
-	ViewPointerEventsVisibleFill    ViewPointerEvents = "visibleFill"
-	ViewPointerEventsVisiblePainted ViewPointerEvents = "visiblePainted"
-	ViewPointerEventsVisibleStroke  ViewPointerEvents = "visibleStroke"
-)
-
-type ViewVectorEffect string
-
-const (
-	ViewVectorEffectFixedPosition    ViewVectorEffect = "fixed-position"
-	ViewVectorEffectNonRotation      ViewVectorEffect = "non-rotation"
-	ViewVectorEffectNonScalingSize   ViewVectorEffect = "non-scaling-size"
-	ViewVectorEffectNonScalingStroke ViewVectorEffect = "non-scaling-stroke"
-	ViewVectorEffectNone             ViewVectorEffect = "none"
-)
-
-type ViewShapeRendering string
-
-const (
-	ViewShapeRenderingAuto               ViewShapeRendering = "auto"
-	ViewShapeRenderingCrispEdges         ViewShapeRendering = "crispEdges"
-	ViewShapeRenderingGeometricPrecision ViewShapeRendering = "geometricPrecision"
-	ViewShapeRenderingOptimizeSpeed      ViewShapeRendering = "optimizeSpeed"
-)
-
-type ViewColorInterpolation string
-
-const (
-	ViewColorInterpolationAuto      ViewColorInterpolation = "auto"
-	ViewColorInterpolationLinearRGB ViewColorInterpolation = "linearRGB"
-	ViewColorInterpolationSRGB      ViewColorInterpolation = "sRGB"
-)
-
-type ViewColorInterpolationFilters string
-
-const (
-	ViewColorInterpolationFiltersAuto      ViewColorInterpolationFilters = "auto"
-	ViewColorInterpolationFiltersLinearRGB ViewColorInterpolationFilters = "linearRGB"
-	ViewColorInterpolationFiltersSRGB      ViewColorInterpolationFilters = "sRGB"
-)
-
-type ViewFontStyle string
-
-const (
-	ViewFontStyleItalic  ViewFontStyle = "italic"
-	ViewFontStyleNormal  ViewFontStyle = "normal"
-	ViewFontStyleOblique ViewFontStyle = "oblique"
-)
-
-type ViewTextAnchor string
-
-const (
-	ViewTextAnchorEnd    ViewTextAnchor = "end"
-	ViewTextAnchorMiddle ViewTextAnchor = "middle"
-	ViewTextAnchorStart  ViewTextAnchor = "start"
-)
-
-type ViewDominantBaseline string
-
-const (
-	ViewDominantBaselineAlphabetic   ViewDominantBaseline = "alphabetic"
-	ViewDominantBaselineAuto         ViewDominantBaseline = "auto"
-	ViewDominantBaselineCentral      ViewDominantBaseline = "central"
-	ViewDominantBaselineHanging      ViewDominantBaseline = "hanging"
-	ViewDominantBaselineIdeographic  ViewDominantBaseline = "ideographic"
-	ViewDominantBaselineMathematical ViewDominantBaseline = "mathematical"
-	ViewDominantBaselineMiddle       ViewDominantBaseline = "middle"
-	ViewDominantBaselineTextBottom   ViewDominantBaseline = "text-bottom"
-	ViewDominantBaselineTextTop      ViewDominantBaseline = "text-top"
-)
-
 type ViewAlignmentBaseline string
 
 const (
@@ -321,13 +193,63 @@ const (
 	ViewAlignmentBaselineTop            ViewAlignmentBaseline = "top"
 )
 
-type ViewTextRendering string
+type ViewClipRule string
 
 const (
-	ViewTextRenderingAuto               ViewTextRendering = "auto"
-	ViewTextRenderingGeometricPrecision ViewTextRendering = "geometricPrecision"
-	ViewTextRenderingOptimizeLegibility ViewTextRendering = "optimizeLegibility"
-	ViewTextRenderingOptimizeSpeed      ViewTextRendering = "optimizeSpeed"
+	ViewClipRuleEvenodd ViewClipRule = "evenodd"
+	ViewClipRuleNonzero ViewClipRule = "nonzero"
+)
+
+type ViewColorInterpolation string
+
+const (
+	ViewColorInterpolationAuto      ViewColorInterpolation = "auto"
+	ViewColorInterpolationLinearRGB ViewColorInterpolation = "linearRGB"
+	ViewColorInterpolationSRGB      ViewColorInterpolation = "sRGB"
+)
+
+type ViewColorInterpolationFilters string
+
+const (
+	ViewColorInterpolationFiltersAuto      ViewColorInterpolationFilters = "auto"
+	ViewColorInterpolationFiltersLinearRGB ViewColorInterpolationFilters = "linearRGB"
+	ViewColorInterpolationFiltersSRGB      ViewColorInterpolationFilters = "sRGB"
+)
+
+type ViewDirection string
+
+const (
+	ViewDirectionLtr ViewDirection = "ltr"
+	ViewDirectionRtl ViewDirection = "rtl"
+)
+
+type ViewDominantBaseline string
+
+const (
+	ViewDominantBaselineAlphabetic   ViewDominantBaseline = "alphabetic"
+	ViewDominantBaselineAuto         ViewDominantBaseline = "auto"
+	ViewDominantBaselineCentral      ViewDominantBaseline = "central"
+	ViewDominantBaselineHanging      ViewDominantBaseline = "hanging"
+	ViewDominantBaselineIdeographic  ViewDominantBaseline = "ideographic"
+	ViewDominantBaselineMathematical ViewDominantBaseline = "mathematical"
+	ViewDominantBaselineMiddle       ViewDominantBaseline = "middle"
+	ViewDominantBaselineTextBottom   ViewDominantBaseline = "text-bottom"
+	ViewDominantBaselineTextTop      ViewDominantBaseline = "text-top"
+)
+
+type ViewFillRule string
+
+const (
+	ViewFillRuleEvenodd ViewFillRule = "evenodd"
+	ViewFillRuleNonzero ViewFillRule = "nonzero"
+)
+
+type ViewFontStyle string
+
+const (
+	ViewFontStyleItalic  ViewFontStyle = "italic"
+	ViewFontStyleNormal  ViewFontStyle = "normal"
+	ViewFontStyleOblique ViewFontStyle = "oblique"
 )
 
 type ViewImageRendering string
@@ -352,6 +274,66 @@ const (
 	ViewOverflowVisible ViewOverflow = "visible"
 )
 
+type ViewPointerEvents string
+
+const (
+	ViewPointerEventsAll            ViewPointerEvents = "all"
+	ViewPointerEventsAuto           ViewPointerEvents = "auto"
+	ViewPointerEventsBoundingBox    ViewPointerEvents = "bounding-box"
+	ViewPointerEventsFill           ViewPointerEvents = "fill"
+	ViewPointerEventsNone           ViewPointerEvents = "none"
+	ViewPointerEventsPainted        ViewPointerEvents = "painted"
+	ViewPointerEventsStroke         ViewPointerEvents = "stroke"
+	ViewPointerEventsVisible        ViewPointerEvents = "visible"
+	ViewPointerEventsVisibleFill    ViewPointerEvents = "visibleFill"
+	ViewPointerEventsVisiblePainted ViewPointerEvents = "visiblePainted"
+	ViewPointerEventsVisibleStroke  ViewPointerEvents = "visibleStroke"
+)
+
+type ViewShapeRendering string
+
+const (
+	ViewShapeRenderingAuto               ViewShapeRendering = "auto"
+	ViewShapeRenderingCrispEdges         ViewShapeRendering = "crispEdges"
+	ViewShapeRenderingGeometricPrecision ViewShapeRendering = "geometricPrecision"
+	ViewShapeRenderingOptimizeSpeed      ViewShapeRendering = "optimizeSpeed"
+)
+
+type ViewStrokeLinecap string
+
+const (
+	ViewStrokeLinecapButt   ViewStrokeLinecap = "butt"
+	ViewStrokeLinecapRound  ViewStrokeLinecap = "round"
+	ViewStrokeLinecapSquare ViewStrokeLinecap = "square"
+)
+
+type ViewStrokeLinejoin string
+
+const (
+	ViewStrokeLinejoinArcs      ViewStrokeLinejoin = "arcs"
+	ViewStrokeLinejoinBevel     ViewStrokeLinejoin = "bevel"
+	ViewStrokeLinejoinMiter     ViewStrokeLinejoin = "miter"
+	ViewStrokeLinejoinMiterClip ViewStrokeLinejoin = "miter-clip"
+	ViewStrokeLinejoinRound     ViewStrokeLinejoin = "round"
+)
+
+type ViewTextAnchor string
+
+const (
+	ViewTextAnchorEnd    ViewTextAnchor = "end"
+	ViewTextAnchorMiddle ViewTextAnchor = "middle"
+	ViewTextAnchorStart  ViewTextAnchor = "start"
+)
+
+type ViewTextRendering string
+
+const (
+	ViewTextRenderingAuto               ViewTextRendering = "auto"
+	ViewTextRenderingGeometricPrecision ViewTextRendering = "geometricPrecision"
+	ViewTextRenderingOptimizeLegibility ViewTextRendering = "optimizeLegibility"
+	ViewTextRenderingOptimizeSpeed      ViewTextRendering = "optimizeSpeed"
+)
+
 type ViewTransformBox string
 
 const (
@@ -362,11 +344,22 @@ const (
 	ViewTransformBoxViewBox    ViewTransformBox = "view-box"
 )
 
-type ViewDirection string
+type ViewVectorEffect string
 
 const (
-	ViewDirectionLtr ViewDirection = "ltr"
-	ViewDirectionRtl ViewDirection = "rtl"
+	ViewVectorEffectFixedPosition    ViewVectorEffect = "fixed-position"
+	ViewVectorEffectNonRotation      ViewVectorEffect = "non-rotation"
+	ViewVectorEffectNonScalingSize   ViewVectorEffect = "non-scaling-size"
+	ViewVectorEffectNonScalingStroke ViewVectorEffect = "non-scaling-stroke"
+	ViewVectorEffectNone             ViewVectorEffect = "none"
+)
+
+type ViewVisibility string
+
+const (
+	ViewVisibilityCollapse ViewVisibility = "collapse"
+	ViewVisibilityHidden   ViewVisibility = "hidden"
+	ViewVisibilityVisible  ViewVisibility = "visible"
 )
 
 type ViewWritingMode string
@@ -385,11 +378,12 @@ const (
 	ViewWritingModeVerticalRl   ViewWritingMode = "vertical-rl"
 )
 
-func (e *ViewElement) ViewBox(s string) *ViewElement {
-	e.attributes.Set("viewBox", s)
+type ViewXmlSpace string
 
-	return e
-}
+const (
+	ViewXmlSpaceDefault  ViewXmlSpace = "default"
+	ViewXmlSpacePreserve ViewXmlSpace = "preserve"
+)
 
 func (e *ViewElement) PreserveAspectRatio(s string) *ViewElement {
 	e.attributes.Set("preserveAspectRatio", s)
@@ -397,14 +391,57 @@ func (e *ViewElement) PreserveAspectRatio(s string) *ViewElement {
 	return e
 }
 
+func (e *ViewElement) ViewBox(s string) *ViewElement {
+	e.attributes.Set("viewBox", s)
+
+	return e
+}
+
+// ZoomAndPan sets the "zoomAndPan" attribute.
+//
+// Deprecated: the "zoomAndPan" attribute is deprecated or obsolete in its source specification.
 func (e *ViewElement) ZoomAndPan(a ViewZoomAndPan) *ViewElement {
 	e.attributes.Set("zoomAndPan", string(a))
 
 	return e
 }
 
-func (e *ViewElement) Id(s string) *ViewElement {
-	e.attributes.Set("id", s)
+func (e *ViewElement) AlignmentBaseline(a ViewAlignmentBaseline) *ViewElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func ViewAlignmentBaselineCustom(s string) ViewAlignmentBaseline {
+	return ViewAlignmentBaseline(s)
+}
+
+func (e *ViewElement) AriaUnsafe(name string, s string) *ViewElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *ViewElement) Aria(name string, s string) *ViewElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ViewElement) Autofocus(b bool) *ViewElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *ViewElement) BaselineShift(s string) *ViewElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -415,40 +452,59 @@ func (e *ViewElement) Class(s ...string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) Style(s string) *ViewElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *ViewElement) Clip(s string) *ViewElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *ViewElement) Tabindex(i int) *ViewElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *ViewElement) ClipPath(s string) *ViewElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *ViewElement) Lang(s string) *ViewElement {
-	e.attributes.Set("lang", s)
+func (e *ViewElement) ClipRule(a ViewClipRule) *ViewElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *ViewElement) XmlLang(s string) *ViewElement {
-	e.attributes.Set("xml:lang", s)
+func ViewClipRuleCustom(s string) ViewClipRule {
+	return ViewClipRule(s)
+}
+
+func (e *ViewElement) Color(s string) *ViewElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *ViewElement) XmlSpace(a ViewXmlSpace) *ViewElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *ViewElement) ColorInterpolation(a ViewColorInterpolation) *ViewElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ViewElement) Autofocus(b bool) *ViewElement {
-	e.attributes.SetBool("autofocus", b)
+func ViewColorInterpolationCustom(s string) ViewColorInterpolation {
+	return ViewColorInterpolation(s)
+}
+
+func (e *ViewElement) ColorInterpolationFilters(a ViewColorInterpolationFilters) *ViewElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func ViewColorInterpolationFiltersCustom(s string) ViewColorInterpolationFilters {
+	return ViewColorInterpolationFilters(s)
+}
+
+func (e *ViewElement) Cursor(s string) *ViewElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -469,20 +525,30 @@ func (e *ViewElement) Data(name string, s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) AriaUnsafe(name string, s string) *ViewElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *ViewElement) Direction(a ViewDirection) *ViewElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *ViewElement) Aria(name string, s string) *ViewElement {
-	tag := strings.ToLower("aria-" + name)
+func ViewDirectionCustom(s string) ViewDirection {
+	return ViewDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *ViewElement) Display(s string) *ViewElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *ViewElement) DominantBaseline(a ViewDominantBaseline) *ViewElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func ViewDominantBaselineCustom(s string) ViewDominantBaseline {
+	return ViewDominantBaseline(s)
 }
 
 func (e *ViewElement) Fill(s string) *ViewElement {
@@ -507,20 +573,220 @@ func ViewFillRuleCustom(s string) ViewFillRule {
 	return ViewFillRule(s)
 }
 
+func (e *ViewElement) Filter(s string) *ViewElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *ViewElement) FloodColor(s string) *ViewElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *ViewElement) FloodOpacity(f float64) *ViewElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ViewElement) FontFamily(s string) *ViewElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *ViewElement) FontSize(s string) *ViewElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *ViewElement) FontSizeAdjust(s string) *ViewElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *ViewElement) FontStretch(s string) *ViewElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *ViewElement) FontStyle(a ViewFontStyle) *ViewElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func ViewFontStyleCustom(s string) ViewFontStyle {
+	return ViewFontStyle(s)
+}
+
+func (e *ViewElement) FontVariant(s string) *ViewElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *ViewElement) FontWeight(s string) *ViewElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *ViewElement) GlyphOrientationHorizontal(s string) *ViewElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *ViewElement) GlyphOrientationVertical(s string) *ViewElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *ViewElement) Id(s string) *ViewElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *ViewElement) ImageRendering(a ViewImageRendering) *ViewElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func ViewImageRenderingCustom(s string) ViewImageRendering {
+	return ViewImageRendering(s)
+}
+
+func (e *ViewElement) Lang(s string) *ViewElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *ViewElement) LetterSpacing(s string) *ViewElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *ViewElement) LightingColor(s string) *ViewElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *ViewElement) MarkerEnd(s string) *ViewElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *ViewElement) MarkerMid(s string) *ViewElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *ViewElement) MarkerStart(s string) *ViewElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *ViewElement) Mask(s string) *ViewElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *ViewElement) Opacity(f float64) *ViewElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *ViewElement) Overflow(a ViewOverflow) *ViewElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func ViewOverflowCustom(s string) ViewOverflow {
+	return ViewOverflow(s)
+}
+
+func (e *ViewElement) PaintOrder(s string) *ViewElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *ViewElement) PointerEvents(a ViewPointerEvents) *ViewElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func ViewPointerEventsCustom(s string) ViewPointerEvents {
+	return ViewPointerEvents(s)
+}
+
+func (e *ViewElement) RequiredExtensions(s string) *ViewElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *ViewElement) ShapeRendering(a ViewShapeRendering) *ViewElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func ViewShapeRenderingCustom(s string) ViewShapeRendering {
+	return ViewShapeRendering(s)
+}
+
+func (e *ViewElement) StopColor(s string) *ViewElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *ViewElement) StopOpacity(f float64) *ViewElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *ViewElement) Stroke(s string) *ViewElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *ViewElement) StrokeWidth(s string) *ViewElement {
-	e.attributes.Set("stroke-width", s)
+func (e *ViewElement) StrokeDasharray(s string) *ViewElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *ViewElement) StrokeOpacity(f float64) *ViewElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ViewElement) StrokeDashoffset(s string) *ViewElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -551,210 +817,28 @@ func (e *ViewElement) StrokeMiterlimit(f float64) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) StrokeDasharray(s string) *ViewElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *ViewElement) StrokeOpacity(f float64) *ViewElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *ViewElement) StrokeDashoffset(s string) *ViewElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *ViewElement) StrokeWidth(s string) *ViewElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *ViewElement) Opacity(f float64) *ViewElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *ViewElement) Style(s string) *ViewElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *ViewElement) Color(s string) *ViewElement {
-	e.attributes.Set("color", s)
+func (e *ViewElement) Tabindex(i int) *ViewElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *ViewElement) Display(s string) *ViewElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *ViewElement) Visibility(a ViewVisibility) *ViewElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func ViewVisibilityCustom(s string) ViewVisibility {
-	return ViewVisibility(s)
-}
-
-func (e *ViewElement) ClipPath(s string) *ViewElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *ViewElement) ClipRule(a ViewClipRule) *ViewElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func ViewClipRuleCustom(s string) ViewClipRule {
-	return ViewClipRule(s)
-}
-
-func (e *ViewElement) Mask(s string) *ViewElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *ViewElement) Filter(s string) *ViewElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *ViewElement) Cursor(s string) *ViewElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *ViewElement) PointerEvents(a ViewPointerEvents) *ViewElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func ViewPointerEventsCustom(s string) ViewPointerEvents {
-	return ViewPointerEvents(s)
-}
-
-func (e *ViewElement) VectorEffect(a ViewVectorEffect) *ViewElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func ViewVectorEffectCustom(s string) ViewVectorEffect {
-	return ViewVectorEffect(s)
-}
-
-func (e *ViewElement) PaintOrder(s string) *ViewElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *ViewElement) ShapeRendering(a ViewShapeRendering) *ViewElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func ViewShapeRenderingCustom(s string) ViewShapeRendering {
-	return ViewShapeRendering(s)
-}
-
-func (e *ViewElement) ColorInterpolation(a ViewColorInterpolation) *ViewElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func ViewColorInterpolationCustom(s string) ViewColorInterpolation {
-	return ViewColorInterpolation(s)
-}
-
-func (e *ViewElement) ColorInterpolationFilters(a ViewColorInterpolationFilters) *ViewElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func ViewColorInterpolationFiltersCustom(s string) ViewColorInterpolationFilters {
-	return ViewColorInterpolationFilters(s)
-}
-
-func (e *ViewElement) FloodColor(s string) *ViewElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *ViewElement) FloodOpacity(f float64) *ViewElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ViewElement) LightingColor(s string) *ViewElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *ViewElement) StopColor(s string) *ViewElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *ViewElement) StopOpacity(f float64) *ViewElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *ViewElement) MarkerStart(s string) *ViewElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *ViewElement) MarkerMid(s string) *ViewElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *ViewElement) MarkerEnd(s string) *ViewElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *ViewElement) FontFamily(s string) *ViewElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *ViewElement) FontSize(s string) *ViewElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *ViewElement) FontWeight(s string) *ViewElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *ViewElement) FontStyle(a ViewFontStyle) *ViewElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func ViewFontStyleCustom(s string) ViewFontStyle {
-	return ViewFontStyle(s)
 }
 
 func (e *ViewElement) TextAnchor(a ViewTextAnchor) *ViewElement {
@@ -767,40 +851,14 @@ func ViewTextAnchorCustom(s string) ViewTextAnchor {
 	return ViewTextAnchor(s)
 }
 
-func (e *ViewElement) DominantBaseline(a ViewDominantBaseline) *ViewElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func ViewDominantBaselineCustom(s string) ViewDominantBaseline {
-	return ViewDominantBaseline(s)
-}
-
-func (e *ViewElement) AlignmentBaseline(a ViewAlignmentBaseline) *ViewElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func ViewAlignmentBaselineCustom(s string) ViewAlignmentBaseline {
-	return ViewAlignmentBaseline(s)
-}
-
-func (e *ViewElement) LetterSpacing(s string) *ViewElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *ViewElement) WordSpacing(s string) *ViewElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *ViewElement) TextDecoration(s string) *ViewElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *ViewElement) TextOverflow(s string) *ViewElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -815,24 +873,10 @@ func ViewTextRenderingCustom(s string) ViewTextRendering {
 	return ViewTextRendering(s)
 }
 
-func (e *ViewElement) ImageRendering(a ViewImageRendering) *ViewElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *ViewElement) Transform(s string) *ViewElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func ViewImageRenderingCustom(s string) ViewImageRendering {
-	return ViewImageRendering(s)
-}
-
-func (e *ViewElement) Overflow(a ViewOverflow) *ViewElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func ViewOverflowCustom(s string) ViewOverflow {
-	return ViewOverflow(s)
 }
 
 func (e *ViewElement) TransformBox(a ViewTransformBox) *ViewElement {
@@ -845,18 +889,46 @@ func ViewTransformBoxCustom(s string) ViewTransformBox {
 	return ViewTransformBox(s)
 }
 
-func (e *ViewElement) Direction(a ViewDirection) *ViewElement {
-	e.attributes.Set("direction", string(a))
+func (e *ViewElement) TransformOrigin(s string) *ViewElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func ViewDirectionCustom(s string) ViewDirection {
-	return ViewDirection(s)
-}
-
 func (e *ViewElement) UnicodeBidi(s string) *ViewElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *ViewElement) VectorEffect(a ViewVectorEffect) *ViewElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func ViewVectorEffectCustom(s string) ViewVectorEffect {
+	return ViewVectorEffect(s)
+}
+
+func (e *ViewElement) Visibility(a ViewVisibility) *ViewElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func ViewVisibilityCustom(s string) ViewVisibility {
+	return ViewVisibility(s)
+}
+
+func (e *ViewElement) WhiteSpace(s string) *ViewElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *ViewElement) WordSpacing(s string) *ViewElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -871,8 +943,20 @@ func ViewWritingModeCustom(s string) ViewWritingMode {
 	return ViewWritingMode(s)
 }
 
-func (e *ViewElement) WhiteSpace(s string) *ViewElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *ViewElement) XmlLang(s string) *ViewElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *ViewElement) XmlSpace(a ViewXmlSpace) *ViewElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

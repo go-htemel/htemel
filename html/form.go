@@ -171,6 +171,14 @@ const (
 	FormAutocompleteOn  FormAutocomplete = "on"
 )
 
+type FormEnctype string
+
+const (
+	FormEnctypeApplicationXWwwFormUrlencoded FormEnctype = "application/x-www-form-urlencoded"
+	FormEnctypeMultipartFormData             FormEnctype = "multipart/form-data"
+	FormEnctypeTextPlain                     FormEnctype = "text/plain"
+)
+
 type FormMethod string
 
 const (
@@ -255,6 +263,15 @@ const (
 	FormInputmodeUrl     FormInputmode = "url"
 )
 
+type FormPopover string
+
+const (
+	FormPopoverAuto   FormPopover = "auto"
+	FormPopoverHint   FormPopover = "hint"
+	FormPopoverManual FormPopover = "manual"
+	FormPopoverEmpty  FormPopover = ""
+)
+
 type FormSpellcheck string
 
 const (
@@ -285,6 +302,8 @@ func (e *FormElement) AcceptCharset(s string) *FormElement {
 	return e
 }
 
+// Action sets the "action" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FormElement) Action(s string) *FormElement {
 	e.attributes.Set("action", s)
 
@@ -297,8 +316,8 @@ func (e *FormElement) Autocomplete(a FormAutocomplete) *FormElement {
 	return e
 }
 
-func (e *FormElement) Enctype(s string) *FormElement {
-	e.attributes.Set("enctype", s)
+func (e *FormElement) Enctype(a FormEnctype) *FormElement {
+	e.attributes.Set("enctype", string(a))
 
 	return e
 }
@@ -323,14 +342,14 @@ func (e *FormElement) Novalidate(b bool) *FormElement {
 	return e
 }
 
-func (e *FormElement) Target(s string) *FormElement {
-	e.attributes.Set("target", s)
+func (e *FormElement) Rel(s ...string) *FormElement {
+	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
 
-func (e *FormElement) Rel(s ...string) *FormElement {
-	e.attributes.Set("rel", strings.Join(s, " "))
+func (e *FormElement) Target(s string) *FormElement {
+	e.attributes.Set("target", s)
 
 	return e
 }
@@ -435,6 +454,26 @@ func (e *FormElement) Enterkeyhint(a FormEnterkeyhint) *FormElement {
 	return e
 }
 
+func (e *FormElement) Exportparts(s string) *FormElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *FormElement) Headingoffset(i int) *FormElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FormElement) Headingreset(b bool) *FormElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FormElement) Hidden(v ...FormHidden) *FormElement {
@@ -467,6 +506,14 @@ func (e *FormElement) Inputmode(a FormInputmode) *FormElement {
 	return e
 }
 
+func (e *FormElement) Is(s string) *FormElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FormElement) Itemid(s string) *FormElement {
 	e.attributes.Set("itemid", s)
 
@@ -511,8 +558,20 @@ func (e *FormElement) Nonce(s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Popover(s string) *FormElement {
-	e.attributes.Set("popover", s)
+func (e *FormElement) Part(s ...string) *FormElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Popover(v ...FormPopover) *FormElement {
+	var val FormPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

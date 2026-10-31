@@ -240,6 +240,15 @@ const (
 	LegendInputmodeUrl     LegendInputmode = "url"
 )
 
+type LegendPopover string
+
+const (
+	LegendPopoverAuto   LegendPopover = "auto"
+	LegendPopoverHint   LegendPopover = "hint"
+	LegendPopoverManual LegendPopover = "manual"
+	LegendPopoverEmpty  LegendPopover = ""
+)
+
 type LegendSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *LegendElement) Enterkeyhint(a LegendEnterkeyhint) *LegendElement {
 	return e
 }
 
+func (e *LegendElement) Exportparts(s string) *LegendElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *LegendElement) Headingoffset(i int) *LegendElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *LegendElement) Headingreset(b bool) *LegendElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *LegendElement) Hidden(v ...LegendHidden) *LegendElement {
@@ -396,6 +425,14 @@ func (e *LegendElement) Inputmode(a LegendInputmode) *LegendElement {
 	return e
 }
 
+func (e *LegendElement) Is(s string) *LegendElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *LegendElement) Itemid(s string) *LegendElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *LegendElement) Nonce(s string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Popover(s string) *LegendElement {
-	e.attributes.Set("popover", s)
+func (e *LegendElement) Part(s ...string) *LegendElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Popover(v ...LegendPopover) *LegendElement {
+	var val LegendPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

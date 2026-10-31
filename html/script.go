@@ -167,12 +167,6 @@ func (e *ScriptElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ScriptBlocking string
-
-const (
-	ScriptBlockingRender ScriptBlocking = "render"
-)
-
 type ScriptCrossorigin string
 
 const (
@@ -187,6 +181,28 @@ const (
 	ScriptFetchpriorityAuto ScriptFetchpriority = "auto"
 	ScriptFetchpriorityHigh ScriptFetchpriority = "high"
 	ScriptFetchpriorityLow  ScriptFetchpriority = "low"
+)
+
+type ScriptReferrerpolicy string
+
+const (
+	ScriptReferrerpolicyNoReferrer                  ScriptReferrerpolicy = "no-referrer"
+	ScriptReferrerpolicyNoReferrerWhenDowngrade     ScriptReferrerpolicy = "no-referrer-when-downgrade"
+	ScriptReferrerpolicyOrigin                      ScriptReferrerpolicy = "origin"
+	ScriptReferrerpolicyOriginWhenCrossOrigin       ScriptReferrerpolicy = "origin-when-cross-origin"
+	ScriptReferrerpolicySameOrigin                  ScriptReferrerpolicy = "same-origin"
+	ScriptReferrerpolicyStrictOrigin                ScriptReferrerpolicy = "strict-origin"
+	ScriptReferrerpolicyStrictOriginWhenCrossOrigin ScriptReferrerpolicy = "strict-origin-when-cross-origin"
+	ScriptReferrerpolicyUnsafeUrl                   ScriptReferrerpolicy = "unsafe-url"
+	ScriptReferrerpolicyEmpty                       ScriptReferrerpolicy = ""
+)
+
+type ScriptType string
+
+const (
+	ScriptTypeImportmap        ScriptType = "importmap"
+	ScriptTypeModule           ScriptType = "module"
+	ScriptTypeSpeculationrules ScriptType = "speculationrules"
 )
 
 type ScriptAutocapitalize string
@@ -265,6 +281,15 @@ const (
 	ScriptInputmodeUrl     ScriptInputmode = "url"
 )
 
+type ScriptPopover string
+
+const (
+	ScriptPopoverAuto   ScriptPopover = "auto"
+	ScriptPopoverHint   ScriptPopover = "hint"
+	ScriptPopoverManual ScriptPopover = "manual"
+	ScriptPopoverEmpty  ScriptPopover = ""
+)
+
 type ScriptSpellcheck string
 
 const (
@@ -289,26 +314,6 @@ const (
 	ScriptWritingsuggestionsEmpty ScriptWritingsuggestions = ""
 )
 
-func (e *ScriptElement) Type(s string) *ScriptElement {
-	e.attributes.Set("type", s)
-
-	return e
-}
-
-func (e *ScriptElement) Src(s string) *ScriptElement {
-	e.attributes.Set("src", s)
-
-	return e
-}
-
-// Nomodule sets the boolean attribute "nomodule". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ScriptElement) Nomodule(b bool) *ScriptElement {
-	e.attributes.SetBool("nomodule", b)
-
-	return e
-}
-
 // Async sets the boolean attribute "async". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *ScriptElement) Async(b bool) *ScriptElement {
@@ -317,16 +322,8 @@ func (e *ScriptElement) Async(b bool) *ScriptElement {
 	return e
 }
 
-// Defer sets the boolean attribute "defer". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *ScriptElement) Defer(b bool) *ScriptElement {
-	e.attributes.SetBool("defer", b)
-
-	return e
-}
-
-func (e *ScriptElement) Blocking(a ScriptBlocking) *ScriptElement {
-	e.attributes.Set("blocking", string(a))
+func (e *ScriptElement) Blocking(s ...string) *ScriptElement {
+	e.attributes.Set("blocking", strings.Join(s, " "))
 
 	return e
 }
@@ -343,8 +340,16 @@ func (e *ScriptElement) Crossorigin(v ...ScriptCrossorigin) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Referrerpolicy(s string) *ScriptElement {
-	e.attributes.Set("referrerpolicy", s)
+// Defer sets the boolean attribute "defer". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ScriptElement) Defer(b bool) *ScriptElement {
+	e.attributes.SetBool("defer", b)
+
+	return e
+}
+
+func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
+	e.attributes.Set("fetchpriority", string(a))
 
 	return e
 }
@@ -355,10 +360,42 @@ func (e *ScriptElement) Integrity(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
-	e.attributes.Set("fetchpriority", string(a))
+// Nomodule sets the boolean attribute "nomodule". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ScriptElement) Nomodule(b bool) *ScriptElement {
+	e.attributes.SetBool("nomodule", b)
 
 	return e
+}
+
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Referrerpolicy(v ...ScriptReferrerpolicy) *ScriptElement {
+	var val ScriptReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *ScriptElement) Src(s string) *ScriptElement {
+	e.attributes.Set("src", s)
+
+	return e
+}
+
+func (e *ScriptElement) Type(a ScriptType) *ScriptElement {
+	e.attributes.Set("type", string(a))
+
+	return e
+}
+
+func ScriptTypeCustom(s string) ScriptType {
+	return ScriptType(s)
 }
 
 func (e *ScriptElement) Accesskey(r rune) *ScriptElement {
@@ -461,6 +498,26 @@ func (e *ScriptElement) Enterkeyhint(a ScriptEnterkeyhint) *ScriptElement {
 	return e
 }
 
+func (e *ScriptElement) Exportparts(s string) *ScriptElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ScriptElement) Headingoffset(i int) *ScriptElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ScriptElement) Headingreset(b bool) *ScriptElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ScriptElement) Hidden(v ...ScriptHidden) *ScriptElement {
@@ -493,6 +550,14 @@ func (e *ScriptElement) Inputmode(a ScriptInputmode) *ScriptElement {
 	return e
 }
 
+func (e *ScriptElement) Is(s string) *ScriptElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ScriptElement) Itemid(s string) *ScriptElement {
 	e.attributes.Set("itemid", s)
 
@@ -537,8 +602,20 @@ func (e *ScriptElement) Nonce(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Popover(s string) *ScriptElement {
-	e.attributes.Set("popover", s)
+func (e *ScriptElement) Part(s ...string) *ScriptElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Popover(v ...ScriptPopover) *ScriptElement {
+	var val ScriptPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

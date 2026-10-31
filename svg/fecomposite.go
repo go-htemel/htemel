@@ -176,134 +176,6 @@ const (
 	FeCompositeOperatorXor        FeCompositeOperator = "xor"
 )
 
-type FeCompositeXmlSpace string
-
-const (
-	FeCompositeXmlSpaceDefault  FeCompositeXmlSpace = "default"
-	FeCompositeXmlSpacePreserve FeCompositeXmlSpace = "preserve"
-)
-
-type FeCompositeFillRule string
-
-const (
-	FeCompositeFillRuleEvenodd FeCompositeFillRule = "evenodd"
-	FeCompositeFillRuleNonzero FeCompositeFillRule = "nonzero"
-)
-
-type FeCompositeStrokeLinecap string
-
-const (
-	FeCompositeStrokeLinecapButt   FeCompositeStrokeLinecap = "butt"
-	FeCompositeStrokeLinecapRound  FeCompositeStrokeLinecap = "round"
-	FeCompositeStrokeLinecapSquare FeCompositeStrokeLinecap = "square"
-)
-
-type FeCompositeStrokeLinejoin string
-
-const (
-	FeCompositeStrokeLinejoinArcs      FeCompositeStrokeLinejoin = "arcs"
-	FeCompositeStrokeLinejoinBevel     FeCompositeStrokeLinejoin = "bevel"
-	FeCompositeStrokeLinejoinMiter     FeCompositeStrokeLinejoin = "miter"
-	FeCompositeStrokeLinejoinMiterClip FeCompositeStrokeLinejoin = "miter-clip"
-	FeCompositeStrokeLinejoinRound     FeCompositeStrokeLinejoin = "round"
-)
-
-type FeCompositeVisibility string
-
-const (
-	FeCompositeVisibilityCollapse FeCompositeVisibility = "collapse"
-	FeCompositeVisibilityHidden   FeCompositeVisibility = "hidden"
-	FeCompositeVisibilityVisible  FeCompositeVisibility = "visible"
-)
-
-type FeCompositeClipRule string
-
-const (
-	FeCompositeClipRuleEvenodd FeCompositeClipRule = "evenodd"
-	FeCompositeClipRuleNonzero FeCompositeClipRule = "nonzero"
-)
-
-type FeCompositePointerEvents string
-
-const (
-	FeCompositePointerEventsAll            FeCompositePointerEvents = "all"
-	FeCompositePointerEventsAuto           FeCompositePointerEvents = "auto"
-	FeCompositePointerEventsBoundingBox    FeCompositePointerEvents = "bounding-box"
-	FeCompositePointerEventsFill           FeCompositePointerEvents = "fill"
-	FeCompositePointerEventsNone           FeCompositePointerEvents = "none"
-	FeCompositePointerEventsPainted        FeCompositePointerEvents = "painted"
-	FeCompositePointerEventsStroke         FeCompositePointerEvents = "stroke"
-	FeCompositePointerEventsVisible        FeCompositePointerEvents = "visible"
-	FeCompositePointerEventsVisibleFill    FeCompositePointerEvents = "visibleFill"
-	FeCompositePointerEventsVisiblePainted FeCompositePointerEvents = "visiblePainted"
-	FeCompositePointerEventsVisibleStroke  FeCompositePointerEvents = "visibleStroke"
-)
-
-type FeCompositeVectorEffect string
-
-const (
-	FeCompositeVectorEffectFixedPosition    FeCompositeVectorEffect = "fixed-position"
-	FeCompositeVectorEffectNonRotation      FeCompositeVectorEffect = "non-rotation"
-	FeCompositeVectorEffectNonScalingSize   FeCompositeVectorEffect = "non-scaling-size"
-	FeCompositeVectorEffectNonScalingStroke FeCompositeVectorEffect = "non-scaling-stroke"
-	FeCompositeVectorEffectNone             FeCompositeVectorEffect = "none"
-)
-
-type FeCompositeShapeRendering string
-
-const (
-	FeCompositeShapeRenderingAuto               FeCompositeShapeRendering = "auto"
-	FeCompositeShapeRenderingCrispEdges         FeCompositeShapeRendering = "crispEdges"
-	FeCompositeShapeRenderingGeometricPrecision FeCompositeShapeRendering = "geometricPrecision"
-	FeCompositeShapeRenderingOptimizeSpeed      FeCompositeShapeRendering = "optimizeSpeed"
-)
-
-type FeCompositeColorInterpolation string
-
-const (
-	FeCompositeColorInterpolationAuto      FeCompositeColorInterpolation = "auto"
-	FeCompositeColorInterpolationLinearRGB FeCompositeColorInterpolation = "linearRGB"
-	FeCompositeColorInterpolationSRGB      FeCompositeColorInterpolation = "sRGB"
-)
-
-type FeCompositeColorInterpolationFilters string
-
-const (
-	FeCompositeColorInterpolationFiltersAuto      FeCompositeColorInterpolationFilters = "auto"
-	FeCompositeColorInterpolationFiltersLinearRGB FeCompositeColorInterpolationFilters = "linearRGB"
-	FeCompositeColorInterpolationFiltersSRGB      FeCompositeColorInterpolationFilters = "sRGB"
-)
-
-type FeCompositeFontStyle string
-
-const (
-	FeCompositeFontStyleItalic  FeCompositeFontStyle = "italic"
-	FeCompositeFontStyleNormal  FeCompositeFontStyle = "normal"
-	FeCompositeFontStyleOblique FeCompositeFontStyle = "oblique"
-)
-
-type FeCompositeTextAnchor string
-
-const (
-	FeCompositeTextAnchorEnd    FeCompositeTextAnchor = "end"
-	FeCompositeTextAnchorMiddle FeCompositeTextAnchor = "middle"
-	FeCompositeTextAnchorStart  FeCompositeTextAnchor = "start"
-)
-
-type FeCompositeDominantBaseline string
-
-const (
-	FeCompositeDominantBaselineAlphabetic   FeCompositeDominantBaseline = "alphabetic"
-	FeCompositeDominantBaselineAuto         FeCompositeDominantBaseline = "auto"
-	FeCompositeDominantBaselineCentral      FeCompositeDominantBaseline = "central"
-	FeCompositeDominantBaselineHanging      FeCompositeDominantBaseline = "hanging"
-	FeCompositeDominantBaselineIdeographic  FeCompositeDominantBaseline = "ideographic"
-	FeCompositeDominantBaselineMathematical FeCompositeDominantBaseline = "mathematical"
-	FeCompositeDominantBaselineMiddle       FeCompositeDominantBaseline = "middle"
-	FeCompositeDominantBaselineTextBottom   FeCompositeDominantBaseline = "text-bottom"
-	FeCompositeDominantBaselineTextTop      FeCompositeDominantBaseline = "text-top"
-)
-
 type FeCompositeAlignmentBaseline string
 
 const (
@@ -326,13 +198,63 @@ const (
 	FeCompositeAlignmentBaselineTop            FeCompositeAlignmentBaseline = "top"
 )
 
-type FeCompositeTextRendering string
+type FeCompositeClipRule string
 
 const (
-	FeCompositeTextRenderingAuto               FeCompositeTextRendering = "auto"
-	FeCompositeTextRenderingGeometricPrecision FeCompositeTextRendering = "geometricPrecision"
-	FeCompositeTextRenderingOptimizeLegibility FeCompositeTextRendering = "optimizeLegibility"
-	FeCompositeTextRenderingOptimizeSpeed      FeCompositeTextRendering = "optimizeSpeed"
+	FeCompositeClipRuleEvenodd FeCompositeClipRule = "evenodd"
+	FeCompositeClipRuleNonzero FeCompositeClipRule = "nonzero"
+)
+
+type FeCompositeColorInterpolation string
+
+const (
+	FeCompositeColorInterpolationAuto      FeCompositeColorInterpolation = "auto"
+	FeCompositeColorInterpolationLinearRGB FeCompositeColorInterpolation = "linearRGB"
+	FeCompositeColorInterpolationSRGB      FeCompositeColorInterpolation = "sRGB"
+)
+
+type FeCompositeColorInterpolationFilters string
+
+const (
+	FeCompositeColorInterpolationFiltersAuto      FeCompositeColorInterpolationFilters = "auto"
+	FeCompositeColorInterpolationFiltersLinearRGB FeCompositeColorInterpolationFilters = "linearRGB"
+	FeCompositeColorInterpolationFiltersSRGB      FeCompositeColorInterpolationFilters = "sRGB"
+)
+
+type FeCompositeDirection string
+
+const (
+	FeCompositeDirectionLtr FeCompositeDirection = "ltr"
+	FeCompositeDirectionRtl FeCompositeDirection = "rtl"
+)
+
+type FeCompositeDominantBaseline string
+
+const (
+	FeCompositeDominantBaselineAlphabetic   FeCompositeDominantBaseline = "alphabetic"
+	FeCompositeDominantBaselineAuto         FeCompositeDominantBaseline = "auto"
+	FeCompositeDominantBaselineCentral      FeCompositeDominantBaseline = "central"
+	FeCompositeDominantBaselineHanging      FeCompositeDominantBaseline = "hanging"
+	FeCompositeDominantBaselineIdeographic  FeCompositeDominantBaseline = "ideographic"
+	FeCompositeDominantBaselineMathematical FeCompositeDominantBaseline = "mathematical"
+	FeCompositeDominantBaselineMiddle       FeCompositeDominantBaseline = "middle"
+	FeCompositeDominantBaselineTextBottom   FeCompositeDominantBaseline = "text-bottom"
+	FeCompositeDominantBaselineTextTop      FeCompositeDominantBaseline = "text-top"
+)
+
+type FeCompositeFillRule string
+
+const (
+	FeCompositeFillRuleEvenodd FeCompositeFillRule = "evenodd"
+	FeCompositeFillRuleNonzero FeCompositeFillRule = "nonzero"
+)
+
+type FeCompositeFontStyle string
+
+const (
+	FeCompositeFontStyleItalic  FeCompositeFontStyle = "italic"
+	FeCompositeFontStyleNormal  FeCompositeFontStyle = "normal"
+	FeCompositeFontStyleOblique FeCompositeFontStyle = "oblique"
 )
 
 type FeCompositeImageRendering string
@@ -357,6 +279,66 @@ const (
 	FeCompositeOverflowVisible FeCompositeOverflow = "visible"
 )
 
+type FeCompositePointerEvents string
+
+const (
+	FeCompositePointerEventsAll            FeCompositePointerEvents = "all"
+	FeCompositePointerEventsAuto           FeCompositePointerEvents = "auto"
+	FeCompositePointerEventsBoundingBox    FeCompositePointerEvents = "bounding-box"
+	FeCompositePointerEventsFill           FeCompositePointerEvents = "fill"
+	FeCompositePointerEventsNone           FeCompositePointerEvents = "none"
+	FeCompositePointerEventsPainted        FeCompositePointerEvents = "painted"
+	FeCompositePointerEventsStroke         FeCompositePointerEvents = "stroke"
+	FeCompositePointerEventsVisible        FeCompositePointerEvents = "visible"
+	FeCompositePointerEventsVisibleFill    FeCompositePointerEvents = "visibleFill"
+	FeCompositePointerEventsVisiblePainted FeCompositePointerEvents = "visiblePainted"
+	FeCompositePointerEventsVisibleStroke  FeCompositePointerEvents = "visibleStroke"
+)
+
+type FeCompositeShapeRendering string
+
+const (
+	FeCompositeShapeRenderingAuto               FeCompositeShapeRendering = "auto"
+	FeCompositeShapeRenderingCrispEdges         FeCompositeShapeRendering = "crispEdges"
+	FeCompositeShapeRenderingGeometricPrecision FeCompositeShapeRendering = "geometricPrecision"
+	FeCompositeShapeRenderingOptimizeSpeed      FeCompositeShapeRendering = "optimizeSpeed"
+)
+
+type FeCompositeStrokeLinecap string
+
+const (
+	FeCompositeStrokeLinecapButt   FeCompositeStrokeLinecap = "butt"
+	FeCompositeStrokeLinecapRound  FeCompositeStrokeLinecap = "round"
+	FeCompositeStrokeLinecapSquare FeCompositeStrokeLinecap = "square"
+)
+
+type FeCompositeStrokeLinejoin string
+
+const (
+	FeCompositeStrokeLinejoinArcs      FeCompositeStrokeLinejoin = "arcs"
+	FeCompositeStrokeLinejoinBevel     FeCompositeStrokeLinejoin = "bevel"
+	FeCompositeStrokeLinejoinMiter     FeCompositeStrokeLinejoin = "miter"
+	FeCompositeStrokeLinejoinMiterClip FeCompositeStrokeLinejoin = "miter-clip"
+	FeCompositeStrokeLinejoinRound     FeCompositeStrokeLinejoin = "round"
+)
+
+type FeCompositeTextAnchor string
+
+const (
+	FeCompositeTextAnchorEnd    FeCompositeTextAnchor = "end"
+	FeCompositeTextAnchorMiddle FeCompositeTextAnchor = "middle"
+	FeCompositeTextAnchorStart  FeCompositeTextAnchor = "start"
+)
+
+type FeCompositeTextRendering string
+
+const (
+	FeCompositeTextRenderingAuto               FeCompositeTextRendering = "auto"
+	FeCompositeTextRenderingGeometricPrecision FeCompositeTextRendering = "geometricPrecision"
+	FeCompositeTextRenderingOptimizeLegibility FeCompositeTextRendering = "optimizeLegibility"
+	FeCompositeTextRenderingOptimizeSpeed      FeCompositeTextRendering = "optimizeSpeed"
+)
+
 type FeCompositeTransformBox string
 
 const (
@@ -367,11 +349,22 @@ const (
 	FeCompositeTransformBoxViewBox    FeCompositeTransformBox = "view-box"
 )
 
-type FeCompositeDirection string
+type FeCompositeVectorEffect string
 
 const (
-	FeCompositeDirectionLtr FeCompositeDirection = "ltr"
-	FeCompositeDirectionRtl FeCompositeDirection = "rtl"
+	FeCompositeVectorEffectFixedPosition    FeCompositeVectorEffect = "fixed-position"
+	FeCompositeVectorEffectNonRotation      FeCompositeVectorEffect = "non-rotation"
+	FeCompositeVectorEffectNonScalingSize   FeCompositeVectorEffect = "non-scaling-size"
+	FeCompositeVectorEffectNonScalingStroke FeCompositeVectorEffect = "non-scaling-stroke"
+	FeCompositeVectorEffectNone             FeCompositeVectorEffect = "none"
+)
+
+type FeCompositeVisibility string
+
+const (
+	FeCompositeVisibilityCollapse FeCompositeVisibility = "collapse"
+	FeCompositeVisibilityHidden   FeCompositeVisibility = "hidden"
+	FeCompositeVisibilityVisible  FeCompositeVisibility = "visible"
 )
 
 type FeCompositeWritingMode string
@@ -390,32 +383,15 @@ const (
 	FeCompositeWritingModeVerticalRl   FeCompositeWritingMode = "vertical-rl"
 )
 
-func (e *FeCompositeElement) X(s string) *FeCompositeElement {
-	e.attributes.Set("x", s)
+type FeCompositeXmlSpace string
 
-	return e
-}
-
-func (e *FeCompositeElement) Y(s string) *FeCompositeElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Width(s string) *FeCompositeElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
+const (
+	FeCompositeXmlSpaceDefault  FeCompositeXmlSpace = "default"
+	FeCompositeXmlSpacePreserve FeCompositeXmlSpace = "preserve"
+)
 
 func (e *FeCompositeElement) Height(s string) *FeCompositeElement {
 	e.attributes.Set("height", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Result(s string) *FeCompositeElement {
-	e.attributes.Set("result", s)
 
 	return e
 }
@@ -428,12 +404,6 @@ func (e *FeCompositeElement) In(s string) *FeCompositeElement {
 
 func (e *FeCompositeElement) In2(s string) *FeCompositeElement {
 	e.attributes.Set("in2", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Operator(a FeCompositeOperator) *FeCompositeElement {
-	e.attributes.Set("operator", string(a))
 
 	return e
 }
@@ -462,8 +432,72 @@ func (e *FeCompositeElement) K4(f float64) *FeCompositeElement {
 	return e
 }
 
-func (e *FeCompositeElement) Id(s string) *FeCompositeElement {
-	e.attributes.Set("id", s)
+func (e *FeCompositeElement) Operator(a FeCompositeOperator) *FeCompositeElement {
+	e.attributes.Set("operator", string(a))
+
+	return e
+}
+
+func (e *FeCompositeElement) Result(s string) *FeCompositeElement {
+	e.attributes.Set("result", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Width(s string) *FeCompositeElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) X(s string) *FeCompositeElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Y(s string) *FeCompositeElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) AlignmentBaseline(a FeCompositeAlignmentBaseline) *FeCompositeElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeCompositeAlignmentBaselineCustom(s string) FeCompositeAlignmentBaseline {
+	return FeCompositeAlignmentBaseline(s)
+}
+
+func (e *FeCompositeElement) AriaUnsafe(name string, s string) *FeCompositeElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Aria(name string, s string) *FeCompositeElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeCompositeElement) Autofocus(b bool) *FeCompositeElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeCompositeElement) BaselineShift(s string) *FeCompositeElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -474,40 +508,59 @@ func (e *FeCompositeElement) Class(s ...string) *FeCompositeElement {
 	return e
 }
 
-func (e *FeCompositeElement) Style(s string) *FeCompositeElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeCompositeElement) Clip(s string) *FeCompositeElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) Tabindex(i int) *FeCompositeElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeCompositeElement) ClipPath(s string) *FeCompositeElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) Lang(s string) *FeCompositeElement {
-	e.attributes.Set("lang", s)
+func (e *FeCompositeElement) ClipRule(a FeCompositeClipRule) *FeCompositeElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeCompositeElement) XmlLang(s string) *FeCompositeElement {
-	e.attributes.Set("xml:lang", s)
+func FeCompositeClipRuleCustom(s string) FeCompositeClipRule {
+	return FeCompositeClipRule(s)
+}
+
+func (e *FeCompositeElement) Color(s string) *FeCompositeElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) XmlSpace(a FeCompositeXmlSpace) *FeCompositeElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeCompositeElement) ColorInterpolation(a FeCompositeColorInterpolation) *FeCompositeElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeCompositeElement) Autofocus(b bool) *FeCompositeElement {
-	e.attributes.SetBool("autofocus", b)
+func FeCompositeColorInterpolationCustom(s string) FeCompositeColorInterpolation {
+	return FeCompositeColorInterpolation(s)
+}
+
+func (e *FeCompositeElement) ColorInterpolationFilters(a FeCompositeColorInterpolationFilters) *FeCompositeElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeCompositeColorInterpolationFiltersCustom(s string) FeCompositeColorInterpolationFilters {
+	return FeCompositeColorInterpolationFilters(s)
+}
+
+func (e *FeCompositeElement) Cursor(s string) *FeCompositeElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -528,20 +581,30 @@ func (e *FeCompositeElement) Data(name string, s string) *FeCompositeElement {
 	return e
 }
 
-func (e *FeCompositeElement) AriaUnsafe(name string, s string) *FeCompositeElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeCompositeElement) Direction(a FeCompositeDirection) *FeCompositeElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeCompositeElement) Aria(name string, s string) *FeCompositeElement {
-	tag := strings.ToLower("aria-" + name)
+func FeCompositeDirectionCustom(s string) FeCompositeDirection {
+	return FeCompositeDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeCompositeElement) Display(s string) *FeCompositeElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeCompositeElement) DominantBaseline(a FeCompositeDominantBaseline) *FeCompositeElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeCompositeDominantBaselineCustom(s string) FeCompositeDominantBaseline {
+	return FeCompositeDominantBaseline(s)
 }
 
 func (e *FeCompositeElement) Fill(s string) *FeCompositeElement {
@@ -566,20 +629,220 @@ func FeCompositeFillRuleCustom(s string) FeCompositeFillRule {
 	return FeCompositeFillRule(s)
 }
 
+func (e *FeCompositeElement) Filter(s string) *FeCompositeElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FloodColor(s string) *FeCompositeElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FloodOpacity(f float64) *FeCompositeElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeCompositeElement) FontFamily(s string) *FeCompositeElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FontSize(s string) *FeCompositeElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FontSizeAdjust(s string) *FeCompositeElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FontStretch(s string) *FeCompositeElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FontStyle(a FeCompositeFontStyle) *FeCompositeElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeCompositeFontStyleCustom(s string) FeCompositeFontStyle {
+	return FeCompositeFontStyle(s)
+}
+
+func (e *FeCompositeElement) FontVariant(s string) *FeCompositeElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) FontWeight(s string) *FeCompositeElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeCompositeElement) GlyphOrientationHorizontal(s string) *FeCompositeElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeCompositeElement) GlyphOrientationVertical(s string) *FeCompositeElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Id(s string) *FeCompositeElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) ImageRendering(a FeCompositeImageRendering) *FeCompositeElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeCompositeImageRenderingCustom(s string) FeCompositeImageRendering {
+	return FeCompositeImageRendering(s)
+}
+
+func (e *FeCompositeElement) Lang(s string) *FeCompositeElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) LetterSpacing(s string) *FeCompositeElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) LightingColor(s string) *FeCompositeElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) MarkerEnd(s string) *FeCompositeElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) MarkerMid(s string) *FeCompositeElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) MarkerStart(s string) *FeCompositeElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Mask(s string) *FeCompositeElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) Opacity(f float64) *FeCompositeElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeCompositeElement) Overflow(a FeCompositeOverflow) *FeCompositeElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeCompositeOverflowCustom(s string) FeCompositeOverflow {
+	return FeCompositeOverflow(s)
+}
+
+func (e *FeCompositeElement) PaintOrder(s string) *FeCompositeElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) PointerEvents(a FeCompositePointerEvents) *FeCompositeElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeCompositePointerEventsCustom(s string) FeCompositePointerEvents {
+	return FeCompositePointerEvents(s)
+}
+
+func (e *FeCompositeElement) RequiredExtensions(s string) *FeCompositeElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) ShapeRendering(a FeCompositeShapeRendering) *FeCompositeElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeCompositeShapeRenderingCustom(s string) FeCompositeShapeRendering {
+	return FeCompositeShapeRendering(s)
+}
+
+func (e *FeCompositeElement) StopColor(s string) *FeCompositeElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) StopOpacity(f float64) *FeCompositeElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeCompositeElement) Stroke(s string) *FeCompositeElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) StrokeWidth(s string) *FeCompositeElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeCompositeElement) StrokeDasharray(s string) *FeCompositeElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) StrokeOpacity(f float64) *FeCompositeElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeCompositeElement) StrokeDashoffset(s string) *FeCompositeElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -610,210 +873,28 @@ func (e *FeCompositeElement) StrokeMiterlimit(f float64) *FeCompositeElement {
 	return e
 }
 
-func (e *FeCompositeElement) StrokeDasharray(s string) *FeCompositeElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeCompositeElement) StrokeOpacity(f float64) *FeCompositeElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeCompositeElement) StrokeDashoffset(s string) *FeCompositeElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeCompositeElement) StrokeWidth(s string) *FeCompositeElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) Opacity(f float64) *FeCompositeElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeCompositeElement) Style(s string) *FeCompositeElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeCompositeElement) Color(s string) *FeCompositeElement {
-	e.attributes.Set("color", s)
+func (e *FeCompositeElement) Tabindex(i int) *FeCompositeElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeCompositeElement) Display(s string) *FeCompositeElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Visibility(a FeCompositeVisibility) *FeCompositeElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeCompositeVisibilityCustom(s string) FeCompositeVisibility {
-	return FeCompositeVisibility(s)
-}
-
-func (e *FeCompositeElement) ClipPath(s string) *FeCompositeElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) ClipRule(a FeCompositeClipRule) *FeCompositeElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeCompositeClipRuleCustom(s string) FeCompositeClipRule {
-	return FeCompositeClipRule(s)
-}
-
-func (e *FeCompositeElement) Mask(s string) *FeCompositeElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Filter(s string) *FeCompositeElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) Cursor(s string) *FeCompositeElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) PointerEvents(a FeCompositePointerEvents) *FeCompositeElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeCompositePointerEventsCustom(s string) FeCompositePointerEvents {
-	return FeCompositePointerEvents(s)
-}
-
-func (e *FeCompositeElement) VectorEffect(a FeCompositeVectorEffect) *FeCompositeElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeCompositeVectorEffectCustom(s string) FeCompositeVectorEffect {
-	return FeCompositeVectorEffect(s)
-}
-
-func (e *FeCompositeElement) PaintOrder(s string) *FeCompositeElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) ShapeRendering(a FeCompositeShapeRendering) *FeCompositeElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeCompositeShapeRenderingCustom(s string) FeCompositeShapeRendering {
-	return FeCompositeShapeRendering(s)
-}
-
-func (e *FeCompositeElement) ColorInterpolation(a FeCompositeColorInterpolation) *FeCompositeElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeCompositeColorInterpolationCustom(s string) FeCompositeColorInterpolation {
-	return FeCompositeColorInterpolation(s)
-}
-
-func (e *FeCompositeElement) ColorInterpolationFilters(a FeCompositeColorInterpolationFilters) *FeCompositeElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeCompositeColorInterpolationFiltersCustom(s string) FeCompositeColorInterpolationFilters {
-	return FeCompositeColorInterpolationFilters(s)
-}
-
-func (e *FeCompositeElement) FloodColor(s string) *FeCompositeElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) FloodOpacity(f float64) *FeCompositeElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeCompositeElement) LightingColor(s string) *FeCompositeElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) StopColor(s string) *FeCompositeElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) StopOpacity(f float64) *FeCompositeElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeCompositeElement) MarkerStart(s string) *FeCompositeElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) MarkerMid(s string) *FeCompositeElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) MarkerEnd(s string) *FeCompositeElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) FontFamily(s string) *FeCompositeElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) FontSize(s string) *FeCompositeElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) FontWeight(s string) *FeCompositeElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) FontStyle(a FeCompositeFontStyle) *FeCompositeElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeCompositeFontStyleCustom(s string) FeCompositeFontStyle {
-	return FeCompositeFontStyle(s)
 }
 
 func (e *FeCompositeElement) TextAnchor(a FeCompositeTextAnchor) *FeCompositeElement {
@@ -826,40 +907,14 @@ func FeCompositeTextAnchorCustom(s string) FeCompositeTextAnchor {
 	return FeCompositeTextAnchor(s)
 }
 
-func (e *FeCompositeElement) DominantBaseline(a FeCompositeDominantBaseline) *FeCompositeElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeCompositeDominantBaselineCustom(s string) FeCompositeDominantBaseline {
-	return FeCompositeDominantBaseline(s)
-}
-
-func (e *FeCompositeElement) AlignmentBaseline(a FeCompositeAlignmentBaseline) *FeCompositeElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeCompositeAlignmentBaselineCustom(s string) FeCompositeAlignmentBaseline {
-	return FeCompositeAlignmentBaseline(s)
-}
-
-func (e *FeCompositeElement) LetterSpacing(s string) *FeCompositeElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeCompositeElement) WordSpacing(s string) *FeCompositeElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeCompositeElement) TextDecoration(s string) *FeCompositeElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) TextOverflow(s string) *FeCompositeElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -874,24 +929,10 @@ func FeCompositeTextRenderingCustom(s string) FeCompositeTextRendering {
 	return FeCompositeTextRendering(s)
 }
 
-func (e *FeCompositeElement) ImageRendering(a FeCompositeImageRendering) *FeCompositeElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeCompositeElement) Transform(s string) *FeCompositeElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeCompositeImageRenderingCustom(s string) FeCompositeImageRendering {
-	return FeCompositeImageRendering(s)
-}
-
-func (e *FeCompositeElement) Overflow(a FeCompositeOverflow) *FeCompositeElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeCompositeOverflowCustom(s string) FeCompositeOverflow {
-	return FeCompositeOverflow(s)
 }
 
 func (e *FeCompositeElement) TransformBox(a FeCompositeTransformBox) *FeCompositeElement {
@@ -904,18 +945,46 @@ func FeCompositeTransformBoxCustom(s string) FeCompositeTransformBox {
 	return FeCompositeTransformBox(s)
 }
 
-func (e *FeCompositeElement) Direction(a FeCompositeDirection) *FeCompositeElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeCompositeElement) TransformOrigin(s string) *FeCompositeElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeCompositeDirectionCustom(s string) FeCompositeDirection {
-	return FeCompositeDirection(s)
-}
-
 func (e *FeCompositeElement) UnicodeBidi(s string) *FeCompositeElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) VectorEffect(a FeCompositeVectorEffect) *FeCompositeElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeCompositeVectorEffectCustom(s string) FeCompositeVectorEffect {
+	return FeCompositeVectorEffect(s)
+}
+
+func (e *FeCompositeElement) Visibility(a FeCompositeVisibility) *FeCompositeElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeCompositeVisibilityCustom(s string) FeCompositeVisibility {
+	return FeCompositeVisibility(s)
+}
+
+func (e *FeCompositeElement) WhiteSpace(s string) *FeCompositeElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeCompositeElement) WordSpacing(s string) *FeCompositeElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -930,8 +999,20 @@ func FeCompositeWritingModeCustom(s string) FeCompositeWritingMode {
 	return FeCompositeWritingMode(s)
 }
 
-func (e *FeCompositeElement) WhiteSpace(s string) *FeCompositeElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeCompositeElement) XmlLang(s string) *FeCompositeElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeCompositeElement) XmlSpace(a FeCompositeXmlSpace) *FeCompositeElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

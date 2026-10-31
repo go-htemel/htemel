@@ -240,6 +240,15 @@ const (
 	ObjectInputmodeUrl     ObjectInputmode = "url"
 )
 
+type ObjectPopover string
+
+const (
+	ObjectPopoverAuto   ObjectPopover = "auto"
+	ObjectPopoverHint   ObjectPopover = "hint"
+	ObjectPopoverManual ObjectPopover = "manual"
+	ObjectPopoverEmpty  ObjectPopover = ""
+)
+
 type ObjectSpellcheck string
 
 const (
@@ -264,20 +273,10 @@ const (
 	ObjectWritingsuggestionsEmpty ObjectWritingsuggestions = ""
 )
 
+// Data sets the "data" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ObjectElement) Data(s string) *ObjectElement {
 	e.attributes.Set("data", s)
-
-	return e
-}
-
-func (e *ObjectElement) Type(s string) *ObjectElement {
-	e.attributes.Set("type", s)
-
-	return e
-}
-
-func (e *ObjectElement) Name(s string) *ObjectElement {
-	e.attributes.Set("name", s)
 
 	return e
 }
@@ -288,14 +287,26 @@ func (e *ObjectElement) Form(s string) *ObjectElement {
 	return e
 }
 
-func (e *ObjectElement) Width(i int) *ObjectElement {
-	e.attributes.Set("width", strconv.Itoa(i))
+func (e *ObjectElement) Height(i int) *ObjectElement {
+	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
 
-func (e *ObjectElement) Height(i int) *ObjectElement {
-	e.attributes.Set("height", strconv.Itoa(i))
+func (e *ObjectElement) Name(s string) *ObjectElement {
+	e.attributes.Set("name", s)
+
+	return e
+}
+
+func (e *ObjectElement) Type(s string) *ObjectElement {
+	e.attributes.Set("type", s)
+
+	return e
+}
+
+func (e *ObjectElement) Width(i int) *ObjectElement {
+	e.attributes.Set("width", strconv.Itoa(i))
 
 	return e
 }
@@ -384,6 +395,26 @@ func (e *ObjectElement) Enterkeyhint(a ObjectEnterkeyhint) *ObjectElement {
 	return e
 }
 
+func (e *ObjectElement) Exportparts(s string) *ObjectElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ObjectElement) Headingoffset(i int) *ObjectElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ObjectElement) Headingreset(b bool) *ObjectElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ObjectElement) Hidden(v ...ObjectHidden) *ObjectElement {
@@ -416,6 +447,14 @@ func (e *ObjectElement) Inputmode(a ObjectInputmode) *ObjectElement {
 	return e
 }
 
+func (e *ObjectElement) Is(s string) *ObjectElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ObjectElement) Itemid(s string) *ObjectElement {
 	e.attributes.Set("itemid", s)
 
@@ -460,8 +499,20 @@ func (e *ObjectElement) Nonce(s string) *ObjectElement {
 	return e
 }
 
-func (e *ObjectElement) Popover(s string) *ObjectElement {
-	e.attributes.Set("popover", s)
+func (e *ObjectElement) Part(s ...string) *ObjectElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ObjectElement) Popover(v ...ObjectPopover) *ObjectElement {
+	var val ObjectPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

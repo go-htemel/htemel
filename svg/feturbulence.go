@@ -178,134 +178,6 @@ const (
 	FeTurbulenceTypeTurbulence   FeTurbulenceType = "turbulence"
 )
 
-type FeTurbulenceXmlSpace string
-
-const (
-	FeTurbulenceXmlSpaceDefault  FeTurbulenceXmlSpace = "default"
-	FeTurbulenceXmlSpacePreserve FeTurbulenceXmlSpace = "preserve"
-)
-
-type FeTurbulenceFillRule string
-
-const (
-	FeTurbulenceFillRuleEvenodd FeTurbulenceFillRule = "evenodd"
-	FeTurbulenceFillRuleNonzero FeTurbulenceFillRule = "nonzero"
-)
-
-type FeTurbulenceStrokeLinecap string
-
-const (
-	FeTurbulenceStrokeLinecapButt   FeTurbulenceStrokeLinecap = "butt"
-	FeTurbulenceStrokeLinecapRound  FeTurbulenceStrokeLinecap = "round"
-	FeTurbulenceStrokeLinecapSquare FeTurbulenceStrokeLinecap = "square"
-)
-
-type FeTurbulenceStrokeLinejoin string
-
-const (
-	FeTurbulenceStrokeLinejoinArcs      FeTurbulenceStrokeLinejoin = "arcs"
-	FeTurbulenceStrokeLinejoinBevel     FeTurbulenceStrokeLinejoin = "bevel"
-	FeTurbulenceStrokeLinejoinMiter     FeTurbulenceStrokeLinejoin = "miter"
-	FeTurbulenceStrokeLinejoinMiterClip FeTurbulenceStrokeLinejoin = "miter-clip"
-	FeTurbulenceStrokeLinejoinRound     FeTurbulenceStrokeLinejoin = "round"
-)
-
-type FeTurbulenceVisibility string
-
-const (
-	FeTurbulenceVisibilityCollapse FeTurbulenceVisibility = "collapse"
-	FeTurbulenceVisibilityHidden   FeTurbulenceVisibility = "hidden"
-	FeTurbulenceVisibilityVisible  FeTurbulenceVisibility = "visible"
-)
-
-type FeTurbulenceClipRule string
-
-const (
-	FeTurbulenceClipRuleEvenodd FeTurbulenceClipRule = "evenodd"
-	FeTurbulenceClipRuleNonzero FeTurbulenceClipRule = "nonzero"
-)
-
-type FeTurbulencePointerEvents string
-
-const (
-	FeTurbulencePointerEventsAll            FeTurbulencePointerEvents = "all"
-	FeTurbulencePointerEventsAuto           FeTurbulencePointerEvents = "auto"
-	FeTurbulencePointerEventsBoundingBox    FeTurbulencePointerEvents = "bounding-box"
-	FeTurbulencePointerEventsFill           FeTurbulencePointerEvents = "fill"
-	FeTurbulencePointerEventsNone           FeTurbulencePointerEvents = "none"
-	FeTurbulencePointerEventsPainted        FeTurbulencePointerEvents = "painted"
-	FeTurbulencePointerEventsStroke         FeTurbulencePointerEvents = "stroke"
-	FeTurbulencePointerEventsVisible        FeTurbulencePointerEvents = "visible"
-	FeTurbulencePointerEventsVisibleFill    FeTurbulencePointerEvents = "visibleFill"
-	FeTurbulencePointerEventsVisiblePainted FeTurbulencePointerEvents = "visiblePainted"
-	FeTurbulencePointerEventsVisibleStroke  FeTurbulencePointerEvents = "visibleStroke"
-)
-
-type FeTurbulenceVectorEffect string
-
-const (
-	FeTurbulenceVectorEffectFixedPosition    FeTurbulenceVectorEffect = "fixed-position"
-	FeTurbulenceVectorEffectNonRotation      FeTurbulenceVectorEffect = "non-rotation"
-	FeTurbulenceVectorEffectNonScalingSize   FeTurbulenceVectorEffect = "non-scaling-size"
-	FeTurbulenceVectorEffectNonScalingStroke FeTurbulenceVectorEffect = "non-scaling-stroke"
-	FeTurbulenceVectorEffectNone             FeTurbulenceVectorEffect = "none"
-)
-
-type FeTurbulenceShapeRendering string
-
-const (
-	FeTurbulenceShapeRenderingAuto               FeTurbulenceShapeRendering = "auto"
-	FeTurbulenceShapeRenderingCrispEdges         FeTurbulenceShapeRendering = "crispEdges"
-	FeTurbulenceShapeRenderingGeometricPrecision FeTurbulenceShapeRendering = "geometricPrecision"
-	FeTurbulenceShapeRenderingOptimizeSpeed      FeTurbulenceShapeRendering = "optimizeSpeed"
-)
-
-type FeTurbulenceColorInterpolation string
-
-const (
-	FeTurbulenceColorInterpolationAuto      FeTurbulenceColorInterpolation = "auto"
-	FeTurbulenceColorInterpolationLinearRGB FeTurbulenceColorInterpolation = "linearRGB"
-	FeTurbulenceColorInterpolationSRGB      FeTurbulenceColorInterpolation = "sRGB"
-)
-
-type FeTurbulenceColorInterpolationFilters string
-
-const (
-	FeTurbulenceColorInterpolationFiltersAuto      FeTurbulenceColorInterpolationFilters = "auto"
-	FeTurbulenceColorInterpolationFiltersLinearRGB FeTurbulenceColorInterpolationFilters = "linearRGB"
-	FeTurbulenceColorInterpolationFiltersSRGB      FeTurbulenceColorInterpolationFilters = "sRGB"
-)
-
-type FeTurbulenceFontStyle string
-
-const (
-	FeTurbulenceFontStyleItalic  FeTurbulenceFontStyle = "italic"
-	FeTurbulenceFontStyleNormal  FeTurbulenceFontStyle = "normal"
-	FeTurbulenceFontStyleOblique FeTurbulenceFontStyle = "oblique"
-)
-
-type FeTurbulenceTextAnchor string
-
-const (
-	FeTurbulenceTextAnchorEnd    FeTurbulenceTextAnchor = "end"
-	FeTurbulenceTextAnchorMiddle FeTurbulenceTextAnchor = "middle"
-	FeTurbulenceTextAnchorStart  FeTurbulenceTextAnchor = "start"
-)
-
-type FeTurbulenceDominantBaseline string
-
-const (
-	FeTurbulenceDominantBaselineAlphabetic   FeTurbulenceDominantBaseline = "alphabetic"
-	FeTurbulenceDominantBaselineAuto         FeTurbulenceDominantBaseline = "auto"
-	FeTurbulenceDominantBaselineCentral      FeTurbulenceDominantBaseline = "central"
-	FeTurbulenceDominantBaselineHanging      FeTurbulenceDominantBaseline = "hanging"
-	FeTurbulenceDominantBaselineIdeographic  FeTurbulenceDominantBaseline = "ideographic"
-	FeTurbulenceDominantBaselineMathematical FeTurbulenceDominantBaseline = "mathematical"
-	FeTurbulenceDominantBaselineMiddle       FeTurbulenceDominantBaseline = "middle"
-	FeTurbulenceDominantBaselineTextBottom   FeTurbulenceDominantBaseline = "text-bottom"
-	FeTurbulenceDominantBaselineTextTop      FeTurbulenceDominantBaseline = "text-top"
-)
-
 type FeTurbulenceAlignmentBaseline string
 
 const (
@@ -328,13 +200,63 @@ const (
 	FeTurbulenceAlignmentBaselineTop            FeTurbulenceAlignmentBaseline = "top"
 )
 
-type FeTurbulenceTextRendering string
+type FeTurbulenceClipRule string
 
 const (
-	FeTurbulenceTextRenderingAuto               FeTurbulenceTextRendering = "auto"
-	FeTurbulenceTextRenderingGeometricPrecision FeTurbulenceTextRendering = "geometricPrecision"
-	FeTurbulenceTextRenderingOptimizeLegibility FeTurbulenceTextRendering = "optimizeLegibility"
-	FeTurbulenceTextRenderingOptimizeSpeed      FeTurbulenceTextRendering = "optimizeSpeed"
+	FeTurbulenceClipRuleEvenodd FeTurbulenceClipRule = "evenodd"
+	FeTurbulenceClipRuleNonzero FeTurbulenceClipRule = "nonzero"
+)
+
+type FeTurbulenceColorInterpolation string
+
+const (
+	FeTurbulenceColorInterpolationAuto      FeTurbulenceColorInterpolation = "auto"
+	FeTurbulenceColorInterpolationLinearRGB FeTurbulenceColorInterpolation = "linearRGB"
+	FeTurbulenceColorInterpolationSRGB      FeTurbulenceColorInterpolation = "sRGB"
+)
+
+type FeTurbulenceColorInterpolationFilters string
+
+const (
+	FeTurbulenceColorInterpolationFiltersAuto      FeTurbulenceColorInterpolationFilters = "auto"
+	FeTurbulenceColorInterpolationFiltersLinearRGB FeTurbulenceColorInterpolationFilters = "linearRGB"
+	FeTurbulenceColorInterpolationFiltersSRGB      FeTurbulenceColorInterpolationFilters = "sRGB"
+)
+
+type FeTurbulenceDirection string
+
+const (
+	FeTurbulenceDirectionLtr FeTurbulenceDirection = "ltr"
+	FeTurbulenceDirectionRtl FeTurbulenceDirection = "rtl"
+)
+
+type FeTurbulenceDominantBaseline string
+
+const (
+	FeTurbulenceDominantBaselineAlphabetic   FeTurbulenceDominantBaseline = "alphabetic"
+	FeTurbulenceDominantBaselineAuto         FeTurbulenceDominantBaseline = "auto"
+	FeTurbulenceDominantBaselineCentral      FeTurbulenceDominantBaseline = "central"
+	FeTurbulenceDominantBaselineHanging      FeTurbulenceDominantBaseline = "hanging"
+	FeTurbulenceDominantBaselineIdeographic  FeTurbulenceDominantBaseline = "ideographic"
+	FeTurbulenceDominantBaselineMathematical FeTurbulenceDominantBaseline = "mathematical"
+	FeTurbulenceDominantBaselineMiddle       FeTurbulenceDominantBaseline = "middle"
+	FeTurbulenceDominantBaselineTextBottom   FeTurbulenceDominantBaseline = "text-bottom"
+	FeTurbulenceDominantBaselineTextTop      FeTurbulenceDominantBaseline = "text-top"
+)
+
+type FeTurbulenceFillRule string
+
+const (
+	FeTurbulenceFillRuleEvenodd FeTurbulenceFillRule = "evenodd"
+	FeTurbulenceFillRuleNonzero FeTurbulenceFillRule = "nonzero"
+)
+
+type FeTurbulenceFontStyle string
+
+const (
+	FeTurbulenceFontStyleItalic  FeTurbulenceFontStyle = "italic"
+	FeTurbulenceFontStyleNormal  FeTurbulenceFontStyle = "normal"
+	FeTurbulenceFontStyleOblique FeTurbulenceFontStyle = "oblique"
 )
 
 type FeTurbulenceImageRendering string
@@ -359,6 +281,66 @@ const (
 	FeTurbulenceOverflowVisible FeTurbulenceOverflow = "visible"
 )
 
+type FeTurbulencePointerEvents string
+
+const (
+	FeTurbulencePointerEventsAll            FeTurbulencePointerEvents = "all"
+	FeTurbulencePointerEventsAuto           FeTurbulencePointerEvents = "auto"
+	FeTurbulencePointerEventsBoundingBox    FeTurbulencePointerEvents = "bounding-box"
+	FeTurbulencePointerEventsFill           FeTurbulencePointerEvents = "fill"
+	FeTurbulencePointerEventsNone           FeTurbulencePointerEvents = "none"
+	FeTurbulencePointerEventsPainted        FeTurbulencePointerEvents = "painted"
+	FeTurbulencePointerEventsStroke         FeTurbulencePointerEvents = "stroke"
+	FeTurbulencePointerEventsVisible        FeTurbulencePointerEvents = "visible"
+	FeTurbulencePointerEventsVisibleFill    FeTurbulencePointerEvents = "visibleFill"
+	FeTurbulencePointerEventsVisiblePainted FeTurbulencePointerEvents = "visiblePainted"
+	FeTurbulencePointerEventsVisibleStroke  FeTurbulencePointerEvents = "visibleStroke"
+)
+
+type FeTurbulenceShapeRendering string
+
+const (
+	FeTurbulenceShapeRenderingAuto               FeTurbulenceShapeRendering = "auto"
+	FeTurbulenceShapeRenderingCrispEdges         FeTurbulenceShapeRendering = "crispEdges"
+	FeTurbulenceShapeRenderingGeometricPrecision FeTurbulenceShapeRendering = "geometricPrecision"
+	FeTurbulenceShapeRenderingOptimizeSpeed      FeTurbulenceShapeRendering = "optimizeSpeed"
+)
+
+type FeTurbulenceStrokeLinecap string
+
+const (
+	FeTurbulenceStrokeLinecapButt   FeTurbulenceStrokeLinecap = "butt"
+	FeTurbulenceStrokeLinecapRound  FeTurbulenceStrokeLinecap = "round"
+	FeTurbulenceStrokeLinecapSquare FeTurbulenceStrokeLinecap = "square"
+)
+
+type FeTurbulenceStrokeLinejoin string
+
+const (
+	FeTurbulenceStrokeLinejoinArcs      FeTurbulenceStrokeLinejoin = "arcs"
+	FeTurbulenceStrokeLinejoinBevel     FeTurbulenceStrokeLinejoin = "bevel"
+	FeTurbulenceStrokeLinejoinMiter     FeTurbulenceStrokeLinejoin = "miter"
+	FeTurbulenceStrokeLinejoinMiterClip FeTurbulenceStrokeLinejoin = "miter-clip"
+	FeTurbulenceStrokeLinejoinRound     FeTurbulenceStrokeLinejoin = "round"
+)
+
+type FeTurbulenceTextAnchor string
+
+const (
+	FeTurbulenceTextAnchorEnd    FeTurbulenceTextAnchor = "end"
+	FeTurbulenceTextAnchorMiddle FeTurbulenceTextAnchor = "middle"
+	FeTurbulenceTextAnchorStart  FeTurbulenceTextAnchor = "start"
+)
+
+type FeTurbulenceTextRendering string
+
+const (
+	FeTurbulenceTextRenderingAuto               FeTurbulenceTextRendering = "auto"
+	FeTurbulenceTextRenderingGeometricPrecision FeTurbulenceTextRendering = "geometricPrecision"
+	FeTurbulenceTextRenderingOptimizeLegibility FeTurbulenceTextRendering = "optimizeLegibility"
+	FeTurbulenceTextRenderingOptimizeSpeed      FeTurbulenceTextRendering = "optimizeSpeed"
+)
+
 type FeTurbulenceTransformBox string
 
 const (
@@ -369,11 +351,22 @@ const (
 	FeTurbulenceTransformBoxViewBox    FeTurbulenceTransformBox = "view-box"
 )
 
-type FeTurbulenceDirection string
+type FeTurbulenceVectorEffect string
 
 const (
-	FeTurbulenceDirectionLtr FeTurbulenceDirection = "ltr"
-	FeTurbulenceDirectionRtl FeTurbulenceDirection = "rtl"
+	FeTurbulenceVectorEffectFixedPosition    FeTurbulenceVectorEffect = "fixed-position"
+	FeTurbulenceVectorEffectNonRotation      FeTurbulenceVectorEffect = "non-rotation"
+	FeTurbulenceVectorEffectNonScalingSize   FeTurbulenceVectorEffect = "non-scaling-size"
+	FeTurbulenceVectorEffectNonScalingStroke FeTurbulenceVectorEffect = "non-scaling-stroke"
+	FeTurbulenceVectorEffectNone             FeTurbulenceVectorEffect = "none"
+)
+
+type FeTurbulenceVisibility string
+
+const (
+	FeTurbulenceVisibilityCollapse FeTurbulenceVisibility = "collapse"
+	FeTurbulenceVisibilityHidden   FeTurbulenceVisibility = "hidden"
+	FeTurbulenceVisibilityVisible  FeTurbulenceVisibility = "visible"
 )
 
 type FeTurbulenceWritingMode string
@@ -392,20 +385,15 @@ const (
 	FeTurbulenceWritingModeVerticalRl   FeTurbulenceWritingMode = "vertical-rl"
 )
 
-func (e *FeTurbulenceElement) X(s string) *FeTurbulenceElement {
-	e.attributes.Set("x", s)
+type FeTurbulenceXmlSpace string
 
-	return e
-}
+const (
+	FeTurbulenceXmlSpaceDefault  FeTurbulenceXmlSpace = "default"
+	FeTurbulenceXmlSpacePreserve FeTurbulenceXmlSpace = "preserve"
+)
 
-func (e *FeTurbulenceElement) Y(s string) *FeTurbulenceElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) Width(s string) *FeTurbulenceElement {
-	e.attributes.Set("width", s)
+func (e *FeTurbulenceElement) BaseFrequency(s string) *FeTurbulenceElement {
+	e.attributes.Set("baseFrequency", s)
 
 	return e
 }
@@ -416,20 +404,14 @@ func (e *FeTurbulenceElement) Height(s string) *FeTurbulenceElement {
 	return e
 }
 
-func (e *FeTurbulenceElement) Result(s string) *FeTurbulenceElement {
-	e.attributes.Set("result", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) BaseFrequency(s string) *FeTurbulenceElement {
-	e.attributes.Set("baseFrequency", s)
-
-	return e
-}
-
 func (e *FeTurbulenceElement) NumOctaves(i int) *FeTurbulenceElement {
 	e.attributes.Set("numOctaves", strconv.Itoa(i))
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Result(s string) *FeTurbulenceElement {
+	e.attributes.Set("result", s)
 
 	return e
 }
@@ -452,8 +434,60 @@ func (e *FeTurbulenceElement) Type(a FeTurbulenceType) *FeTurbulenceElement {
 	return e
 }
 
-func (e *FeTurbulenceElement) Id(s string) *FeTurbulenceElement {
-	e.attributes.Set("id", s)
+func (e *FeTurbulenceElement) Width(s string) *FeTurbulenceElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) X(s string) *FeTurbulenceElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Y(s string) *FeTurbulenceElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) AlignmentBaseline(a FeTurbulenceAlignmentBaseline) *FeTurbulenceElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FeTurbulenceAlignmentBaselineCustom(s string) FeTurbulenceAlignmentBaseline {
+	return FeTurbulenceAlignmentBaseline(s)
+}
+
+func (e *FeTurbulenceElement) AriaUnsafe(name string, s string) *FeTurbulenceElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Aria(name string, s string) *FeTurbulenceElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FeTurbulenceElement) Autofocus(b bool) *FeTurbulenceElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) BaselineShift(s string) *FeTurbulenceElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -464,40 +498,59 @@ func (e *FeTurbulenceElement) Class(s ...string) *FeTurbulenceElement {
 	return e
 }
 
-func (e *FeTurbulenceElement) Style(s string) *FeTurbulenceElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FeTurbulenceElement) Clip(s string) *FeTurbulenceElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) Tabindex(i int) *FeTurbulenceElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FeTurbulenceElement) ClipPath(s string) *FeTurbulenceElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) Lang(s string) *FeTurbulenceElement {
-	e.attributes.Set("lang", s)
+func (e *FeTurbulenceElement) ClipRule(a FeTurbulenceClipRule) *FeTurbulenceElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FeTurbulenceElement) XmlLang(s string) *FeTurbulenceElement {
-	e.attributes.Set("xml:lang", s)
+func FeTurbulenceClipRuleCustom(s string) FeTurbulenceClipRule {
+	return FeTurbulenceClipRule(s)
+}
+
+func (e *FeTurbulenceElement) Color(s string) *FeTurbulenceElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) XmlSpace(a FeTurbulenceXmlSpace) *FeTurbulenceElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FeTurbulenceElement) ColorInterpolation(a FeTurbulenceColorInterpolation) *FeTurbulenceElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FeTurbulenceElement) Autofocus(b bool) *FeTurbulenceElement {
-	e.attributes.SetBool("autofocus", b)
+func FeTurbulenceColorInterpolationCustom(s string) FeTurbulenceColorInterpolation {
+	return FeTurbulenceColorInterpolation(s)
+}
+
+func (e *FeTurbulenceElement) ColorInterpolationFilters(a FeTurbulenceColorInterpolationFilters) *FeTurbulenceElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FeTurbulenceColorInterpolationFiltersCustom(s string) FeTurbulenceColorInterpolationFilters {
+	return FeTurbulenceColorInterpolationFilters(s)
+}
+
+func (e *FeTurbulenceElement) Cursor(s string) *FeTurbulenceElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -518,20 +571,30 @@ func (e *FeTurbulenceElement) Data(name string, s string) *FeTurbulenceElement {
 	return e
 }
 
-func (e *FeTurbulenceElement) AriaUnsafe(name string, s string) *FeTurbulenceElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FeTurbulenceElement) Direction(a FeTurbulenceDirection) *FeTurbulenceElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FeTurbulenceElement) Aria(name string, s string) *FeTurbulenceElement {
-	tag := strings.ToLower("aria-" + name)
+func FeTurbulenceDirectionCustom(s string) FeTurbulenceDirection {
+	return FeTurbulenceDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FeTurbulenceElement) Display(s string) *FeTurbulenceElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FeTurbulenceElement) DominantBaseline(a FeTurbulenceDominantBaseline) *FeTurbulenceElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FeTurbulenceDominantBaselineCustom(s string) FeTurbulenceDominantBaseline {
+	return FeTurbulenceDominantBaseline(s)
 }
 
 func (e *FeTurbulenceElement) Fill(s string) *FeTurbulenceElement {
@@ -556,20 +619,220 @@ func FeTurbulenceFillRuleCustom(s string) FeTurbulenceFillRule {
 	return FeTurbulenceFillRule(s)
 }
 
+func (e *FeTurbulenceElement) Filter(s string) *FeTurbulenceElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FloodColor(s string) *FeTurbulenceElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FloodOpacity(f float64) *FeTurbulenceElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontFamily(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontSize(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontSizeAdjust(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontStretch(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontStyle(a FeTurbulenceFontStyle) *FeTurbulenceElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FeTurbulenceFontStyleCustom(s string) FeTurbulenceFontStyle {
+	return FeTurbulenceFontStyle(s)
+}
+
+func (e *FeTurbulenceElement) FontVariant(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) FontWeight(s string) *FeTurbulenceElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FeTurbulenceElement) GlyphOrientationHorizontal(s string) *FeTurbulenceElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FeTurbulenceElement) GlyphOrientationVertical(s string) *FeTurbulenceElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Id(s string) *FeTurbulenceElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) ImageRendering(a FeTurbulenceImageRendering) *FeTurbulenceElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FeTurbulenceImageRenderingCustom(s string) FeTurbulenceImageRendering {
+	return FeTurbulenceImageRendering(s)
+}
+
+func (e *FeTurbulenceElement) Lang(s string) *FeTurbulenceElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) LetterSpacing(s string) *FeTurbulenceElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) LightingColor(s string) *FeTurbulenceElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) MarkerEnd(s string) *FeTurbulenceElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) MarkerMid(s string) *FeTurbulenceElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) MarkerStart(s string) *FeTurbulenceElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Mask(s string) *FeTurbulenceElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Opacity(f float64) *FeTurbulenceElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FeTurbulenceElement) Overflow(a FeTurbulenceOverflow) *FeTurbulenceElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FeTurbulenceOverflowCustom(s string) FeTurbulenceOverflow {
+	return FeTurbulenceOverflow(s)
+}
+
+func (e *FeTurbulenceElement) PaintOrder(s string) *FeTurbulenceElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) PointerEvents(a FeTurbulencePointerEvents) *FeTurbulenceElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FeTurbulencePointerEventsCustom(s string) FeTurbulencePointerEvents {
+	return FeTurbulencePointerEvents(s)
+}
+
+func (e *FeTurbulenceElement) RequiredExtensions(s string) *FeTurbulenceElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) ShapeRendering(a FeTurbulenceShapeRendering) *FeTurbulenceElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FeTurbulenceShapeRenderingCustom(s string) FeTurbulenceShapeRendering {
+	return FeTurbulenceShapeRendering(s)
+}
+
+func (e *FeTurbulenceElement) StopColor(s string) *FeTurbulenceElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) StopOpacity(f float64) *FeTurbulenceElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FeTurbulenceElement) Stroke(s string) *FeTurbulenceElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) StrokeWidth(s string) *FeTurbulenceElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FeTurbulenceElement) StrokeDasharray(s string) *FeTurbulenceElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) StrokeOpacity(f float64) *FeTurbulenceElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeTurbulenceElement) StrokeDashoffset(s string) *FeTurbulenceElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -600,210 +863,28 @@ func (e *FeTurbulenceElement) StrokeMiterlimit(f float64) *FeTurbulenceElement {
 	return e
 }
 
-func (e *FeTurbulenceElement) StrokeDasharray(s string) *FeTurbulenceElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FeTurbulenceElement) StrokeOpacity(f float64) *FeTurbulenceElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FeTurbulenceElement) StrokeDashoffset(s string) *FeTurbulenceElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FeTurbulenceElement) StrokeWidth(s string) *FeTurbulenceElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) Opacity(f float64) *FeTurbulenceElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FeTurbulenceElement) Style(s string) *FeTurbulenceElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FeTurbulenceElement) Color(s string) *FeTurbulenceElement {
-	e.attributes.Set("color", s)
+func (e *FeTurbulenceElement) Tabindex(i int) *FeTurbulenceElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FeTurbulenceElement) Display(s string) *FeTurbulenceElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) Visibility(a FeTurbulenceVisibility) *FeTurbulenceElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FeTurbulenceVisibilityCustom(s string) FeTurbulenceVisibility {
-	return FeTurbulenceVisibility(s)
-}
-
-func (e *FeTurbulenceElement) ClipPath(s string) *FeTurbulenceElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) ClipRule(a FeTurbulenceClipRule) *FeTurbulenceElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FeTurbulenceClipRuleCustom(s string) FeTurbulenceClipRule {
-	return FeTurbulenceClipRule(s)
-}
-
-func (e *FeTurbulenceElement) Mask(s string) *FeTurbulenceElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) Filter(s string) *FeTurbulenceElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) Cursor(s string) *FeTurbulenceElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) PointerEvents(a FeTurbulencePointerEvents) *FeTurbulenceElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FeTurbulencePointerEventsCustom(s string) FeTurbulencePointerEvents {
-	return FeTurbulencePointerEvents(s)
-}
-
-func (e *FeTurbulenceElement) VectorEffect(a FeTurbulenceVectorEffect) *FeTurbulenceElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FeTurbulenceVectorEffectCustom(s string) FeTurbulenceVectorEffect {
-	return FeTurbulenceVectorEffect(s)
-}
-
-func (e *FeTurbulenceElement) PaintOrder(s string) *FeTurbulenceElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) ShapeRendering(a FeTurbulenceShapeRendering) *FeTurbulenceElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FeTurbulenceShapeRenderingCustom(s string) FeTurbulenceShapeRendering {
-	return FeTurbulenceShapeRendering(s)
-}
-
-func (e *FeTurbulenceElement) ColorInterpolation(a FeTurbulenceColorInterpolation) *FeTurbulenceElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FeTurbulenceColorInterpolationCustom(s string) FeTurbulenceColorInterpolation {
-	return FeTurbulenceColorInterpolation(s)
-}
-
-func (e *FeTurbulenceElement) ColorInterpolationFilters(a FeTurbulenceColorInterpolationFilters) *FeTurbulenceElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FeTurbulenceColorInterpolationFiltersCustom(s string) FeTurbulenceColorInterpolationFilters {
-	return FeTurbulenceColorInterpolationFilters(s)
-}
-
-func (e *FeTurbulenceElement) FloodColor(s string) *FeTurbulenceElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) FloodOpacity(f float64) *FeTurbulenceElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeTurbulenceElement) LightingColor(s string) *FeTurbulenceElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) StopColor(s string) *FeTurbulenceElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) StopOpacity(f float64) *FeTurbulenceElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FeTurbulenceElement) MarkerStart(s string) *FeTurbulenceElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) MarkerMid(s string) *FeTurbulenceElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) MarkerEnd(s string) *FeTurbulenceElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) FontFamily(s string) *FeTurbulenceElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) FontSize(s string) *FeTurbulenceElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) FontWeight(s string) *FeTurbulenceElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) FontStyle(a FeTurbulenceFontStyle) *FeTurbulenceElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FeTurbulenceFontStyleCustom(s string) FeTurbulenceFontStyle {
-	return FeTurbulenceFontStyle(s)
 }
 
 func (e *FeTurbulenceElement) TextAnchor(a FeTurbulenceTextAnchor) *FeTurbulenceElement {
@@ -816,40 +897,14 @@ func FeTurbulenceTextAnchorCustom(s string) FeTurbulenceTextAnchor {
 	return FeTurbulenceTextAnchor(s)
 }
 
-func (e *FeTurbulenceElement) DominantBaseline(a FeTurbulenceDominantBaseline) *FeTurbulenceElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FeTurbulenceDominantBaselineCustom(s string) FeTurbulenceDominantBaseline {
-	return FeTurbulenceDominantBaseline(s)
-}
-
-func (e *FeTurbulenceElement) AlignmentBaseline(a FeTurbulenceAlignmentBaseline) *FeTurbulenceElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FeTurbulenceAlignmentBaselineCustom(s string) FeTurbulenceAlignmentBaseline {
-	return FeTurbulenceAlignmentBaseline(s)
-}
-
-func (e *FeTurbulenceElement) LetterSpacing(s string) *FeTurbulenceElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FeTurbulenceElement) WordSpacing(s string) *FeTurbulenceElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FeTurbulenceElement) TextDecoration(s string) *FeTurbulenceElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) TextOverflow(s string) *FeTurbulenceElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -864,24 +919,10 @@ func FeTurbulenceTextRenderingCustom(s string) FeTurbulenceTextRendering {
 	return FeTurbulenceTextRendering(s)
 }
 
-func (e *FeTurbulenceElement) ImageRendering(a FeTurbulenceImageRendering) *FeTurbulenceElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FeTurbulenceElement) Transform(s string) *FeTurbulenceElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FeTurbulenceImageRenderingCustom(s string) FeTurbulenceImageRendering {
-	return FeTurbulenceImageRendering(s)
-}
-
-func (e *FeTurbulenceElement) Overflow(a FeTurbulenceOverflow) *FeTurbulenceElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FeTurbulenceOverflowCustom(s string) FeTurbulenceOverflow {
-	return FeTurbulenceOverflow(s)
 }
 
 func (e *FeTurbulenceElement) TransformBox(a FeTurbulenceTransformBox) *FeTurbulenceElement {
@@ -894,18 +935,46 @@ func FeTurbulenceTransformBoxCustom(s string) FeTurbulenceTransformBox {
 	return FeTurbulenceTransformBox(s)
 }
 
-func (e *FeTurbulenceElement) Direction(a FeTurbulenceDirection) *FeTurbulenceElement {
-	e.attributes.Set("direction", string(a))
+func (e *FeTurbulenceElement) TransformOrigin(s string) *FeTurbulenceElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FeTurbulenceDirectionCustom(s string) FeTurbulenceDirection {
-	return FeTurbulenceDirection(s)
-}
-
 func (e *FeTurbulenceElement) UnicodeBidi(s string) *FeTurbulenceElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) VectorEffect(a FeTurbulenceVectorEffect) *FeTurbulenceElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FeTurbulenceVectorEffectCustom(s string) FeTurbulenceVectorEffect {
+	return FeTurbulenceVectorEffect(s)
+}
+
+func (e *FeTurbulenceElement) Visibility(a FeTurbulenceVisibility) *FeTurbulenceElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FeTurbulenceVisibilityCustom(s string) FeTurbulenceVisibility {
+	return FeTurbulenceVisibility(s)
+}
+
+func (e *FeTurbulenceElement) WhiteSpace(s string) *FeTurbulenceElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FeTurbulenceElement) WordSpacing(s string) *FeTurbulenceElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -920,8 +989,20 @@ func FeTurbulenceWritingModeCustom(s string) FeTurbulenceWritingMode {
 	return FeTurbulenceWritingMode(s)
 }
 
-func (e *FeTurbulenceElement) WhiteSpace(s string) *FeTurbulenceElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FeTurbulenceElement) XmlLang(s string) *FeTurbulenceElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FeTurbulenceElement) XmlSpace(a FeTurbulenceXmlSpace) *FeTurbulenceElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

@@ -240,6 +240,15 @@ const (
 	AbbrInputmodeUrl     AbbrInputmode = "url"
 )
 
+type AbbrPopover string
+
+const (
+	AbbrPopoverAuto   AbbrPopover = "auto"
+	AbbrPopoverHint   AbbrPopover = "hint"
+	AbbrPopoverManual AbbrPopover = "manual"
+	AbbrPopoverEmpty  AbbrPopover = ""
+)
+
 type AbbrSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *AbbrElement) Enterkeyhint(a AbbrEnterkeyhint) *AbbrElement {
 	return e
 }
 
+func (e *AbbrElement) Exportparts(s string) *AbbrElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *AbbrElement) Headingoffset(i int) *AbbrElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AbbrElement) Headingreset(b bool) *AbbrElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AbbrElement) Hidden(v ...AbbrHidden) *AbbrElement {
@@ -396,6 +425,14 @@ func (e *AbbrElement) Inputmode(a AbbrInputmode) *AbbrElement {
 	return e
 }
 
+func (e *AbbrElement) Is(s string) *AbbrElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AbbrElement) Itemid(s string) *AbbrElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *AbbrElement) Nonce(s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Popover(s string) *AbbrElement {
-	e.attributes.Set("popover", s)
+func (e *AbbrElement) Part(s ...string) *AbbrElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Popover(v ...AbbrPopover) *AbbrElement {
+	var val AbbrPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

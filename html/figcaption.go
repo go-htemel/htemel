@@ -240,6 +240,15 @@ const (
 	FigcaptionInputmodeUrl     FigcaptionInputmode = "url"
 )
 
+type FigcaptionPopover string
+
+const (
+	FigcaptionPopoverAuto   FigcaptionPopover = "auto"
+	FigcaptionPopoverHint   FigcaptionPopover = "hint"
+	FigcaptionPopoverManual FigcaptionPopover = "manual"
+	FigcaptionPopoverEmpty  FigcaptionPopover = ""
+)
+
 type FigcaptionSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *FigcaptionElement) Enterkeyhint(a FigcaptionEnterkeyhint) *FigcaptionEl
 	return e
 }
 
+func (e *FigcaptionElement) Exportparts(s string) *FigcaptionElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *FigcaptionElement) Headingoffset(i int) *FigcaptionElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FigcaptionElement) Headingreset(b bool) *FigcaptionElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *FigcaptionElement) Hidden(v ...FigcaptionHidden) *FigcaptionElement {
@@ -396,6 +425,14 @@ func (e *FigcaptionElement) Inputmode(a FigcaptionInputmode) *FigcaptionElement 
 	return e
 }
 
+func (e *FigcaptionElement) Is(s string) *FigcaptionElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *FigcaptionElement) Itemid(s string) *FigcaptionElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *FigcaptionElement) Nonce(s string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Popover(s string) *FigcaptionElement {
-	e.attributes.Set("popover", s)
+func (e *FigcaptionElement) Part(s ...string) *FigcaptionElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Popover(v ...FigcaptionPopover) *FigcaptionElement {
+	var val FigcaptionPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

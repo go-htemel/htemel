@@ -164,134 +164,6 @@ func (e *PolygonElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PolygonXmlSpace string
-
-const (
-	PolygonXmlSpaceDefault  PolygonXmlSpace = "default"
-	PolygonXmlSpacePreserve PolygonXmlSpace = "preserve"
-)
-
-type PolygonFillRule string
-
-const (
-	PolygonFillRuleEvenodd PolygonFillRule = "evenodd"
-	PolygonFillRuleNonzero PolygonFillRule = "nonzero"
-)
-
-type PolygonStrokeLinecap string
-
-const (
-	PolygonStrokeLinecapButt   PolygonStrokeLinecap = "butt"
-	PolygonStrokeLinecapRound  PolygonStrokeLinecap = "round"
-	PolygonStrokeLinecapSquare PolygonStrokeLinecap = "square"
-)
-
-type PolygonStrokeLinejoin string
-
-const (
-	PolygonStrokeLinejoinArcs      PolygonStrokeLinejoin = "arcs"
-	PolygonStrokeLinejoinBevel     PolygonStrokeLinejoin = "bevel"
-	PolygonStrokeLinejoinMiter     PolygonStrokeLinejoin = "miter"
-	PolygonStrokeLinejoinMiterClip PolygonStrokeLinejoin = "miter-clip"
-	PolygonStrokeLinejoinRound     PolygonStrokeLinejoin = "round"
-)
-
-type PolygonVisibility string
-
-const (
-	PolygonVisibilityCollapse PolygonVisibility = "collapse"
-	PolygonVisibilityHidden   PolygonVisibility = "hidden"
-	PolygonVisibilityVisible  PolygonVisibility = "visible"
-)
-
-type PolygonClipRule string
-
-const (
-	PolygonClipRuleEvenodd PolygonClipRule = "evenodd"
-	PolygonClipRuleNonzero PolygonClipRule = "nonzero"
-)
-
-type PolygonPointerEvents string
-
-const (
-	PolygonPointerEventsAll            PolygonPointerEvents = "all"
-	PolygonPointerEventsAuto           PolygonPointerEvents = "auto"
-	PolygonPointerEventsBoundingBox    PolygonPointerEvents = "bounding-box"
-	PolygonPointerEventsFill           PolygonPointerEvents = "fill"
-	PolygonPointerEventsNone           PolygonPointerEvents = "none"
-	PolygonPointerEventsPainted        PolygonPointerEvents = "painted"
-	PolygonPointerEventsStroke         PolygonPointerEvents = "stroke"
-	PolygonPointerEventsVisible        PolygonPointerEvents = "visible"
-	PolygonPointerEventsVisibleFill    PolygonPointerEvents = "visibleFill"
-	PolygonPointerEventsVisiblePainted PolygonPointerEvents = "visiblePainted"
-	PolygonPointerEventsVisibleStroke  PolygonPointerEvents = "visibleStroke"
-)
-
-type PolygonVectorEffect string
-
-const (
-	PolygonVectorEffectFixedPosition    PolygonVectorEffect = "fixed-position"
-	PolygonVectorEffectNonRotation      PolygonVectorEffect = "non-rotation"
-	PolygonVectorEffectNonScalingSize   PolygonVectorEffect = "non-scaling-size"
-	PolygonVectorEffectNonScalingStroke PolygonVectorEffect = "non-scaling-stroke"
-	PolygonVectorEffectNone             PolygonVectorEffect = "none"
-)
-
-type PolygonShapeRendering string
-
-const (
-	PolygonShapeRenderingAuto               PolygonShapeRendering = "auto"
-	PolygonShapeRenderingCrispEdges         PolygonShapeRendering = "crispEdges"
-	PolygonShapeRenderingGeometricPrecision PolygonShapeRendering = "geometricPrecision"
-	PolygonShapeRenderingOptimizeSpeed      PolygonShapeRendering = "optimizeSpeed"
-)
-
-type PolygonColorInterpolation string
-
-const (
-	PolygonColorInterpolationAuto      PolygonColorInterpolation = "auto"
-	PolygonColorInterpolationLinearRGB PolygonColorInterpolation = "linearRGB"
-	PolygonColorInterpolationSRGB      PolygonColorInterpolation = "sRGB"
-)
-
-type PolygonColorInterpolationFilters string
-
-const (
-	PolygonColorInterpolationFiltersAuto      PolygonColorInterpolationFilters = "auto"
-	PolygonColorInterpolationFiltersLinearRGB PolygonColorInterpolationFilters = "linearRGB"
-	PolygonColorInterpolationFiltersSRGB      PolygonColorInterpolationFilters = "sRGB"
-)
-
-type PolygonFontStyle string
-
-const (
-	PolygonFontStyleItalic  PolygonFontStyle = "italic"
-	PolygonFontStyleNormal  PolygonFontStyle = "normal"
-	PolygonFontStyleOblique PolygonFontStyle = "oblique"
-)
-
-type PolygonTextAnchor string
-
-const (
-	PolygonTextAnchorEnd    PolygonTextAnchor = "end"
-	PolygonTextAnchorMiddle PolygonTextAnchor = "middle"
-	PolygonTextAnchorStart  PolygonTextAnchor = "start"
-)
-
-type PolygonDominantBaseline string
-
-const (
-	PolygonDominantBaselineAlphabetic   PolygonDominantBaseline = "alphabetic"
-	PolygonDominantBaselineAuto         PolygonDominantBaseline = "auto"
-	PolygonDominantBaselineCentral      PolygonDominantBaseline = "central"
-	PolygonDominantBaselineHanging      PolygonDominantBaseline = "hanging"
-	PolygonDominantBaselineIdeographic  PolygonDominantBaseline = "ideographic"
-	PolygonDominantBaselineMathematical PolygonDominantBaseline = "mathematical"
-	PolygonDominantBaselineMiddle       PolygonDominantBaseline = "middle"
-	PolygonDominantBaselineTextBottom   PolygonDominantBaseline = "text-bottom"
-	PolygonDominantBaselineTextTop      PolygonDominantBaseline = "text-top"
-)
-
 type PolygonAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	PolygonAlignmentBaselineTop            PolygonAlignmentBaseline = "top"
 )
 
-type PolygonTextRendering string
+type PolygonClipRule string
 
 const (
-	PolygonTextRenderingAuto               PolygonTextRendering = "auto"
-	PolygonTextRenderingGeometricPrecision PolygonTextRendering = "geometricPrecision"
-	PolygonTextRenderingOptimizeLegibility PolygonTextRendering = "optimizeLegibility"
-	PolygonTextRenderingOptimizeSpeed      PolygonTextRendering = "optimizeSpeed"
+	PolygonClipRuleEvenodd PolygonClipRule = "evenodd"
+	PolygonClipRuleNonzero PolygonClipRule = "nonzero"
+)
+
+type PolygonColorInterpolation string
+
+const (
+	PolygonColorInterpolationAuto      PolygonColorInterpolation = "auto"
+	PolygonColorInterpolationLinearRGB PolygonColorInterpolation = "linearRGB"
+	PolygonColorInterpolationSRGB      PolygonColorInterpolation = "sRGB"
+)
+
+type PolygonColorInterpolationFilters string
+
+const (
+	PolygonColorInterpolationFiltersAuto      PolygonColorInterpolationFilters = "auto"
+	PolygonColorInterpolationFiltersLinearRGB PolygonColorInterpolationFilters = "linearRGB"
+	PolygonColorInterpolationFiltersSRGB      PolygonColorInterpolationFilters = "sRGB"
+)
+
+type PolygonDirection string
+
+const (
+	PolygonDirectionLtr PolygonDirection = "ltr"
+	PolygonDirectionRtl PolygonDirection = "rtl"
+)
+
+type PolygonDominantBaseline string
+
+const (
+	PolygonDominantBaselineAlphabetic   PolygonDominantBaseline = "alphabetic"
+	PolygonDominantBaselineAuto         PolygonDominantBaseline = "auto"
+	PolygonDominantBaselineCentral      PolygonDominantBaseline = "central"
+	PolygonDominantBaselineHanging      PolygonDominantBaseline = "hanging"
+	PolygonDominantBaselineIdeographic  PolygonDominantBaseline = "ideographic"
+	PolygonDominantBaselineMathematical PolygonDominantBaseline = "mathematical"
+	PolygonDominantBaselineMiddle       PolygonDominantBaseline = "middle"
+	PolygonDominantBaselineTextBottom   PolygonDominantBaseline = "text-bottom"
+	PolygonDominantBaselineTextTop      PolygonDominantBaseline = "text-top"
+)
+
+type PolygonFillRule string
+
+const (
+	PolygonFillRuleEvenodd PolygonFillRule = "evenodd"
+	PolygonFillRuleNonzero PolygonFillRule = "nonzero"
+)
+
+type PolygonFontStyle string
+
+const (
+	PolygonFontStyleItalic  PolygonFontStyle = "italic"
+	PolygonFontStyleNormal  PolygonFontStyle = "normal"
+	PolygonFontStyleOblique PolygonFontStyle = "oblique"
 )
 
 type PolygonImageRendering string
@@ -345,6 +267,66 @@ const (
 	PolygonOverflowVisible PolygonOverflow = "visible"
 )
 
+type PolygonPointerEvents string
+
+const (
+	PolygonPointerEventsAll            PolygonPointerEvents = "all"
+	PolygonPointerEventsAuto           PolygonPointerEvents = "auto"
+	PolygonPointerEventsBoundingBox    PolygonPointerEvents = "bounding-box"
+	PolygonPointerEventsFill           PolygonPointerEvents = "fill"
+	PolygonPointerEventsNone           PolygonPointerEvents = "none"
+	PolygonPointerEventsPainted        PolygonPointerEvents = "painted"
+	PolygonPointerEventsStroke         PolygonPointerEvents = "stroke"
+	PolygonPointerEventsVisible        PolygonPointerEvents = "visible"
+	PolygonPointerEventsVisibleFill    PolygonPointerEvents = "visibleFill"
+	PolygonPointerEventsVisiblePainted PolygonPointerEvents = "visiblePainted"
+	PolygonPointerEventsVisibleStroke  PolygonPointerEvents = "visibleStroke"
+)
+
+type PolygonShapeRendering string
+
+const (
+	PolygonShapeRenderingAuto               PolygonShapeRendering = "auto"
+	PolygonShapeRenderingCrispEdges         PolygonShapeRendering = "crispEdges"
+	PolygonShapeRenderingGeometricPrecision PolygonShapeRendering = "geometricPrecision"
+	PolygonShapeRenderingOptimizeSpeed      PolygonShapeRendering = "optimizeSpeed"
+)
+
+type PolygonStrokeLinecap string
+
+const (
+	PolygonStrokeLinecapButt   PolygonStrokeLinecap = "butt"
+	PolygonStrokeLinecapRound  PolygonStrokeLinecap = "round"
+	PolygonStrokeLinecapSquare PolygonStrokeLinecap = "square"
+)
+
+type PolygonStrokeLinejoin string
+
+const (
+	PolygonStrokeLinejoinArcs      PolygonStrokeLinejoin = "arcs"
+	PolygonStrokeLinejoinBevel     PolygonStrokeLinejoin = "bevel"
+	PolygonStrokeLinejoinMiter     PolygonStrokeLinejoin = "miter"
+	PolygonStrokeLinejoinMiterClip PolygonStrokeLinejoin = "miter-clip"
+	PolygonStrokeLinejoinRound     PolygonStrokeLinejoin = "round"
+)
+
+type PolygonTextAnchor string
+
+const (
+	PolygonTextAnchorEnd    PolygonTextAnchor = "end"
+	PolygonTextAnchorMiddle PolygonTextAnchor = "middle"
+	PolygonTextAnchorStart  PolygonTextAnchor = "start"
+)
+
+type PolygonTextRendering string
+
+const (
+	PolygonTextRenderingAuto               PolygonTextRendering = "auto"
+	PolygonTextRenderingGeometricPrecision PolygonTextRendering = "geometricPrecision"
+	PolygonTextRenderingOptimizeLegibility PolygonTextRendering = "optimizeLegibility"
+	PolygonTextRenderingOptimizeSpeed      PolygonTextRendering = "optimizeSpeed"
+)
+
 type PolygonTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	PolygonTransformBoxViewBox    PolygonTransformBox = "view-box"
 )
 
-type PolygonDirection string
+type PolygonVectorEffect string
 
 const (
-	PolygonDirectionLtr PolygonDirection = "ltr"
-	PolygonDirectionRtl PolygonDirection = "rtl"
+	PolygonVectorEffectFixedPosition    PolygonVectorEffect = "fixed-position"
+	PolygonVectorEffectNonRotation      PolygonVectorEffect = "non-rotation"
+	PolygonVectorEffectNonScalingSize   PolygonVectorEffect = "non-scaling-size"
+	PolygonVectorEffectNonScalingStroke PolygonVectorEffect = "non-scaling-stroke"
+	PolygonVectorEffectNone             PolygonVectorEffect = "none"
+)
+
+type PolygonVisibility string
+
+const (
+	PolygonVisibilityCollapse PolygonVisibility = "collapse"
+	PolygonVisibilityHidden   PolygonVisibility = "hidden"
+	PolygonVisibilityVisible  PolygonVisibility = "visible"
 )
 
 type PolygonWritingMode string
@@ -378,32 +371,67 @@ const (
 	PolygonWritingModeVerticalRl   PolygonWritingMode = "vertical-rl"
 )
 
+type PolygonXmlSpace string
+
+const (
+	PolygonXmlSpaceDefault  PolygonXmlSpace = "default"
+	PolygonXmlSpacePreserve PolygonXmlSpace = "preserve"
+)
+
+func (e *PolygonElement) PathLength(f float64) *PolygonElement {
+	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PolygonElement) Points(s string) *PolygonElement {
 	e.attributes.Set("points", s)
 
 	return e
 }
 
-func (e *PolygonElement) PathLength(s string) *PolygonElement {
-	e.attributes.Set("pathLength", s)
+func (e *PolygonElement) SystemLanguage(s string) *PolygonElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *PolygonElement) Transform(s string) *PolygonElement {
-	e.attributes.Set("transform", s)
+func (e *PolygonElement) AlignmentBaseline(a PolygonAlignmentBaseline) *PolygonElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *PolygonElement) TransformOrigin(s string) *PolygonElement {
-	e.attributes.Set("transform-origin", s)
+func PolygonAlignmentBaselineCustom(s string) PolygonAlignmentBaseline {
+	return PolygonAlignmentBaseline(s)
+}
+
+func (e *PolygonElement) AriaUnsafe(name string, s string) *PolygonElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *PolygonElement) Id(s string) *PolygonElement {
-	e.attributes.Set("id", s)
+func (e *PolygonElement) Aria(name string, s string) *PolygonElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *PolygonElement) Autofocus(b bool) *PolygonElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *PolygonElement) BaselineShift(s string) *PolygonElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -414,40 +442,59 @@ func (e *PolygonElement) Class(s ...string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) Style(s string) *PolygonElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *PolygonElement) Clip(s string) *PolygonElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *PolygonElement) Tabindex(i int) *PolygonElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *PolygonElement) ClipPath(s string) *PolygonElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *PolygonElement) Lang(s string) *PolygonElement {
-	e.attributes.Set("lang", s)
+func (e *PolygonElement) ClipRule(a PolygonClipRule) *PolygonElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *PolygonElement) XmlLang(s string) *PolygonElement {
-	e.attributes.Set("xml:lang", s)
+func PolygonClipRuleCustom(s string) PolygonClipRule {
+	return PolygonClipRule(s)
+}
+
+func (e *PolygonElement) Color(s string) *PolygonElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *PolygonElement) XmlSpace(a PolygonXmlSpace) *PolygonElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *PolygonElement) ColorInterpolation(a PolygonColorInterpolation) *PolygonElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *PolygonElement) Autofocus(b bool) *PolygonElement {
-	e.attributes.SetBool("autofocus", b)
+func PolygonColorInterpolationCustom(s string) PolygonColorInterpolation {
+	return PolygonColorInterpolation(s)
+}
+
+func (e *PolygonElement) ColorInterpolationFilters(a PolygonColorInterpolationFilters) *PolygonElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func PolygonColorInterpolationFiltersCustom(s string) PolygonColorInterpolationFilters {
+	return PolygonColorInterpolationFilters(s)
+}
+
+func (e *PolygonElement) Cursor(s string) *PolygonElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -468,20 +515,30 @@ func (e *PolygonElement) Data(name string, s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) AriaUnsafe(name string, s string) *PolygonElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *PolygonElement) Direction(a PolygonDirection) *PolygonElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *PolygonElement) Aria(name string, s string) *PolygonElement {
-	tag := strings.ToLower("aria-" + name)
+func PolygonDirectionCustom(s string) PolygonDirection {
+	return PolygonDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *PolygonElement) Display(s string) *PolygonElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *PolygonElement) DominantBaseline(a PolygonDominantBaseline) *PolygonElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func PolygonDominantBaselineCustom(s string) PolygonDominantBaseline {
+	return PolygonDominantBaseline(s)
 }
 
 func (e *PolygonElement) Fill(s string) *PolygonElement {
@@ -506,20 +563,220 @@ func PolygonFillRuleCustom(s string) PolygonFillRule {
 	return PolygonFillRule(s)
 }
 
+func (e *PolygonElement) Filter(s string) *PolygonElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *PolygonElement) FloodColor(s string) *PolygonElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *PolygonElement) FloodOpacity(f float64) *PolygonElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PolygonElement) FontFamily(s string) *PolygonElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *PolygonElement) FontSize(s string) *PolygonElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *PolygonElement) FontSizeAdjust(s string) *PolygonElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *PolygonElement) FontStretch(s string) *PolygonElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *PolygonElement) FontStyle(a PolygonFontStyle) *PolygonElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func PolygonFontStyleCustom(s string) PolygonFontStyle {
+	return PolygonFontStyle(s)
+}
+
+func (e *PolygonElement) FontVariant(s string) *PolygonElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *PolygonElement) FontWeight(s string) *PolygonElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *PolygonElement) GlyphOrientationHorizontal(s string) *PolygonElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *PolygonElement) GlyphOrientationVertical(s string) *PolygonElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *PolygonElement) Id(s string) *PolygonElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *PolygonElement) ImageRendering(a PolygonImageRendering) *PolygonElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func PolygonImageRenderingCustom(s string) PolygonImageRendering {
+	return PolygonImageRendering(s)
+}
+
+func (e *PolygonElement) Lang(s string) *PolygonElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *PolygonElement) LetterSpacing(s string) *PolygonElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *PolygonElement) LightingColor(s string) *PolygonElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *PolygonElement) MarkerEnd(s string) *PolygonElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *PolygonElement) MarkerMid(s string) *PolygonElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *PolygonElement) MarkerStart(s string) *PolygonElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *PolygonElement) Mask(s string) *PolygonElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *PolygonElement) Opacity(f float64) *PolygonElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *PolygonElement) Overflow(a PolygonOverflow) *PolygonElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func PolygonOverflowCustom(s string) PolygonOverflow {
+	return PolygonOverflow(s)
+}
+
+func (e *PolygonElement) PaintOrder(s string) *PolygonElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *PolygonElement) PointerEvents(a PolygonPointerEvents) *PolygonElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func PolygonPointerEventsCustom(s string) PolygonPointerEvents {
+	return PolygonPointerEvents(s)
+}
+
+func (e *PolygonElement) RequiredExtensions(s string) *PolygonElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *PolygonElement) ShapeRendering(a PolygonShapeRendering) *PolygonElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func PolygonShapeRenderingCustom(s string) PolygonShapeRendering {
+	return PolygonShapeRendering(s)
+}
+
+func (e *PolygonElement) StopColor(s string) *PolygonElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *PolygonElement) StopOpacity(f float64) *PolygonElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *PolygonElement) Stroke(s string) *PolygonElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *PolygonElement) StrokeWidth(s string) *PolygonElement {
-	e.attributes.Set("stroke-width", s)
+func (e *PolygonElement) StrokeDasharray(s string) *PolygonElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *PolygonElement) StrokeOpacity(f float64) *PolygonElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PolygonElement) StrokeDashoffset(s string) *PolygonElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -550,210 +807,28 @@ func (e *PolygonElement) StrokeMiterlimit(f float64) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) StrokeDasharray(s string) *PolygonElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *PolygonElement) StrokeOpacity(f float64) *PolygonElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *PolygonElement) StrokeDashoffset(s string) *PolygonElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *PolygonElement) StrokeWidth(s string) *PolygonElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *PolygonElement) Opacity(f float64) *PolygonElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *PolygonElement) Style(s string) *PolygonElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *PolygonElement) Color(s string) *PolygonElement {
-	e.attributes.Set("color", s)
+func (e *PolygonElement) Tabindex(i int) *PolygonElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *PolygonElement) Display(s string) *PolygonElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *PolygonElement) Visibility(a PolygonVisibility) *PolygonElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func PolygonVisibilityCustom(s string) PolygonVisibility {
-	return PolygonVisibility(s)
-}
-
-func (e *PolygonElement) ClipPath(s string) *PolygonElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *PolygonElement) ClipRule(a PolygonClipRule) *PolygonElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func PolygonClipRuleCustom(s string) PolygonClipRule {
-	return PolygonClipRule(s)
-}
-
-func (e *PolygonElement) Mask(s string) *PolygonElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *PolygonElement) Filter(s string) *PolygonElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *PolygonElement) Cursor(s string) *PolygonElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *PolygonElement) PointerEvents(a PolygonPointerEvents) *PolygonElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func PolygonPointerEventsCustom(s string) PolygonPointerEvents {
-	return PolygonPointerEvents(s)
-}
-
-func (e *PolygonElement) VectorEffect(a PolygonVectorEffect) *PolygonElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func PolygonVectorEffectCustom(s string) PolygonVectorEffect {
-	return PolygonVectorEffect(s)
-}
-
-func (e *PolygonElement) PaintOrder(s string) *PolygonElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *PolygonElement) ShapeRendering(a PolygonShapeRendering) *PolygonElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func PolygonShapeRenderingCustom(s string) PolygonShapeRendering {
-	return PolygonShapeRendering(s)
-}
-
-func (e *PolygonElement) ColorInterpolation(a PolygonColorInterpolation) *PolygonElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func PolygonColorInterpolationCustom(s string) PolygonColorInterpolation {
-	return PolygonColorInterpolation(s)
-}
-
-func (e *PolygonElement) ColorInterpolationFilters(a PolygonColorInterpolationFilters) *PolygonElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func PolygonColorInterpolationFiltersCustom(s string) PolygonColorInterpolationFilters {
-	return PolygonColorInterpolationFilters(s)
-}
-
-func (e *PolygonElement) FloodColor(s string) *PolygonElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *PolygonElement) FloodOpacity(f float64) *PolygonElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PolygonElement) LightingColor(s string) *PolygonElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *PolygonElement) StopColor(s string) *PolygonElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *PolygonElement) StopOpacity(f float64) *PolygonElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *PolygonElement) MarkerStart(s string) *PolygonElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *PolygonElement) MarkerMid(s string) *PolygonElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *PolygonElement) MarkerEnd(s string) *PolygonElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *PolygonElement) FontFamily(s string) *PolygonElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *PolygonElement) FontSize(s string) *PolygonElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *PolygonElement) FontWeight(s string) *PolygonElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *PolygonElement) FontStyle(a PolygonFontStyle) *PolygonElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func PolygonFontStyleCustom(s string) PolygonFontStyle {
-	return PolygonFontStyle(s)
 }
 
 func (e *PolygonElement) TextAnchor(a PolygonTextAnchor) *PolygonElement {
@@ -766,40 +841,14 @@ func PolygonTextAnchorCustom(s string) PolygonTextAnchor {
 	return PolygonTextAnchor(s)
 }
 
-func (e *PolygonElement) DominantBaseline(a PolygonDominantBaseline) *PolygonElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func PolygonDominantBaselineCustom(s string) PolygonDominantBaseline {
-	return PolygonDominantBaseline(s)
-}
-
-func (e *PolygonElement) AlignmentBaseline(a PolygonAlignmentBaseline) *PolygonElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func PolygonAlignmentBaselineCustom(s string) PolygonAlignmentBaseline {
-	return PolygonAlignmentBaseline(s)
-}
-
-func (e *PolygonElement) LetterSpacing(s string) *PolygonElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *PolygonElement) WordSpacing(s string) *PolygonElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *PolygonElement) TextDecoration(s string) *PolygonElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *PolygonElement) TextOverflow(s string) *PolygonElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -814,24 +863,10 @@ func PolygonTextRenderingCustom(s string) PolygonTextRendering {
 	return PolygonTextRendering(s)
 }
 
-func (e *PolygonElement) ImageRendering(a PolygonImageRendering) *PolygonElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *PolygonElement) Transform(s string) *PolygonElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func PolygonImageRenderingCustom(s string) PolygonImageRendering {
-	return PolygonImageRendering(s)
-}
-
-func (e *PolygonElement) Overflow(a PolygonOverflow) *PolygonElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func PolygonOverflowCustom(s string) PolygonOverflow {
-	return PolygonOverflow(s)
 }
 
 func (e *PolygonElement) TransformBox(a PolygonTransformBox) *PolygonElement {
@@ -844,18 +879,46 @@ func PolygonTransformBoxCustom(s string) PolygonTransformBox {
 	return PolygonTransformBox(s)
 }
 
-func (e *PolygonElement) Direction(a PolygonDirection) *PolygonElement {
-	e.attributes.Set("direction", string(a))
+func (e *PolygonElement) TransformOrigin(s string) *PolygonElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func PolygonDirectionCustom(s string) PolygonDirection {
-	return PolygonDirection(s)
-}
-
 func (e *PolygonElement) UnicodeBidi(s string) *PolygonElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *PolygonElement) VectorEffect(a PolygonVectorEffect) *PolygonElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func PolygonVectorEffectCustom(s string) PolygonVectorEffect {
+	return PolygonVectorEffect(s)
+}
+
+func (e *PolygonElement) Visibility(a PolygonVisibility) *PolygonElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func PolygonVisibilityCustom(s string) PolygonVisibility {
+	return PolygonVisibility(s)
+}
+
+func (e *PolygonElement) WhiteSpace(s string) *PolygonElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *PolygonElement) WordSpacing(s string) *PolygonElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -870,8 +933,20 @@ func PolygonWritingModeCustom(s string) PolygonWritingMode {
 	return PolygonWritingMode(s)
 }
 
-func (e *PolygonElement) WhiteSpace(s string) *PolygonElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *PolygonElement) XmlLang(s string) *PolygonElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *PolygonElement) XmlSpace(a PolygonXmlSpace) *PolygonElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

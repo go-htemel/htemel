@@ -164,134 +164,6 @@ func (e *UseElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type UseXmlSpace string
-
-const (
-	UseXmlSpaceDefault  UseXmlSpace = "default"
-	UseXmlSpacePreserve UseXmlSpace = "preserve"
-)
-
-type UseFillRule string
-
-const (
-	UseFillRuleEvenodd UseFillRule = "evenodd"
-	UseFillRuleNonzero UseFillRule = "nonzero"
-)
-
-type UseStrokeLinecap string
-
-const (
-	UseStrokeLinecapButt   UseStrokeLinecap = "butt"
-	UseStrokeLinecapRound  UseStrokeLinecap = "round"
-	UseStrokeLinecapSquare UseStrokeLinecap = "square"
-)
-
-type UseStrokeLinejoin string
-
-const (
-	UseStrokeLinejoinArcs      UseStrokeLinejoin = "arcs"
-	UseStrokeLinejoinBevel     UseStrokeLinejoin = "bevel"
-	UseStrokeLinejoinMiter     UseStrokeLinejoin = "miter"
-	UseStrokeLinejoinMiterClip UseStrokeLinejoin = "miter-clip"
-	UseStrokeLinejoinRound     UseStrokeLinejoin = "round"
-)
-
-type UseVisibility string
-
-const (
-	UseVisibilityCollapse UseVisibility = "collapse"
-	UseVisibilityHidden   UseVisibility = "hidden"
-	UseVisibilityVisible  UseVisibility = "visible"
-)
-
-type UseClipRule string
-
-const (
-	UseClipRuleEvenodd UseClipRule = "evenodd"
-	UseClipRuleNonzero UseClipRule = "nonzero"
-)
-
-type UsePointerEvents string
-
-const (
-	UsePointerEventsAll            UsePointerEvents = "all"
-	UsePointerEventsAuto           UsePointerEvents = "auto"
-	UsePointerEventsBoundingBox    UsePointerEvents = "bounding-box"
-	UsePointerEventsFill           UsePointerEvents = "fill"
-	UsePointerEventsNone           UsePointerEvents = "none"
-	UsePointerEventsPainted        UsePointerEvents = "painted"
-	UsePointerEventsStroke         UsePointerEvents = "stroke"
-	UsePointerEventsVisible        UsePointerEvents = "visible"
-	UsePointerEventsVisibleFill    UsePointerEvents = "visibleFill"
-	UsePointerEventsVisiblePainted UsePointerEvents = "visiblePainted"
-	UsePointerEventsVisibleStroke  UsePointerEvents = "visibleStroke"
-)
-
-type UseVectorEffect string
-
-const (
-	UseVectorEffectFixedPosition    UseVectorEffect = "fixed-position"
-	UseVectorEffectNonRotation      UseVectorEffect = "non-rotation"
-	UseVectorEffectNonScalingSize   UseVectorEffect = "non-scaling-size"
-	UseVectorEffectNonScalingStroke UseVectorEffect = "non-scaling-stroke"
-	UseVectorEffectNone             UseVectorEffect = "none"
-)
-
-type UseShapeRendering string
-
-const (
-	UseShapeRenderingAuto               UseShapeRendering = "auto"
-	UseShapeRenderingCrispEdges         UseShapeRendering = "crispEdges"
-	UseShapeRenderingGeometricPrecision UseShapeRendering = "geometricPrecision"
-	UseShapeRenderingOptimizeSpeed      UseShapeRendering = "optimizeSpeed"
-)
-
-type UseColorInterpolation string
-
-const (
-	UseColorInterpolationAuto      UseColorInterpolation = "auto"
-	UseColorInterpolationLinearRGB UseColorInterpolation = "linearRGB"
-	UseColorInterpolationSRGB      UseColorInterpolation = "sRGB"
-)
-
-type UseColorInterpolationFilters string
-
-const (
-	UseColorInterpolationFiltersAuto      UseColorInterpolationFilters = "auto"
-	UseColorInterpolationFiltersLinearRGB UseColorInterpolationFilters = "linearRGB"
-	UseColorInterpolationFiltersSRGB      UseColorInterpolationFilters = "sRGB"
-)
-
-type UseFontStyle string
-
-const (
-	UseFontStyleItalic  UseFontStyle = "italic"
-	UseFontStyleNormal  UseFontStyle = "normal"
-	UseFontStyleOblique UseFontStyle = "oblique"
-)
-
-type UseTextAnchor string
-
-const (
-	UseTextAnchorEnd    UseTextAnchor = "end"
-	UseTextAnchorMiddle UseTextAnchor = "middle"
-	UseTextAnchorStart  UseTextAnchor = "start"
-)
-
-type UseDominantBaseline string
-
-const (
-	UseDominantBaselineAlphabetic   UseDominantBaseline = "alphabetic"
-	UseDominantBaselineAuto         UseDominantBaseline = "auto"
-	UseDominantBaselineCentral      UseDominantBaseline = "central"
-	UseDominantBaselineHanging      UseDominantBaseline = "hanging"
-	UseDominantBaselineIdeographic  UseDominantBaseline = "ideographic"
-	UseDominantBaselineMathematical UseDominantBaseline = "mathematical"
-	UseDominantBaselineMiddle       UseDominantBaseline = "middle"
-	UseDominantBaselineTextBottom   UseDominantBaseline = "text-bottom"
-	UseDominantBaselineTextTop      UseDominantBaseline = "text-top"
-)
-
 type UseAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	UseAlignmentBaselineTop            UseAlignmentBaseline = "top"
 )
 
-type UseTextRendering string
+type UseClipRule string
 
 const (
-	UseTextRenderingAuto               UseTextRendering = "auto"
-	UseTextRenderingGeometricPrecision UseTextRendering = "geometricPrecision"
-	UseTextRenderingOptimizeLegibility UseTextRendering = "optimizeLegibility"
-	UseTextRenderingOptimizeSpeed      UseTextRendering = "optimizeSpeed"
+	UseClipRuleEvenodd UseClipRule = "evenodd"
+	UseClipRuleNonzero UseClipRule = "nonzero"
+)
+
+type UseColorInterpolation string
+
+const (
+	UseColorInterpolationAuto      UseColorInterpolation = "auto"
+	UseColorInterpolationLinearRGB UseColorInterpolation = "linearRGB"
+	UseColorInterpolationSRGB      UseColorInterpolation = "sRGB"
+)
+
+type UseColorInterpolationFilters string
+
+const (
+	UseColorInterpolationFiltersAuto      UseColorInterpolationFilters = "auto"
+	UseColorInterpolationFiltersLinearRGB UseColorInterpolationFilters = "linearRGB"
+	UseColorInterpolationFiltersSRGB      UseColorInterpolationFilters = "sRGB"
+)
+
+type UseDirection string
+
+const (
+	UseDirectionLtr UseDirection = "ltr"
+	UseDirectionRtl UseDirection = "rtl"
+)
+
+type UseDominantBaseline string
+
+const (
+	UseDominantBaselineAlphabetic   UseDominantBaseline = "alphabetic"
+	UseDominantBaselineAuto         UseDominantBaseline = "auto"
+	UseDominantBaselineCentral      UseDominantBaseline = "central"
+	UseDominantBaselineHanging      UseDominantBaseline = "hanging"
+	UseDominantBaselineIdeographic  UseDominantBaseline = "ideographic"
+	UseDominantBaselineMathematical UseDominantBaseline = "mathematical"
+	UseDominantBaselineMiddle       UseDominantBaseline = "middle"
+	UseDominantBaselineTextBottom   UseDominantBaseline = "text-bottom"
+	UseDominantBaselineTextTop      UseDominantBaseline = "text-top"
+)
+
+type UseFillRule string
+
+const (
+	UseFillRuleEvenodd UseFillRule = "evenodd"
+	UseFillRuleNonzero UseFillRule = "nonzero"
+)
+
+type UseFontStyle string
+
+const (
+	UseFontStyleItalic  UseFontStyle = "italic"
+	UseFontStyleNormal  UseFontStyle = "normal"
+	UseFontStyleOblique UseFontStyle = "oblique"
 )
 
 type UseImageRendering string
@@ -345,6 +267,66 @@ const (
 	UseOverflowVisible UseOverflow = "visible"
 )
 
+type UsePointerEvents string
+
+const (
+	UsePointerEventsAll            UsePointerEvents = "all"
+	UsePointerEventsAuto           UsePointerEvents = "auto"
+	UsePointerEventsBoundingBox    UsePointerEvents = "bounding-box"
+	UsePointerEventsFill           UsePointerEvents = "fill"
+	UsePointerEventsNone           UsePointerEvents = "none"
+	UsePointerEventsPainted        UsePointerEvents = "painted"
+	UsePointerEventsStroke         UsePointerEvents = "stroke"
+	UsePointerEventsVisible        UsePointerEvents = "visible"
+	UsePointerEventsVisibleFill    UsePointerEvents = "visibleFill"
+	UsePointerEventsVisiblePainted UsePointerEvents = "visiblePainted"
+	UsePointerEventsVisibleStroke  UsePointerEvents = "visibleStroke"
+)
+
+type UseShapeRendering string
+
+const (
+	UseShapeRenderingAuto               UseShapeRendering = "auto"
+	UseShapeRenderingCrispEdges         UseShapeRendering = "crispEdges"
+	UseShapeRenderingGeometricPrecision UseShapeRendering = "geometricPrecision"
+	UseShapeRenderingOptimizeSpeed      UseShapeRendering = "optimizeSpeed"
+)
+
+type UseStrokeLinecap string
+
+const (
+	UseStrokeLinecapButt   UseStrokeLinecap = "butt"
+	UseStrokeLinecapRound  UseStrokeLinecap = "round"
+	UseStrokeLinecapSquare UseStrokeLinecap = "square"
+)
+
+type UseStrokeLinejoin string
+
+const (
+	UseStrokeLinejoinArcs      UseStrokeLinejoin = "arcs"
+	UseStrokeLinejoinBevel     UseStrokeLinejoin = "bevel"
+	UseStrokeLinejoinMiter     UseStrokeLinejoin = "miter"
+	UseStrokeLinejoinMiterClip UseStrokeLinejoin = "miter-clip"
+	UseStrokeLinejoinRound     UseStrokeLinejoin = "round"
+)
+
+type UseTextAnchor string
+
+const (
+	UseTextAnchorEnd    UseTextAnchor = "end"
+	UseTextAnchorMiddle UseTextAnchor = "middle"
+	UseTextAnchorStart  UseTextAnchor = "start"
+)
+
+type UseTextRendering string
+
+const (
+	UseTextRenderingAuto               UseTextRendering = "auto"
+	UseTextRenderingGeometricPrecision UseTextRendering = "geometricPrecision"
+	UseTextRenderingOptimizeLegibility UseTextRendering = "optimizeLegibility"
+	UseTextRenderingOptimizeSpeed      UseTextRendering = "optimizeSpeed"
+)
+
 type UseTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	UseTransformBoxViewBox    UseTransformBox = "view-box"
 )
 
-type UseDirection string
+type UseVectorEffect string
 
 const (
-	UseDirectionLtr UseDirection = "ltr"
-	UseDirectionRtl UseDirection = "rtl"
+	UseVectorEffectFixedPosition    UseVectorEffect = "fixed-position"
+	UseVectorEffectNonRotation      UseVectorEffect = "non-rotation"
+	UseVectorEffectNonScalingSize   UseVectorEffect = "non-scaling-size"
+	UseVectorEffectNonScalingStroke UseVectorEffect = "non-scaling-stroke"
+	UseVectorEffectNone             UseVectorEffect = "none"
+)
+
+type UseVisibility string
+
+const (
+	UseVisibilityCollapse UseVisibility = "collapse"
+	UseVisibilityHidden   UseVisibility = "hidden"
+	UseVisibilityVisible  UseVisibility = "visible"
 )
 
 type UseWritingMode string
@@ -378,26 +371,29 @@ const (
 	UseWritingModeVerticalRl   UseWritingMode = "vertical-rl"
 )
 
+type UseXmlSpace string
+
+const (
+	UseXmlSpaceDefault  UseXmlSpace = "default"
+	UseXmlSpacePreserve UseXmlSpace = "preserve"
+)
+
+func (e *UseElement) Height(s string) *UseElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *UseElement) Href(s string) *UseElement {
 	e.attributes.Set("href", s)
 
 	return e
 }
 
-func (e *UseElement) XlinkHref(s string) *UseElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *UseElement) X(s string) *UseElement {
-	e.attributes.Set("x", s)
-
-	return e
-}
-
-func (e *UseElement) Y(s string) *UseElement {
-	e.attributes.Set("y", s)
+func (e *UseElement) SystemLanguage(s string) *UseElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
@@ -408,26 +404,64 @@ func (e *UseElement) Width(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) Height(s string) *UseElement {
-	e.attributes.Set("height", s)
+func (e *UseElement) X(s string) *UseElement {
+	e.attributes.Set("x", s)
 
 	return e
 }
 
-func (e *UseElement) Transform(s string) *UseElement {
-	e.attributes.Set("transform", s)
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) XlinkHref(s string) *UseElement {
+	e.attributes.Set("xlink:href", s)
 
 	return e
 }
 
-func (e *UseElement) TransformOrigin(s string) *UseElement {
-	e.attributes.Set("transform-origin", s)
+func (e *UseElement) Y(s string) *UseElement {
+	e.attributes.Set("y", s)
 
 	return e
 }
 
-func (e *UseElement) Id(s string) *UseElement {
-	e.attributes.Set("id", s)
+func (e *UseElement) AlignmentBaseline(a UseAlignmentBaseline) *UseElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func UseAlignmentBaselineCustom(s string) UseAlignmentBaseline {
+	return UseAlignmentBaseline(s)
+}
+
+func (e *UseElement) AriaUnsafe(name string, s string) *UseElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *UseElement) Aria(name string, s string) *UseElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *UseElement) Autofocus(b bool) *UseElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *UseElement) BaselineShift(s string) *UseElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -438,40 +472,59 @@ func (e *UseElement) Class(s ...string) *UseElement {
 	return e
 }
 
-func (e *UseElement) Style(s string) *UseElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) Clip(s string) *UseElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *UseElement) Tabindex(i int) *UseElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *UseElement) ClipPath(s string) *UseElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *UseElement) Lang(s string) *UseElement {
-	e.attributes.Set("lang", s)
+func (e *UseElement) ClipRule(a UseClipRule) *UseElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *UseElement) XmlLang(s string) *UseElement {
-	e.attributes.Set("xml:lang", s)
+func UseClipRuleCustom(s string) UseClipRule {
+	return UseClipRule(s)
+}
+
+func (e *UseElement) Color(s string) *UseElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *UseElement) XmlSpace(a UseXmlSpace) *UseElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *UseElement) ColorInterpolation(a UseColorInterpolation) *UseElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *UseElement) Autofocus(b bool) *UseElement {
-	e.attributes.SetBool("autofocus", b)
+func UseColorInterpolationCustom(s string) UseColorInterpolation {
+	return UseColorInterpolation(s)
+}
+
+func (e *UseElement) ColorInterpolationFilters(a UseColorInterpolationFilters) *UseElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func UseColorInterpolationFiltersCustom(s string) UseColorInterpolationFilters {
+	return UseColorInterpolationFilters(s)
+}
+
+func (e *UseElement) Cursor(s string) *UseElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -492,20 +545,30 @@ func (e *UseElement) Data(name string, s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) AriaUnsafe(name string, s string) *UseElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *UseElement) Direction(a UseDirection) *UseElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *UseElement) Aria(name string, s string) *UseElement {
-	tag := strings.ToLower("aria-" + name)
+func UseDirectionCustom(s string) UseDirection {
+	return UseDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *UseElement) Display(s string) *UseElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *UseElement) DominantBaseline(a UseDominantBaseline) *UseElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func UseDominantBaselineCustom(s string) UseDominantBaseline {
+	return UseDominantBaseline(s)
 }
 
 func (e *UseElement) Fill(s string) *UseElement {
@@ -530,20 +593,220 @@ func UseFillRuleCustom(s string) UseFillRule {
 	return UseFillRule(s)
 }
 
+func (e *UseElement) Filter(s string) *UseElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *UseElement) FloodColor(s string) *UseElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *UseElement) FloodOpacity(f float64) *UseElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *UseElement) FontFamily(s string) *UseElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *UseElement) FontSize(s string) *UseElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *UseElement) FontSizeAdjust(s string) *UseElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *UseElement) FontStretch(s string) *UseElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *UseElement) FontStyle(a UseFontStyle) *UseElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func UseFontStyleCustom(s string) UseFontStyle {
+	return UseFontStyle(s)
+}
+
+func (e *UseElement) FontVariant(s string) *UseElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *UseElement) FontWeight(s string) *UseElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) GlyphOrientationHorizontal(s string) *UseElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) GlyphOrientationVertical(s string) *UseElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *UseElement) Id(s string) *UseElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *UseElement) ImageRendering(a UseImageRendering) *UseElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func UseImageRenderingCustom(s string) UseImageRendering {
+	return UseImageRendering(s)
+}
+
+func (e *UseElement) Lang(s string) *UseElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *UseElement) LetterSpacing(s string) *UseElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *UseElement) LightingColor(s string) *UseElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *UseElement) MarkerEnd(s string) *UseElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *UseElement) MarkerMid(s string) *UseElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *UseElement) MarkerStart(s string) *UseElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *UseElement) Mask(s string) *UseElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *UseElement) Opacity(f float64) *UseElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *UseElement) Overflow(a UseOverflow) *UseElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func UseOverflowCustom(s string) UseOverflow {
+	return UseOverflow(s)
+}
+
+func (e *UseElement) PaintOrder(s string) *UseElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *UseElement) PointerEvents(a UsePointerEvents) *UseElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func UsePointerEventsCustom(s string) UsePointerEvents {
+	return UsePointerEvents(s)
+}
+
+func (e *UseElement) RequiredExtensions(s string) *UseElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *UseElement) ShapeRendering(a UseShapeRendering) *UseElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func UseShapeRenderingCustom(s string) UseShapeRendering {
+	return UseShapeRendering(s)
+}
+
+func (e *UseElement) StopColor(s string) *UseElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *UseElement) StopOpacity(f float64) *UseElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *UseElement) Stroke(s string) *UseElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *UseElement) StrokeWidth(s string) *UseElement {
-	e.attributes.Set("stroke-width", s)
+func (e *UseElement) StrokeDasharray(s string) *UseElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *UseElement) StrokeOpacity(f float64) *UseElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *UseElement) StrokeDashoffset(s string) *UseElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -574,210 +837,28 @@ func (e *UseElement) StrokeMiterlimit(f float64) *UseElement {
 	return e
 }
 
-func (e *UseElement) StrokeDasharray(s string) *UseElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *UseElement) StrokeOpacity(f float64) *UseElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *UseElement) StrokeDashoffset(s string) *UseElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *UseElement) StrokeWidth(s string) *UseElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *UseElement) Opacity(f float64) *UseElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *UseElement) Style(s string) *UseElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *UseElement) Color(s string) *UseElement {
-	e.attributes.Set("color", s)
+func (e *UseElement) Tabindex(i int) *UseElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *UseElement) Display(s string) *UseElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *UseElement) Visibility(a UseVisibility) *UseElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func UseVisibilityCustom(s string) UseVisibility {
-	return UseVisibility(s)
-}
-
-func (e *UseElement) ClipPath(s string) *UseElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *UseElement) ClipRule(a UseClipRule) *UseElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func UseClipRuleCustom(s string) UseClipRule {
-	return UseClipRule(s)
-}
-
-func (e *UseElement) Mask(s string) *UseElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *UseElement) Filter(s string) *UseElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *UseElement) Cursor(s string) *UseElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *UseElement) PointerEvents(a UsePointerEvents) *UseElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func UsePointerEventsCustom(s string) UsePointerEvents {
-	return UsePointerEvents(s)
-}
-
-func (e *UseElement) VectorEffect(a UseVectorEffect) *UseElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func UseVectorEffectCustom(s string) UseVectorEffect {
-	return UseVectorEffect(s)
-}
-
-func (e *UseElement) PaintOrder(s string) *UseElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *UseElement) ShapeRendering(a UseShapeRendering) *UseElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func UseShapeRenderingCustom(s string) UseShapeRendering {
-	return UseShapeRendering(s)
-}
-
-func (e *UseElement) ColorInterpolation(a UseColorInterpolation) *UseElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func UseColorInterpolationCustom(s string) UseColorInterpolation {
-	return UseColorInterpolation(s)
-}
-
-func (e *UseElement) ColorInterpolationFilters(a UseColorInterpolationFilters) *UseElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func UseColorInterpolationFiltersCustom(s string) UseColorInterpolationFilters {
-	return UseColorInterpolationFilters(s)
-}
-
-func (e *UseElement) FloodColor(s string) *UseElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *UseElement) FloodOpacity(f float64) *UseElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *UseElement) LightingColor(s string) *UseElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *UseElement) StopColor(s string) *UseElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *UseElement) StopOpacity(f float64) *UseElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *UseElement) MarkerStart(s string) *UseElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *UseElement) MarkerMid(s string) *UseElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *UseElement) MarkerEnd(s string) *UseElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *UseElement) FontFamily(s string) *UseElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *UseElement) FontSize(s string) *UseElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *UseElement) FontWeight(s string) *UseElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *UseElement) FontStyle(a UseFontStyle) *UseElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func UseFontStyleCustom(s string) UseFontStyle {
-	return UseFontStyle(s)
 }
 
 func (e *UseElement) TextAnchor(a UseTextAnchor) *UseElement {
@@ -790,40 +871,14 @@ func UseTextAnchorCustom(s string) UseTextAnchor {
 	return UseTextAnchor(s)
 }
 
-func (e *UseElement) DominantBaseline(a UseDominantBaseline) *UseElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func UseDominantBaselineCustom(s string) UseDominantBaseline {
-	return UseDominantBaseline(s)
-}
-
-func (e *UseElement) AlignmentBaseline(a UseAlignmentBaseline) *UseElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func UseAlignmentBaselineCustom(s string) UseAlignmentBaseline {
-	return UseAlignmentBaseline(s)
-}
-
-func (e *UseElement) LetterSpacing(s string) *UseElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *UseElement) WordSpacing(s string) *UseElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *UseElement) TextDecoration(s string) *UseElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *UseElement) TextOverflow(s string) *UseElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -838,24 +893,10 @@ func UseTextRenderingCustom(s string) UseTextRendering {
 	return UseTextRendering(s)
 }
 
-func (e *UseElement) ImageRendering(a UseImageRendering) *UseElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *UseElement) Transform(s string) *UseElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func UseImageRenderingCustom(s string) UseImageRendering {
-	return UseImageRendering(s)
-}
-
-func (e *UseElement) Overflow(a UseOverflow) *UseElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func UseOverflowCustom(s string) UseOverflow {
-	return UseOverflow(s)
 }
 
 func (e *UseElement) TransformBox(a UseTransformBox) *UseElement {
@@ -868,18 +909,46 @@ func UseTransformBoxCustom(s string) UseTransformBox {
 	return UseTransformBox(s)
 }
 
-func (e *UseElement) Direction(a UseDirection) *UseElement {
-	e.attributes.Set("direction", string(a))
+func (e *UseElement) TransformOrigin(s string) *UseElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func UseDirectionCustom(s string) UseDirection {
-	return UseDirection(s)
-}
-
 func (e *UseElement) UnicodeBidi(s string) *UseElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *UseElement) VectorEffect(a UseVectorEffect) *UseElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func UseVectorEffectCustom(s string) UseVectorEffect {
+	return UseVectorEffect(s)
+}
+
+func (e *UseElement) Visibility(a UseVisibility) *UseElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func UseVisibilityCustom(s string) UseVisibility {
+	return UseVisibility(s)
+}
+
+func (e *UseElement) WhiteSpace(s string) *UseElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *UseElement) WordSpacing(s string) *UseElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -894,8 +963,20 @@ func UseWritingModeCustom(s string) UseWritingMode {
 	return UseWritingMode(s)
 }
 
-func (e *UseElement) WhiteSpace(s string) *UseElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) XmlLang(s string) *UseElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *UseElement) XmlSpace(a UseXmlSpace) *UseElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

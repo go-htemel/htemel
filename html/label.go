@@ -240,6 +240,15 @@ const (
 	LabelInputmodeUrl     LabelInputmode = "url"
 )
 
+type LabelPopover string
+
+const (
+	LabelPopoverAuto   LabelPopover = "auto"
+	LabelPopoverHint   LabelPopover = "hint"
+	LabelPopoverManual LabelPopover = "manual"
+	LabelPopoverEmpty  LabelPopover = ""
+)
+
 type LabelSpellcheck string
 
 const (
@@ -370,6 +379,26 @@ func (e *LabelElement) Enterkeyhint(a LabelEnterkeyhint) *LabelElement {
 	return e
 }
 
+func (e *LabelElement) Exportparts(s string) *LabelElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *LabelElement) Headingoffset(i int) *LabelElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *LabelElement) Headingreset(b bool) *LabelElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *LabelElement) Hidden(v ...LabelHidden) *LabelElement {
@@ -402,6 +431,14 @@ func (e *LabelElement) Inputmode(a LabelInputmode) *LabelElement {
 	return e
 }
 
+func (e *LabelElement) Is(s string) *LabelElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *LabelElement) Itemid(s string) *LabelElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +483,20 @@ func (e *LabelElement) Nonce(s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Popover(s string) *LabelElement {
-	e.attributes.Set("popover", s)
+func (e *LabelElement) Part(s ...string) *LabelElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Popover(v ...LabelPopover) *LabelElement {
+	var val LabelPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

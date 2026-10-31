@@ -44,5 +44,5 @@ jobs:
       - name: Generated code is current
         run: |
           go generate ./...
-          git status --porcelain -- html/ svg/
-          test -z "$(git status --porcelain -- html/ svg/)"
+          git status --porcelain -- html/ svg/ mathml/
+          test -z "$(git status --porcelain -- html/ svg/ mathml/)"

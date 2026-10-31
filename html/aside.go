@@ -240,6 +240,15 @@ const (
 	AsideInputmodeUrl     AsideInputmode = "url"
 )
 
+type AsidePopover string
+
+const (
+	AsidePopoverAuto   AsidePopover = "auto"
+	AsidePopoverHint   AsidePopover = "hint"
+	AsidePopoverManual AsidePopover = "manual"
+	AsidePopoverEmpty  AsidePopover = ""
+)
+
 type AsideSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *AsideElement) Enterkeyhint(a AsideEnterkeyhint) *AsideElement {
 	return e
 }
 
+func (e *AsideElement) Exportparts(s string) *AsideElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *AsideElement) Headingoffset(i int) *AsideElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AsideElement) Headingreset(b bool) *AsideElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *AsideElement) Hidden(v ...AsideHidden) *AsideElement {
@@ -396,6 +425,14 @@ func (e *AsideElement) Inputmode(a AsideInputmode) *AsideElement {
 	return e
 }
 
+func (e *AsideElement) Is(s string) *AsideElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *AsideElement) Itemid(s string) *AsideElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *AsideElement) Nonce(s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Popover(s string) *AsideElement {
-	e.attributes.Set("popover", s)
+func (e *AsideElement) Part(s ...string) *AsideElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Popover(v ...AsidePopover) *AsideElement {
+	var val AsidePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

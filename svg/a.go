@@ -167,7 +167,6 @@ func (e *AElement) SetAttrUnsafe(name, value string) {
 type AReferrerpolicy string
 
 const (
-	AReferrerpolicyV                           AReferrerpolicy = ""
 	AReferrerpolicyNoReferrer                  AReferrerpolicy = "no-referrer"
 	AReferrerpolicyNoReferrerWhenDowngrade     AReferrerpolicy = "no-referrer-when-downgrade"
 	AReferrerpolicyOrigin                      AReferrerpolicy = "origin"
@@ -177,134 +176,6 @@ const (
 	AReferrerpolicyStrictOriginWhenCrossOrigin AReferrerpolicy = "strict-origin-when-cross-origin"
 	AReferrerpolicyUnsafeUrl                   AReferrerpolicy = "unsafe-url"
 	AReferrerpolicyEmpty                       AReferrerpolicy = ""
-)
-
-type AXmlSpace string
-
-const (
-	AXmlSpaceDefault  AXmlSpace = "default"
-	AXmlSpacePreserve AXmlSpace = "preserve"
-)
-
-type AFillRule string
-
-const (
-	AFillRuleEvenodd AFillRule = "evenodd"
-	AFillRuleNonzero AFillRule = "nonzero"
-)
-
-type AStrokeLinecap string
-
-const (
-	AStrokeLinecapButt   AStrokeLinecap = "butt"
-	AStrokeLinecapRound  AStrokeLinecap = "round"
-	AStrokeLinecapSquare AStrokeLinecap = "square"
-)
-
-type AStrokeLinejoin string
-
-const (
-	AStrokeLinejoinArcs      AStrokeLinejoin = "arcs"
-	AStrokeLinejoinBevel     AStrokeLinejoin = "bevel"
-	AStrokeLinejoinMiter     AStrokeLinejoin = "miter"
-	AStrokeLinejoinMiterClip AStrokeLinejoin = "miter-clip"
-	AStrokeLinejoinRound     AStrokeLinejoin = "round"
-)
-
-type AVisibility string
-
-const (
-	AVisibilityCollapse AVisibility = "collapse"
-	AVisibilityHidden   AVisibility = "hidden"
-	AVisibilityVisible  AVisibility = "visible"
-)
-
-type AClipRule string
-
-const (
-	AClipRuleEvenodd AClipRule = "evenodd"
-	AClipRuleNonzero AClipRule = "nonzero"
-)
-
-type APointerEvents string
-
-const (
-	APointerEventsAll            APointerEvents = "all"
-	APointerEventsAuto           APointerEvents = "auto"
-	APointerEventsBoundingBox    APointerEvents = "bounding-box"
-	APointerEventsFill           APointerEvents = "fill"
-	APointerEventsNone           APointerEvents = "none"
-	APointerEventsPainted        APointerEvents = "painted"
-	APointerEventsStroke         APointerEvents = "stroke"
-	APointerEventsVisible        APointerEvents = "visible"
-	APointerEventsVisibleFill    APointerEvents = "visibleFill"
-	APointerEventsVisiblePainted APointerEvents = "visiblePainted"
-	APointerEventsVisibleStroke  APointerEvents = "visibleStroke"
-)
-
-type AVectorEffect string
-
-const (
-	AVectorEffectFixedPosition    AVectorEffect = "fixed-position"
-	AVectorEffectNonRotation      AVectorEffect = "non-rotation"
-	AVectorEffectNonScalingSize   AVectorEffect = "non-scaling-size"
-	AVectorEffectNonScalingStroke AVectorEffect = "non-scaling-stroke"
-	AVectorEffectNone             AVectorEffect = "none"
-)
-
-type AShapeRendering string
-
-const (
-	AShapeRenderingAuto               AShapeRendering = "auto"
-	AShapeRenderingCrispEdges         AShapeRendering = "crispEdges"
-	AShapeRenderingGeometricPrecision AShapeRendering = "geometricPrecision"
-	AShapeRenderingOptimizeSpeed      AShapeRendering = "optimizeSpeed"
-)
-
-type AColorInterpolation string
-
-const (
-	AColorInterpolationAuto      AColorInterpolation = "auto"
-	AColorInterpolationLinearRGB AColorInterpolation = "linearRGB"
-	AColorInterpolationSRGB      AColorInterpolation = "sRGB"
-)
-
-type AColorInterpolationFilters string
-
-const (
-	AColorInterpolationFiltersAuto      AColorInterpolationFilters = "auto"
-	AColorInterpolationFiltersLinearRGB AColorInterpolationFilters = "linearRGB"
-	AColorInterpolationFiltersSRGB      AColorInterpolationFilters = "sRGB"
-)
-
-type AFontStyle string
-
-const (
-	AFontStyleItalic  AFontStyle = "italic"
-	AFontStyleNormal  AFontStyle = "normal"
-	AFontStyleOblique AFontStyle = "oblique"
-)
-
-type ATextAnchor string
-
-const (
-	ATextAnchorEnd    ATextAnchor = "end"
-	ATextAnchorMiddle ATextAnchor = "middle"
-	ATextAnchorStart  ATextAnchor = "start"
-)
-
-type ADominantBaseline string
-
-const (
-	ADominantBaselineAlphabetic   ADominantBaseline = "alphabetic"
-	ADominantBaselineAuto         ADominantBaseline = "auto"
-	ADominantBaselineCentral      ADominantBaseline = "central"
-	ADominantBaselineHanging      ADominantBaseline = "hanging"
-	ADominantBaselineIdeographic  ADominantBaseline = "ideographic"
-	ADominantBaselineMathematical ADominantBaseline = "mathematical"
-	ADominantBaselineMiddle       ADominantBaseline = "middle"
-	ADominantBaselineTextBottom   ADominantBaseline = "text-bottom"
-	ADominantBaselineTextTop      ADominantBaseline = "text-top"
 )
 
 type AAlignmentBaseline string
@@ -329,13 +200,63 @@ const (
 	AAlignmentBaselineTop            AAlignmentBaseline = "top"
 )
 
-type ATextRendering string
+type AClipRule string
 
 const (
-	ATextRenderingAuto               ATextRendering = "auto"
-	ATextRenderingGeometricPrecision ATextRendering = "geometricPrecision"
-	ATextRenderingOptimizeLegibility ATextRendering = "optimizeLegibility"
-	ATextRenderingOptimizeSpeed      ATextRendering = "optimizeSpeed"
+	AClipRuleEvenodd AClipRule = "evenodd"
+	AClipRuleNonzero AClipRule = "nonzero"
+)
+
+type AColorInterpolation string
+
+const (
+	AColorInterpolationAuto      AColorInterpolation = "auto"
+	AColorInterpolationLinearRGB AColorInterpolation = "linearRGB"
+	AColorInterpolationSRGB      AColorInterpolation = "sRGB"
+)
+
+type AColorInterpolationFilters string
+
+const (
+	AColorInterpolationFiltersAuto      AColorInterpolationFilters = "auto"
+	AColorInterpolationFiltersLinearRGB AColorInterpolationFilters = "linearRGB"
+	AColorInterpolationFiltersSRGB      AColorInterpolationFilters = "sRGB"
+)
+
+type ADirection string
+
+const (
+	ADirectionLtr ADirection = "ltr"
+	ADirectionRtl ADirection = "rtl"
+)
+
+type ADominantBaseline string
+
+const (
+	ADominantBaselineAlphabetic   ADominantBaseline = "alphabetic"
+	ADominantBaselineAuto         ADominantBaseline = "auto"
+	ADominantBaselineCentral      ADominantBaseline = "central"
+	ADominantBaselineHanging      ADominantBaseline = "hanging"
+	ADominantBaselineIdeographic  ADominantBaseline = "ideographic"
+	ADominantBaselineMathematical ADominantBaseline = "mathematical"
+	ADominantBaselineMiddle       ADominantBaseline = "middle"
+	ADominantBaselineTextBottom   ADominantBaseline = "text-bottom"
+	ADominantBaselineTextTop      ADominantBaseline = "text-top"
+)
+
+type AFillRule string
+
+const (
+	AFillRuleEvenodd AFillRule = "evenodd"
+	AFillRuleNonzero AFillRule = "nonzero"
+)
+
+type AFontStyle string
+
+const (
+	AFontStyleItalic  AFontStyle = "italic"
+	AFontStyleNormal  AFontStyle = "normal"
+	AFontStyleOblique AFontStyle = "oblique"
 )
 
 type AImageRendering string
@@ -360,6 +281,66 @@ const (
 	AOverflowVisible AOverflow = "visible"
 )
 
+type APointerEvents string
+
+const (
+	APointerEventsAll            APointerEvents = "all"
+	APointerEventsAuto           APointerEvents = "auto"
+	APointerEventsBoundingBox    APointerEvents = "bounding-box"
+	APointerEventsFill           APointerEvents = "fill"
+	APointerEventsNone           APointerEvents = "none"
+	APointerEventsPainted        APointerEvents = "painted"
+	APointerEventsStroke         APointerEvents = "stroke"
+	APointerEventsVisible        APointerEvents = "visible"
+	APointerEventsVisibleFill    APointerEvents = "visibleFill"
+	APointerEventsVisiblePainted APointerEvents = "visiblePainted"
+	APointerEventsVisibleStroke  APointerEvents = "visibleStroke"
+)
+
+type AShapeRendering string
+
+const (
+	AShapeRenderingAuto               AShapeRendering = "auto"
+	AShapeRenderingCrispEdges         AShapeRendering = "crispEdges"
+	AShapeRenderingGeometricPrecision AShapeRendering = "geometricPrecision"
+	AShapeRenderingOptimizeSpeed      AShapeRendering = "optimizeSpeed"
+)
+
+type AStrokeLinecap string
+
+const (
+	AStrokeLinecapButt   AStrokeLinecap = "butt"
+	AStrokeLinecapRound  AStrokeLinecap = "round"
+	AStrokeLinecapSquare AStrokeLinecap = "square"
+)
+
+type AStrokeLinejoin string
+
+const (
+	AStrokeLinejoinArcs      AStrokeLinejoin = "arcs"
+	AStrokeLinejoinBevel     AStrokeLinejoin = "bevel"
+	AStrokeLinejoinMiter     AStrokeLinejoin = "miter"
+	AStrokeLinejoinMiterClip AStrokeLinejoin = "miter-clip"
+	AStrokeLinejoinRound     AStrokeLinejoin = "round"
+)
+
+type ATextAnchor string
+
+const (
+	ATextAnchorEnd    ATextAnchor = "end"
+	ATextAnchorMiddle ATextAnchor = "middle"
+	ATextAnchorStart  ATextAnchor = "start"
+)
+
+type ATextRendering string
+
+const (
+	ATextRenderingAuto               ATextRendering = "auto"
+	ATextRenderingGeometricPrecision ATextRendering = "geometricPrecision"
+	ATextRenderingOptimizeLegibility ATextRendering = "optimizeLegibility"
+	ATextRenderingOptimizeSpeed      ATextRendering = "optimizeSpeed"
+)
+
 type ATransformBox string
 
 const (
@@ -370,11 +351,22 @@ const (
 	ATransformBoxViewBox    ATransformBox = "view-box"
 )
 
-type ADirection string
+type AVectorEffect string
 
 const (
-	ADirectionLtr ADirection = "ltr"
-	ADirectionRtl ADirection = "rtl"
+	AVectorEffectFixedPosition    AVectorEffect = "fixed-position"
+	AVectorEffectNonRotation      AVectorEffect = "non-rotation"
+	AVectorEffectNonScalingSize   AVectorEffect = "non-scaling-size"
+	AVectorEffectNonScalingStroke AVectorEffect = "non-scaling-stroke"
+	AVectorEffectNone             AVectorEffect = "none"
+)
+
+type AVisibility string
+
+const (
+	AVisibilityCollapse AVisibility = "collapse"
+	AVisibilityHidden   AVisibility = "hidden"
+	AVisibilityVisible  AVisibility = "visible"
 )
 
 type AWritingMode string
@@ -393,23 +385,12 @@ const (
 	AWritingModeVerticalRl   AWritingMode = "vertical-rl"
 )
 
-func (e *AElement) Href(s string) *AElement {
-	e.attributes.Set("href", s)
+type AXmlSpace string
 
-	return e
-}
-
-func (e *AElement) XlinkHref(s string) *AElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *AElement) Target(s string) *AElement {
-	e.attributes.Set("target", s)
-
-	return e
-}
+const (
+	AXmlSpaceDefault  AXmlSpace = "default"
+	AXmlSpacePreserve AXmlSpace = "preserve"
+)
 
 func (e *AElement) Download(s string) *AElement {
 	e.attributes.Set("download", s)
@@ -417,14 +398,10 @@ func (e *AElement) Download(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Ping(s string) *AElement {
-	e.attributes.Set("ping", s)
-
-	return e
-}
-
-func (e *AElement) Rel(s ...string) *AElement {
-	e.attributes.Set("rel", strings.Join(s, " "))
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *AElement) Href(s string) *AElement {
+	e.attributes.Set("href", s)
 
 	return e
 }
@@ -435,8 +412,8 @@ func (e *AElement) Hreflang(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Type(s string) *AElement {
-	e.attributes.Set("type", s)
+func (e *AElement) Ping(s ...string) *AElement {
+	e.attributes.Set("ping", strings.Join(s, " "))
 
 	return e
 }
@@ -453,20 +430,103 @@ func (e *AElement) Referrerpolicy(v ...AReferrerpolicy) *AElement {
 	return e
 }
 
-func (e *AElement) Transform(s string) *AElement {
-	e.attributes.Set("transform", s)
+func (e *AElement) Rel(s ...string) *AElement {
+	e.attributes.Set("rel", strings.Join(s, " "))
 
 	return e
 }
 
-func (e *AElement) TransformOrigin(s string) *AElement {
-	e.attributes.Set("transform-origin", s)
+func (e *AElement) SystemLanguage(s string) *AElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
 
-func (e *AElement) Id(s string) *AElement {
-	e.attributes.Set("id", s)
+func (e *AElement) Target(s string) *AElement {
+	e.attributes.Set("target", s)
+
+	return e
+}
+
+func (e *AElement) Type(s string) *AElement {
+	e.attributes.Set("type", s)
+
+	return e
+}
+
+// XlinkActuate sets the "xlink:actuate" attribute.
+//
+// Deprecated: the "xlink:actuate" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XlinkActuate(s string) *AElement {
+	e.attributes.Set("xlink:actuate", s)
+
+	return e
+}
+
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XlinkHref(s string) *AElement {
+	e.attributes.Set("xlink:href", s)
+
+	return e
+}
+
+// XlinkShow sets the "xlink:show" attribute.
+//
+// Deprecated: the "xlink:show" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XlinkShow(s string) *AElement {
+	e.attributes.Set("xlink:show", s)
+
+	return e
+}
+
+// XlinkTitle sets the "xlink:title" attribute.
+//
+// Deprecated: the "xlink:title" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XlinkTitle(s string) *AElement {
+	e.attributes.Set("xlink:title", s)
+
+	return e
+}
+
+func (e *AElement) AlignmentBaseline(a AAlignmentBaseline) *AElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func AAlignmentBaselineCustom(s string) AAlignmentBaseline {
+	return AAlignmentBaseline(s)
+}
+
+func (e *AElement) AriaUnsafe(name string, s string) *AElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *AElement) Aria(name string, s string) *AElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AElement) Autofocus(b bool) *AElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *AElement) BaselineShift(s string) *AElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -477,40 +537,59 @@ func (e *AElement) Class(s ...string) *AElement {
 	return e
 }
 
-func (e *AElement) Style(s string) *AElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) Clip(s string) *AElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *AElement) Tabindex(i int) *AElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *AElement) ClipPath(s string) *AElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *AElement) Lang(s string) *AElement {
-	e.attributes.Set("lang", s)
+func (e *AElement) ClipRule(a AClipRule) *AElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *AElement) XmlLang(s string) *AElement {
-	e.attributes.Set("xml:lang", s)
+func AClipRuleCustom(s string) AClipRule {
+	return AClipRule(s)
+}
+
+func (e *AElement) Color(s string) *AElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *AElement) XmlSpace(a AXmlSpace) *AElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *AElement) ColorInterpolation(a AColorInterpolation) *AElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AElement) Autofocus(b bool) *AElement {
-	e.attributes.SetBool("autofocus", b)
+func AColorInterpolationCustom(s string) AColorInterpolation {
+	return AColorInterpolation(s)
+}
+
+func (e *AElement) ColorInterpolationFilters(a AColorInterpolationFilters) *AElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func AColorInterpolationFiltersCustom(s string) AColorInterpolationFilters {
+	return AColorInterpolationFilters(s)
+}
+
+func (e *AElement) Cursor(s string) *AElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -531,20 +610,30 @@ func (e *AElement) Data(name string, s string) *AElement {
 	return e
 }
 
-func (e *AElement) AriaUnsafe(name string, s string) *AElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *AElement) Direction(a ADirection) *AElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *AElement) Aria(name string, s string) *AElement {
-	tag := strings.ToLower("aria-" + name)
+func ADirectionCustom(s string) ADirection {
+	return ADirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *AElement) Display(s string) *AElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *AElement) DominantBaseline(a ADominantBaseline) *AElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func ADominantBaselineCustom(s string) ADominantBaseline {
+	return ADominantBaseline(s)
 }
 
 func (e *AElement) Fill(s string) *AElement {
@@ -569,20 +658,220 @@ func AFillRuleCustom(s string) AFillRule {
 	return AFillRule(s)
 }
 
+func (e *AElement) Filter(s string) *AElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *AElement) FloodColor(s string) *AElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *AElement) FloodOpacity(f float64) *AElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AElement) FontFamily(s string) *AElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *AElement) FontSize(s string) *AElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *AElement) FontSizeAdjust(s string) *AElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *AElement) FontStretch(s string) *AElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *AElement) FontStyle(a AFontStyle) *AElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func AFontStyleCustom(s string) AFontStyle {
+	return AFontStyle(s)
+}
+
+func (e *AElement) FontVariant(s string) *AElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *AElement) FontWeight(s string) *AElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) GlyphOrientationHorizontal(s string) *AElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) GlyphOrientationVertical(s string) *AElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *AElement) Id(s string) *AElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *AElement) ImageRendering(a AImageRendering) *AElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func AImageRenderingCustom(s string) AImageRendering {
+	return AImageRendering(s)
+}
+
+func (e *AElement) Lang(s string) *AElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *AElement) LetterSpacing(s string) *AElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *AElement) LightingColor(s string) *AElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *AElement) MarkerEnd(s string) *AElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *AElement) MarkerMid(s string) *AElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *AElement) MarkerStart(s string) *AElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *AElement) Mask(s string) *AElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *AElement) Opacity(f float64) *AElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AElement) Overflow(a AOverflow) *AElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func AOverflowCustom(s string) AOverflow {
+	return AOverflow(s)
+}
+
+func (e *AElement) PaintOrder(s string) *AElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *AElement) PointerEvents(a APointerEvents) *AElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func APointerEventsCustom(s string) APointerEvents {
+	return APointerEvents(s)
+}
+
+func (e *AElement) RequiredExtensions(s string) *AElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *AElement) ShapeRendering(a AShapeRendering) *AElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func AShapeRenderingCustom(s string) AShapeRendering {
+	return AShapeRendering(s)
+}
+
+func (e *AElement) StopColor(s string) *AElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *AElement) StopOpacity(f float64) *AElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *AElement) Stroke(s string) *AElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *AElement) StrokeWidth(s string) *AElement {
-	e.attributes.Set("stroke-width", s)
+func (e *AElement) StrokeDasharray(s string) *AElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *AElement) StrokeOpacity(f float64) *AElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AElement) StrokeDashoffset(s string) *AElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -613,210 +902,28 @@ func (e *AElement) StrokeMiterlimit(f float64) *AElement {
 	return e
 }
 
-func (e *AElement) StrokeDasharray(s string) *AElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *AElement) StrokeOpacity(f float64) *AElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *AElement) StrokeDashoffset(s string) *AElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *AElement) StrokeWidth(s string) *AElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *AElement) Opacity(f float64) *AElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AElement) Style(s string) *AElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *AElement) Color(s string) *AElement {
-	e.attributes.Set("color", s)
+func (e *AElement) Tabindex(i int) *AElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *AElement) Display(s string) *AElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *AElement) Visibility(a AVisibility) *AElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func AVisibilityCustom(s string) AVisibility {
-	return AVisibility(s)
-}
-
-func (e *AElement) ClipPath(s string) *AElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *AElement) ClipRule(a AClipRule) *AElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func AClipRuleCustom(s string) AClipRule {
-	return AClipRule(s)
-}
-
-func (e *AElement) Mask(s string) *AElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *AElement) Filter(s string) *AElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *AElement) Cursor(s string) *AElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *AElement) PointerEvents(a APointerEvents) *AElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func APointerEventsCustom(s string) APointerEvents {
-	return APointerEvents(s)
-}
-
-func (e *AElement) VectorEffect(a AVectorEffect) *AElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func AVectorEffectCustom(s string) AVectorEffect {
-	return AVectorEffect(s)
-}
-
-func (e *AElement) PaintOrder(s string) *AElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *AElement) ShapeRendering(a AShapeRendering) *AElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func AShapeRenderingCustom(s string) AShapeRendering {
-	return AShapeRendering(s)
-}
-
-func (e *AElement) ColorInterpolation(a AColorInterpolation) *AElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func AColorInterpolationCustom(s string) AColorInterpolation {
-	return AColorInterpolation(s)
-}
-
-func (e *AElement) ColorInterpolationFilters(a AColorInterpolationFilters) *AElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func AColorInterpolationFiltersCustom(s string) AColorInterpolationFilters {
-	return AColorInterpolationFilters(s)
-}
-
-func (e *AElement) FloodColor(s string) *AElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *AElement) FloodOpacity(f float64) *AElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AElement) LightingColor(s string) *AElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *AElement) StopColor(s string) *AElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *AElement) StopOpacity(f float64) *AElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AElement) MarkerStart(s string) *AElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *AElement) MarkerMid(s string) *AElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *AElement) MarkerEnd(s string) *AElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *AElement) FontFamily(s string) *AElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *AElement) FontSize(s string) *AElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *AElement) FontWeight(s string) *AElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *AElement) FontStyle(a AFontStyle) *AElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func AFontStyleCustom(s string) AFontStyle {
-	return AFontStyle(s)
 }
 
 func (e *AElement) TextAnchor(a ATextAnchor) *AElement {
@@ -829,40 +936,14 @@ func ATextAnchorCustom(s string) ATextAnchor {
 	return ATextAnchor(s)
 }
 
-func (e *AElement) DominantBaseline(a ADominantBaseline) *AElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func ADominantBaselineCustom(s string) ADominantBaseline {
-	return ADominantBaseline(s)
-}
-
-func (e *AElement) AlignmentBaseline(a AAlignmentBaseline) *AElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func AAlignmentBaselineCustom(s string) AAlignmentBaseline {
-	return AAlignmentBaseline(s)
-}
-
-func (e *AElement) LetterSpacing(s string) *AElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *AElement) WordSpacing(s string) *AElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *AElement) TextDecoration(s string) *AElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *AElement) TextOverflow(s string) *AElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -877,24 +958,10 @@ func ATextRenderingCustom(s string) ATextRendering {
 	return ATextRendering(s)
 }
 
-func (e *AElement) ImageRendering(a AImageRendering) *AElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *AElement) Transform(s string) *AElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func AImageRenderingCustom(s string) AImageRendering {
-	return AImageRendering(s)
-}
-
-func (e *AElement) Overflow(a AOverflow) *AElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func AOverflowCustom(s string) AOverflow {
-	return AOverflow(s)
 }
 
 func (e *AElement) TransformBox(a ATransformBox) *AElement {
@@ -907,18 +974,46 @@ func ATransformBoxCustom(s string) ATransformBox {
 	return ATransformBox(s)
 }
 
-func (e *AElement) Direction(a ADirection) *AElement {
-	e.attributes.Set("direction", string(a))
+func (e *AElement) TransformOrigin(s string) *AElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func ADirectionCustom(s string) ADirection {
-	return ADirection(s)
-}
-
 func (e *AElement) UnicodeBidi(s string) *AElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *AElement) VectorEffect(a AVectorEffect) *AElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func AVectorEffectCustom(s string) AVectorEffect {
+	return AVectorEffect(s)
+}
+
+func (e *AElement) Visibility(a AVisibility) *AElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func AVisibilityCustom(s string) AVisibility {
+	return AVisibility(s)
+}
+
+func (e *AElement) WhiteSpace(s string) *AElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *AElement) WordSpacing(s string) *AElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -933,8 +1028,20 @@ func AWritingModeCustom(s string) AWritingMode {
 	return AWritingMode(s)
 }
 
-func (e *AElement) WhiteSpace(s string) *AElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XmlLang(s string) *AElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *AElement) XmlSpace(a AXmlSpace) *AElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

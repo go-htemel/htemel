@@ -240,6 +240,15 @@ const (
 	MeterInputmodeUrl     MeterInputmode = "url"
 )
 
+type MeterPopover string
+
+const (
+	MeterPopoverAuto   MeterPopover = "auto"
+	MeterPopoverHint   MeterPopover = "hint"
+	MeterPopoverManual MeterPopover = "manual"
+	MeterPopoverEmpty  MeterPopover = ""
+)
+
 type MeterSpellcheck string
 
 const (
@@ -264,20 +273,8 @@ const (
 	MeterWritingsuggestionsEmpty MeterWritingsuggestions = ""
 )
 
-func (e *MeterElement) Value(f float64) *MeterElement {
-	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MeterElement) Min(f float64) *MeterElement {
-	e.attributes.Set("min", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *MeterElement) Max(f float64) *MeterElement {
-	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MeterElement) High(f float64) *MeterElement {
+	e.attributes.Set("high", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -288,14 +285,26 @@ func (e *MeterElement) Low(f float64) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) High(f float64) *MeterElement {
-	e.attributes.Set("high", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *MeterElement) Max(f float64) *MeterElement {
+	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MeterElement) Min(f float64) *MeterElement {
+	e.attributes.Set("min", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
 func (e *MeterElement) Optimum(f float64) *MeterElement {
 	e.attributes.Set("optimum", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *MeterElement) Value(f float64) *MeterElement {
+	e.attributes.Set("value", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
@@ -400,6 +409,26 @@ func (e *MeterElement) Enterkeyhint(a MeterEnterkeyhint) *MeterElement {
 	return e
 }
 
+func (e *MeterElement) Exportparts(s string) *MeterElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *MeterElement) Headingoffset(i int) *MeterElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *MeterElement) Headingreset(b bool) *MeterElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *MeterElement) Hidden(v ...MeterHidden) *MeterElement {
@@ -432,6 +461,14 @@ func (e *MeterElement) Inputmode(a MeterInputmode) *MeterElement {
 	return e
 }
 
+func (e *MeterElement) Is(s string) *MeterElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *MeterElement) Itemid(s string) *MeterElement {
 	e.attributes.Set("itemid", s)
 
@@ -476,8 +513,20 @@ func (e *MeterElement) Nonce(s string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Popover(s string) *MeterElement {
-	e.attributes.Set("popover", s)
+func (e *MeterElement) Part(s ...string) *MeterElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Popover(v ...MeterPopover) *MeterElement {
+	var val MeterPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -171,134 +171,6 @@ const (
 	SvgZoomAndPanMagnify SvgZoomAndPan = "magnify"
 )
 
-type SvgXmlSpace string
-
-const (
-	SvgXmlSpaceDefault  SvgXmlSpace = "default"
-	SvgXmlSpacePreserve SvgXmlSpace = "preserve"
-)
-
-type SvgFillRule string
-
-const (
-	SvgFillRuleEvenodd SvgFillRule = "evenodd"
-	SvgFillRuleNonzero SvgFillRule = "nonzero"
-)
-
-type SvgStrokeLinecap string
-
-const (
-	SvgStrokeLinecapButt   SvgStrokeLinecap = "butt"
-	SvgStrokeLinecapRound  SvgStrokeLinecap = "round"
-	SvgStrokeLinecapSquare SvgStrokeLinecap = "square"
-)
-
-type SvgStrokeLinejoin string
-
-const (
-	SvgStrokeLinejoinArcs      SvgStrokeLinejoin = "arcs"
-	SvgStrokeLinejoinBevel     SvgStrokeLinejoin = "bevel"
-	SvgStrokeLinejoinMiter     SvgStrokeLinejoin = "miter"
-	SvgStrokeLinejoinMiterClip SvgStrokeLinejoin = "miter-clip"
-	SvgStrokeLinejoinRound     SvgStrokeLinejoin = "round"
-)
-
-type SvgVisibility string
-
-const (
-	SvgVisibilityCollapse SvgVisibility = "collapse"
-	SvgVisibilityHidden   SvgVisibility = "hidden"
-	SvgVisibilityVisible  SvgVisibility = "visible"
-)
-
-type SvgClipRule string
-
-const (
-	SvgClipRuleEvenodd SvgClipRule = "evenodd"
-	SvgClipRuleNonzero SvgClipRule = "nonzero"
-)
-
-type SvgPointerEvents string
-
-const (
-	SvgPointerEventsAll            SvgPointerEvents = "all"
-	SvgPointerEventsAuto           SvgPointerEvents = "auto"
-	SvgPointerEventsBoundingBox    SvgPointerEvents = "bounding-box"
-	SvgPointerEventsFill           SvgPointerEvents = "fill"
-	SvgPointerEventsNone           SvgPointerEvents = "none"
-	SvgPointerEventsPainted        SvgPointerEvents = "painted"
-	SvgPointerEventsStroke         SvgPointerEvents = "stroke"
-	SvgPointerEventsVisible        SvgPointerEvents = "visible"
-	SvgPointerEventsVisibleFill    SvgPointerEvents = "visibleFill"
-	SvgPointerEventsVisiblePainted SvgPointerEvents = "visiblePainted"
-	SvgPointerEventsVisibleStroke  SvgPointerEvents = "visibleStroke"
-)
-
-type SvgVectorEffect string
-
-const (
-	SvgVectorEffectFixedPosition    SvgVectorEffect = "fixed-position"
-	SvgVectorEffectNonRotation      SvgVectorEffect = "non-rotation"
-	SvgVectorEffectNonScalingSize   SvgVectorEffect = "non-scaling-size"
-	SvgVectorEffectNonScalingStroke SvgVectorEffect = "non-scaling-stroke"
-	SvgVectorEffectNone             SvgVectorEffect = "none"
-)
-
-type SvgShapeRendering string
-
-const (
-	SvgShapeRenderingAuto               SvgShapeRendering = "auto"
-	SvgShapeRenderingCrispEdges         SvgShapeRendering = "crispEdges"
-	SvgShapeRenderingGeometricPrecision SvgShapeRendering = "geometricPrecision"
-	SvgShapeRenderingOptimizeSpeed      SvgShapeRendering = "optimizeSpeed"
-)
-
-type SvgColorInterpolation string
-
-const (
-	SvgColorInterpolationAuto      SvgColorInterpolation = "auto"
-	SvgColorInterpolationLinearRGB SvgColorInterpolation = "linearRGB"
-	SvgColorInterpolationSRGB      SvgColorInterpolation = "sRGB"
-)
-
-type SvgColorInterpolationFilters string
-
-const (
-	SvgColorInterpolationFiltersAuto      SvgColorInterpolationFilters = "auto"
-	SvgColorInterpolationFiltersLinearRGB SvgColorInterpolationFilters = "linearRGB"
-	SvgColorInterpolationFiltersSRGB      SvgColorInterpolationFilters = "sRGB"
-)
-
-type SvgFontStyle string
-
-const (
-	SvgFontStyleItalic  SvgFontStyle = "italic"
-	SvgFontStyleNormal  SvgFontStyle = "normal"
-	SvgFontStyleOblique SvgFontStyle = "oblique"
-)
-
-type SvgTextAnchor string
-
-const (
-	SvgTextAnchorEnd    SvgTextAnchor = "end"
-	SvgTextAnchorMiddle SvgTextAnchor = "middle"
-	SvgTextAnchorStart  SvgTextAnchor = "start"
-)
-
-type SvgDominantBaseline string
-
-const (
-	SvgDominantBaselineAlphabetic   SvgDominantBaseline = "alphabetic"
-	SvgDominantBaselineAuto         SvgDominantBaseline = "auto"
-	SvgDominantBaselineCentral      SvgDominantBaseline = "central"
-	SvgDominantBaselineHanging      SvgDominantBaseline = "hanging"
-	SvgDominantBaselineIdeographic  SvgDominantBaseline = "ideographic"
-	SvgDominantBaselineMathematical SvgDominantBaseline = "mathematical"
-	SvgDominantBaselineMiddle       SvgDominantBaseline = "middle"
-	SvgDominantBaselineTextBottom   SvgDominantBaseline = "text-bottom"
-	SvgDominantBaselineTextTop      SvgDominantBaseline = "text-top"
-)
-
 type SvgAlignmentBaseline string
 
 const (
@@ -321,13 +193,63 @@ const (
 	SvgAlignmentBaselineTop            SvgAlignmentBaseline = "top"
 )
 
-type SvgTextRendering string
+type SvgClipRule string
 
 const (
-	SvgTextRenderingAuto               SvgTextRendering = "auto"
-	SvgTextRenderingGeometricPrecision SvgTextRendering = "geometricPrecision"
-	SvgTextRenderingOptimizeLegibility SvgTextRendering = "optimizeLegibility"
-	SvgTextRenderingOptimizeSpeed      SvgTextRendering = "optimizeSpeed"
+	SvgClipRuleEvenodd SvgClipRule = "evenodd"
+	SvgClipRuleNonzero SvgClipRule = "nonzero"
+)
+
+type SvgColorInterpolation string
+
+const (
+	SvgColorInterpolationAuto      SvgColorInterpolation = "auto"
+	SvgColorInterpolationLinearRGB SvgColorInterpolation = "linearRGB"
+	SvgColorInterpolationSRGB      SvgColorInterpolation = "sRGB"
+)
+
+type SvgColorInterpolationFilters string
+
+const (
+	SvgColorInterpolationFiltersAuto      SvgColorInterpolationFilters = "auto"
+	SvgColorInterpolationFiltersLinearRGB SvgColorInterpolationFilters = "linearRGB"
+	SvgColorInterpolationFiltersSRGB      SvgColorInterpolationFilters = "sRGB"
+)
+
+type SvgDirection string
+
+const (
+	SvgDirectionLtr SvgDirection = "ltr"
+	SvgDirectionRtl SvgDirection = "rtl"
+)
+
+type SvgDominantBaseline string
+
+const (
+	SvgDominantBaselineAlphabetic   SvgDominantBaseline = "alphabetic"
+	SvgDominantBaselineAuto         SvgDominantBaseline = "auto"
+	SvgDominantBaselineCentral      SvgDominantBaseline = "central"
+	SvgDominantBaselineHanging      SvgDominantBaseline = "hanging"
+	SvgDominantBaselineIdeographic  SvgDominantBaseline = "ideographic"
+	SvgDominantBaselineMathematical SvgDominantBaseline = "mathematical"
+	SvgDominantBaselineMiddle       SvgDominantBaseline = "middle"
+	SvgDominantBaselineTextBottom   SvgDominantBaseline = "text-bottom"
+	SvgDominantBaselineTextTop      SvgDominantBaseline = "text-top"
+)
+
+type SvgFillRule string
+
+const (
+	SvgFillRuleEvenodd SvgFillRule = "evenodd"
+	SvgFillRuleNonzero SvgFillRule = "nonzero"
+)
+
+type SvgFontStyle string
+
+const (
+	SvgFontStyleItalic  SvgFontStyle = "italic"
+	SvgFontStyleNormal  SvgFontStyle = "normal"
+	SvgFontStyleOblique SvgFontStyle = "oblique"
 )
 
 type SvgImageRendering string
@@ -352,6 +274,66 @@ const (
 	SvgOverflowVisible SvgOverflow = "visible"
 )
 
+type SvgPointerEvents string
+
+const (
+	SvgPointerEventsAll            SvgPointerEvents = "all"
+	SvgPointerEventsAuto           SvgPointerEvents = "auto"
+	SvgPointerEventsBoundingBox    SvgPointerEvents = "bounding-box"
+	SvgPointerEventsFill           SvgPointerEvents = "fill"
+	SvgPointerEventsNone           SvgPointerEvents = "none"
+	SvgPointerEventsPainted        SvgPointerEvents = "painted"
+	SvgPointerEventsStroke         SvgPointerEvents = "stroke"
+	SvgPointerEventsVisible        SvgPointerEvents = "visible"
+	SvgPointerEventsVisibleFill    SvgPointerEvents = "visibleFill"
+	SvgPointerEventsVisiblePainted SvgPointerEvents = "visiblePainted"
+	SvgPointerEventsVisibleStroke  SvgPointerEvents = "visibleStroke"
+)
+
+type SvgShapeRendering string
+
+const (
+	SvgShapeRenderingAuto               SvgShapeRendering = "auto"
+	SvgShapeRenderingCrispEdges         SvgShapeRendering = "crispEdges"
+	SvgShapeRenderingGeometricPrecision SvgShapeRendering = "geometricPrecision"
+	SvgShapeRenderingOptimizeSpeed      SvgShapeRendering = "optimizeSpeed"
+)
+
+type SvgStrokeLinecap string
+
+const (
+	SvgStrokeLinecapButt   SvgStrokeLinecap = "butt"
+	SvgStrokeLinecapRound  SvgStrokeLinecap = "round"
+	SvgStrokeLinecapSquare SvgStrokeLinecap = "square"
+)
+
+type SvgStrokeLinejoin string
+
+const (
+	SvgStrokeLinejoinArcs      SvgStrokeLinejoin = "arcs"
+	SvgStrokeLinejoinBevel     SvgStrokeLinejoin = "bevel"
+	SvgStrokeLinejoinMiter     SvgStrokeLinejoin = "miter"
+	SvgStrokeLinejoinMiterClip SvgStrokeLinejoin = "miter-clip"
+	SvgStrokeLinejoinRound     SvgStrokeLinejoin = "round"
+)
+
+type SvgTextAnchor string
+
+const (
+	SvgTextAnchorEnd    SvgTextAnchor = "end"
+	SvgTextAnchorMiddle SvgTextAnchor = "middle"
+	SvgTextAnchorStart  SvgTextAnchor = "start"
+)
+
+type SvgTextRendering string
+
+const (
+	SvgTextRenderingAuto               SvgTextRendering = "auto"
+	SvgTextRenderingGeometricPrecision SvgTextRendering = "geometricPrecision"
+	SvgTextRenderingOptimizeLegibility SvgTextRendering = "optimizeLegibility"
+	SvgTextRenderingOptimizeSpeed      SvgTextRendering = "optimizeSpeed"
+)
+
 type SvgTransformBox string
 
 const (
@@ -362,11 +344,22 @@ const (
 	SvgTransformBoxViewBox    SvgTransformBox = "view-box"
 )
 
-type SvgDirection string
+type SvgVectorEffect string
 
 const (
-	SvgDirectionLtr SvgDirection = "ltr"
-	SvgDirectionRtl SvgDirection = "rtl"
+	SvgVectorEffectFixedPosition    SvgVectorEffect = "fixed-position"
+	SvgVectorEffectNonRotation      SvgVectorEffect = "non-rotation"
+	SvgVectorEffectNonScalingSize   SvgVectorEffect = "non-scaling-size"
+	SvgVectorEffectNonScalingStroke SvgVectorEffect = "non-scaling-stroke"
+	SvgVectorEffectNone             SvgVectorEffect = "none"
+)
+
+type SvgVisibility string
+
+const (
+	SvgVisibilityCollapse SvgVisibility = "collapse"
+	SvgVisibilityHidden   SvgVisibility = "hidden"
+	SvgVisibilityVisible  SvgVisibility = "visible"
 )
 
 type SvgWritingMode string
@@ -385,6 +378,61 @@ const (
 	SvgWritingModeVerticalRl   SvgWritingMode = "vertical-rl"
 )
 
+type SvgXmlSpace string
+
+const (
+	SvgXmlSpaceDefault  SvgXmlSpace = "default"
+	SvgXmlSpacePreserve SvgXmlSpace = "preserve"
+)
+
+// BaseProfile sets the "baseProfile" attribute.
+//
+// Deprecated: the "baseProfile" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) BaseProfile(s string) *SvgElement {
+	e.attributes.Set("baseProfile", s)
+
+	return e
+}
+
+func (e *SvgElement) Height(s string) *SvgElement {
+	e.attributes.Set("height", s)
+
+	return e
+}
+
+func (e *SvgElement) PreserveAspectRatio(s string) *SvgElement {
+	e.attributes.Set("preserveAspectRatio", s)
+
+	return e
+}
+
+func (e *SvgElement) SystemLanguage(s string) *SvgElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+// Version sets the "version" attribute.
+//
+// Deprecated: the "version" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) Version(s string) *SvgElement {
+	e.attributes.Set("version", s)
+
+	return e
+}
+
+func (e *SvgElement) ViewBox(s string) *SvgElement {
+	e.attributes.Set("viewBox", s)
+
+	return e
+}
+
+func (e *SvgElement) Width(s string) *SvgElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
 func (e *SvgElement) X(s string) *SvgElement {
 	e.attributes.Set("x", s)
 
@@ -397,62 +445,51 @@ func (e *SvgElement) Y(s string) *SvgElement {
 	return e
 }
 
-func (e *SvgElement) Width(s string) *SvgElement {
-	e.attributes.Set("width", s)
-
-	return e
-}
-
-func (e *SvgElement) Height(s string) *SvgElement {
-	e.attributes.Set("height", s)
-
-	return e
-}
-
-func (e *SvgElement) ViewBox(s string) *SvgElement {
-	e.attributes.Set("viewBox", s)
-
-	return e
-}
-
-func (e *SvgElement) PreserveAspectRatio(s string) *SvgElement {
-	e.attributes.Set("preserveAspectRatio", s)
-
-	return e
-}
-
+// ZoomAndPan sets the "zoomAndPan" attribute.
+//
+// Deprecated: the "zoomAndPan" attribute is deprecated or obsolete in its source specification.
 func (e *SvgElement) ZoomAndPan(a SvgZoomAndPan) *SvgElement {
 	e.attributes.Set("zoomAndPan", string(a))
 
 	return e
 }
 
-func (e *SvgElement) Xmlns(s string) *SvgElement {
-	e.attributes.Set("xmlns", s)
+func (e *SvgElement) AlignmentBaseline(a SvgAlignmentBaseline) *SvgElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *SvgElement) Version(s string) *SvgElement {
-	e.attributes.Set("version", s)
+func SvgAlignmentBaselineCustom(s string) SvgAlignmentBaseline {
+	return SvgAlignmentBaseline(s)
+}
+
+func (e *SvgElement) AriaUnsafe(name string, s string) *SvgElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
 
 	return e
 }
 
-func (e *SvgElement) Transform(s string) *SvgElement {
-	e.attributes.Set("transform", s)
+func (e *SvgElement) Aria(name string, s string) *SvgElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
 
 	return e
 }
 
-func (e *SvgElement) TransformOrigin(s string) *SvgElement {
-	e.attributes.Set("transform-origin", s)
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SvgElement) Autofocus(b bool) *SvgElement {
+	e.attributes.SetBool("autofocus", b)
 
 	return e
 }
 
-func (e *SvgElement) Id(s string) *SvgElement {
-	e.attributes.Set("id", s)
+func (e *SvgElement) BaselineShift(s string) *SvgElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -463,40 +500,59 @@ func (e *SvgElement) Class(s ...string) *SvgElement {
 	return e
 }
 
-func (e *SvgElement) Style(s string) *SvgElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) Clip(s string) *SvgElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *SvgElement) Tabindex(i int) *SvgElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *SvgElement) ClipPath(s string) *SvgElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *SvgElement) Lang(s string) *SvgElement {
-	e.attributes.Set("lang", s)
+func (e *SvgElement) ClipRule(a SvgClipRule) *SvgElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *SvgElement) XmlLang(s string) *SvgElement {
-	e.attributes.Set("xml:lang", s)
+func SvgClipRuleCustom(s string) SvgClipRule {
+	return SvgClipRule(s)
+}
+
+func (e *SvgElement) Color(s string) *SvgElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *SvgElement) XmlSpace(a SvgXmlSpace) *SvgElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *SvgElement) ColorInterpolation(a SvgColorInterpolation) *SvgElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *SvgElement) Autofocus(b bool) *SvgElement {
-	e.attributes.SetBool("autofocus", b)
+func SvgColorInterpolationCustom(s string) SvgColorInterpolation {
+	return SvgColorInterpolation(s)
+}
+
+func (e *SvgElement) ColorInterpolationFilters(a SvgColorInterpolationFilters) *SvgElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func SvgColorInterpolationFiltersCustom(s string) SvgColorInterpolationFilters {
+	return SvgColorInterpolationFilters(s)
+}
+
+func (e *SvgElement) Cursor(s string) *SvgElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -517,20 +573,30 @@ func (e *SvgElement) Data(name string, s string) *SvgElement {
 	return e
 }
 
-func (e *SvgElement) AriaUnsafe(name string, s string) *SvgElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *SvgElement) Direction(a SvgDirection) *SvgElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *SvgElement) Aria(name string, s string) *SvgElement {
-	tag := strings.ToLower("aria-" + name)
+func SvgDirectionCustom(s string) SvgDirection {
+	return SvgDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *SvgElement) Display(s string) *SvgElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *SvgElement) DominantBaseline(a SvgDominantBaseline) *SvgElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func SvgDominantBaselineCustom(s string) SvgDominantBaseline {
+	return SvgDominantBaseline(s)
 }
 
 func (e *SvgElement) Fill(s string) *SvgElement {
@@ -555,20 +621,220 @@ func SvgFillRuleCustom(s string) SvgFillRule {
 	return SvgFillRule(s)
 }
 
+func (e *SvgElement) Filter(s string) *SvgElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *SvgElement) FloodColor(s string) *SvgElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *SvgElement) FloodOpacity(f float64) *SvgElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *SvgElement) FontFamily(s string) *SvgElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *SvgElement) FontSize(s string) *SvgElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *SvgElement) FontSizeAdjust(s string) *SvgElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *SvgElement) FontStretch(s string) *SvgElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *SvgElement) FontStyle(a SvgFontStyle) *SvgElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func SvgFontStyleCustom(s string) SvgFontStyle {
+	return SvgFontStyle(s)
+}
+
+func (e *SvgElement) FontVariant(s string) *SvgElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *SvgElement) FontWeight(s string) *SvgElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) GlyphOrientationHorizontal(s string) *SvgElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) GlyphOrientationVertical(s string) *SvgElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *SvgElement) Id(s string) *SvgElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *SvgElement) ImageRendering(a SvgImageRendering) *SvgElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func SvgImageRenderingCustom(s string) SvgImageRendering {
+	return SvgImageRendering(s)
+}
+
+func (e *SvgElement) Lang(s string) *SvgElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *SvgElement) LetterSpacing(s string) *SvgElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *SvgElement) LightingColor(s string) *SvgElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *SvgElement) MarkerEnd(s string) *SvgElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *SvgElement) MarkerMid(s string) *SvgElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *SvgElement) MarkerStart(s string) *SvgElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *SvgElement) Mask(s string) *SvgElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *SvgElement) Opacity(f float64) *SvgElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *SvgElement) Overflow(a SvgOverflow) *SvgElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func SvgOverflowCustom(s string) SvgOverflow {
+	return SvgOverflow(s)
+}
+
+func (e *SvgElement) PaintOrder(s string) *SvgElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *SvgElement) PointerEvents(a SvgPointerEvents) *SvgElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func SvgPointerEventsCustom(s string) SvgPointerEvents {
+	return SvgPointerEvents(s)
+}
+
+func (e *SvgElement) RequiredExtensions(s string) *SvgElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *SvgElement) ShapeRendering(a SvgShapeRendering) *SvgElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func SvgShapeRenderingCustom(s string) SvgShapeRendering {
+	return SvgShapeRendering(s)
+}
+
+func (e *SvgElement) StopColor(s string) *SvgElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *SvgElement) StopOpacity(f float64) *SvgElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *SvgElement) Stroke(s string) *SvgElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *SvgElement) StrokeWidth(s string) *SvgElement {
-	e.attributes.Set("stroke-width", s)
+func (e *SvgElement) StrokeDasharray(s string) *SvgElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *SvgElement) StrokeOpacity(f float64) *SvgElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *SvgElement) StrokeDashoffset(s string) *SvgElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -599,210 +865,28 @@ func (e *SvgElement) StrokeMiterlimit(f float64) *SvgElement {
 	return e
 }
 
-func (e *SvgElement) StrokeDasharray(s string) *SvgElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *SvgElement) StrokeOpacity(f float64) *SvgElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *SvgElement) StrokeDashoffset(s string) *SvgElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *SvgElement) StrokeWidth(s string) *SvgElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *SvgElement) Opacity(f float64) *SvgElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *SvgElement) Style(s string) *SvgElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *SvgElement) Color(s string) *SvgElement {
-	e.attributes.Set("color", s)
+func (e *SvgElement) Tabindex(i int) *SvgElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *SvgElement) Display(s string) *SvgElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *SvgElement) Visibility(a SvgVisibility) *SvgElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func SvgVisibilityCustom(s string) SvgVisibility {
-	return SvgVisibility(s)
-}
-
-func (e *SvgElement) ClipPath(s string) *SvgElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *SvgElement) ClipRule(a SvgClipRule) *SvgElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func SvgClipRuleCustom(s string) SvgClipRule {
-	return SvgClipRule(s)
-}
-
-func (e *SvgElement) Mask(s string) *SvgElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *SvgElement) Filter(s string) *SvgElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *SvgElement) Cursor(s string) *SvgElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *SvgElement) PointerEvents(a SvgPointerEvents) *SvgElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func SvgPointerEventsCustom(s string) SvgPointerEvents {
-	return SvgPointerEvents(s)
-}
-
-func (e *SvgElement) VectorEffect(a SvgVectorEffect) *SvgElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func SvgVectorEffectCustom(s string) SvgVectorEffect {
-	return SvgVectorEffect(s)
-}
-
-func (e *SvgElement) PaintOrder(s string) *SvgElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *SvgElement) ShapeRendering(a SvgShapeRendering) *SvgElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func SvgShapeRenderingCustom(s string) SvgShapeRendering {
-	return SvgShapeRendering(s)
-}
-
-func (e *SvgElement) ColorInterpolation(a SvgColorInterpolation) *SvgElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func SvgColorInterpolationCustom(s string) SvgColorInterpolation {
-	return SvgColorInterpolation(s)
-}
-
-func (e *SvgElement) ColorInterpolationFilters(a SvgColorInterpolationFilters) *SvgElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func SvgColorInterpolationFiltersCustom(s string) SvgColorInterpolationFilters {
-	return SvgColorInterpolationFilters(s)
-}
-
-func (e *SvgElement) FloodColor(s string) *SvgElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *SvgElement) FloodOpacity(f float64) *SvgElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *SvgElement) LightingColor(s string) *SvgElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *SvgElement) StopColor(s string) *SvgElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *SvgElement) StopOpacity(f float64) *SvgElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *SvgElement) MarkerStart(s string) *SvgElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *SvgElement) MarkerMid(s string) *SvgElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *SvgElement) MarkerEnd(s string) *SvgElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *SvgElement) FontFamily(s string) *SvgElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *SvgElement) FontSize(s string) *SvgElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *SvgElement) FontWeight(s string) *SvgElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *SvgElement) FontStyle(a SvgFontStyle) *SvgElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func SvgFontStyleCustom(s string) SvgFontStyle {
-	return SvgFontStyle(s)
 }
 
 func (e *SvgElement) TextAnchor(a SvgTextAnchor) *SvgElement {
@@ -815,40 +899,14 @@ func SvgTextAnchorCustom(s string) SvgTextAnchor {
 	return SvgTextAnchor(s)
 }
 
-func (e *SvgElement) DominantBaseline(a SvgDominantBaseline) *SvgElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func SvgDominantBaselineCustom(s string) SvgDominantBaseline {
-	return SvgDominantBaseline(s)
-}
-
-func (e *SvgElement) AlignmentBaseline(a SvgAlignmentBaseline) *SvgElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func SvgAlignmentBaselineCustom(s string) SvgAlignmentBaseline {
-	return SvgAlignmentBaseline(s)
-}
-
-func (e *SvgElement) LetterSpacing(s string) *SvgElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *SvgElement) WordSpacing(s string) *SvgElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *SvgElement) TextDecoration(s string) *SvgElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *SvgElement) TextOverflow(s string) *SvgElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -863,24 +921,10 @@ func SvgTextRenderingCustom(s string) SvgTextRendering {
 	return SvgTextRendering(s)
 }
 
-func (e *SvgElement) ImageRendering(a SvgImageRendering) *SvgElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *SvgElement) Transform(s string) *SvgElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func SvgImageRenderingCustom(s string) SvgImageRendering {
-	return SvgImageRendering(s)
-}
-
-func (e *SvgElement) Overflow(a SvgOverflow) *SvgElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func SvgOverflowCustom(s string) SvgOverflow {
-	return SvgOverflow(s)
 }
 
 func (e *SvgElement) TransformBox(a SvgTransformBox) *SvgElement {
@@ -893,18 +937,46 @@ func SvgTransformBoxCustom(s string) SvgTransformBox {
 	return SvgTransformBox(s)
 }
 
-func (e *SvgElement) Direction(a SvgDirection) *SvgElement {
-	e.attributes.Set("direction", string(a))
+func (e *SvgElement) TransformOrigin(s string) *SvgElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func SvgDirectionCustom(s string) SvgDirection {
-	return SvgDirection(s)
-}
-
 func (e *SvgElement) UnicodeBidi(s string) *SvgElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *SvgElement) VectorEffect(a SvgVectorEffect) *SvgElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func SvgVectorEffectCustom(s string) SvgVectorEffect {
+	return SvgVectorEffect(s)
+}
+
+func (e *SvgElement) Visibility(a SvgVisibility) *SvgElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func SvgVisibilityCustom(s string) SvgVisibility {
+	return SvgVisibility(s)
+}
+
+func (e *SvgElement) WhiteSpace(s string) *SvgElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *SvgElement) WordSpacing(s string) *SvgElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -919,8 +991,20 @@ func SvgWritingModeCustom(s string) SvgWritingMode {
 	return SvgWritingMode(s)
 }
 
-func (e *SvgElement) WhiteSpace(s string) *SvgElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) XmlLang(s string) *SvgElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *SvgElement) XmlSpace(a SvgXmlSpace) *SvgElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

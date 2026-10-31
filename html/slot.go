@@ -240,6 +240,15 @@ const (
 	SlotInputmodeUrl     SlotInputmode = "url"
 )
 
+type SlotPopover string
+
+const (
+	SlotPopoverAuto   SlotPopover = "auto"
+	SlotPopoverHint   SlotPopover = "hint"
+	SlotPopoverManual SlotPopover = "manual"
+	SlotPopoverEmpty  SlotPopover = ""
+)
+
 type SlotSpellcheck string
 
 const (
@@ -370,6 +379,26 @@ func (e *SlotElement) Enterkeyhint(a SlotEnterkeyhint) *SlotElement {
 	return e
 }
 
+func (e *SlotElement) Exportparts(s string) *SlotElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SlotElement) Headingoffset(i int) *SlotElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SlotElement) Headingreset(b bool) *SlotElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SlotElement) Hidden(v ...SlotHidden) *SlotElement {
@@ -402,6 +431,14 @@ func (e *SlotElement) Inputmode(a SlotInputmode) *SlotElement {
 	return e
 }
 
+func (e *SlotElement) Is(s string) *SlotElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SlotElement) Itemid(s string) *SlotElement {
 	e.attributes.Set("itemid", s)
 
@@ -446,8 +483,20 @@ func (e *SlotElement) Nonce(s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Popover(s string) *SlotElement {
-	e.attributes.Set("popover", s)
+func (e *SlotElement) Part(s ...string) *SlotElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Popover(v ...SlotPopover) *SlotElement {
+	var val SlotPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

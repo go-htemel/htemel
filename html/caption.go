@@ -240,6 +240,15 @@ const (
 	CaptionInputmodeUrl     CaptionInputmode = "url"
 )
 
+type CaptionPopover string
+
+const (
+	CaptionPopoverAuto   CaptionPopover = "auto"
+	CaptionPopoverHint   CaptionPopover = "hint"
+	CaptionPopoverManual CaptionPopover = "manual"
+	CaptionPopoverEmpty  CaptionPopover = ""
+)
+
 type CaptionSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *CaptionElement) Enterkeyhint(a CaptionEnterkeyhint) *CaptionElement {
 	return e
 }
 
+func (e *CaptionElement) Exportparts(s string) *CaptionElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *CaptionElement) Headingoffset(i int) *CaptionElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *CaptionElement) Headingreset(b bool) *CaptionElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *CaptionElement) Hidden(v ...CaptionHidden) *CaptionElement {
@@ -396,6 +425,14 @@ func (e *CaptionElement) Inputmode(a CaptionInputmode) *CaptionElement {
 	return e
 }
 
+func (e *CaptionElement) Is(s string) *CaptionElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *CaptionElement) Itemid(s string) *CaptionElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *CaptionElement) Nonce(s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Popover(s string) *CaptionElement {
-	e.attributes.Set("popover", s)
+func (e *CaptionElement) Part(s ...string) *CaptionElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Popover(v ...CaptionPopover) *CaptionElement {
+	var val CaptionPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

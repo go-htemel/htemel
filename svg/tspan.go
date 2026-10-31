@@ -171,134 +171,6 @@ const (
 	TspanLengthAdjustSpacingAndGlyphs TspanLengthAdjust = "spacingAndGlyphs"
 )
 
-type TspanXmlSpace string
-
-const (
-	TspanXmlSpaceDefault  TspanXmlSpace = "default"
-	TspanXmlSpacePreserve TspanXmlSpace = "preserve"
-)
-
-type TspanFillRule string
-
-const (
-	TspanFillRuleEvenodd TspanFillRule = "evenodd"
-	TspanFillRuleNonzero TspanFillRule = "nonzero"
-)
-
-type TspanStrokeLinecap string
-
-const (
-	TspanStrokeLinecapButt   TspanStrokeLinecap = "butt"
-	TspanStrokeLinecapRound  TspanStrokeLinecap = "round"
-	TspanStrokeLinecapSquare TspanStrokeLinecap = "square"
-)
-
-type TspanStrokeLinejoin string
-
-const (
-	TspanStrokeLinejoinArcs      TspanStrokeLinejoin = "arcs"
-	TspanStrokeLinejoinBevel     TspanStrokeLinejoin = "bevel"
-	TspanStrokeLinejoinMiter     TspanStrokeLinejoin = "miter"
-	TspanStrokeLinejoinMiterClip TspanStrokeLinejoin = "miter-clip"
-	TspanStrokeLinejoinRound     TspanStrokeLinejoin = "round"
-)
-
-type TspanVisibility string
-
-const (
-	TspanVisibilityCollapse TspanVisibility = "collapse"
-	TspanVisibilityHidden   TspanVisibility = "hidden"
-	TspanVisibilityVisible  TspanVisibility = "visible"
-)
-
-type TspanClipRule string
-
-const (
-	TspanClipRuleEvenodd TspanClipRule = "evenodd"
-	TspanClipRuleNonzero TspanClipRule = "nonzero"
-)
-
-type TspanPointerEvents string
-
-const (
-	TspanPointerEventsAll            TspanPointerEvents = "all"
-	TspanPointerEventsAuto           TspanPointerEvents = "auto"
-	TspanPointerEventsBoundingBox    TspanPointerEvents = "bounding-box"
-	TspanPointerEventsFill           TspanPointerEvents = "fill"
-	TspanPointerEventsNone           TspanPointerEvents = "none"
-	TspanPointerEventsPainted        TspanPointerEvents = "painted"
-	TspanPointerEventsStroke         TspanPointerEvents = "stroke"
-	TspanPointerEventsVisible        TspanPointerEvents = "visible"
-	TspanPointerEventsVisibleFill    TspanPointerEvents = "visibleFill"
-	TspanPointerEventsVisiblePainted TspanPointerEvents = "visiblePainted"
-	TspanPointerEventsVisibleStroke  TspanPointerEvents = "visibleStroke"
-)
-
-type TspanVectorEffect string
-
-const (
-	TspanVectorEffectFixedPosition    TspanVectorEffect = "fixed-position"
-	TspanVectorEffectNonRotation      TspanVectorEffect = "non-rotation"
-	TspanVectorEffectNonScalingSize   TspanVectorEffect = "non-scaling-size"
-	TspanVectorEffectNonScalingStroke TspanVectorEffect = "non-scaling-stroke"
-	TspanVectorEffectNone             TspanVectorEffect = "none"
-)
-
-type TspanShapeRendering string
-
-const (
-	TspanShapeRenderingAuto               TspanShapeRendering = "auto"
-	TspanShapeRenderingCrispEdges         TspanShapeRendering = "crispEdges"
-	TspanShapeRenderingGeometricPrecision TspanShapeRendering = "geometricPrecision"
-	TspanShapeRenderingOptimizeSpeed      TspanShapeRendering = "optimizeSpeed"
-)
-
-type TspanColorInterpolation string
-
-const (
-	TspanColorInterpolationAuto      TspanColorInterpolation = "auto"
-	TspanColorInterpolationLinearRGB TspanColorInterpolation = "linearRGB"
-	TspanColorInterpolationSRGB      TspanColorInterpolation = "sRGB"
-)
-
-type TspanColorInterpolationFilters string
-
-const (
-	TspanColorInterpolationFiltersAuto      TspanColorInterpolationFilters = "auto"
-	TspanColorInterpolationFiltersLinearRGB TspanColorInterpolationFilters = "linearRGB"
-	TspanColorInterpolationFiltersSRGB      TspanColorInterpolationFilters = "sRGB"
-)
-
-type TspanFontStyle string
-
-const (
-	TspanFontStyleItalic  TspanFontStyle = "italic"
-	TspanFontStyleNormal  TspanFontStyle = "normal"
-	TspanFontStyleOblique TspanFontStyle = "oblique"
-)
-
-type TspanTextAnchor string
-
-const (
-	TspanTextAnchorEnd    TspanTextAnchor = "end"
-	TspanTextAnchorMiddle TspanTextAnchor = "middle"
-	TspanTextAnchorStart  TspanTextAnchor = "start"
-)
-
-type TspanDominantBaseline string
-
-const (
-	TspanDominantBaselineAlphabetic   TspanDominantBaseline = "alphabetic"
-	TspanDominantBaselineAuto         TspanDominantBaseline = "auto"
-	TspanDominantBaselineCentral      TspanDominantBaseline = "central"
-	TspanDominantBaselineHanging      TspanDominantBaseline = "hanging"
-	TspanDominantBaselineIdeographic  TspanDominantBaseline = "ideographic"
-	TspanDominantBaselineMathematical TspanDominantBaseline = "mathematical"
-	TspanDominantBaselineMiddle       TspanDominantBaseline = "middle"
-	TspanDominantBaselineTextBottom   TspanDominantBaseline = "text-bottom"
-	TspanDominantBaselineTextTop      TspanDominantBaseline = "text-top"
-)
-
 type TspanAlignmentBaseline string
 
 const (
@@ -321,13 +193,63 @@ const (
 	TspanAlignmentBaselineTop            TspanAlignmentBaseline = "top"
 )
 
-type TspanTextRendering string
+type TspanClipRule string
 
 const (
-	TspanTextRenderingAuto               TspanTextRendering = "auto"
-	TspanTextRenderingGeometricPrecision TspanTextRendering = "geometricPrecision"
-	TspanTextRenderingOptimizeLegibility TspanTextRendering = "optimizeLegibility"
-	TspanTextRenderingOptimizeSpeed      TspanTextRendering = "optimizeSpeed"
+	TspanClipRuleEvenodd TspanClipRule = "evenodd"
+	TspanClipRuleNonzero TspanClipRule = "nonzero"
+)
+
+type TspanColorInterpolation string
+
+const (
+	TspanColorInterpolationAuto      TspanColorInterpolation = "auto"
+	TspanColorInterpolationLinearRGB TspanColorInterpolation = "linearRGB"
+	TspanColorInterpolationSRGB      TspanColorInterpolation = "sRGB"
+)
+
+type TspanColorInterpolationFilters string
+
+const (
+	TspanColorInterpolationFiltersAuto      TspanColorInterpolationFilters = "auto"
+	TspanColorInterpolationFiltersLinearRGB TspanColorInterpolationFilters = "linearRGB"
+	TspanColorInterpolationFiltersSRGB      TspanColorInterpolationFilters = "sRGB"
+)
+
+type TspanDirection string
+
+const (
+	TspanDirectionLtr TspanDirection = "ltr"
+	TspanDirectionRtl TspanDirection = "rtl"
+)
+
+type TspanDominantBaseline string
+
+const (
+	TspanDominantBaselineAlphabetic   TspanDominantBaseline = "alphabetic"
+	TspanDominantBaselineAuto         TspanDominantBaseline = "auto"
+	TspanDominantBaselineCentral      TspanDominantBaseline = "central"
+	TspanDominantBaselineHanging      TspanDominantBaseline = "hanging"
+	TspanDominantBaselineIdeographic  TspanDominantBaseline = "ideographic"
+	TspanDominantBaselineMathematical TspanDominantBaseline = "mathematical"
+	TspanDominantBaselineMiddle       TspanDominantBaseline = "middle"
+	TspanDominantBaselineTextBottom   TspanDominantBaseline = "text-bottom"
+	TspanDominantBaselineTextTop      TspanDominantBaseline = "text-top"
+)
+
+type TspanFillRule string
+
+const (
+	TspanFillRuleEvenodd TspanFillRule = "evenodd"
+	TspanFillRuleNonzero TspanFillRule = "nonzero"
+)
+
+type TspanFontStyle string
+
+const (
+	TspanFontStyleItalic  TspanFontStyle = "italic"
+	TspanFontStyleNormal  TspanFontStyle = "normal"
+	TspanFontStyleOblique TspanFontStyle = "oblique"
 )
 
 type TspanImageRendering string
@@ -352,6 +274,66 @@ const (
 	TspanOverflowVisible TspanOverflow = "visible"
 )
 
+type TspanPointerEvents string
+
+const (
+	TspanPointerEventsAll            TspanPointerEvents = "all"
+	TspanPointerEventsAuto           TspanPointerEvents = "auto"
+	TspanPointerEventsBoundingBox    TspanPointerEvents = "bounding-box"
+	TspanPointerEventsFill           TspanPointerEvents = "fill"
+	TspanPointerEventsNone           TspanPointerEvents = "none"
+	TspanPointerEventsPainted        TspanPointerEvents = "painted"
+	TspanPointerEventsStroke         TspanPointerEvents = "stroke"
+	TspanPointerEventsVisible        TspanPointerEvents = "visible"
+	TspanPointerEventsVisibleFill    TspanPointerEvents = "visibleFill"
+	TspanPointerEventsVisiblePainted TspanPointerEvents = "visiblePainted"
+	TspanPointerEventsVisibleStroke  TspanPointerEvents = "visibleStroke"
+)
+
+type TspanShapeRendering string
+
+const (
+	TspanShapeRenderingAuto               TspanShapeRendering = "auto"
+	TspanShapeRenderingCrispEdges         TspanShapeRendering = "crispEdges"
+	TspanShapeRenderingGeometricPrecision TspanShapeRendering = "geometricPrecision"
+	TspanShapeRenderingOptimizeSpeed      TspanShapeRendering = "optimizeSpeed"
+)
+
+type TspanStrokeLinecap string
+
+const (
+	TspanStrokeLinecapButt   TspanStrokeLinecap = "butt"
+	TspanStrokeLinecapRound  TspanStrokeLinecap = "round"
+	TspanStrokeLinecapSquare TspanStrokeLinecap = "square"
+)
+
+type TspanStrokeLinejoin string
+
+const (
+	TspanStrokeLinejoinArcs      TspanStrokeLinejoin = "arcs"
+	TspanStrokeLinejoinBevel     TspanStrokeLinejoin = "bevel"
+	TspanStrokeLinejoinMiter     TspanStrokeLinejoin = "miter"
+	TspanStrokeLinejoinMiterClip TspanStrokeLinejoin = "miter-clip"
+	TspanStrokeLinejoinRound     TspanStrokeLinejoin = "round"
+)
+
+type TspanTextAnchor string
+
+const (
+	TspanTextAnchorEnd    TspanTextAnchor = "end"
+	TspanTextAnchorMiddle TspanTextAnchor = "middle"
+	TspanTextAnchorStart  TspanTextAnchor = "start"
+)
+
+type TspanTextRendering string
+
+const (
+	TspanTextRenderingAuto               TspanTextRendering = "auto"
+	TspanTextRenderingGeometricPrecision TspanTextRendering = "geometricPrecision"
+	TspanTextRenderingOptimizeLegibility TspanTextRendering = "optimizeLegibility"
+	TspanTextRenderingOptimizeSpeed      TspanTextRendering = "optimizeSpeed"
+)
+
 type TspanTransformBox string
 
 const (
@@ -362,11 +344,22 @@ const (
 	TspanTransformBoxViewBox    TspanTransformBox = "view-box"
 )
 
-type TspanDirection string
+type TspanVectorEffect string
 
 const (
-	TspanDirectionLtr TspanDirection = "ltr"
-	TspanDirectionRtl TspanDirection = "rtl"
+	TspanVectorEffectFixedPosition    TspanVectorEffect = "fixed-position"
+	TspanVectorEffectNonRotation      TspanVectorEffect = "non-rotation"
+	TspanVectorEffectNonScalingSize   TspanVectorEffect = "non-scaling-size"
+	TspanVectorEffectNonScalingStroke TspanVectorEffect = "non-scaling-stroke"
+	TspanVectorEffectNone             TspanVectorEffect = "none"
+)
+
+type TspanVisibility string
+
+const (
+	TspanVisibilityCollapse TspanVisibility = "collapse"
+	TspanVisibilityHidden   TspanVisibility = "hidden"
+	TspanVisibilityVisible  TspanVisibility = "visible"
 )
 
 type TspanWritingMode string
@@ -385,17 +378,12 @@ const (
 	TspanWritingModeVerticalRl   TspanWritingMode = "vertical-rl"
 )
 
-func (e *TspanElement) X(s string) *TspanElement {
-	e.attributes.Set("x", s)
+type TspanXmlSpace string
 
-	return e
-}
-
-func (e *TspanElement) Y(s string) *TspanElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
+const (
+	TspanXmlSpaceDefault  TspanXmlSpace = "default"
+	TspanXmlSpacePreserve TspanXmlSpace = "preserve"
+)
 
 func (e *TspanElement) Dx(s string) *TspanElement {
 	e.attributes.Set("dx", s)
@@ -409,8 +397,20 @@ func (e *TspanElement) Dy(s string) *TspanElement {
 	return e
 }
 
+func (e *TspanElement) LengthAdjust(a TspanLengthAdjust) *TspanElement {
+	e.attributes.Set("lengthAdjust", string(a))
+
+	return e
+}
+
 func (e *TspanElement) Rotate(s string) *TspanElement {
 	e.attributes.Set("rotate", s)
+
+	return e
+}
+
+func (e *TspanElement) SystemLanguage(s string) *TspanElement {
+	e.attributes.Set("systemLanguage", s)
 
 	return e
 }
@@ -421,26 +421,54 @@ func (e *TspanElement) TextLength(s string) *TspanElement {
 	return e
 }
 
-func (e *TspanElement) LengthAdjust(a TspanLengthAdjust) *TspanElement {
-	e.attributes.Set("lengthAdjust", string(a))
+func (e *TspanElement) X(s string) *TspanElement {
+	e.attributes.Set("x", s)
 
 	return e
 }
 
-func (e *TspanElement) Transform(s string) *TspanElement {
-	e.attributes.Set("transform", s)
+func (e *TspanElement) Y(s string) *TspanElement {
+	e.attributes.Set("y", s)
 
 	return e
 }
 
-func (e *TspanElement) TransformOrigin(s string) *TspanElement {
-	e.attributes.Set("transform-origin", s)
+func (e *TspanElement) AlignmentBaseline(a TspanAlignmentBaseline) *TspanElement {
+	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
 }
 
-func (e *TspanElement) Id(s string) *TspanElement {
-	e.attributes.Set("id", s)
+func TspanAlignmentBaselineCustom(s string) TspanAlignmentBaseline {
+	return TspanAlignmentBaseline(s)
+}
+
+func (e *TspanElement) AriaUnsafe(name string, s string) *TspanElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *TspanElement) Aria(name string, s string) *TspanElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TspanElement) Autofocus(b bool) *TspanElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *TspanElement) BaselineShift(s string) *TspanElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -451,40 +479,59 @@ func (e *TspanElement) Class(s ...string) *TspanElement {
 	return e
 }
 
-func (e *TspanElement) Style(s string) *TspanElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *TspanElement) Clip(s string) *TspanElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *TspanElement) Tabindex(i int) *TspanElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *TspanElement) ClipPath(s string) *TspanElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *TspanElement) Lang(s string) *TspanElement {
-	e.attributes.Set("lang", s)
+func (e *TspanElement) ClipRule(a TspanClipRule) *TspanElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *TspanElement) XmlLang(s string) *TspanElement {
-	e.attributes.Set("xml:lang", s)
+func TspanClipRuleCustom(s string) TspanClipRule {
+	return TspanClipRule(s)
+}
+
+func (e *TspanElement) Color(s string) *TspanElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *TspanElement) XmlSpace(a TspanXmlSpace) *TspanElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *TspanElement) ColorInterpolation(a TspanColorInterpolation) *TspanElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TspanElement) Autofocus(b bool) *TspanElement {
-	e.attributes.SetBool("autofocus", b)
+func TspanColorInterpolationCustom(s string) TspanColorInterpolation {
+	return TspanColorInterpolation(s)
+}
+
+func (e *TspanElement) ColorInterpolationFilters(a TspanColorInterpolationFilters) *TspanElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func TspanColorInterpolationFiltersCustom(s string) TspanColorInterpolationFilters {
+	return TspanColorInterpolationFilters(s)
+}
+
+func (e *TspanElement) Cursor(s string) *TspanElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -505,20 +552,30 @@ func (e *TspanElement) Data(name string, s string) *TspanElement {
 	return e
 }
 
-func (e *TspanElement) AriaUnsafe(name string, s string) *TspanElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *TspanElement) Direction(a TspanDirection) *TspanElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *TspanElement) Aria(name string, s string) *TspanElement {
-	tag := strings.ToLower("aria-" + name)
+func TspanDirectionCustom(s string) TspanDirection {
+	return TspanDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *TspanElement) Display(s string) *TspanElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *TspanElement) DominantBaseline(a TspanDominantBaseline) *TspanElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func TspanDominantBaselineCustom(s string) TspanDominantBaseline {
+	return TspanDominantBaseline(s)
 }
 
 func (e *TspanElement) Fill(s string) *TspanElement {
@@ -543,20 +600,220 @@ func TspanFillRuleCustom(s string) TspanFillRule {
 	return TspanFillRule(s)
 }
 
+func (e *TspanElement) Filter(s string) *TspanElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *TspanElement) FloodColor(s string) *TspanElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *TspanElement) FloodOpacity(f float64) *TspanElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *TspanElement) FontFamily(s string) *TspanElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *TspanElement) FontSize(s string) *TspanElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *TspanElement) FontSizeAdjust(s string) *TspanElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *TspanElement) FontStretch(s string) *TspanElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *TspanElement) FontStyle(a TspanFontStyle) *TspanElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func TspanFontStyleCustom(s string) TspanFontStyle {
+	return TspanFontStyle(s)
+}
+
+func (e *TspanElement) FontVariant(s string) *TspanElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *TspanElement) FontWeight(s string) *TspanElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *TspanElement) GlyphOrientationHorizontal(s string) *TspanElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *TspanElement) GlyphOrientationVertical(s string) *TspanElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *TspanElement) Id(s string) *TspanElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *TspanElement) ImageRendering(a TspanImageRendering) *TspanElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func TspanImageRenderingCustom(s string) TspanImageRendering {
+	return TspanImageRendering(s)
+}
+
+func (e *TspanElement) Lang(s string) *TspanElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *TspanElement) LetterSpacing(s string) *TspanElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *TspanElement) LightingColor(s string) *TspanElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *TspanElement) MarkerEnd(s string) *TspanElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *TspanElement) MarkerMid(s string) *TspanElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *TspanElement) MarkerStart(s string) *TspanElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *TspanElement) Mask(s string) *TspanElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *TspanElement) Opacity(f float64) *TspanElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *TspanElement) Overflow(a TspanOverflow) *TspanElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func TspanOverflowCustom(s string) TspanOverflow {
+	return TspanOverflow(s)
+}
+
+func (e *TspanElement) PaintOrder(s string) *TspanElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *TspanElement) PointerEvents(a TspanPointerEvents) *TspanElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func TspanPointerEventsCustom(s string) TspanPointerEvents {
+	return TspanPointerEvents(s)
+}
+
+func (e *TspanElement) RequiredExtensions(s string) *TspanElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *TspanElement) ShapeRendering(a TspanShapeRendering) *TspanElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func TspanShapeRenderingCustom(s string) TspanShapeRendering {
+	return TspanShapeRendering(s)
+}
+
+func (e *TspanElement) StopColor(s string) *TspanElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *TspanElement) StopOpacity(f float64) *TspanElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *TspanElement) Stroke(s string) *TspanElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *TspanElement) StrokeWidth(s string) *TspanElement {
-	e.attributes.Set("stroke-width", s)
+func (e *TspanElement) StrokeDasharray(s string) *TspanElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *TspanElement) StrokeOpacity(f float64) *TspanElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *TspanElement) StrokeDashoffset(s string) *TspanElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -587,210 +844,28 @@ func (e *TspanElement) StrokeMiterlimit(f float64) *TspanElement {
 	return e
 }
 
-func (e *TspanElement) StrokeDasharray(s string) *TspanElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *TspanElement) StrokeOpacity(f float64) *TspanElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *TspanElement) StrokeDashoffset(s string) *TspanElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *TspanElement) StrokeWidth(s string) *TspanElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *TspanElement) Opacity(f float64) *TspanElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *TspanElement) Style(s string) *TspanElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *TspanElement) Color(s string) *TspanElement {
-	e.attributes.Set("color", s)
+func (e *TspanElement) Tabindex(i int) *TspanElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *TspanElement) Display(s string) *TspanElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *TspanElement) Visibility(a TspanVisibility) *TspanElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func TspanVisibilityCustom(s string) TspanVisibility {
-	return TspanVisibility(s)
-}
-
-func (e *TspanElement) ClipPath(s string) *TspanElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *TspanElement) ClipRule(a TspanClipRule) *TspanElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func TspanClipRuleCustom(s string) TspanClipRule {
-	return TspanClipRule(s)
-}
-
-func (e *TspanElement) Mask(s string) *TspanElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *TspanElement) Filter(s string) *TspanElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *TspanElement) Cursor(s string) *TspanElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *TspanElement) PointerEvents(a TspanPointerEvents) *TspanElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func TspanPointerEventsCustom(s string) TspanPointerEvents {
-	return TspanPointerEvents(s)
-}
-
-func (e *TspanElement) VectorEffect(a TspanVectorEffect) *TspanElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func TspanVectorEffectCustom(s string) TspanVectorEffect {
-	return TspanVectorEffect(s)
-}
-
-func (e *TspanElement) PaintOrder(s string) *TspanElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *TspanElement) ShapeRendering(a TspanShapeRendering) *TspanElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func TspanShapeRenderingCustom(s string) TspanShapeRendering {
-	return TspanShapeRendering(s)
-}
-
-func (e *TspanElement) ColorInterpolation(a TspanColorInterpolation) *TspanElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func TspanColorInterpolationCustom(s string) TspanColorInterpolation {
-	return TspanColorInterpolation(s)
-}
-
-func (e *TspanElement) ColorInterpolationFilters(a TspanColorInterpolationFilters) *TspanElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func TspanColorInterpolationFiltersCustom(s string) TspanColorInterpolationFilters {
-	return TspanColorInterpolationFilters(s)
-}
-
-func (e *TspanElement) FloodColor(s string) *TspanElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *TspanElement) FloodOpacity(f float64) *TspanElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *TspanElement) LightingColor(s string) *TspanElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *TspanElement) StopColor(s string) *TspanElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *TspanElement) StopOpacity(f float64) *TspanElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *TspanElement) MarkerStart(s string) *TspanElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *TspanElement) MarkerMid(s string) *TspanElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *TspanElement) MarkerEnd(s string) *TspanElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *TspanElement) FontFamily(s string) *TspanElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *TspanElement) FontSize(s string) *TspanElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *TspanElement) FontWeight(s string) *TspanElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *TspanElement) FontStyle(a TspanFontStyle) *TspanElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func TspanFontStyleCustom(s string) TspanFontStyle {
-	return TspanFontStyle(s)
 }
 
 func (e *TspanElement) TextAnchor(a TspanTextAnchor) *TspanElement {
@@ -803,40 +878,14 @@ func TspanTextAnchorCustom(s string) TspanTextAnchor {
 	return TspanTextAnchor(s)
 }
 
-func (e *TspanElement) DominantBaseline(a TspanDominantBaseline) *TspanElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func TspanDominantBaselineCustom(s string) TspanDominantBaseline {
-	return TspanDominantBaseline(s)
-}
-
-func (e *TspanElement) AlignmentBaseline(a TspanAlignmentBaseline) *TspanElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func TspanAlignmentBaselineCustom(s string) TspanAlignmentBaseline {
-	return TspanAlignmentBaseline(s)
-}
-
-func (e *TspanElement) LetterSpacing(s string) *TspanElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *TspanElement) WordSpacing(s string) *TspanElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *TspanElement) TextDecoration(s string) *TspanElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *TspanElement) TextOverflow(s string) *TspanElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -851,24 +900,10 @@ func TspanTextRenderingCustom(s string) TspanTextRendering {
 	return TspanTextRendering(s)
 }
 
-func (e *TspanElement) ImageRendering(a TspanImageRendering) *TspanElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *TspanElement) Transform(s string) *TspanElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func TspanImageRenderingCustom(s string) TspanImageRendering {
-	return TspanImageRendering(s)
-}
-
-func (e *TspanElement) Overflow(a TspanOverflow) *TspanElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func TspanOverflowCustom(s string) TspanOverflow {
-	return TspanOverflow(s)
 }
 
 func (e *TspanElement) TransformBox(a TspanTransformBox) *TspanElement {
@@ -881,18 +916,46 @@ func TspanTransformBoxCustom(s string) TspanTransformBox {
 	return TspanTransformBox(s)
 }
 
-func (e *TspanElement) Direction(a TspanDirection) *TspanElement {
-	e.attributes.Set("direction", string(a))
+func (e *TspanElement) TransformOrigin(s string) *TspanElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func TspanDirectionCustom(s string) TspanDirection {
-	return TspanDirection(s)
-}
-
 func (e *TspanElement) UnicodeBidi(s string) *TspanElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *TspanElement) VectorEffect(a TspanVectorEffect) *TspanElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func TspanVectorEffectCustom(s string) TspanVectorEffect {
+	return TspanVectorEffect(s)
+}
+
+func (e *TspanElement) Visibility(a TspanVisibility) *TspanElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func TspanVisibilityCustom(s string) TspanVisibility {
+	return TspanVisibility(s)
+}
+
+func (e *TspanElement) WhiteSpace(s string) *TspanElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *TspanElement) WordSpacing(s string) *TspanElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -907,8 +970,20 @@ func TspanWritingModeCustom(s string) TspanWritingMode {
 	return TspanWritingMode(s)
 }
 
-func (e *TspanElement) WhiteSpace(s string) *TspanElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *TspanElement) XmlLang(s string) *TspanElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *TspanElement) XmlSpace(a TspanXmlSpace) *TspanElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

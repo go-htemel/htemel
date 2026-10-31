@@ -164,12 +164,18 @@ func (e *AnimateTransformElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AnimateTransformRestart string
+type AnimateTransformAccumulate string
 
 const (
-	AnimateTransformRestartAlways        AnimateTransformRestart = "always"
-	AnimateTransformRestartNever         AnimateTransformRestart = "never"
-	AnimateTransformRestartWhenNotActive AnimateTransformRestart = "whenNotActive"
+	AnimateTransformAccumulateNone AnimateTransformAccumulate = "none"
+	AnimateTransformAccumulateSum  AnimateTransformAccumulate = "sum"
+)
+
+type AnimateTransformAdditive string
+
+const (
+	AnimateTransformAdditiveReplace AnimateTransformAdditive = "replace"
+	AnimateTransformAdditiveSum     AnimateTransformAdditive = "sum"
 )
 
 type AnimateTransformAttributeType string
@@ -189,18 +195,19 @@ const (
 	AnimateTransformCalcModeSpline   AnimateTransformCalcMode = "spline"
 )
 
-type AnimateTransformAdditive string
+type AnimateTransformFill string
 
 const (
-	AnimateTransformAdditiveReplace AnimateTransformAdditive = "replace"
-	AnimateTransformAdditiveSum     AnimateTransformAdditive = "sum"
+	AnimateTransformFillFreeze AnimateTransformFill = "freeze"
+	AnimateTransformFillRemove AnimateTransformFill = "remove"
 )
 
-type AnimateTransformAccumulate string
+type AnimateTransformRestart string
 
 const (
-	AnimateTransformAccumulateNone AnimateTransformAccumulate = "none"
-	AnimateTransformAccumulateSum  AnimateTransformAccumulate = "sum"
+	AnimateTransformRestartAlways        AnimateTransformRestart = "always"
+	AnimateTransformRestartNever         AnimateTransformRestart = "never"
+	AnimateTransformRestartWhenNotActive AnimateTransformRestart = "whenNotActive"
 )
 
 type AnimateTransformType string
@@ -211,134 +218,6 @@ const (
 	AnimateTransformTypeSkewX     AnimateTransformType = "skewX"
 	AnimateTransformTypeSkewY     AnimateTransformType = "skewY"
 	AnimateTransformTypeTranslate AnimateTransformType = "translate"
-)
-
-type AnimateTransformXmlSpace string
-
-const (
-	AnimateTransformXmlSpaceDefault  AnimateTransformXmlSpace = "default"
-	AnimateTransformXmlSpacePreserve AnimateTransformXmlSpace = "preserve"
-)
-
-type AnimateTransformFillRule string
-
-const (
-	AnimateTransformFillRuleEvenodd AnimateTransformFillRule = "evenodd"
-	AnimateTransformFillRuleNonzero AnimateTransformFillRule = "nonzero"
-)
-
-type AnimateTransformStrokeLinecap string
-
-const (
-	AnimateTransformStrokeLinecapButt   AnimateTransformStrokeLinecap = "butt"
-	AnimateTransformStrokeLinecapRound  AnimateTransformStrokeLinecap = "round"
-	AnimateTransformStrokeLinecapSquare AnimateTransformStrokeLinecap = "square"
-)
-
-type AnimateTransformStrokeLinejoin string
-
-const (
-	AnimateTransformStrokeLinejoinArcs      AnimateTransformStrokeLinejoin = "arcs"
-	AnimateTransformStrokeLinejoinBevel     AnimateTransformStrokeLinejoin = "bevel"
-	AnimateTransformStrokeLinejoinMiter     AnimateTransformStrokeLinejoin = "miter"
-	AnimateTransformStrokeLinejoinMiterClip AnimateTransformStrokeLinejoin = "miter-clip"
-	AnimateTransformStrokeLinejoinRound     AnimateTransformStrokeLinejoin = "round"
-)
-
-type AnimateTransformVisibility string
-
-const (
-	AnimateTransformVisibilityCollapse AnimateTransformVisibility = "collapse"
-	AnimateTransformVisibilityHidden   AnimateTransformVisibility = "hidden"
-	AnimateTransformVisibilityVisible  AnimateTransformVisibility = "visible"
-)
-
-type AnimateTransformClipRule string
-
-const (
-	AnimateTransformClipRuleEvenodd AnimateTransformClipRule = "evenodd"
-	AnimateTransformClipRuleNonzero AnimateTransformClipRule = "nonzero"
-)
-
-type AnimateTransformPointerEvents string
-
-const (
-	AnimateTransformPointerEventsAll            AnimateTransformPointerEvents = "all"
-	AnimateTransformPointerEventsAuto           AnimateTransformPointerEvents = "auto"
-	AnimateTransformPointerEventsBoundingBox    AnimateTransformPointerEvents = "bounding-box"
-	AnimateTransformPointerEventsFill           AnimateTransformPointerEvents = "fill"
-	AnimateTransformPointerEventsNone           AnimateTransformPointerEvents = "none"
-	AnimateTransformPointerEventsPainted        AnimateTransformPointerEvents = "painted"
-	AnimateTransformPointerEventsStroke         AnimateTransformPointerEvents = "stroke"
-	AnimateTransformPointerEventsVisible        AnimateTransformPointerEvents = "visible"
-	AnimateTransformPointerEventsVisibleFill    AnimateTransformPointerEvents = "visibleFill"
-	AnimateTransformPointerEventsVisiblePainted AnimateTransformPointerEvents = "visiblePainted"
-	AnimateTransformPointerEventsVisibleStroke  AnimateTransformPointerEvents = "visibleStroke"
-)
-
-type AnimateTransformVectorEffect string
-
-const (
-	AnimateTransformVectorEffectFixedPosition    AnimateTransformVectorEffect = "fixed-position"
-	AnimateTransformVectorEffectNonRotation      AnimateTransformVectorEffect = "non-rotation"
-	AnimateTransformVectorEffectNonScalingSize   AnimateTransformVectorEffect = "non-scaling-size"
-	AnimateTransformVectorEffectNonScalingStroke AnimateTransformVectorEffect = "non-scaling-stroke"
-	AnimateTransformVectorEffectNone             AnimateTransformVectorEffect = "none"
-)
-
-type AnimateTransformShapeRendering string
-
-const (
-	AnimateTransformShapeRenderingAuto               AnimateTransformShapeRendering = "auto"
-	AnimateTransformShapeRenderingCrispEdges         AnimateTransformShapeRendering = "crispEdges"
-	AnimateTransformShapeRenderingGeometricPrecision AnimateTransformShapeRendering = "geometricPrecision"
-	AnimateTransformShapeRenderingOptimizeSpeed      AnimateTransformShapeRendering = "optimizeSpeed"
-)
-
-type AnimateTransformColorInterpolation string
-
-const (
-	AnimateTransformColorInterpolationAuto      AnimateTransformColorInterpolation = "auto"
-	AnimateTransformColorInterpolationLinearRGB AnimateTransformColorInterpolation = "linearRGB"
-	AnimateTransformColorInterpolationSRGB      AnimateTransformColorInterpolation = "sRGB"
-)
-
-type AnimateTransformColorInterpolationFilters string
-
-const (
-	AnimateTransformColorInterpolationFiltersAuto      AnimateTransformColorInterpolationFilters = "auto"
-	AnimateTransformColorInterpolationFiltersLinearRGB AnimateTransformColorInterpolationFilters = "linearRGB"
-	AnimateTransformColorInterpolationFiltersSRGB      AnimateTransformColorInterpolationFilters = "sRGB"
-)
-
-type AnimateTransformFontStyle string
-
-const (
-	AnimateTransformFontStyleItalic  AnimateTransformFontStyle = "italic"
-	AnimateTransformFontStyleNormal  AnimateTransformFontStyle = "normal"
-	AnimateTransformFontStyleOblique AnimateTransformFontStyle = "oblique"
-)
-
-type AnimateTransformTextAnchor string
-
-const (
-	AnimateTransformTextAnchorEnd    AnimateTransformTextAnchor = "end"
-	AnimateTransformTextAnchorMiddle AnimateTransformTextAnchor = "middle"
-	AnimateTransformTextAnchorStart  AnimateTransformTextAnchor = "start"
-)
-
-type AnimateTransformDominantBaseline string
-
-const (
-	AnimateTransformDominantBaselineAlphabetic   AnimateTransformDominantBaseline = "alphabetic"
-	AnimateTransformDominantBaselineAuto         AnimateTransformDominantBaseline = "auto"
-	AnimateTransformDominantBaselineCentral      AnimateTransformDominantBaseline = "central"
-	AnimateTransformDominantBaselineHanging      AnimateTransformDominantBaseline = "hanging"
-	AnimateTransformDominantBaselineIdeographic  AnimateTransformDominantBaseline = "ideographic"
-	AnimateTransformDominantBaselineMathematical AnimateTransformDominantBaseline = "mathematical"
-	AnimateTransformDominantBaselineMiddle       AnimateTransformDominantBaseline = "middle"
-	AnimateTransformDominantBaselineTextBottom   AnimateTransformDominantBaseline = "text-bottom"
-	AnimateTransformDominantBaselineTextTop      AnimateTransformDominantBaseline = "text-top"
 )
 
 type AnimateTransformAlignmentBaseline string
@@ -363,13 +242,63 @@ const (
 	AnimateTransformAlignmentBaselineTop            AnimateTransformAlignmentBaseline = "top"
 )
 
-type AnimateTransformTextRendering string
+type AnimateTransformClipRule string
 
 const (
-	AnimateTransformTextRenderingAuto               AnimateTransformTextRendering = "auto"
-	AnimateTransformTextRenderingGeometricPrecision AnimateTransformTextRendering = "geometricPrecision"
-	AnimateTransformTextRenderingOptimizeLegibility AnimateTransformTextRendering = "optimizeLegibility"
-	AnimateTransformTextRenderingOptimizeSpeed      AnimateTransformTextRendering = "optimizeSpeed"
+	AnimateTransformClipRuleEvenodd AnimateTransformClipRule = "evenodd"
+	AnimateTransformClipRuleNonzero AnimateTransformClipRule = "nonzero"
+)
+
+type AnimateTransformColorInterpolation string
+
+const (
+	AnimateTransformColorInterpolationAuto      AnimateTransformColorInterpolation = "auto"
+	AnimateTransformColorInterpolationLinearRGB AnimateTransformColorInterpolation = "linearRGB"
+	AnimateTransformColorInterpolationSRGB      AnimateTransformColorInterpolation = "sRGB"
+)
+
+type AnimateTransformColorInterpolationFilters string
+
+const (
+	AnimateTransformColorInterpolationFiltersAuto      AnimateTransformColorInterpolationFilters = "auto"
+	AnimateTransformColorInterpolationFiltersLinearRGB AnimateTransformColorInterpolationFilters = "linearRGB"
+	AnimateTransformColorInterpolationFiltersSRGB      AnimateTransformColorInterpolationFilters = "sRGB"
+)
+
+type AnimateTransformDirection string
+
+const (
+	AnimateTransformDirectionLtr AnimateTransformDirection = "ltr"
+	AnimateTransformDirectionRtl AnimateTransformDirection = "rtl"
+)
+
+type AnimateTransformDominantBaseline string
+
+const (
+	AnimateTransformDominantBaselineAlphabetic   AnimateTransformDominantBaseline = "alphabetic"
+	AnimateTransformDominantBaselineAuto         AnimateTransformDominantBaseline = "auto"
+	AnimateTransformDominantBaselineCentral      AnimateTransformDominantBaseline = "central"
+	AnimateTransformDominantBaselineHanging      AnimateTransformDominantBaseline = "hanging"
+	AnimateTransformDominantBaselineIdeographic  AnimateTransformDominantBaseline = "ideographic"
+	AnimateTransformDominantBaselineMathematical AnimateTransformDominantBaseline = "mathematical"
+	AnimateTransformDominantBaselineMiddle       AnimateTransformDominantBaseline = "middle"
+	AnimateTransformDominantBaselineTextBottom   AnimateTransformDominantBaseline = "text-bottom"
+	AnimateTransformDominantBaselineTextTop      AnimateTransformDominantBaseline = "text-top"
+)
+
+type AnimateTransformFillRule string
+
+const (
+	AnimateTransformFillRuleEvenodd AnimateTransformFillRule = "evenodd"
+	AnimateTransformFillRuleNonzero AnimateTransformFillRule = "nonzero"
+)
+
+type AnimateTransformFontStyle string
+
+const (
+	AnimateTransformFontStyleItalic  AnimateTransformFontStyle = "italic"
+	AnimateTransformFontStyleNormal  AnimateTransformFontStyle = "normal"
+	AnimateTransformFontStyleOblique AnimateTransformFontStyle = "oblique"
 )
 
 type AnimateTransformImageRendering string
@@ -394,6 +323,66 @@ const (
 	AnimateTransformOverflowVisible AnimateTransformOverflow = "visible"
 )
 
+type AnimateTransformPointerEvents string
+
+const (
+	AnimateTransformPointerEventsAll            AnimateTransformPointerEvents = "all"
+	AnimateTransformPointerEventsAuto           AnimateTransformPointerEvents = "auto"
+	AnimateTransformPointerEventsBoundingBox    AnimateTransformPointerEvents = "bounding-box"
+	AnimateTransformPointerEventsFill           AnimateTransformPointerEvents = "fill"
+	AnimateTransformPointerEventsNone           AnimateTransformPointerEvents = "none"
+	AnimateTransformPointerEventsPainted        AnimateTransformPointerEvents = "painted"
+	AnimateTransformPointerEventsStroke         AnimateTransformPointerEvents = "stroke"
+	AnimateTransformPointerEventsVisible        AnimateTransformPointerEvents = "visible"
+	AnimateTransformPointerEventsVisibleFill    AnimateTransformPointerEvents = "visibleFill"
+	AnimateTransformPointerEventsVisiblePainted AnimateTransformPointerEvents = "visiblePainted"
+	AnimateTransformPointerEventsVisibleStroke  AnimateTransformPointerEvents = "visibleStroke"
+)
+
+type AnimateTransformShapeRendering string
+
+const (
+	AnimateTransformShapeRenderingAuto               AnimateTransformShapeRendering = "auto"
+	AnimateTransformShapeRenderingCrispEdges         AnimateTransformShapeRendering = "crispEdges"
+	AnimateTransformShapeRenderingGeometricPrecision AnimateTransformShapeRendering = "geometricPrecision"
+	AnimateTransformShapeRenderingOptimizeSpeed      AnimateTransformShapeRendering = "optimizeSpeed"
+)
+
+type AnimateTransformStrokeLinecap string
+
+const (
+	AnimateTransformStrokeLinecapButt   AnimateTransformStrokeLinecap = "butt"
+	AnimateTransformStrokeLinecapRound  AnimateTransformStrokeLinecap = "round"
+	AnimateTransformStrokeLinecapSquare AnimateTransformStrokeLinecap = "square"
+)
+
+type AnimateTransformStrokeLinejoin string
+
+const (
+	AnimateTransformStrokeLinejoinArcs      AnimateTransformStrokeLinejoin = "arcs"
+	AnimateTransformStrokeLinejoinBevel     AnimateTransformStrokeLinejoin = "bevel"
+	AnimateTransformStrokeLinejoinMiter     AnimateTransformStrokeLinejoin = "miter"
+	AnimateTransformStrokeLinejoinMiterClip AnimateTransformStrokeLinejoin = "miter-clip"
+	AnimateTransformStrokeLinejoinRound     AnimateTransformStrokeLinejoin = "round"
+)
+
+type AnimateTransformTextAnchor string
+
+const (
+	AnimateTransformTextAnchorEnd    AnimateTransformTextAnchor = "end"
+	AnimateTransformTextAnchorMiddle AnimateTransformTextAnchor = "middle"
+	AnimateTransformTextAnchorStart  AnimateTransformTextAnchor = "start"
+)
+
+type AnimateTransformTextRendering string
+
+const (
+	AnimateTransformTextRenderingAuto               AnimateTransformTextRendering = "auto"
+	AnimateTransformTextRenderingGeometricPrecision AnimateTransformTextRendering = "geometricPrecision"
+	AnimateTransformTextRenderingOptimizeLegibility AnimateTransformTextRendering = "optimizeLegibility"
+	AnimateTransformTextRenderingOptimizeSpeed      AnimateTransformTextRendering = "optimizeSpeed"
+)
+
 type AnimateTransformTransformBox string
 
 const (
@@ -404,11 +393,22 @@ const (
 	AnimateTransformTransformBoxViewBox    AnimateTransformTransformBox = "view-box"
 )
 
-type AnimateTransformDirection string
+type AnimateTransformVectorEffect string
 
 const (
-	AnimateTransformDirectionLtr AnimateTransformDirection = "ltr"
-	AnimateTransformDirectionRtl AnimateTransformDirection = "rtl"
+	AnimateTransformVectorEffectFixedPosition    AnimateTransformVectorEffect = "fixed-position"
+	AnimateTransformVectorEffectNonRotation      AnimateTransformVectorEffect = "non-rotation"
+	AnimateTransformVectorEffectNonScalingSize   AnimateTransformVectorEffect = "non-scaling-size"
+	AnimateTransformVectorEffectNonScalingStroke AnimateTransformVectorEffect = "non-scaling-stroke"
+	AnimateTransformVectorEffectNone             AnimateTransformVectorEffect = "none"
+)
+
+type AnimateTransformVisibility string
+
+const (
+	AnimateTransformVisibilityCollapse AnimateTransformVisibility = "collapse"
+	AnimateTransformVisibilityHidden   AnimateTransformVisibility = "hidden"
+	AnimateTransformVisibilityVisible  AnimateTransformVisibility = "visible"
 )
 
 type AnimateTransformWritingMode string
@@ -427,62 +427,21 @@ const (
 	AnimateTransformWritingModeVerticalRl   AnimateTransformWritingMode = "vertical-rl"
 )
 
-func (e *AnimateTransformElement) Href(s string) *AnimateTransformElement {
-	e.attributes.Set("href", s)
+type AnimateTransformXmlSpace string
+
+const (
+	AnimateTransformXmlSpaceDefault  AnimateTransformXmlSpace = "default"
+	AnimateTransformXmlSpacePreserve AnimateTransformXmlSpace = "preserve"
+)
+
+func (e *AnimateTransformElement) Accumulate(a AnimateTransformAccumulate) *AnimateTransformElement {
+	e.attributes.Set("accumulate", string(a))
 
 	return e
 }
 
-func (e *AnimateTransformElement) XlinkHref(s string) *AnimateTransformElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Begin(s string) *AnimateTransformElement {
-	e.attributes.Set("begin", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Dur(s string) *AnimateTransformElement {
-	e.attributes.Set("dur", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) End(s string) *AnimateTransformElement {
-	e.attributes.Set("end", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Min(s string) *AnimateTransformElement {
-	e.attributes.Set("min", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Max(s string) *AnimateTransformElement {
-	e.attributes.Set("max", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Restart(a AnimateTransformRestart) *AnimateTransformElement {
-	e.attributes.Set("restart", string(a))
-
-	return e
-}
-
-func (e *AnimateTransformElement) RepeatCount(s string) *AnimateTransformElement {
-	e.attributes.Set("repeatCount", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) RepeatDur(s string) *AnimateTransformElement {
-	e.attributes.Set("repeatDur", s)
+func (e *AnimateTransformElement) Additive(a AnimateTransformAdditive) *AnimateTransformElement {
+	e.attributes.Set("additive", string(a))
 
 	return e
 }
@@ -499,14 +458,8 @@ func (e *AnimateTransformElement) AttributeType(a AnimateTransformAttributeType)
 	return e
 }
 
-func (e *AnimateTransformElement) From(s string) *AnimateTransformElement {
-	e.attributes.Set("from", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) To(s string) *AnimateTransformElement {
-	e.attributes.Set("to", s)
+func (e *AnimateTransformElement) Begin(s string) *AnimateTransformElement {
+	e.attributes.Set("begin", s)
 
 	return e
 }
@@ -517,20 +470,40 @@ func (e *AnimateTransformElement) By(s string) *AnimateTransformElement {
 	return e
 }
 
-func (e *AnimateTransformElement) Values(s string) *AnimateTransformElement {
-	e.attributes.Set("values", s)
-
-	return e
-}
-
 func (e *AnimateTransformElement) CalcMode(a AnimateTransformCalcMode) *AnimateTransformElement {
 	e.attributes.Set("calcMode", string(a))
 
 	return e
 }
 
-func (e *AnimateTransformElement) KeyTimes(s string) *AnimateTransformElement {
-	e.attributes.Set("keyTimes", s)
+func (e *AnimateTransformElement) Dur(s string) *AnimateTransformElement {
+	e.attributes.Set("dur", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) End(s string) *AnimateTransformElement {
+	e.attributes.Set("end", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Fill(a AnimateTransformFill) *AnimateTransformElement {
+	e.attributes.Set("fill", string(a))
+
+	return e
+}
+
+func (e *AnimateTransformElement) From(s string) *AnimateTransformElement {
+	e.attributes.Set("from", s)
+
+	return e
+}
+
+// Href sets the "href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+func (e *AnimateTransformElement) Href(s string) *AnimateTransformElement {
+	e.attributes.Set("href", s)
 
 	return e
 }
@@ -541,14 +514,50 @@ func (e *AnimateTransformElement) KeySplines(s string) *AnimateTransformElement 
 	return e
 }
 
-func (e *AnimateTransformElement) Additive(a AnimateTransformAdditive) *AnimateTransformElement {
-	e.attributes.Set("additive", string(a))
+func (e *AnimateTransformElement) KeyTimes(s string) *AnimateTransformElement {
+	e.attributes.Set("keyTimes", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Accumulate(a AnimateTransformAccumulate) *AnimateTransformElement {
-	e.attributes.Set("accumulate", string(a))
+func (e *AnimateTransformElement) Max(s string) *AnimateTransformElement {
+	e.attributes.Set("max", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Min(s string) *AnimateTransformElement {
+	e.attributes.Set("min", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) RepeatCount(s string) *AnimateTransformElement {
+	e.attributes.Set("repeatCount", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) RepeatDur(s string) *AnimateTransformElement {
+	e.attributes.Set("repeatDur", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Restart(a AnimateTransformRestart) *AnimateTransformElement {
+	e.attributes.Set("restart", string(a))
+
+	return e
+}
+
+func (e *AnimateTransformElement) SystemLanguage(s string) *AnimateTransformElement {
+	e.attributes.Set("systemLanguage", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) To(s string) *AnimateTransformElement {
+	e.attributes.Set("to", s)
 
 	return e
 }
@@ -559,8 +568,48 @@ func (e *AnimateTransformElement) Type(a AnimateTransformType) *AnimateTransform
 	return e
 }
 
-func (e *AnimateTransformElement) Id(s string) *AnimateTransformElement {
-	e.attributes.Set("id", s)
+func (e *AnimateTransformElement) Values(s string) *AnimateTransformElement {
+	e.attributes.Set("values", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) AlignmentBaseline(a AnimateTransformAlignmentBaseline) *AnimateTransformElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func AnimateTransformAlignmentBaselineCustom(s string) AnimateTransformAlignmentBaseline {
+	return AnimateTransformAlignmentBaseline(s)
+}
+
+func (e *AnimateTransformElement) AriaUnsafe(name string, s string) *AnimateTransformElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Aria(name string, s string) *AnimateTransformElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *AnimateTransformElement) Autofocus(b bool) *AnimateTransformElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *AnimateTransformElement) BaselineShift(s string) *AnimateTransformElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -571,40 +620,59 @@ func (e *AnimateTransformElement) Class(s ...string) *AnimateTransformElement {
 	return e
 }
 
-func (e *AnimateTransformElement) Style(s string) *AnimateTransformElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateTransformElement) Clip(s string) *AnimateTransformElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Tabindex(i int) *AnimateTransformElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *AnimateTransformElement) ClipPath(s string) *AnimateTransformElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Lang(s string) *AnimateTransformElement {
-	e.attributes.Set("lang", s)
+func (e *AnimateTransformElement) ClipRule(a AnimateTransformClipRule) *AnimateTransformElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *AnimateTransformElement) XmlLang(s string) *AnimateTransformElement {
-	e.attributes.Set("xml:lang", s)
+func AnimateTransformClipRuleCustom(s string) AnimateTransformClipRule {
+	return AnimateTransformClipRule(s)
+}
+
+func (e *AnimateTransformElement) Color(s string) *AnimateTransformElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) XmlSpace(a AnimateTransformXmlSpace) *AnimateTransformElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *AnimateTransformElement) ColorInterpolation(a AnimateTransformColorInterpolation) *AnimateTransformElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *AnimateTransformElement) Autofocus(b bool) *AnimateTransformElement {
-	e.attributes.SetBool("autofocus", b)
+func AnimateTransformColorInterpolationCustom(s string) AnimateTransformColorInterpolation {
+	return AnimateTransformColorInterpolation(s)
+}
+
+func (e *AnimateTransformElement) ColorInterpolationFilters(a AnimateTransformColorInterpolationFilters) *AnimateTransformElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func AnimateTransformColorInterpolationFiltersCustom(s string) AnimateTransformColorInterpolationFilters {
+	return AnimateTransformColorInterpolationFilters(s)
+}
+
+func (e *AnimateTransformElement) Cursor(s string) *AnimateTransformElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -625,26 +693,30 @@ func (e *AnimateTransformElement) Data(name string, s string) *AnimateTransformE
 	return e
 }
 
-func (e *AnimateTransformElement) AriaUnsafe(name string, s string) *AnimateTransformElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *AnimateTransformElement) Direction(a AnimateTransformDirection) *AnimateTransformElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *AnimateTransformElement) Aria(name string, s string) *AnimateTransformElement {
-	tag := strings.ToLower("aria-" + name)
+func AnimateTransformDirectionCustom(s string) AnimateTransformDirection {
+	return AnimateTransformDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *AnimateTransformElement) Display(s string) *AnimateTransformElement {
+	e.attributes.Set("display", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Fill(s string) *AnimateTransformElement {
-	e.attributes.Set("fill", s)
+func (e *AnimateTransformElement) DominantBaseline(a AnimateTransformDominantBaseline) *AnimateTransformElement {
+	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
+}
+
+func AnimateTransformDominantBaselineCustom(s string) AnimateTransformDominantBaseline {
+	return AnimateTransformDominantBaseline(s)
 }
 
 func (e *AnimateTransformElement) FillOpacity(f float64) *AnimateTransformElement {
@@ -663,20 +735,220 @@ func AnimateTransformFillRuleCustom(s string) AnimateTransformFillRule {
 	return AnimateTransformFillRule(s)
 }
 
+func (e *AnimateTransformElement) Filter(s string) *AnimateTransformElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FloodColor(s string) *AnimateTransformElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FloodOpacity(f float64) *AnimateTransformElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontFamily(s string) *AnimateTransformElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontSize(s string) *AnimateTransformElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontSizeAdjust(s string) *AnimateTransformElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontStretch(s string) *AnimateTransformElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontStyle(a AnimateTransformFontStyle) *AnimateTransformElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func AnimateTransformFontStyleCustom(s string) AnimateTransformFontStyle {
+	return AnimateTransformFontStyle(s)
+}
+
+func (e *AnimateTransformElement) FontVariant(s string) *AnimateTransformElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) FontWeight(s string) *AnimateTransformElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateTransformElement) GlyphOrientationHorizontal(s string) *AnimateTransformElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateTransformElement) GlyphOrientationVertical(s string) *AnimateTransformElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Id(s string) *AnimateTransformElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) ImageRendering(a AnimateTransformImageRendering) *AnimateTransformElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func AnimateTransformImageRenderingCustom(s string) AnimateTransformImageRendering {
+	return AnimateTransformImageRendering(s)
+}
+
+func (e *AnimateTransformElement) Lang(s string) *AnimateTransformElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) LetterSpacing(s string) *AnimateTransformElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) LightingColor(s string) *AnimateTransformElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) MarkerEnd(s string) *AnimateTransformElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) MarkerMid(s string) *AnimateTransformElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) MarkerStart(s string) *AnimateTransformElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Mask(s string) *AnimateTransformElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) Opacity(f float64) *AnimateTransformElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *AnimateTransformElement) Overflow(a AnimateTransformOverflow) *AnimateTransformElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func AnimateTransformOverflowCustom(s string) AnimateTransformOverflow {
+	return AnimateTransformOverflow(s)
+}
+
+func (e *AnimateTransformElement) PaintOrder(s string) *AnimateTransformElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) PointerEvents(a AnimateTransformPointerEvents) *AnimateTransformElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func AnimateTransformPointerEventsCustom(s string) AnimateTransformPointerEvents {
+	return AnimateTransformPointerEvents(s)
+}
+
+func (e *AnimateTransformElement) RequiredExtensions(s string) *AnimateTransformElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) ShapeRendering(a AnimateTransformShapeRendering) *AnimateTransformElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func AnimateTransformShapeRenderingCustom(s string) AnimateTransformShapeRendering {
+	return AnimateTransformShapeRendering(s)
+}
+
+func (e *AnimateTransformElement) StopColor(s string) *AnimateTransformElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) StopOpacity(f float64) *AnimateTransformElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *AnimateTransformElement) Stroke(s string) *AnimateTransformElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) StrokeWidth(s string) *AnimateTransformElement {
-	e.attributes.Set("stroke-width", s)
+func (e *AnimateTransformElement) StrokeDasharray(s string) *AnimateTransformElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) StrokeOpacity(f float64) *AnimateTransformElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AnimateTransformElement) StrokeDashoffset(s string) *AnimateTransformElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -707,210 +979,28 @@ func (e *AnimateTransformElement) StrokeMiterlimit(f float64) *AnimateTransformE
 	return e
 }
 
-func (e *AnimateTransformElement) StrokeDasharray(s string) *AnimateTransformElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *AnimateTransformElement) StrokeOpacity(f float64) *AnimateTransformElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *AnimateTransformElement) StrokeDashoffset(s string) *AnimateTransformElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *AnimateTransformElement) StrokeWidth(s string) *AnimateTransformElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Opacity(f float64) *AnimateTransformElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *AnimateTransformElement) Style(s string) *AnimateTransformElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *AnimateTransformElement) Color(s string) *AnimateTransformElement {
-	e.attributes.Set("color", s)
+func (e *AnimateTransformElement) Tabindex(i int) *AnimateTransformElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *AnimateTransformElement) Display(s string) *AnimateTransformElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Visibility(a AnimateTransformVisibility) *AnimateTransformElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func AnimateTransformVisibilityCustom(s string) AnimateTransformVisibility {
-	return AnimateTransformVisibility(s)
-}
-
-func (e *AnimateTransformElement) ClipPath(s string) *AnimateTransformElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) ClipRule(a AnimateTransformClipRule) *AnimateTransformElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func AnimateTransformClipRuleCustom(s string) AnimateTransformClipRule {
-	return AnimateTransformClipRule(s)
-}
-
-func (e *AnimateTransformElement) Mask(s string) *AnimateTransformElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Filter(s string) *AnimateTransformElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) Cursor(s string) *AnimateTransformElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) PointerEvents(a AnimateTransformPointerEvents) *AnimateTransformElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func AnimateTransformPointerEventsCustom(s string) AnimateTransformPointerEvents {
-	return AnimateTransformPointerEvents(s)
-}
-
-func (e *AnimateTransformElement) VectorEffect(a AnimateTransformVectorEffect) *AnimateTransformElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func AnimateTransformVectorEffectCustom(s string) AnimateTransformVectorEffect {
-	return AnimateTransformVectorEffect(s)
-}
-
-func (e *AnimateTransformElement) PaintOrder(s string) *AnimateTransformElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) ShapeRendering(a AnimateTransformShapeRendering) *AnimateTransformElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func AnimateTransformShapeRenderingCustom(s string) AnimateTransformShapeRendering {
-	return AnimateTransformShapeRendering(s)
-}
-
-func (e *AnimateTransformElement) ColorInterpolation(a AnimateTransformColorInterpolation) *AnimateTransformElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func AnimateTransformColorInterpolationCustom(s string) AnimateTransformColorInterpolation {
-	return AnimateTransformColorInterpolation(s)
-}
-
-func (e *AnimateTransformElement) ColorInterpolationFilters(a AnimateTransformColorInterpolationFilters) *AnimateTransformElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func AnimateTransformColorInterpolationFiltersCustom(s string) AnimateTransformColorInterpolationFilters {
-	return AnimateTransformColorInterpolationFilters(s)
-}
-
-func (e *AnimateTransformElement) FloodColor(s string) *AnimateTransformElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) FloodOpacity(f float64) *AnimateTransformElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AnimateTransformElement) LightingColor(s string) *AnimateTransformElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) StopColor(s string) *AnimateTransformElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) StopOpacity(f float64) *AnimateTransformElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *AnimateTransformElement) MarkerStart(s string) *AnimateTransformElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) MarkerMid(s string) *AnimateTransformElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) MarkerEnd(s string) *AnimateTransformElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) FontFamily(s string) *AnimateTransformElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) FontSize(s string) *AnimateTransformElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) FontWeight(s string) *AnimateTransformElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) FontStyle(a AnimateTransformFontStyle) *AnimateTransformElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func AnimateTransformFontStyleCustom(s string) AnimateTransformFontStyle {
-	return AnimateTransformFontStyle(s)
 }
 
 func (e *AnimateTransformElement) TextAnchor(a AnimateTransformTextAnchor) *AnimateTransformElement {
@@ -923,40 +1013,14 @@ func AnimateTransformTextAnchorCustom(s string) AnimateTransformTextAnchor {
 	return AnimateTransformTextAnchor(s)
 }
 
-func (e *AnimateTransformElement) DominantBaseline(a AnimateTransformDominantBaseline) *AnimateTransformElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func AnimateTransformDominantBaselineCustom(s string) AnimateTransformDominantBaseline {
-	return AnimateTransformDominantBaseline(s)
-}
-
-func (e *AnimateTransformElement) AlignmentBaseline(a AnimateTransformAlignmentBaseline) *AnimateTransformElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func AnimateTransformAlignmentBaselineCustom(s string) AnimateTransformAlignmentBaseline {
-	return AnimateTransformAlignmentBaseline(s)
-}
-
-func (e *AnimateTransformElement) LetterSpacing(s string) *AnimateTransformElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *AnimateTransformElement) WordSpacing(s string) *AnimateTransformElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *AnimateTransformElement) TextDecoration(s string) *AnimateTransformElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) TextOverflow(s string) *AnimateTransformElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -971,24 +1035,10 @@ func AnimateTransformTextRenderingCustom(s string) AnimateTransformTextRendering
 	return AnimateTransformTextRendering(s)
 }
 
-func (e *AnimateTransformElement) ImageRendering(a AnimateTransformImageRendering) *AnimateTransformElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *AnimateTransformElement) Transform(s string) *AnimateTransformElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func AnimateTransformImageRenderingCustom(s string) AnimateTransformImageRendering {
-	return AnimateTransformImageRendering(s)
-}
-
-func (e *AnimateTransformElement) Overflow(a AnimateTransformOverflow) *AnimateTransformElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func AnimateTransformOverflowCustom(s string) AnimateTransformOverflow {
-	return AnimateTransformOverflow(s)
 }
 
 func (e *AnimateTransformElement) TransformBox(a AnimateTransformTransformBox) *AnimateTransformElement {
@@ -1001,18 +1051,46 @@ func AnimateTransformTransformBoxCustom(s string) AnimateTransformTransformBox {
 	return AnimateTransformTransformBox(s)
 }
 
-func (e *AnimateTransformElement) Direction(a AnimateTransformDirection) *AnimateTransformElement {
-	e.attributes.Set("direction", string(a))
+func (e *AnimateTransformElement) TransformOrigin(s string) *AnimateTransformElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func AnimateTransformDirectionCustom(s string) AnimateTransformDirection {
-	return AnimateTransformDirection(s)
-}
-
 func (e *AnimateTransformElement) UnicodeBidi(s string) *AnimateTransformElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) VectorEffect(a AnimateTransformVectorEffect) *AnimateTransformElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func AnimateTransformVectorEffectCustom(s string) AnimateTransformVectorEffect {
+	return AnimateTransformVectorEffect(s)
+}
+
+func (e *AnimateTransformElement) Visibility(a AnimateTransformVisibility) *AnimateTransformElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func AnimateTransformVisibilityCustom(s string) AnimateTransformVisibility {
+	return AnimateTransformVisibility(s)
+}
+
+func (e *AnimateTransformElement) WhiteSpace(s string) *AnimateTransformElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *AnimateTransformElement) WordSpacing(s string) *AnimateTransformElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -1027,8 +1105,20 @@ func AnimateTransformWritingModeCustom(s string) AnimateTransformWritingMode {
 	return AnimateTransformWritingMode(s)
 }
 
-func (e *AnimateTransformElement) WhiteSpace(s string) *AnimateTransformElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateTransformElement) XmlLang(s string) *AnimateTransformElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *AnimateTransformElement) XmlSpace(a AnimateTransformXmlSpace) *AnimateTransformElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

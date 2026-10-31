@@ -243,6 +243,15 @@ const (
 	StyleInputmodeUrl     StyleInputmode = "url"
 )
 
+type StylePopover string
+
+const (
+	StylePopoverAuto   StylePopover = "auto"
+	StylePopoverHint   StylePopover = "hint"
+	StylePopoverManual StylePopover = "manual"
+	StylePopoverEmpty  StylePopover = ""
+)
+
 type StyleSpellcheck string
 
 const (
@@ -267,14 +276,14 @@ const (
 	StyleWritingsuggestionsEmpty StyleWritingsuggestions = ""
 )
 
-func (e *StyleElement) Media(s string) *StyleElement {
-	e.attributes.Set("media", s)
+func (e *StyleElement) Blocking(s ...string) *StyleElement {
+	e.attributes.Set("blocking", strings.Join(s, " "))
 
 	return e
 }
 
-func (e *StyleElement) Blocking(s string) *StyleElement {
-	e.attributes.Set("blocking", s)
+func (e *StyleElement) Media(s string) *StyleElement {
+	e.attributes.Set("media", s)
 
 	return e
 }
@@ -379,6 +388,26 @@ func (e *StyleElement) Enterkeyhint(a StyleEnterkeyhint) *StyleElement {
 	return e
 }
 
+func (e *StyleElement) Exportparts(s string) *StyleElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *StyleElement) Headingoffset(i int) *StyleElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *StyleElement) Headingreset(b bool) *StyleElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *StyleElement) Hidden(v ...StyleHidden) *StyleElement {
@@ -411,6 +440,14 @@ func (e *StyleElement) Inputmode(a StyleInputmode) *StyleElement {
 	return e
 }
 
+func (e *StyleElement) Is(s string) *StyleElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *StyleElement) Itemid(s string) *StyleElement {
 	e.attributes.Set("itemid", s)
 
@@ -455,8 +492,20 @@ func (e *StyleElement) Nonce(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Popover(s string) *StyleElement {
-	e.attributes.Set("popover", s)
+func (e *StyleElement) Part(s ...string) *StyleElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Popover(v ...StylePopover) *StyleElement {
+	var val StylePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

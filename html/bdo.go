@@ -240,6 +240,15 @@ const (
 	BdoInputmodeUrl     BdoInputmode = "url"
 )
 
+type BdoPopover string
+
+const (
+	BdoPopoverAuto   BdoPopover = "auto"
+	BdoPopoverHint   BdoPopover = "hint"
+	BdoPopoverManual BdoPopover = "manual"
+	BdoPopoverEmpty  BdoPopover = ""
+)
+
 type BdoSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *BdoElement) Enterkeyhint(a BdoEnterkeyhint) *BdoElement {
 	return e
 }
 
+func (e *BdoElement) Exportparts(s string) *BdoElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *BdoElement) Headingoffset(i int) *BdoElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *BdoElement) Headingreset(b bool) *BdoElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BdoElement) Hidden(v ...BdoHidden) *BdoElement {
@@ -396,6 +425,14 @@ func (e *BdoElement) Inputmode(a BdoInputmode) *BdoElement {
 	return e
 }
 
+func (e *BdoElement) Is(s string) *BdoElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BdoElement) Itemid(s string) *BdoElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *BdoElement) Nonce(s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Popover(s string) *BdoElement {
-	e.attributes.Set("popover", s)
+func (e *BdoElement) Part(s ...string) *BdoElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Popover(v ...BdoPopover) *BdoElement {
+	var val BdoPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

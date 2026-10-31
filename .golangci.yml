@@ -26,7 +26,7 @@ linters:
     generated: disable
     rules:
       # Generated element code: keep govet/staticcheck, skip stylistic linters.
-      - path: ^(html|svg)/
+      - path: ^(html|svg|mathml)/
         linters:
           - revive
           - gocritic

@@ -240,6 +240,15 @@ const (
 	OutputInputmodeUrl     OutputInputmode = "url"
 )
 
+type OutputPopover string
+
+const (
+	OutputPopoverAuto   OutputPopover = "auto"
+	OutputPopoverHint   OutputPopover = "hint"
+	OutputPopoverManual OutputPopover = "manual"
+	OutputPopoverEmpty  OutputPopover = ""
+)
+
 type OutputSpellcheck string
 
 const (
@@ -264,8 +273,8 @@ const (
 	OutputWritingsuggestionsEmpty OutputWritingsuggestions = ""
 )
 
-func (e *OutputElement) For(s string) *OutputElement {
-	e.attributes.Set("for", s)
+func (e *OutputElement) For(s ...string) *OutputElement {
+	e.attributes.Set("for", strings.Join(s, " "))
 
 	return e
 }
@@ -382,6 +391,26 @@ func (e *OutputElement) Enterkeyhint(a OutputEnterkeyhint) *OutputElement {
 	return e
 }
 
+func (e *OutputElement) Exportparts(s string) *OutputElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *OutputElement) Headingoffset(i int) *OutputElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *OutputElement) Headingreset(b bool) *OutputElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OutputElement) Hidden(v ...OutputHidden) *OutputElement {
@@ -414,6 +443,14 @@ func (e *OutputElement) Inputmode(a OutputInputmode) *OutputElement {
 	return e
 }
 
+func (e *OutputElement) Is(s string) *OutputElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *OutputElement) Itemid(s string) *OutputElement {
 	e.attributes.Set("itemid", s)
 
@@ -458,8 +495,20 @@ func (e *OutputElement) Nonce(s string) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Popover(s string) *OutputElement {
-	e.attributes.Set("popover", s)
+func (e *OutputElement) Part(s ...string) *OutputElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OutputElement) Popover(v ...OutputPopover) *OutputElement {
+	var val OutputPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

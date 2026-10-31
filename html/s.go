@@ -240,6 +240,15 @@ const (
 	SInputmodeUrl     SInputmode = "url"
 )
 
+type SPopover string
+
+const (
+	SPopoverAuto   SPopover = "auto"
+	SPopoverHint   SPopover = "hint"
+	SPopoverManual SPopover = "manual"
+	SPopoverEmpty  SPopover = ""
+)
+
 type SSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SElement) Enterkeyhint(a SEnterkeyhint) *SElement {
 	return e
 }
 
+func (e *SElement) Exportparts(s string) *SElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SElement) Headingoffset(i int) *SElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SElement) Headingreset(b bool) *SElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SElement) Hidden(v ...SHidden) *SElement {
@@ -396,6 +425,14 @@ func (e *SElement) Inputmode(a SInputmode) *SElement {
 	return e
 }
 
+func (e *SElement) Is(s string) *SElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SElement) Itemid(s string) *SElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SElement) Nonce(s string) *SElement {
 	return e
 }
 
-func (e *SElement) Popover(s string) *SElement {
-	e.attributes.Set("popover", s)
+func (e *SElement) Part(s ...string) *SElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Popover(v ...SPopover) *SElement {
+	var val SPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

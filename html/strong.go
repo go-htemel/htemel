@@ -240,6 +240,15 @@ const (
 	StrongInputmodeUrl     StrongInputmode = "url"
 )
 
+type StrongPopover string
+
+const (
+	StrongPopoverAuto   StrongPopover = "auto"
+	StrongPopoverHint   StrongPopover = "hint"
+	StrongPopoverManual StrongPopover = "manual"
+	StrongPopoverEmpty  StrongPopover = ""
+)
+
 type StrongSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *StrongElement) Enterkeyhint(a StrongEnterkeyhint) *StrongElement {
 	return e
 }
 
+func (e *StrongElement) Exportparts(s string) *StrongElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *StrongElement) Headingoffset(i int) *StrongElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *StrongElement) Headingreset(b bool) *StrongElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *StrongElement) Hidden(v ...StrongHidden) *StrongElement {
@@ -396,6 +425,14 @@ func (e *StrongElement) Inputmode(a StrongInputmode) *StrongElement {
 	return e
 }
 
+func (e *StrongElement) Is(s string) *StrongElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *StrongElement) Itemid(s string) *StrongElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *StrongElement) Nonce(s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Popover(s string) *StrongElement {
-	e.attributes.Set("popover", s)
+func (e *StrongElement) Part(s ...string) *StrongElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Popover(v ...StrongPopover) *StrongElement {
+	var val StrongPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

@@ -240,6 +240,15 @@ const (
 	H4InputmodeUrl     H4Inputmode = "url"
 )
 
+type H4Popover string
+
+const (
+	H4PopoverAuto   H4Popover = "auto"
+	H4PopoverHint   H4Popover = "hint"
+	H4PopoverManual H4Popover = "manual"
+	H4PopoverEmpty  H4Popover = ""
+)
+
 type H4Spellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *H4Element) Enterkeyhint(a H4Enterkeyhint) *H4Element {
 	return e
 }
 
+func (e *H4Element) Exportparts(s string) *H4Element {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *H4Element) Headingoffset(i int) *H4Element {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *H4Element) Headingreset(b bool) *H4Element {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *H4Element) Hidden(v ...H4Hidden) *H4Element {
@@ -396,6 +425,14 @@ func (e *H4Element) Inputmode(a H4Inputmode) *H4Element {
 	return e
 }
 
+func (e *H4Element) Is(s string) *H4Element {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *H4Element) Itemid(s string) *H4Element {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *H4Element) Nonce(s string) *H4Element {
 	return e
 }
 
-func (e *H4Element) Popover(s string) *H4Element {
-	e.attributes.Set("popover", s)
+func (e *H4Element) Part(s ...string) *H4Element {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Popover(v ...H4Popover) *H4Element {
+	var val H4Popover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

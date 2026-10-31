@@ -109,11 +109,27 @@ func (e *InputElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+type InputCapture string
+
+const (
+	InputCaptureEnvironment InputCapture = "environment"
+	InputCaptureUser        InputCapture = "user"
+	InputCaptureEmpty       InputCapture = ""
+)
+
 type InputColorspace string
 
 const (
 	InputColorspaceDisplayP3   InputColorspace = "display-p3"
 	InputColorspaceLimitedSrgb InputColorspace = "limited-srgb"
+)
+
+type InputFormenctype string
+
+const (
+	InputFormenctypeApplicationXWwwFormUrlencoded InputFormenctype = "application/x-www-form-urlencoded"
+	InputFormenctypeMultipartFormData             InputFormenctype = "multipart/form-data"
+	InputFormenctypeTextPlain                     InputFormenctype = "text/plain"
 )
 
 type InputFormmethod string
@@ -235,6 +251,15 @@ const (
 	InputInputmodeUrl     InputInputmode = "url"
 )
 
+type InputPopover string
+
+const (
+	InputPopoverAuto   InputPopover = "auto"
+	InputPopoverHint   InputPopover = "hint"
+	InputPopoverManual InputPopover = "manual"
+	InputPopoverEmpty  InputPopover = ""
+)
+
 type InputSpellcheck string
 
 const (
@@ -285,6 +310,18 @@ func (e *InputElement) Autocomplete(s ...string) *InputElement {
 	return e
 }
 
+// Capture sets the "capture" attribute. Called with no argument, Capture() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Capture(v ...InputCapture) *InputElement {
+	var val InputCapture
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("capture", string(val))
+
+	return e
+}
+
 // Checked sets the boolean attribute "checked". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *InputElement) Checked(b bool) *InputElement {
@@ -319,14 +356,16 @@ func (e *InputElement) Form(s string) *InputElement {
 	return e
 }
 
+// Formaction sets the "formaction" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *InputElement) Formaction(s string) *InputElement {
 	e.attributes.Set("formaction", s)
 
 	return e
 }
 
-func (e *InputElement) Formenctype(s string) *InputElement {
-	e.attributes.Set("formenctype", s)
+func (e *InputElement) Formenctype(a InputFormenctype) *InputElement {
+	e.attributes.Set("formenctype", string(a))
 
 	return e
 }
@@ -363,8 +402,8 @@ func (e *InputElement) List(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Max(i int) *InputElement {
-	e.attributes.Set("max", strconv.Itoa(i))
+func (e *InputElement) Max(s string) *InputElement {
+	e.attributes.Set("max", s)
 
 	return e
 }
@@ -375,8 +414,8 @@ func (e *InputElement) Maxlength(i int) *InputElement {
 	return e
 }
 
-func (e *InputElement) Min(i int) *InputElement {
-	e.attributes.Set("min", strconv.Itoa(i))
+func (e *InputElement) Min(s string) *InputElement {
+	e.attributes.Set("min", s)
 
 	return e
 }
@@ -447,6 +486,8 @@ func (e *InputElement) Size(i int) *InputElement {
 	return e
 }
 
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *InputElement) Src(s string) *InputElement {
 	e.attributes.Set("src", s)
 
@@ -467,6 +508,14 @@ func (e *InputElement) Type(a InputType) *InputElement {
 
 func (e *InputElement) Value(s string) *InputElement {
 	e.attributes.Set("value", s)
+
+	return e
+}
+
+// Webkitdirectory sets the boolean attribute "webkitdirectory". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *InputElement) Webkitdirectory(b bool) *InputElement {
+	e.attributes.SetBool("webkitdirectory", b)
 
 	return e
 }
@@ -577,6 +626,26 @@ func (e *InputElement) Enterkeyhint(a InputEnterkeyhint) *InputElement {
 	return e
 }
 
+func (e *InputElement) Exportparts(s string) *InputElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *InputElement) Headingoffset(i int) *InputElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *InputElement) Headingreset(b bool) *InputElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *InputElement) Hidden(v ...InputHidden) *InputElement {
@@ -609,6 +678,14 @@ func (e *InputElement) Inputmode(a InputInputmode) *InputElement {
 	return e
 }
 
+func (e *InputElement) Is(s string) *InputElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *InputElement) Itemid(s string) *InputElement {
 	e.attributes.Set("itemid", s)
 
@@ -653,8 +730,20 @@ func (e *InputElement) Nonce(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Popover(s string) *InputElement {
-	e.attributes.Set("popover", s)
+func (e *InputElement) Part(s ...string) *InputElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Popover(v ...InputPopover) *InputElement {
+	var val InputPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

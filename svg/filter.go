@@ -178,134 +178,6 @@ const (
 	FilterPrimitiveUnitsUserSpaceOnUse    FilterPrimitiveUnits = "userSpaceOnUse"
 )
 
-type FilterXmlSpace string
-
-const (
-	FilterXmlSpaceDefault  FilterXmlSpace = "default"
-	FilterXmlSpacePreserve FilterXmlSpace = "preserve"
-)
-
-type FilterFillRule string
-
-const (
-	FilterFillRuleEvenodd FilterFillRule = "evenodd"
-	FilterFillRuleNonzero FilterFillRule = "nonzero"
-)
-
-type FilterStrokeLinecap string
-
-const (
-	FilterStrokeLinecapButt   FilterStrokeLinecap = "butt"
-	FilterStrokeLinecapRound  FilterStrokeLinecap = "round"
-	FilterStrokeLinecapSquare FilterStrokeLinecap = "square"
-)
-
-type FilterStrokeLinejoin string
-
-const (
-	FilterStrokeLinejoinArcs      FilterStrokeLinejoin = "arcs"
-	FilterStrokeLinejoinBevel     FilterStrokeLinejoin = "bevel"
-	FilterStrokeLinejoinMiter     FilterStrokeLinejoin = "miter"
-	FilterStrokeLinejoinMiterClip FilterStrokeLinejoin = "miter-clip"
-	FilterStrokeLinejoinRound     FilterStrokeLinejoin = "round"
-)
-
-type FilterVisibility string
-
-const (
-	FilterVisibilityCollapse FilterVisibility = "collapse"
-	FilterVisibilityHidden   FilterVisibility = "hidden"
-	FilterVisibilityVisible  FilterVisibility = "visible"
-)
-
-type FilterClipRule string
-
-const (
-	FilterClipRuleEvenodd FilterClipRule = "evenodd"
-	FilterClipRuleNonzero FilterClipRule = "nonzero"
-)
-
-type FilterPointerEvents string
-
-const (
-	FilterPointerEventsAll            FilterPointerEvents = "all"
-	FilterPointerEventsAuto           FilterPointerEvents = "auto"
-	FilterPointerEventsBoundingBox    FilterPointerEvents = "bounding-box"
-	FilterPointerEventsFill           FilterPointerEvents = "fill"
-	FilterPointerEventsNone           FilterPointerEvents = "none"
-	FilterPointerEventsPainted        FilterPointerEvents = "painted"
-	FilterPointerEventsStroke         FilterPointerEvents = "stroke"
-	FilterPointerEventsVisible        FilterPointerEvents = "visible"
-	FilterPointerEventsVisibleFill    FilterPointerEvents = "visibleFill"
-	FilterPointerEventsVisiblePainted FilterPointerEvents = "visiblePainted"
-	FilterPointerEventsVisibleStroke  FilterPointerEvents = "visibleStroke"
-)
-
-type FilterVectorEffect string
-
-const (
-	FilterVectorEffectFixedPosition    FilterVectorEffect = "fixed-position"
-	FilterVectorEffectNonRotation      FilterVectorEffect = "non-rotation"
-	FilterVectorEffectNonScalingSize   FilterVectorEffect = "non-scaling-size"
-	FilterVectorEffectNonScalingStroke FilterVectorEffect = "non-scaling-stroke"
-	FilterVectorEffectNone             FilterVectorEffect = "none"
-)
-
-type FilterShapeRendering string
-
-const (
-	FilterShapeRenderingAuto               FilterShapeRendering = "auto"
-	FilterShapeRenderingCrispEdges         FilterShapeRendering = "crispEdges"
-	FilterShapeRenderingGeometricPrecision FilterShapeRendering = "geometricPrecision"
-	FilterShapeRenderingOptimizeSpeed      FilterShapeRendering = "optimizeSpeed"
-)
-
-type FilterColorInterpolation string
-
-const (
-	FilterColorInterpolationAuto      FilterColorInterpolation = "auto"
-	FilterColorInterpolationLinearRGB FilterColorInterpolation = "linearRGB"
-	FilterColorInterpolationSRGB      FilterColorInterpolation = "sRGB"
-)
-
-type FilterColorInterpolationFilters string
-
-const (
-	FilterColorInterpolationFiltersAuto      FilterColorInterpolationFilters = "auto"
-	FilterColorInterpolationFiltersLinearRGB FilterColorInterpolationFilters = "linearRGB"
-	FilterColorInterpolationFiltersSRGB      FilterColorInterpolationFilters = "sRGB"
-)
-
-type FilterFontStyle string
-
-const (
-	FilterFontStyleItalic  FilterFontStyle = "italic"
-	FilterFontStyleNormal  FilterFontStyle = "normal"
-	FilterFontStyleOblique FilterFontStyle = "oblique"
-)
-
-type FilterTextAnchor string
-
-const (
-	FilterTextAnchorEnd    FilterTextAnchor = "end"
-	FilterTextAnchorMiddle FilterTextAnchor = "middle"
-	FilterTextAnchorStart  FilterTextAnchor = "start"
-)
-
-type FilterDominantBaseline string
-
-const (
-	FilterDominantBaselineAlphabetic   FilterDominantBaseline = "alphabetic"
-	FilterDominantBaselineAuto         FilterDominantBaseline = "auto"
-	FilterDominantBaselineCentral      FilterDominantBaseline = "central"
-	FilterDominantBaselineHanging      FilterDominantBaseline = "hanging"
-	FilterDominantBaselineIdeographic  FilterDominantBaseline = "ideographic"
-	FilterDominantBaselineMathematical FilterDominantBaseline = "mathematical"
-	FilterDominantBaselineMiddle       FilterDominantBaseline = "middle"
-	FilterDominantBaselineTextBottom   FilterDominantBaseline = "text-bottom"
-	FilterDominantBaselineTextTop      FilterDominantBaseline = "text-top"
-)
-
 type FilterAlignmentBaseline string
 
 const (
@@ -328,13 +200,63 @@ const (
 	FilterAlignmentBaselineTop            FilterAlignmentBaseline = "top"
 )
 
-type FilterTextRendering string
+type FilterClipRule string
 
 const (
-	FilterTextRenderingAuto               FilterTextRendering = "auto"
-	FilterTextRenderingGeometricPrecision FilterTextRendering = "geometricPrecision"
-	FilterTextRenderingOptimizeLegibility FilterTextRendering = "optimizeLegibility"
-	FilterTextRenderingOptimizeSpeed      FilterTextRendering = "optimizeSpeed"
+	FilterClipRuleEvenodd FilterClipRule = "evenodd"
+	FilterClipRuleNonzero FilterClipRule = "nonzero"
+)
+
+type FilterColorInterpolation string
+
+const (
+	FilterColorInterpolationAuto      FilterColorInterpolation = "auto"
+	FilterColorInterpolationLinearRGB FilterColorInterpolation = "linearRGB"
+	FilterColorInterpolationSRGB      FilterColorInterpolation = "sRGB"
+)
+
+type FilterColorInterpolationFilters string
+
+const (
+	FilterColorInterpolationFiltersAuto      FilterColorInterpolationFilters = "auto"
+	FilterColorInterpolationFiltersLinearRGB FilterColorInterpolationFilters = "linearRGB"
+	FilterColorInterpolationFiltersSRGB      FilterColorInterpolationFilters = "sRGB"
+)
+
+type FilterDirection string
+
+const (
+	FilterDirectionLtr FilterDirection = "ltr"
+	FilterDirectionRtl FilterDirection = "rtl"
+)
+
+type FilterDominantBaseline string
+
+const (
+	FilterDominantBaselineAlphabetic   FilterDominantBaseline = "alphabetic"
+	FilterDominantBaselineAuto         FilterDominantBaseline = "auto"
+	FilterDominantBaselineCentral      FilterDominantBaseline = "central"
+	FilterDominantBaselineHanging      FilterDominantBaseline = "hanging"
+	FilterDominantBaselineIdeographic  FilterDominantBaseline = "ideographic"
+	FilterDominantBaselineMathematical FilterDominantBaseline = "mathematical"
+	FilterDominantBaselineMiddle       FilterDominantBaseline = "middle"
+	FilterDominantBaselineTextBottom   FilterDominantBaseline = "text-bottom"
+	FilterDominantBaselineTextTop      FilterDominantBaseline = "text-top"
+)
+
+type FilterFillRule string
+
+const (
+	FilterFillRuleEvenodd FilterFillRule = "evenodd"
+	FilterFillRuleNonzero FilterFillRule = "nonzero"
+)
+
+type FilterFontStyle string
+
+const (
+	FilterFontStyleItalic  FilterFontStyle = "italic"
+	FilterFontStyleNormal  FilterFontStyle = "normal"
+	FilterFontStyleOblique FilterFontStyle = "oblique"
 )
 
 type FilterImageRendering string
@@ -359,6 +281,66 @@ const (
 	FilterOverflowVisible FilterOverflow = "visible"
 )
 
+type FilterPointerEvents string
+
+const (
+	FilterPointerEventsAll            FilterPointerEvents = "all"
+	FilterPointerEventsAuto           FilterPointerEvents = "auto"
+	FilterPointerEventsBoundingBox    FilterPointerEvents = "bounding-box"
+	FilterPointerEventsFill           FilterPointerEvents = "fill"
+	FilterPointerEventsNone           FilterPointerEvents = "none"
+	FilterPointerEventsPainted        FilterPointerEvents = "painted"
+	FilterPointerEventsStroke         FilterPointerEvents = "stroke"
+	FilterPointerEventsVisible        FilterPointerEvents = "visible"
+	FilterPointerEventsVisibleFill    FilterPointerEvents = "visibleFill"
+	FilterPointerEventsVisiblePainted FilterPointerEvents = "visiblePainted"
+	FilterPointerEventsVisibleStroke  FilterPointerEvents = "visibleStroke"
+)
+
+type FilterShapeRendering string
+
+const (
+	FilterShapeRenderingAuto               FilterShapeRendering = "auto"
+	FilterShapeRenderingCrispEdges         FilterShapeRendering = "crispEdges"
+	FilterShapeRenderingGeometricPrecision FilterShapeRendering = "geometricPrecision"
+	FilterShapeRenderingOptimizeSpeed      FilterShapeRendering = "optimizeSpeed"
+)
+
+type FilterStrokeLinecap string
+
+const (
+	FilterStrokeLinecapButt   FilterStrokeLinecap = "butt"
+	FilterStrokeLinecapRound  FilterStrokeLinecap = "round"
+	FilterStrokeLinecapSquare FilterStrokeLinecap = "square"
+)
+
+type FilterStrokeLinejoin string
+
+const (
+	FilterStrokeLinejoinArcs      FilterStrokeLinejoin = "arcs"
+	FilterStrokeLinejoinBevel     FilterStrokeLinejoin = "bevel"
+	FilterStrokeLinejoinMiter     FilterStrokeLinejoin = "miter"
+	FilterStrokeLinejoinMiterClip FilterStrokeLinejoin = "miter-clip"
+	FilterStrokeLinejoinRound     FilterStrokeLinejoin = "round"
+)
+
+type FilterTextAnchor string
+
+const (
+	FilterTextAnchorEnd    FilterTextAnchor = "end"
+	FilterTextAnchorMiddle FilterTextAnchor = "middle"
+	FilterTextAnchorStart  FilterTextAnchor = "start"
+)
+
+type FilterTextRendering string
+
+const (
+	FilterTextRenderingAuto               FilterTextRendering = "auto"
+	FilterTextRenderingGeometricPrecision FilterTextRendering = "geometricPrecision"
+	FilterTextRenderingOptimizeLegibility FilterTextRendering = "optimizeLegibility"
+	FilterTextRenderingOptimizeSpeed      FilterTextRendering = "optimizeSpeed"
+)
+
 type FilterTransformBox string
 
 const (
@@ -369,11 +351,22 @@ const (
 	FilterTransformBoxViewBox    FilterTransformBox = "view-box"
 )
 
-type FilterDirection string
+type FilterVectorEffect string
 
 const (
-	FilterDirectionLtr FilterDirection = "ltr"
-	FilterDirectionRtl FilterDirection = "rtl"
+	FilterVectorEffectFixedPosition    FilterVectorEffect = "fixed-position"
+	FilterVectorEffectNonRotation      FilterVectorEffect = "non-rotation"
+	FilterVectorEffectNonScalingSize   FilterVectorEffect = "non-scaling-size"
+	FilterVectorEffectNonScalingStroke FilterVectorEffect = "non-scaling-stroke"
+	FilterVectorEffectNone             FilterVectorEffect = "none"
+)
+
+type FilterVisibility string
+
+const (
+	FilterVisibilityCollapse FilterVisibility = "collapse"
+	FilterVisibilityHidden   FilterVisibility = "hidden"
+	FilterVisibilityVisible  FilterVisibility = "visible"
 )
 
 type FilterWritingMode string
@@ -392,32 +385,15 @@ const (
 	FilterWritingModeVerticalRl   FilterWritingMode = "vertical-rl"
 )
 
-func (e *FilterElement) Href(s string) *FilterElement {
-	e.attributes.Set("href", s)
+type FilterXmlSpace string
 
-	return e
-}
+const (
+	FilterXmlSpaceDefault  FilterXmlSpace = "default"
+	FilterXmlSpacePreserve FilterXmlSpace = "preserve"
+)
 
-func (e *FilterElement) XlinkHref(s string) *FilterElement {
-	e.attributes.Set("xlink:href", s)
-
-	return e
-}
-
-func (e *FilterElement) X(s string) *FilterElement {
-	e.attributes.Set("x", s)
-
-	return e
-}
-
-func (e *FilterElement) Y(s string) *FilterElement {
-	e.attributes.Set("y", s)
-
-	return e
-}
-
-func (e *FilterElement) Width(s string) *FilterElement {
-	e.attributes.Set("width", s)
+func (e *FilterElement) FilterUnits(a FilterFilterUnits) *FilterElement {
+	e.attributes.Set("filterUnits", string(a))
 
 	return e
 }
@@ -428,20 +404,76 @@ func (e *FilterElement) Height(s string) *FilterElement {
 	return e
 }
 
-func (e *FilterElement) FilterUnits(a FilterFilterUnits) *FilterElement {
-	e.attributes.Set("filterUnits", string(a))
-
-	return e
-}
-
 func (e *FilterElement) PrimitiveUnits(a FilterPrimitiveUnits) *FilterElement {
 	e.attributes.Set("primitiveUnits", string(a))
 
 	return e
 }
 
-func (e *FilterElement) Id(s string) *FilterElement {
-	e.attributes.Set("id", s)
+func (e *FilterElement) Width(s string) *FilterElement {
+	e.attributes.Set("width", s)
+
+	return e
+}
+
+func (e *FilterElement) X(s string) *FilterElement {
+	e.attributes.Set("x", s)
+
+	return e
+}
+
+// XlinkHref sets the "xlink:href" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
+//
+// Deprecated: the "xlink:href" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) XlinkHref(s string) *FilterElement {
+	e.attributes.Set("xlink:href", s)
+
+	return e
+}
+
+func (e *FilterElement) Y(s string) *FilterElement {
+	e.attributes.Set("y", s)
+
+	return e
+}
+
+func (e *FilterElement) AlignmentBaseline(a FilterAlignmentBaseline) *FilterElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func FilterAlignmentBaselineCustom(s string) FilterAlignmentBaseline {
+	return FilterAlignmentBaseline(s)
+}
+
+func (e *FilterElement) AriaUnsafe(name string, s string) *FilterElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *FilterElement) Aria(name string, s string) *FilterElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *FilterElement) Autofocus(b bool) *FilterElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *FilterElement) BaselineShift(s string) *FilterElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -452,40 +484,59 @@ func (e *FilterElement) Class(s ...string) *FilterElement {
 	return e
 }
 
-func (e *FilterElement) Style(s string) *FilterElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) Clip(s string) *FilterElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *FilterElement) Tabindex(i int) *FilterElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *FilterElement) ClipPath(s string) *FilterElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *FilterElement) Lang(s string) *FilterElement {
-	e.attributes.Set("lang", s)
+func (e *FilterElement) ClipRule(a FilterClipRule) *FilterElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *FilterElement) XmlLang(s string) *FilterElement {
-	e.attributes.Set("xml:lang", s)
+func FilterClipRuleCustom(s string) FilterClipRule {
+	return FilterClipRule(s)
+}
+
+func (e *FilterElement) Color(s string) *FilterElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *FilterElement) XmlSpace(a FilterXmlSpace) *FilterElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *FilterElement) ColorInterpolation(a FilterColorInterpolation) *FilterElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *FilterElement) Autofocus(b bool) *FilterElement {
-	e.attributes.SetBool("autofocus", b)
+func FilterColorInterpolationCustom(s string) FilterColorInterpolation {
+	return FilterColorInterpolation(s)
+}
+
+func (e *FilterElement) ColorInterpolationFilters(a FilterColorInterpolationFilters) *FilterElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func FilterColorInterpolationFiltersCustom(s string) FilterColorInterpolationFilters {
+	return FilterColorInterpolationFilters(s)
+}
+
+func (e *FilterElement) Cursor(s string) *FilterElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -506,20 +557,30 @@ func (e *FilterElement) Data(name string, s string) *FilterElement {
 	return e
 }
 
-func (e *FilterElement) AriaUnsafe(name string, s string) *FilterElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *FilterElement) Direction(a FilterDirection) *FilterElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *FilterElement) Aria(name string, s string) *FilterElement {
-	tag := strings.ToLower("aria-" + name)
+func FilterDirectionCustom(s string) FilterDirection {
+	return FilterDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *FilterElement) Display(s string) *FilterElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *FilterElement) DominantBaseline(a FilterDominantBaseline) *FilterElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func FilterDominantBaselineCustom(s string) FilterDominantBaseline {
+	return FilterDominantBaseline(s)
 }
 
 func (e *FilterElement) Fill(s string) *FilterElement {
@@ -544,20 +605,220 @@ func FilterFillRuleCustom(s string) FilterFillRule {
 	return FilterFillRule(s)
 }
 
+func (e *FilterElement) Filter(s string) *FilterElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *FilterElement) FloodColor(s string) *FilterElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *FilterElement) FloodOpacity(f float64) *FilterElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FilterElement) FontFamily(s string) *FilterElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *FilterElement) FontSize(s string) *FilterElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *FilterElement) FontSizeAdjust(s string) *FilterElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *FilterElement) FontStretch(s string) *FilterElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *FilterElement) FontStyle(a FilterFontStyle) *FilterElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func FilterFontStyleCustom(s string) FilterFontStyle {
+	return FilterFontStyle(s)
+}
+
+func (e *FilterElement) FontVariant(s string) *FilterElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *FilterElement) FontWeight(s string) *FilterElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) GlyphOrientationHorizontal(s string) *FilterElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) GlyphOrientationVertical(s string) *FilterElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *FilterElement) Id(s string) *FilterElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *FilterElement) ImageRendering(a FilterImageRendering) *FilterElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func FilterImageRenderingCustom(s string) FilterImageRendering {
+	return FilterImageRendering(s)
+}
+
+func (e *FilterElement) Lang(s string) *FilterElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *FilterElement) LetterSpacing(s string) *FilterElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *FilterElement) LightingColor(s string) *FilterElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *FilterElement) MarkerEnd(s string) *FilterElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *FilterElement) MarkerMid(s string) *FilterElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *FilterElement) MarkerStart(s string) *FilterElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *FilterElement) Mask(s string) *FilterElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *FilterElement) Opacity(f float64) *FilterElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *FilterElement) Overflow(a FilterOverflow) *FilterElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func FilterOverflowCustom(s string) FilterOverflow {
+	return FilterOverflow(s)
+}
+
+func (e *FilterElement) PaintOrder(s string) *FilterElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *FilterElement) PointerEvents(a FilterPointerEvents) *FilterElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func FilterPointerEventsCustom(s string) FilterPointerEvents {
+	return FilterPointerEvents(s)
+}
+
+func (e *FilterElement) RequiredExtensions(s string) *FilterElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *FilterElement) ShapeRendering(a FilterShapeRendering) *FilterElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func FilterShapeRenderingCustom(s string) FilterShapeRendering {
+	return FilterShapeRendering(s)
+}
+
+func (e *FilterElement) StopColor(s string) *FilterElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *FilterElement) StopOpacity(f float64) *FilterElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *FilterElement) Stroke(s string) *FilterElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *FilterElement) StrokeWidth(s string) *FilterElement {
-	e.attributes.Set("stroke-width", s)
+func (e *FilterElement) StrokeDasharray(s string) *FilterElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *FilterElement) StrokeOpacity(f float64) *FilterElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FilterElement) StrokeDashoffset(s string) *FilterElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -588,210 +849,28 @@ func (e *FilterElement) StrokeMiterlimit(f float64) *FilterElement {
 	return e
 }
 
-func (e *FilterElement) StrokeDasharray(s string) *FilterElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *FilterElement) StrokeOpacity(f float64) *FilterElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *FilterElement) StrokeDashoffset(s string) *FilterElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *FilterElement) StrokeWidth(s string) *FilterElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *FilterElement) Opacity(f float64) *FilterElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *FilterElement) Style(s string) *FilterElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *FilterElement) Color(s string) *FilterElement {
-	e.attributes.Set("color", s)
+func (e *FilterElement) Tabindex(i int) *FilterElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *FilterElement) Display(s string) *FilterElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *FilterElement) Visibility(a FilterVisibility) *FilterElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func FilterVisibilityCustom(s string) FilterVisibility {
-	return FilterVisibility(s)
-}
-
-func (e *FilterElement) ClipPath(s string) *FilterElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *FilterElement) ClipRule(a FilterClipRule) *FilterElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func FilterClipRuleCustom(s string) FilterClipRule {
-	return FilterClipRule(s)
-}
-
-func (e *FilterElement) Mask(s string) *FilterElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *FilterElement) Filter(s string) *FilterElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *FilterElement) Cursor(s string) *FilterElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *FilterElement) PointerEvents(a FilterPointerEvents) *FilterElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func FilterPointerEventsCustom(s string) FilterPointerEvents {
-	return FilterPointerEvents(s)
-}
-
-func (e *FilterElement) VectorEffect(a FilterVectorEffect) *FilterElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func FilterVectorEffectCustom(s string) FilterVectorEffect {
-	return FilterVectorEffect(s)
-}
-
-func (e *FilterElement) PaintOrder(s string) *FilterElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *FilterElement) ShapeRendering(a FilterShapeRendering) *FilterElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func FilterShapeRenderingCustom(s string) FilterShapeRendering {
-	return FilterShapeRendering(s)
-}
-
-func (e *FilterElement) ColorInterpolation(a FilterColorInterpolation) *FilterElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func FilterColorInterpolationCustom(s string) FilterColorInterpolation {
-	return FilterColorInterpolation(s)
-}
-
-func (e *FilterElement) ColorInterpolationFilters(a FilterColorInterpolationFilters) *FilterElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func FilterColorInterpolationFiltersCustom(s string) FilterColorInterpolationFilters {
-	return FilterColorInterpolationFilters(s)
-}
-
-func (e *FilterElement) FloodColor(s string) *FilterElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *FilterElement) FloodOpacity(f float64) *FilterElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FilterElement) LightingColor(s string) *FilterElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *FilterElement) StopColor(s string) *FilterElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *FilterElement) StopOpacity(f float64) *FilterElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *FilterElement) MarkerStart(s string) *FilterElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *FilterElement) MarkerMid(s string) *FilterElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *FilterElement) MarkerEnd(s string) *FilterElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *FilterElement) FontFamily(s string) *FilterElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *FilterElement) FontSize(s string) *FilterElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *FilterElement) FontWeight(s string) *FilterElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *FilterElement) FontStyle(a FilterFontStyle) *FilterElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func FilterFontStyleCustom(s string) FilterFontStyle {
-	return FilterFontStyle(s)
 }
 
 func (e *FilterElement) TextAnchor(a FilterTextAnchor) *FilterElement {
@@ -804,40 +883,14 @@ func FilterTextAnchorCustom(s string) FilterTextAnchor {
 	return FilterTextAnchor(s)
 }
 
-func (e *FilterElement) DominantBaseline(a FilterDominantBaseline) *FilterElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func FilterDominantBaselineCustom(s string) FilterDominantBaseline {
-	return FilterDominantBaseline(s)
-}
-
-func (e *FilterElement) AlignmentBaseline(a FilterAlignmentBaseline) *FilterElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func FilterAlignmentBaselineCustom(s string) FilterAlignmentBaseline {
-	return FilterAlignmentBaseline(s)
-}
-
-func (e *FilterElement) LetterSpacing(s string) *FilterElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *FilterElement) WordSpacing(s string) *FilterElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *FilterElement) TextDecoration(s string) *FilterElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *FilterElement) TextOverflow(s string) *FilterElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -852,24 +905,10 @@ func FilterTextRenderingCustom(s string) FilterTextRendering {
 	return FilterTextRendering(s)
 }
 
-func (e *FilterElement) ImageRendering(a FilterImageRendering) *FilterElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *FilterElement) Transform(s string) *FilterElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func FilterImageRenderingCustom(s string) FilterImageRendering {
-	return FilterImageRendering(s)
-}
-
-func (e *FilterElement) Overflow(a FilterOverflow) *FilterElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func FilterOverflowCustom(s string) FilterOverflow {
-	return FilterOverflow(s)
 }
 
 func (e *FilterElement) TransformBox(a FilterTransformBox) *FilterElement {
@@ -882,18 +921,46 @@ func FilterTransformBoxCustom(s string) FilterTransformBox {
 	return FilterTransformBox(s)
 }
 
-func (e *FilterElement) Direction(a FilterDirection) *FilterElement {
-	e.attributes.Set("direction", string(a))
+func (e *FilterElement) TransformOrigin(s string) *FilterElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func FilterDirectionCustom(s string) FilterDirection {
-	return FilterDirection(s)
-}
-
 func (e *FilterElement) UnicodeBidi(s string) *FilterElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *FilterElement) VectorEffect(a FilterVectorEffect) *FilterElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func FilterVectorEffectCustom(s string) FilterVectorEffect {
+	return FilterVectorEffect(s)
+}
+
+func (e *FilterElement) Visibility(a FilterVisibility) *FilterElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func FilterVisibilityCustom(s string) FilterVisibility {
+	return FilterVisibility(s)
+}
+
+func (e *FilterElement) WhiteSpace(s string) *FilterElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *FilterElement) WordSpacing(s string) *FilterElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -908,8 +975,20 @@ func FilterWritingModeCustom(s string) FilterWritingMode {
 	return FilterWritingMode(s)
 }
 
-func (e *FilterElement) WhiteSpace(s string) *FilterElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) XmlLang(s string) *FilterElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *FilterElement) XmlSpace(a FilterXmlSpace) *FilterElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

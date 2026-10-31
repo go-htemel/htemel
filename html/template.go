@@ -171,6 +171,13 @@ const (
 	TemplateShadowrootmodeOpen   TemplateShadowrootmode = "open"
 )
 
+type TemplateShadowrootslotassignment string
+
+const (
+	TemplateShadowrootslotassignmentManual TemplateShadowrootslotassignment = "manual"
+	TemplateShadowrootslotassignmentNamed  TemplateShadowrootslotassignment = "named"
+)
+
 type TemplateAutocapitalize string
 
 const (
@@ -247,6 +254,15 @@ const (
 	TemplateInputmodeUrl     TemplateInputmode = "url"
 )
 
+type TemplatePopover string
+
+const (
+	TemplatePopoverAuto   TemplatePopover = "auto"
+	TemplatePopoverHint   TemplatePopover = "hint"
+	TemplatePopoverManual TemplatePopover = "manual"
+	TemplatePopoverEmpty  TemplatePopover = ""
+)
+
 type TemplateSpellcheck string
 
 const (
@@ -271,16 +287,8 @@ const (
 	TemplateWritingsuggestionsEmpty TemplateWritingsuggestions = ""
 )
 
-func (e *TemplateElement) Shadowrootmode(a TemplateShadowrootmode) *TemplateElement {
-	e.attributes.Set("shadowrootmode", string(a))
-
-	return e
-}
-
-// Shadowrootdelegatefocus sets the boolean attribute "shadowrootdelegatefocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TemplateElement) Shadowrootdelegatefocus(b bool) *TemplateElement {
-	e.attributes.SetBool("shadowrootdelegatefocus", b)
+func (e *TemplateElement) For(s string) *TemplateElement {
+	e.attributes.Set("for", s)
 
 	return e
 }
@@ -293,6 +301,28 @@ func (e *TemplateElement) Shadowrootclonable(b bool) *TemplateElement {
 	return e
 }
 
+// Shadowrootcustomelementregistry sets the boolean attribute "shadowrootcustomelementregistry". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TemplateElement) Shadowrootcustomelementregistry(b bool) *TemplateElement {
+	e.attributes.SetBool("shadowrootcustomelementregistry", b)
+
+	return e
+}
+
+// Shadowrootdelegatesfocus sets the boolean attribute "shadowrootdelegatesfocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TemplateElement) Shadowrootdelegatesfocus(b bool) *TemplateElement {
+	e.attributes.SetBool("shadowrootdelegatesfocus", b)
+
+	return e
+}
+
+func (e *TemplateElement) Shadowrootmode(a TemplateShadowrootmode) *TemplateElement {
+	e.attributes.Set("shadowrootmode", string(a))
+
+	return e
+}
+
 // Shadowrootserializable sets the boolean attribute "shadowrootserializable". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *TemplateElement) Shadowrootserializable(b bool) *TemplateElement {
@@ -301,10 +331,8 @@ func (e *TemplateElement) Shadowrootserializable(b bool) *TemplateElement {
 	return e
 }
 
-// Shadowrootcustomelementregistry sets the boolean attribute "shadowrootcustomelementregistry". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *TemplateElement) Shadowrootcustomelementregistry(b bool) *TemplateElement {
-	e.attributes.SetBool("shadowrootcustomelementregistry", b)
+func (e *TemplateElement) Shadowrootslotassignment(a TemplateShadowrootslotassignment) *TemplateElement {
+	e.attributes.Set("shadowrootslotassignment", string(a))
 
 	return e
 }
@@ -409,6 +437,26 @@ func (e *TemplateElement) Enterkeyhint(a TemplateEnterkeyhint) *TemplateElement 
 	return e
 }
 
+func (e *TemplateElement) Exportparts(s string) *TemplateElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *TemplateElement) Headingoffset(i int) *TemplateElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *TemplateElement) Headingreset(b bool) *TemplateElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *TemplateElement) Hidden(v ...TemplateHidden) *TemplateElement {
@@ -441,6 +489,14 @@ func (e *TemplateElement) Inputmode(a TemplateInputmode) *TemplateElement {
 	return e
 }
 
+func (e *TemplateElement) Is(s string) *TemplateElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *TemplateElement) Itemid(s string) *TemplateElement {
 	e.attributes.Set("itemid", s)
 
@@ -485,8 +541,20 @@ func (e *TemplateElement) Nonce(s string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Popover(s string) *TemplateElement {
-	e.attributes.Set("popover", s)
+func (e *TemplateElement) Part(s ...string) *TemplateElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Popover(v ...TemplatePopover) *TemplateElement {
+	var val TemplatePopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

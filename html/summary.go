@@ -240,6 +240,15 @@ const (
 	SummaryInputmodeUrl     SummaryInputmode = "url"
 )
 
+type SummaryPopover string
+
+const (
+	SummaryPopoverAuto   SummaryPopover = "auto"
+	SummaryPopoverHint   SummaryPopover = "hint"
+	SummaryPopoverManual SummaryPopover = "manual"
+	SummaryPopoverEmpty  SummaryPopover = ""
+)
+
 type SummarySpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *SummaryElement) Enterkeyhint(a SummaryEnterkeyhint) *SummaryElement {
 	return e
 }
 
+func (e *SummaryElement) Exportparts(s string) *SummaryElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *SummaryElement) Headingoffset(i int) *SummaryElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *SummaryElement) Headingreset(b bool) *SummaryElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *SummaryElement) Hidden(v ...SummaryHidden) *SummaryElement {
@@ -396,6 +425,14 @@ func (e *SummaryElement) Inputmode(a SummaryInputmode) *SummaryElement {
 	return e
 }
 
+func (e *SummaryElement) Is(s string) *SummaryElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *SummaryElement) Itemid(s string) *SummaryElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *SummaryElement) Nonce(s string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Popover(s string) *SummaryElement {
-	e.attributes.Set("popover", s)
+func (e *SummaryElement) Part(s ...string) *SummaryElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Popover(v ...SummaryPopover) *SummaryElement {
+	var val SummaryPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

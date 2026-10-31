@@ -164,134 +164,6 @@ func (e *StopElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type StopXmlSpace string
-
-const (
-	StopXmlSpaceDefault  StopXmlSpace = "default"
-	StopXmlSpacePreserve StopXmlSpace = "preserve"
-)
-
-type StopFillRule string
-
-const (
-	StopFillRuleEvenodd StopFillRule = "evenodd"
-	StopFillRuleNonzero StopFillRule = "nonzero"
-)
-
-type StopStrokeLinecap string
-
-const (
-	StopStrokeLinecapButt   StopStrokeLinecap = "butt"
-	StopStrokeLinecapRound  StopStrokeLinecap = "round"
-	StopStrokeLinecapSquare StopStrokeLinecap = "square"
-)
-
-type StopStrokeLinejoin string
-
-const (
-	StopStrokeLinejoinArcs      StopStrokeLinejoin = "arcs"
-	StopStrokeLinejoinBevel     StopStrokeLinejoin = "bevel"
-	StopStrokeLinejoinMiter     StopStrokeLinejoin = "miter"
-	StopStrokeLinejoinMiterClip StopStrokeLinejoin = "miter-clip"
-	StopStrokeLinejoinRound     StopStrokeLinejoin = "round"
-)
-
-type StopVisibility string
-
-const (
-	StopVisibilityCollapse StopVisibility = "collapse"
-	StopVisibilityHidden   StopVisibility = "hidden"
-	StopVisibilityVisible  StopVisibility = "visible"
-)
-
-type StopClipRule string
-
-const (
-	StopClipRuleEvenodd StopClipRule = "evenodd"
-	StopClipRuleNonzero StopClipRule = "nonzero"
-)
-
-type StopPointerEvents string
-
-const (
-	StopPointerEventsAll            StopPointerEvents = "all"
-	StopPointerEventsAuto           StopPointerEvents = "auto"
-	StopPointerEventsBoundingBox    StopPointerEvents = "bounding-box"
-	StopPointerEventsFill           StopPointerEvents = "fill"
-	StopPointerEventsNone           StopPointerEvents = "none"
-	StopPointerEventsPainted        StopPointerEvents = "painted"
-	StopPointerEventsStroke         StopPointerEvents = "stroke"
-	StopPointerEventsVisible        StopPointerEvents = "visible"
-	StopPointerEventsVisibleFill    StopPointerEvents = "visibleFill"
-	StopPointerEventsVisiblePainted StopPointerEvents = "visiblePainted"
-	StopPointerEventsVisibleStroke  StopPointerEvents = "visibleStroke"
-)
-
-type StopVectorEffect string
-
-const (
-	StopVectorEffectFixedPosition    StopVectorEffect = "fixed-position"
-	StopVectorEffectNonRotation      StopVectorEffect = "non-rotation"
-	StopVectorEffectNonScalingSize   StopVectorEffect = "non-scaling-size"
-	StopVectorEffectNonScalingStroke StopVectorEffect = "non-scaling-stroke"
-	StopVectorEffectNone             StopVectorEffect = "none"
-)
-
-type StopShapeRendering string
-
-const (
-	StopShapeRenderingAuto               StopShapeRendering = "auto"
-	StopShapeRenderingCrispEdges         StopShapeRendering = "crispEdges"
-	StopShapeRenderingGeometricPrecision StopShapeRendering = "geometricPrecision"
-	StopShapeRenderingOptimizeSpeed      StopShapeRendering = "optimizeSpeed"
-)
-
-type StopColorInterpolation string
-
-const (
-	StopColorInterpolationAuto      StopColorInterpolation = "auto"
-	StopColorInterpolationLinearRGB StopColorInterpolation = "linearRGB"
-	StopColorInterpolationSRGB      StopColorInterpolation = "sRGB"
-)
-
-type StopColorInterpolationFilters string
-
-const (
-	StopColorInterpolationFiltersAuto      StopColorInterpolationFilters = "auto"
-	StopColorInterpolationFiltersLinearRGB StopColorInterpolationFilters = "linearRGB"
-	StopColorInterpolationFiltersSRGB      StopColorInterpolationFilters = "sRGB"
-)
-
-type StopFontStyle string
-
-const (
-	StopFontStyleItalic  StopFontStyle = "italic"
-	StopFontStyleNormal  StopFontStyle = "normal"
-	StopFontStyleOblique StopFontStyle = "oblique"
-)
-
-type StopTextAnchor string
-
-const (
-	StopTextAnchorEnd    StopTextAnchor = "end"
-	StopTextAnchorMiddle StopTextAnchor = "middle"
-	StopTextAnchorStart  StopTextAnchor = "start"
-)
-
-type StopDominantBaseline string
-
-const (
-	StopDominantBaselineAlphabetic   StopDominantBaseline = "alphabetic"
-	StopDominantBaselineAuto         StopDominantBaseline = "auto"
-	StopDominantBaselineCentral      StopDominantBaseline = "central"
-	StopDominantBaselineHanging      StopDominantBaseline = "hanging"
-	StopDominantBaselineIdeographic  StopDominantBaseline = "ideographic"
-	StopDominantBaselineMathematical StopDominantBaseline = "mathematical"
-	StopDominantBaselineMiddle       StopDominantBaseline = "middle"
-	StopDominantBaselineTextBottom   StopDominantBaseline = "text-bottom"
-	StopDominantBaselineTextTop      StopDominantBaseline = "text-top"
-)
-
 type StopAlignmentBaseline string
 
 const (
@@ -314,13 +186,63 @@ const (
 	StopAlignmentBaselineTop            StopAlignmentBaseline = "top"
 )
 
-type StopTextRendering string
+type StopClipRule string
 
 const (
-	StopTextRenderingAuto               StopTextRendering = "auto"
-	StopTextRenderingGeometricPrecision StopTextRendering = "geometricPrecision"
-	StopTextRenderingOptimizeLegibility StopTextRendering = "optimizeLegibility"
-	StopTextRenderingOptimizeSpeed      StopTextRendering = "optimizeSpeed"
+	StopClipRuleEvenodd StopClipRule = "evenodd"
+	StopClipRuleNonzero StopClipRule = "nonzero"
+)
+
+type StopColorInterpolation string
+
+const (
+	StopColorInterpolationAuto      StopColorInterpolation = "auto"
+	StopColorInterpolationLinearRGB StopColorInterpolation = "linearRGB"
+	StopColorInterpolationSRGB      StopColorInterpolation = "sRGB"
+)
+
+type StopColorInterpolationFilters string
+
+const (
+	StopColorInterpolationFiltersAuto      StopColorInterpolationFilters = "auto"
+	StopColorInterpolationFiltersLinearRGB StopColorInterpolationFilters = "linearRGB"
+	StopColorInterpolationFiltersSRGB      StopColorInterpolationFilters = "sRGB"
+)
+
+type StopDirection string
+
+const (
+	StopDirectionLtr StopDirection = "ltr"
+	StopDirectionRtl StopDirection = "rtl"
+)
+
+type StopDominantBaseline string
+
+const (
+	StopDominantBaselineAlphabetic   StopDominantBaseline = "alphabetic"
+	StopDominantBaselineAuto         StopDominantBaseline = "auto"
+	StopDominantBaselineCentral      StopDominantBaseline = "central"
+	StopDominantBaselineHanging      StopDominantBaseline = "hanging"
+	StopDominantBaselineIdeographic  StopDominantBaseline = "ideographic"
+	StopDominantBaselineMathematical StopDominantBaseline = "mathematical"
+	StopDominantBaselineMiddle       StopDominantBaseline = "middle"
+	StopDominantBaselineTextBottom   StopDominantBaseline = "text-bottom"
+	StopDominantBaselineTextTop      StopDominantBaseline = "text-top"
+)
+
+type StopFillRule string
+
+const (
+	StopFillRuleEvenodd StopFillRule = "evenodd"
+	StopFillRuleNonzero StopFillRule = "nonzero"
+)
+
+type StopFontStyle string
+
+const (
+	StopFontStyleItalic  StopFontStyle = "italic"
+	StopFontStyleNormal  StopFontStyle = "normal"
+	StopFontStyleOblique StopFontStyle = "oblique"
 )
 
 type StopImageRendering string
@@ -345,6 +267,66 @@ const (
 	StopOverflowVisible StopOverflow = "visible"
 )
 
+type StopPointerEvents string
+
+const (
+	StopPointerEventsAll            StopPointerEvents = "all"
+	StopPointerEventsAuto           StopPointerEvents = "auto"
+	StopPointerEventsBoundingBox    StopPointerEvents = "bounding-box"
+	StopPointerEventsFill           StopPointerEvents = "fill"
+	StopPointerEventsNone           StopPointerEvents = "none"
+	StopPointerEventsPainted        StopPointerEvents = "painted"
+	StopPointerEventsStroke         StopPointerEvents = "stroke"
+	StopPointerEventsVisible        StopPointerEvents = "visible"
+	StopPointerEventsVisibleFill    StopPointerEvents = "visibleFill"
+	StopPointerEventsVisiblePainted StopPointerEvents = "visiblePainted"
+	StopPointerEventsVisibleStroke  StopPointerEvents = "visibleStroke"
+)
+
+type StopShapeRendering string
+
+const (
+	StopShapeRenderingAuto               StopShapeRendering = "auto"
+	StopShapeRenderingCrispEdges         StopShapeRendering = "crispEdges"
+	StopShapeRenderingGeometricPrecision StopShapeRendering = "geometricPrecision"
+	StopShapeRenderingOptimizeSpeed      StopShapeRendering = "optimizeSpeed"
+)
+
+type StopStrokeLinecap string
+
+const (
+	StopStrokeLinecapButt   StopStrokeLinecap = "butt"
+	StopStrokeLinecapRound  StopStrokeLinecap = "round"
+	StopStrokeLinecapSquare StopStrokeLinecap = "square"
+)
+
+type StopStrokeLinejoin string
+
+const (
+	StopStrokeLinejoinArcs      StopStrokeLinejoin = "arcs"
+	StopStrokeLinejoinBevel     StopStrokeLinejoin = "bevel"
+	StopStrokeLinejoinMiter     StopStrokeLinejoin = "miter"
+	StopStrokeLinejoinMiterClip StopStrokeLinejoin = "miter-clip"
+	StopStrokeLinejoinRound     StopStrokeLinejoin = "round"
+)
+
+type StopTextAnchor string
+
+const (
+	StopTextAnchorEnd    StopTextAnchor = "end"
+	StopTextAnchorMiddle StopTextAnchor = "middle"
+	StopTextAnchorStart  StopTextAnchor = "start"
+)
+
+type StopTextRendering string
+
+const (
+	StopTextRenderingAuto               StopTextRendering = "auto"
+	StopTextRenderingGeometricPrecision StopTextRendering = "geometricPrecision"
+	StopTextRenderingOptimizeLegibility StopTextRendering = "optimizeLegibility"
+	StopTextRenderingOptimizeSpeed      StopTextRendering = "optimizeSpeed"
+)
+
 type StopTransformBox string
 
 const (
@@ -355,11 +337,22 @@ const (
 	StopTransformBoxViewBox    StopTransformBox = "view-box"
 )
 
-type StopDirection string
+type StopVectorEffect string
 
 const (
-	StopDirectionLtr StopDirection = "ltr"
-	StopDirectionRtl StopDirection = "rtl"
+	StopVectorEffectFixedPosition    StopVectorEffect = "fixed-position"
+	StopVectorEffectNonRotation      StopVectorEffect = "non-rotation"
+	StopVectorEffectNonScalingSize   StopVectorEffect = "non-scaling-size"
+	StopVectorEffectNonScalingStroke StopVectorEffect = "non-scaling-stroke"
+	StopVectorEffectNone             StopVectorEffect = "none"
+)
+
+type StopVisibility string
+
+const (
+	StopVisibilityCollapse StopVisibility = "collapse"
+	StopVisibilityHidden   StopVisibility = "hidden"
+	StopVisibilityVisible  StopVisibility = "visible"
 )
 
 type StopWritingMode string
@@ -378,14 +371,55 @@ const (
 	StopWritingModeVerticalRl   StopWritingMode = "vertical-rl"
 )
 
+type StopXmlSpace string
+
+const (
+	StopXmlSpaceDefault  StopXmlSpace = "default"
+	StopXmlSpacePreserve StopXmlSpace = "preserve"
+)
+
 func (e *StopElement) Offset(s string) *StopElement {
 	e.attributes.Set("offset", s)
 
 	return e
 }
 
-func (e *StopElement) Id(s string) *StopElement {
-	e.attributes.Set("id", s)
+func (e *StopElement) AlignmentBaseline(a StopAlignmentBaseline) *StopElement {
+	e.attributes.Set("alignment-baseline", string(a))
+
+	return e
+}
+
+func StopAlignmentBaselineCustom(s string) StopAlignmentBaseline {
+	return StopAlignmentBaseline(s)
+}
+
+func (e *StopElement) AriaUnsafe(name string, s string) *StopElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.SetUnsafe(tag, s)
+
+	return e
+}
+
+func (e *StopElement) Aria(name string, s string) *StopElement {
+	tag := strings.ToLower("aria-" + name)
+
+	e.attributes.Set(tag, s)
+
+	return e
+}
+
+// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *StopElement) Autofocus(b bool) *StopElement {
+	e.attributes.SetBool("autofocus", b)
+
+	return e
+}
+
+func (e *StopElement) BaselineShift(s string) *StopElement {
+	e.attributes.Set("baseline-shift", s)
 
 	return e
 }
@@ -396,40 +430,59 @@ func (e *StopElement) Class(s ...string) *StopElement {
 	return e
 }
 
-func (e *StopElement) Style(s string) *StopElement {
-	e.attributes.Set("style", s)
+// Clip sets the "clip" attribute.
+//
+// Deprecated: the "clip" attribute is deprecated or obsolete in its source specification.
+func (e *StopElement) Clip(s string) *StopElement {
+	e.attributes.Set("clip", s)
 
 	return e
 }
 
-func (e *StopElement) Tabindex(i int) *StopElement {
-	e.attributes.Set("tabindex", strconv.Itoa(i))
+func (e *StopElement) ClipPath(s string) *StopElement {
+	e.attributes.Set("clip-path", s)
 
 	return e
 }
 
-func (e *StopElement) Lang(s string) *StopElement {
-	e.attributes.Set("lang", s)
+func (e *StopElement) ClipRule(a StopClipRule) *StopElement {
+	e.attributes.Set("clip-rule", string(a))
 
 	return e
 }
 
-func (e *StopElement) XmlLang(s string) *StopElement {
-	e.attributes.Set("xml:lang", s)
+func StopClipRuleCustom(s string) StopClipRule {
+	return StopClipRule(s)
+}
+
+func (e *StopElement) Color(s string) *StopElement {
+	e.attributes.Set("color", s)
 
 	return e
 }
 
-func (e *StopElement) XmlSpace(a StopXmlSpace) *StopElement {
-	e.attributes.Set("xml:space", string(a))
+func (e *StopElement) ColorInterpolation(a StopColorInterpolation) *StopElement {
+	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-// Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
-// when false the attribute is omitted (and removed if previously set).
-func (e *StopElement) Autofocus(b bool) *StopElement {
-	e.attributes.SetBool("autofocus", b)
+func StopColorInterpolationCustom(s string) StopColorInterpolation {
+	return StopColorInterpolation(s)
+}
+
+func (e *StopElement) ColorInterpolationFilters(a StopColorInterpolationFilters) *StopElement {
+	e.attributes.Set("color-interpolation-filters", string(a))
+
+	return e
+}
+
+func StopColorInterpolationFiltersCustom(s string) StopColorInterpolationFilters {
+	return StopColorInterpolationFilters(s)
+}
+
+func (e *StopElement) Cursor(s string) *StopElement {
+	e.attributes.Set("cursor", s)
 
 	return e
 }
@@ -450,20 +503,30 @@ func (e *StopElement) Data(name string, s string) *StopElement {
 	return e
 }
 
-func (e *StopElement) AriaUnsafe(name string, s string) *StopElement {
-	tag := strings.ToLower("aria-" + name)
-
-	e.attributes.SetUnsafe(tag, s)
+func (e *StopElement) Direction(a StopDirection) *StopElement {
+	e.attributes.Set("direction", string(a))
 
 	return e
 }
 
-func (e *StopElement) Aria(name string, s string) *StopElement {
-	tag := strings.ToLower("aria-" + name)
+func StopDirectionCustom(s string) StopDirection {
+	return StopDirection(s)
+}
 
-	e.attributes.Set(tag, s)
+func (e *StopElement) Display(s string) *StopElement {
+	e.attributes.Set("display", s)
 
 	return e
+}
+
+func (e *StopElement) DominantBaseline(a StopDominantBaseline) *StopElement {
+	e.attributes.Set("dominant-baseline", string(a))
+
+	return e
+}
+
+func StopDominantBaselineCustom(s string) StopDominantBaseline {
+	return StopDominantBaseline(s)
 }
 
 func (e *StopElement) Fill(s string) *StopElement {
@@ -488,20 +551,220 @@ func StopFillRuleCustom(s string) StopFillRule {
 	return StopFillRule(s)
 }
 
+func (e *StopElement) Filter(s string) *StopElement {
+	e.attributes.Set("filter", s)
+
+	return e
+}
+
+func (e *StopElement) FloodColor(s string) *StopElement {
+	e.attributes.Set("flood-color", s)
+
+	return e
+}
+
+func (e *StopElement) FloodOpacity(f float64) *StopElement {
+	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *StopElement) FontFamily(s string) *StopElement {
+	e.attributes.Set("font-family", s)
+
+	return e
+}
+
+func (e *StopElement) FontSize(s string) *StopElement {
+	e.attributes.Set("font-size", s)
+
+	return e
+}
+
+func (e *StopElement) FontSizeAdjust(s string) *StopElement {
+	e.attributes.Set("font-size-adjust", s)
+
+	return e
+}
+
+func (e *StopElement) FontStretch(s string) *StopElement {
+	e.attributes.Set("font-stretch", s)
+
+	return e
+}
+
+func (e *StopElement) FontStyle(a StopFontStyle) *StopElement {
+	e.attributes.Set("font-style", string(a))
+
+	return e
+}
+
+func StopFontStyleCustom(s string) StopFontStyle {
+	return StopFontStyle(s)
+}
+
+func (e *StopElement) FontVariant(s string) *StopElement {
+	e.attributes.Set("font-variant", s)
+
+	return e
+}
+
+func (e *StopElement) FontWeight(s string) *StopElement {
+	e.attributes.Set("font-weight", s)
+
+	return e
+}
+
+// GlyphOrientationHorizontal sets the "glyph-orientation-horizontal" attribute.
+//
+// Deprecated: the "glyph-orientation-horizontal" attribute is deprecated or obsolete in its source specification.
+func (e *StopElement) GlyphOrientationHorizontal(s string) *StopElement {
+	e.attributes.Set("glyph-orientation-horizontal", s)
+
+	return e
+}
+
+// GlyphOrientationVertical sets the "glyph-orientation-vertical" attribute.
+//
+// Deprecated: the "glyph-orientation-vertical" attribute is deprecated or obsolete in its source specification.
+func (e *StopElement) GlyphOrientationVertical(s string) *StopElement {
+	e.attributes.Set("glyph-orientation-vertical", s)
+
+	return e
+}
+
+func (e *StopElement) Id(s string) *StopElement {
+	e.attributes.Set("id", s)
+
+	return e
+}
+
+func (e *StopElement) ImageRendering(a StopImageRendering) *StopElement {
+	e.attributes.Set("image-rendering", string(a))
+
+	return e
+}
+
+func StopImageRenderingCustom(s string) StopImageRendering {
+	return StopImageRendering(s)
+}
+
+func (e *StopElement) Lang(s string) *StopElement {
+	e.attributes.Set("lang", s)
+
+	return e
+}
+
+func (e *StopElement) LetterSpacing(s string) *StopElement {
+	e.attributes.Set("letter-spacing", s)
+
+	return e
+}
+
+func (e *StopElement) LightingColor(s string) *StopElement {
+	e.attributes.Set("lighting-color", s)
+
+	return e
+}
+
+func (e *StopElement) MarkerEnd(s string) *StopElement {
+	e.attributes.Set("marker-end", s)
+
+	return e
+}
+
+func (e *StopElement) MarkerMid(s string) *StopElement {
+	e.attributes.Set("marker-mid", s)
+
+	return e
+}
+
+func (e *StopElement) MarkerStart(s string) *StopElement {
+	e.attributes.Set("marker-start", s)
+
+	return e
+}
+
+func (e *StopElement) Mask(s string) *StopElement {
+	e.attributes.Set("mask", s)
+
+	return e
+}
+
+func (e *StopElement) Opacity(f float64) *StopElement {
+	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
+func (e *StopElement) Overflow(a StopOverflow) *StopElement {
+	e.attributes.Set("overflow", string(a))
+
+	return e
+}
+
+func StopOverflowCustom(s string) StopOverflow {
+	return StopOverflow(s)
+}
+
+func (e *StopElement) PaintOrder(s string) *StopElement {
+	e.attributes.Set("paint-order", s)
+
+	return e
+}
+
+func (e *StopElement) PointerEvents(a StopPointerEvents) *StopElement {
+	e.attributes.Set("pointer-events", string(a))
+
+	return e
+}
+
+func StopPointerEventsCustom(s string) StopPointerEvents {
+	return StopPointerEvents(s)
+}
+
+func (e *StopElement) RequiredExtensions(s string) *StopElement {
+	e.attributes.Set("requiredExtensions", s)
+
+	return e
+}
+
+func (e *StopElement) ShapeRendering(a StopShapeRendering) *StopElement {
+	e.attributes.Set("shape-rendering", string(a))
+
+	return e
+}
+
+func StopShapeRenderingCustom(s string) StopShapeRendering {
+	return StopShapeRendering(s)
+}
+
+func (e *StopElement) StopColor(s string) *StopElement {
+	e.attributes.Set("stop-color", s)
+
+	return e
+}
+
+func (e *StopElement) StopOpacity(f float64) *StopElement {
+	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+
+	return e
+}
+
 func (e *StopElement) Stroke(s string) *StopElement {
 	e.attributes.Set("stroke", s)
 
 	return e
 }
 
-func (e *StopElement) StrokeWidth(s string) *StopElement {
-	e.attributes.Set("stroke-width", s)
+func (e *StopElement) StrokeDasharray(s string) *StopElement {
+	e.attributes.Set("stroke-dasharray", s)
 
 	return e
 }
 
-func (e *StopElement) StrokeOpacity(f float64) *StopElement {
-	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *StopElement) StrokeDashoffset(s string) *StopElement {
+	e.attributes.Set("stroke-dashoffset", s)
 
 	return e
 }
@@ -532,210 +795,28 @@ func (e *StopElement) StrokeMiterlimit(f float64) *StopElement {
 	return e
 }
 
-func (e *StopElement) StrokeDasharray(s string) *StopElement {
-	e.attributes.Set("stroke-dasharray", s)
+func (e *StopElement) StrokeOpacity(f float64) *StopElement {
+	e.attributes.Set("stroke-opacity", strconv.FormatFloat(f, 'g', -1, 64))
 
 	return e
 }
 
-func (e *StopElement) StrokeDashoffset(s string) *StopElement {
-	e.attributes.Set("stroke-dashoffset", s)
+func (e *StopElement) StrokeWidth(s string) *StopElement {
+	e.attributes.Set("stroke-width", s)
 
 	return e
 }
 
-func (e *StopElement) Opacity(f float64) *StopElement {
-	e.attributes.Set("opacity", strconv.FormatFloat(f, 'g', -1, 64))
+func (e *StopElement) Style(s string) *StopElement {
+	e.attributes.Set("style", s)
 
 	return e
 }
 
-func (e *StopElement) Color(s string) *StopElement {
-	e.attributes.Set("color", s)
+func (e *StopElement) Tabindex(i int) *StopElement {
+	e.attributes.Set("tabindex", strconv.Itoa(i))
 
 	return e
-}
-
-func (e *StopElement) Display(s string) *StopElement {
-	e.attributes.Set("display", s)
-
-	return e
-}
-
-func (e *StopElement) Visibility(a StopVisibility) *StopElement {
-	e.attributes.Set("visibility", string(a))
-
-	return e
-}
-
-func StopVisibilityCustom(s string) StopVisibility {
-	return StopVisibility(s)
-}
-
-func (e *StopElement) ClipPath(s string) *StopElement {
-	e.attributes.Set("clip-path", s)
-
-	return e
-}
-
-func (e *StopElement) ClipRule(a StopClipRule) *StopElement {
-	e.attributes.Set("clip-rule", string(a))
-
-	return e
-}
-
-func StopClipRuleCustom(s string) StopClipRule {
-	return StopClipRule(s)
-}
-
-func (e *StopElement) Mask(s string) *StopElement {
-	e.attributes.Set("mask", s)
-
-	return e
-}
-
-func (e *StopElement) Filter(s string) *StopElement {
-	e.attributes.Set("filter", s)
-
-	return e
-}
-
-func (e *StopElement) Cursor(s string) *StopElement {
-	e.attributes.Set("cursor", s)
-
-	return e
-}
-
-func (e *StopElement) PointerEvents(a StopPointerEvents) *StopElement {
-	e.attributes.Set("pointer-events", string(a))
-
-	return e
-}
-
-func StopPointerEventsCustom(s string) StopPointerEvents {
-	return StopPointerEvents(s)
-}
-
-func (e *StopElement) VectorEffect(a StopVectorEffect) *StopElement {
-	e.attributes.Set("vector-effect", string(a))
-
-	return e
-}
-
-func StopVectorEffectCustom(s string) StopVectorEffect {
-	return StopVectorEffect(s)
-}
-
-func (e *StopElement) PaintOrder(s string) *StopElement {
-	e.attributes.Set("paint-order", s)
-
-	return e
-}
-
-func (e *StopElement) ShapeRendering(a StopShapeRendering) *StopElement {
-	e.attributes.Set("shape-rendering", string(a))
-
-	return e
-}
-
-func StopShapeRenderingCustom(s string) StopShapeRendering {
-	return StopShapeRendering(s)
-}
-
-func (e *StopElement) ColorInterpolation(a StopColorInterpolation) *StopElement {
-	e.attributes.Set("color-interpolation", string(a))
-
-	return e
-}
-
-func StopColorInterpolationCustom(s string) StopColorInterpolation {
-	return StopColorInterpolation(s)
-}
-
-func (e *StopElement) ColorInterpolationFilters(a StopColorInterpolationFilters) *StopElement {
-	e.attributes.Set("color-interpolation-filters", string(a))
-
-	return e
-}
-
-func StopColorInterpolationFiltersCustom(s string) StopColorInterpolationFilters {
-	return StopColorInterpolationFilters(s)
-}
-
-func (e *StopElement) FloodColor(s string) *StopElement {
-	e.attributes.Set("flood-color", s)
-
-	return e
-}
-
-func (e *StopElement) FloodOpacity(f float64) *StopElement {
-	e.attributes.Set("flood-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *StopElement) LightingColor(s string) *StopElement {
-	e.attributes.Set("lighting-color", s)
-
-	return e
-}
-
-func (e *StopElement) StopColor(s string) *StopElement {
-	e.attributes.Set("stop-color", s)
-
-	return e
-}
-
-func (e *StopElement) StopOpacity(f float64) *StopElement {
-	e.attributes.Set("stop-opacity", strconv.FormatFloat(f, 'g', -1, 64))
-
-	return e
-}
-
-func (e *StopElement) MarkerStart(s string) *StopElement {
-	e.attributes.Set("marker-start", s)
-
-	return e
-}
-
-func (e *StopElement) MarkerMid(s string) *StopElement {
-	e.attributes.Set("marker-mid", s)
-
-	return e
-}
-
-func (e *StopElement) MarkerEnd(s string) *StopElement {
-	e.attributes.Set("marker-end", s)
-
-	return e
-}
-
-func (e *StopElement) FontFamily(s string) *StopElement {
-	e.attributes.Set("font-family", s)
-
-	return e
-}
-
-func (e *StopElement) FontSize(s string) *StopElement {
-	e.attributes.Set("font-size", s)
-
-	return e
-}
-
-func (e *StopElement) FontWeight(s string) *StopElement {
-	e.attributes.Set("font-weight", s)
-
-	return e
-}
-
-func (e *StopElement) FontStyle(a StopFontStyle) *StopElement {
-	e.attributes.Set("font-style", string(a))
-
-	return e
-}
-
-func StopFontStyleCustom(s string) StopFontStyle {
-	return StopFontStyle(s)
 }
 
 func (e *StopElement) TextAnchor(a StopTextAnchor) *StopElement {
@@ -748,40 +829,14 @@ func StopTextAnchorCustom(s string) StopTextAnchor {
 	return StopTextAnchor(s)
 }
 
-func (e *StopElement) DominantBaseline(a StopDominantBaseline) *StopElement {
-	e.attributes.Set("dominant-baseline", string(a))
-
-	return e
-}
-
-func StopDominantBaselineCustom(s string) StopDominantBaseline {
-	return StopDominantBaseline(s)
-}
-
-func (e *StopElement) AlignmentBaseline(a StopAlignmentBaseline) *StopElement {
-	e.attributes.Set("alignment-baseline", string(a))
-
-	return e
-}
-
-func StopAlignmentBaselineCustom(s string) StopAlignmentBaseline {
-	return StopAlignmentBaseline(s)
-}
-
-func (e *StopElement) LetterSpacing(s string) *StopElement {
-	e.attributes.Set("letter-spacing", s)
-
-	return e
-}
-
-func (e *StopElement) WordSpacing(s string) *StopElement {
-	e.attributes.Set("word-spacing", s)
-
-	return e
-}
-
 func (e *StopElement) TextDecoration(s string) *StopElement {
 	e.attributes.Set("text-decoration", s)
+
+	return e
+}
+
+func (e *StopElement) TextOverflow(s string) *StopElement {
+	e.attributes.Set("text-overflow", s)
 
 	return e
 }
@@ -796,24 +851,10 @@ func StopTextRenderingCustom(s string) StopTextRendering {
 	return StopTextRendering(s)
 }
 
-func (e *StopElement) ImageRendering(a StopImageRendering) *StopElement {
-	e.attributes.Set("image-rendering", string(a))
+func (e *StopElement) Transform(s string) *StopElement {
+	e.attributes.Set("transform", s)
 
 	return e
-}
-
-func StopImageRenderingCustom(s string) StopImageRendering {
-	return StopImageRendering(s)
-}
-
-func (e *StopElement) Overflow(a StopOverflow) *StopElement {
-	e.attributes.Set("overflow", string(a))
-
-	return e
-}
-
-func StopOverflowCustom(s string) StopOverflow {
-	return StopOverflow(s)
 }
 
 func (e *StopElement) TransformBox(a StopTransformBox) *StopElement {
@@ -826,18 +867,46 @@ func StopTransformBoxCustom(s string) StopTransformBox {
 	return StopTransformBox(s)
 }
 
-func (e *StopElement) Direction(a StopDirection) *StopElement {
-	e.attributes.Set("direction", string(a))
+func (e *StopElement) TransformOrigin(s string) *StopElement {
+	e.attributes.Set("transform-origin", s)
 
 	return e
 }
 
-func StopDirectionCustom(s string) StopDirection {
-	return StopDirection(s)
-}
-
 func (e *StopElement) UnicodeBidi(s string) *StopElement {
 	e.attributes.Set("unicode-bidi", s)
+
+	return e
+}
+
+func (e *StopElement) VectorEffect(a StopVectorEffect) *StopElement {
+	e.attributes.Set("vector-effect", string(a))
+
+	return e
+}
+
+func StopVectorEffectCustom(s string) StopVectorEffect {
+	return StopVectorEffect(s)
+}
+
+func (e *StopElement) Visibility(a StopVisibility) *StopElement {
+	e.attributes.Set("visibility", string(a))
+
+	return e
+}
+
+func StopVisibilityCustom(s string) StopVisibility {
+	return StopVisibility(s)
+}
+
+func (e *StopElement) WhiteSpace(s string) *StopElement {
+	e.attributes.Set("white-space", s)
+
+	return e
+}
+
+func (e *StopElement) WordSpacing(s string) *StopElement {
+	e.attributes.Set("word-spacing", s)
 
 	return e
 }
@@ -852,8 +921,20 @@ func StopWritingModeCustom(s string) StopWritingMode {
 	return StopWritingMode(s)
 }
 
-func (e *StopElement) WhiteSpace(s string) *StopElement {
-	e.attributes.Set("white-space", s)
+// XmlLang sets the "xml:lang" attribute.
+//
+// Deprecated: the "xml:lang" attribute is deprecated or obsolete in its source specification.
+func (e *StopElement) XmlLang(s string) *StopElement {
+	e.attributes.Set("xml:lang", s)
+
+	return e
+}
+
+// XmlSpace sets the "xml:space" attribute.
+//
+// Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
+func (e *StopElement) XmlSpace(a StopXmlSpace) *StopElement {
+	e.attributes.Set("xml:space", string(a))
 
 	return e
 }

@@ -185,6 +185,15 @@ const (
 	ColInputmodeUrl     ColInputmode = "url"
 )
 
+type ColPopover string
+
+const (
+	ColPopoverAuto   ColPopover = "auto"
+	ColPopoverHint   ColPopover = "hint"
+	ColPopoverManual ColPopover = "manual"
+	ColPopoverEmpty  ColPopover = ""
+)
+
 type ColSpellcheck string
 
 const (
@@ -315,6 +324,26 @@ func (e *ColElement) Enterkeyhint(a ColEnterkeyhint) *ColElement {
 	return e
 }
 
+func (e *ColElement) Exportparts(s string) *ColElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *ColElement) Headingoffset(i int) *ColElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *ColElement) Headingreset(b bool) *ColElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *ColElement) Hidden(v ...ColHidden) *ColElement {
@@ -347,6 +376,14 @@ func (e *ColElement) Inputmode(a ColInputmode) *ColElement {
 	return e
 }
 
+func (e *ColElement) Is(s string) *ColElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *ColElement) Itemid(s string) *ColElement {
 	e.attributes.Set("itemid", s)
 
@@ -391,8 +428,20 @@ func (e *ColElement) Nonce(s string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Popover(s string) *ColElement {
-	e.attributes.Set("popover", s)
+func (e *ColElement) Part(s ...string) *ColElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Popover(v ...ColPopover) *ColElement {
+	var val ColPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

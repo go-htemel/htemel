@@ -240,6 +240,15 @@ const (
 	OptionInputmodeUrl     OptionInputmode = "url"
 )
 
+type OptionPopover string
+
+const (
+	OptionPopoverAuto   OptionPopover = "auto"
+	OptionPopoverHint   OptionPopover = "hint"
+	OptionPopoverManual OptionPopover = "manual"
+	OptionPopoverEmpty  OptionPopover = ""
+)
+
 type OptionSpellcheck string
 
 const (
@@ -392,6 +401,26 @@ func (e *OptionElement) Enterkeyhint(a OptionEnterkeyhint) *OptionElement {
 	return e
 }
 
+func (e *OptionElement) Exportparts(s string) *OptionElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *OptionElement) Headingoffset(i int) *OptionElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *OptionElement) Headingreset(b bool) *OptionElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *OptionElement) Hidden(v ...OptionHidden) *OptionElement {
@@ -424,6 +453,14 @@ func (e *OptionElement) Inputmode(a OptionInputmode) *OptionElement {
 	return e
 }
 
+func (e *OptionElement) Is(s string) *OptionElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *OptionElement) Itemid(s string) *OptionElement {
 	e.attributes.Set("itemid", s)
 
@@ -468,8 +505,20 @@ func (e *OptionElement) Nonce(s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Popover(s string) *OptionElement {
-	e.attributes.Set("popover", s)
+func (e *OptionElement) Part(s ...string) *OptionElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Popover(v ...OptionPopover) *OptionElement {
+	var val OptionPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

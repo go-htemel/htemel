@@ -240,6 +240,15 @@ const (
 	BdiInputmodeUrl     BdiInputmode = "url"
 )
 
+type BdiPopover string
+
+const (
+	BdiPopoverAuto   BdiPopover = "auto"
+	BdiPopoverHint   BdiPopover = "hint"
+	BdiPopoverManual BdiPopover = "manual"
+	BdiPopoverEmpty  BdiPopover = ""
+)
+
 type BdiSpellcheck string
 
 const (
@@ -364,6 +373,26 @@ func (e *BdiElement) Enterkeyhint(a BdiEnterkeyhint) *BdiElement {
 	return e
 }
 
+func (e *BdiElement) Exportparts(s string) *BdiElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *BdiElement) Headingoffset(i int) *BdiElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *BdiElement) Headingreset(b bool) *BdiElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *BdiElement) Hidden(v ...BdiHidden) *BdiElement {
@@ -396,6 +425,14 @@ func (e *BdiElement) Inputmode(a BdiInputmode) *BdiElement {
 	return e
 }
 
+func (e *BdiElement) Is(s string) *BdiElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *BdiElement) Itemid(s string) *BdiElement {
 	e.attributes.Set("itemid", s)
 
@@ -440,8 +477,20 @@ func (e *BdiElement) Nonce(s string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Popover(s string) *BdiElement {
-	e.attributes.Set("popover", s)
+func (e *BdiElement) Part(s ...string) *BdiElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Popover(v ...BdiPopover) *BdiElement {
+	var val BdiPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }

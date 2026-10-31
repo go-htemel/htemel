@@ -185,6 +185,15 @@ const (
 	EmbedInputmodeUrl     EmbedInputmode = "url"
 )
 
+type EmbedPopover string
+
+const (
+	EmbedPopoverAuto   EmbedPopover = "auto"
+	EmbedPopoverHint   EmbedPopover = "hint"
+	EmbedPopoverManual EmbedPopover = "manual"
+	EmbedPopoverEmpty  EmbedPopover = ""
+)
+
 type EmbedSpellcheck string
 
 const (
@@ -209,6 +218,14 @@ const (
 	EmbedWritingsuggestionsEmpty EmbedWritingsuggestions = ""
 )
 
+func (e *EmbedElement) Height(i int) *EmbedElement {
+	e.attributes.Set("height", strconv.Itoa(i))
+
+	return e
+}
+
+// Src sets the "src" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *EmbedElement) Src(s string) *EmbedElement {
 	e.attributes.Set("src", s)
 
@@ -223,12 +240,6 @@ func (e *EmbedElement) Type(s string) *EmbedElement {
 
 func (e *EmbedElement) Width(i int) *EmbedElement {
 	e.attributes.Set("width", strconv.Itoa(i))
-
-	return e
-}
-
-func (e *EmbedElement) Height(i int) *EmbedElement {
-	e.attributes.Set("height", strconv.Itoa(i))
 
 	return e
 }
@@ -333,6 +344,26 @@ func (e *EmbedElement) Enterkeyhint(a EmbedEnterkeyhint) *EmbedElement {
 	return e
 }
 
+func (e *EmbedElement) Exportparts(s string) *EmbedElement {
+	e.attributes.Set("exportparts", s)
+
+	return e
+}
+
+func (e *EmbedElement) Headingoffset(i int) *EmbedElement {
+	e.attributes.Set("headingoffset", strconv.Itoa(i))
+
+	return e
+}
+
+// Headingreset sets the boolean attribute "headingreset". When b is true it renders bare;
+// when false the attribute is omitted (and removed if previously set).
+func (e *EmbedElement) Headingreset(b bool) *EmbedElement {
+	e.attributes.SetBool("headingreset", b)
+
+	return e
+}
+
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
 func (e *EmbedElement) Hidden(v ...EmbedHidden) *EmbedElement {
@@ -365,6 +396,14 @@ func (e *EmbedElement) Inputmode(a EmbedInputmode) *EmbedElement {
 	return e
 }
 
+func (e *EmbedElement) Is(s string) *EmbedElement {
+	e.attributes.Set("is", s)
+
+	return e
+}
+
+// Itemid sets the "itemid" attribute.
+// Value is a URL; validate untrusted input with htemel.URL.
 func (e *EmbedElement) Itemid(s string) *EmbedElement {
 	e.attributes.Set("itemid", s)
 
@@ -409,8 +448,20 @@ func (e *EmbedElement) Nonce(s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Popover(s string) *EmbedElement {
-	e.attributes.Set("popover", s)
+func (e *EmbedElement) Part(s ...string) *EmbedElement {
+	e.attributes.Set("part", strings.Join(s, " "))
+
+	return e
+}
+
+// Popover sets the "popover" attribute. Called with no argument, Popover() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Popover(v ...EmbedPopover) *EmbedElement {
+	var val EmbedPopover
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("popover", string(val))
 
 	return e
 }
