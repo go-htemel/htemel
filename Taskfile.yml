@@ -1,0 +1,53 @@
+version: '3'
+
+vars:
+  GENERATED: html/ svg/ mathml/ slots_html.go slots_svg.go slots_mathml.go
+
+tasks:
+  default:
+    desc: List available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  generate:
+    desc: Regenerate the html, svg and mathml packages (go generate)
+    cmds:
+      - go generate ./...
+
+  test:
+    desc: Run all tests with the race detector
+    cmds:
+      - go test -race ./...
+
+  bench:
+    desc: Run benchmarks (no tests)
+    cmds:
+      - go test -run '^$' -bench . -benchmem ./...
+
+  lint:
+    desc: Run golangci-lint if installed, otherwise go vet
+    cmds:
+      - |
+        if command -v golangci-lint >/dev/null 2>&1; then
+          golangci-lint run ./...
+        else
+          echo "golangci-lint not installed; falling back to go vet"
+          go vet ./...
+        fi
+
+  check-generated:
+    desc: Regenerate code and fail if the generated files differ from what is committed
+    deps: [generate]
+    cmds:
+      - |
+        if [ -n "$(git status --porcelain -- {{.GENERATED}})" ]; then
+          echo "generated code is out of date; run 'task generate' and commit the result"
+          git status --porcelain -- {{.GENERATED}}
+          exit 1
+        fi
+
+  tidy:
+    desc: Run go mod tidy
+    cmds:
+      - go mod tidy

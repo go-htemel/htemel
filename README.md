@@ -387,9 +387,9 @@ Thus, **htemel** was created to address these gaps with a focus on type safety a
 ## Development
 
 - `go generate ./...` regenerates the `html`, `svg` and `mathml` packages from `specs/html.json`, `specs/svg.json` and `specs/mathml.json`. Files in `html/`, `svg/` and `mathml/` are generated, so change the generator in `cmd/genelements` or the spec rather than editing them by hand.
-- `make check-generated` regenerates the code and fails if `html/`, `svg/` or `mathml/` differ from what is committed, which catches a spec change without its output.
-- `make test` runs `go test -race ./...`.
-- `make lint` runs `golangci-lint` when it is installed, and falls back to `go vet` otherwise.
+- `task check-generated` regenerates the code and fails if `html/`, `svg/` or `mathml/` differ from what is committed, which catches a spec change without its output.
+- `task test` runs `go test -race ./...`.
+- `task lint` runs `golangci-lint` when it is installed, and falls back to `go vet` otherwise.
 
 ## Contributing
 
