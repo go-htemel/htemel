@@ -44,6 +44,14 @@ func (e *ColElement) With(fn func(*ColElement)) *ColElement {
 	return e
 }
 
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *ColElement) IfThen(cond bool, fn func(*ColElement)) *ColElement {
+	if cond {
+		fn(e)
+	}
+	return e
+}
+
 // AddClass appends a class to the element.
 func (e *ColElement) AddClass(classes ...string) *ColElement {
 	current, _ := e.attributes.Get("class")
@@ -109,114 +117,8 @@ func (e *ColElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ColAutocapitalize string
-
-const (
-	ColAutocapitalizeCharacters ColAutocapitalize = "characters"
-	ColAutocapitalizeNone       ColAutocapitalize = "none"
-	ColAutocapitalizeOff        ColAutocapitalize = "off"
-	ColAutocapitalizeOn         ColAutocapitalize = "on"
-	ColAutocapitalizeSentences  ColAutocapitalize = "sentences"
-	ColAutocapitalizeWords      ColAutocapitalize = "words"
-)
-
-type ColAutocorrect string
-
-const (
-	ColAutocorrectOff   ColAutocorrect = "off"
-	ColAutocorrectOn    ColAutocorrect = "on"
-	ColAutocorrectEmpty ColAutocorrect = ""
-)
-
-type ColContenteditable string
-
-const (
-	ColContenteditableFalse         ColContenteditable = "false"
-	ColContenteditablePlaintextOnly ColContenteditable = "plaintext-only"
-	ColContenteditableTrue          ColContenteditable = "true"
-	ColContenteditableEmpty         ColContenteditable = ""
-)
-
-type ColDir string
-
-const (
-	ColDirAuto ColDir = "auto"
-	ColDirLtr  ColDir = "ltr"
-	ColDirRtl  ColDir = "rtl"
-)
-
-type ColDraggable string
-
-const (
-	ColDraggableFalse ColDraggable = "false"
-	ColDraggableTrue  ColDraggable = "true"
-)
-
-type ColEnterkeyhint string
-
-const (
-	ColEnterkeyhintDone     ColEnterkeyhint = "done"
-	ColEnterkeyhintEnter    ColEnterkeyhint = "enter"
-	ColEnterkeyhintGo       ColEnterkeyhint = "go"
-	ColEnterkeyhintNext     ColEnterkeyhint = "next"
-	ColEnterkeyhintPrevious ColEnterkeyhint = "previous"
-	ColEnterkeyhintSearch   ColEnterkeyhint = "search"
-	ColEnterkeyhintSend     ColEnterkeyhint = "send"
-)
-
-type ColHidden string
-
-const (
-	ColHiddenHidden     ColHidden = "hidden"
-	ColHiddenUntilFound ColHidden = "until-found"
-	ColHiddenEmpty      ColHidden = ""
-)
-
-type ColInputmode string
-
-const (
-	ColInputmodeDecimal ColInputmode = "decimal"
-	ColInputmodeEmail   ColInputmode = "email"
-	ColInputmodeNone    ColInputmode = "none"
-	ColInputmodeNumeric ColInputmode = "numeric"
-	ColInputmodeSearch  ColInputmode = "search"
-	ColInputmodeTel     ColInputmode = "tel"
-	ColInputmodeText    ColInputmode = "text"
-	ColInputmodeUrl     ColInputmode = "url"
-)
-
-type ColPopover string
-
-const (
-	ColPopoverAuto   ColPopover = "auto"
-	ColPopoverHint   ColPopover = "hint"
-	ColPopoverManual ColPopover = "manual"
-	ColPopoverEmpty  ColPopover = ""
-)
-
-type ColSpellcheck string
-
-const (
-	ColSpellcheckFalse ColSpellcheck = "false"
-	ColSpellcheckTrue  ColSpellcheck = "true"
-	ColSpellcheckEmpty ColSpellcheck = ""
-)
-
-type ColTranslate string
-
-const (
-	ColTranslateNo    ColTranslate = "no"
-	ColTranslateYes   ColTranslate = "yes"
-	ColTranslateEmpty ColTranslate = ""
-)
-
-type ColWritingsuggestions string
-
-const (
-	ColWritingsuggestionsFalse ColWritingsuggestions = "false"
-	ColWritingsuggestionsTrue  ColWritingsuggestions = "true"
-	ColWritingsuggestionsEmpty ColWritingsuggestions = ""
-)
+// HTMLColgroupChild marks <col> as a permitted child of <colgroup> (ColgroupChild).
+func (*ColElement) HTMLColgroupChild() {}
 
 func (e *ColElement) Span(i int) *ColElement {
 	e.attributes.Set("span", strconv.Itoa(i))
@@ -246,7 +148,7 @@ func (e *ColElement) Aria(name string, s string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Autocapitalize(a ColAutocapitalize) *ColElement {
+func (e *ColElement) Autocapitalize(a Autocapitalize) *ColElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -254,8 +156,8 @@ func (e *ColElement) Autocapitalize(a ColAutocapitalize) *ColElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Autocorrect(v ...ColAutocorrect) *ColElement {
-	var val ColAutocorrect
+func (e *ColElement) Autocorrect(v ...Autocorrect) *ColElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -280,8 +182,8 @@ func (e *ColElement) Class(s ...string) *ColElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Contenteditable(v ...ColContenteditable) *ColElement {
-	var val ColContenteditable
+func (e *ColElement) Contenteditable(v ...Contenteditable) *ColElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -306,19 +208,19 @@ func (e *ColElement) Data(name string, s string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Dir(a ColDir) *ColElement {
+func (e *ColElement) Dir(a Dir) *ColElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ColElement) Draggable(a ColDraggable) *ColElement {
+func (e *ColElement) Draggable(a Draggable) *ColElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ColElement) Enterkeyhint(a ColEnterkeyhint) *ColElement {
+func (e *ColElement) Enterkeyhint(a Enterkeyhint) *ColElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -346,8 +248,8 @@ func (e *ColElement) Headingreset(b bool) *ColElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Hidden(v ...ColHidden) *ColElement {
-	var val ColHidden
+func (e *ColElement) Hidden(v ...Hidden) *ColElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -370,7 +272,7 @@ func (e *ColElement) Inert(b bool) *ColElement {
 	return e
 }
 
-func (e *ColElement) Inputmode(a ColInputmode) *ColElement {
+func (e *ColElement) Inputmode(a Inputmode) *ColElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -436,8 +338,8 @@ func (e *ColElement) Part(s ...string) *ColElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Popover(v ...ColPopover) *ColElement {
-	var val ColPopover
+func (e *ColElement) Popover(v ...Popover) *ColElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -460,8 +362,8 @@ func (e *ColElement) Slot(s string) *ColElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Spellcheck(v ...ColSpellcheck) *ColElement {
-	var val ColSpellcheck
+func (e *ColElement) Spellcheck(v ...Spellcheck) *ColElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -490,8 +392,8 @@ func (e *ColElement) Title(s string) *ColElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Translate(v ...ColTranslate) *ColElement {
-	var val ColTranslate
+func (e *ColElement) Translate(v ...Translate) *ColElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -502,8 +404,8 @@ func (e *ColElement) Translate(v ...ColTranslate) *ColElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColElement) Writingsuggestions(v ...ColWritingsuggestions) *ColElement {
-	var val ColWritingsuggestions
+func (e *ColElement) Writingsuggestions(v ...Writingsuggestions) *ColElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

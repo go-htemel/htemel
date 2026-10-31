@@ -13,16 +13,20 @@ import (
 )
 
 type CodeElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Code creates a tag <code> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The code element represents a fragment of computer code. This could be an XML element name, a filename, a computer program, or any other string that a computer would recognize.
-func Code(children ...htemel.Node) *CodeElement {
+func Code(children ...htemel.PhrasingContent) *CodeElement {
 	node := &CodeElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Code(children ...htemel.Node) *CodeElement {
 }
 
 // CodeIf creates a tag <code> instance that is only rendered when condition is true.
-func CodeIf(condition bool, children ...htemel.Node) *CodeElement {
+func CodeIf(condition bool, children ...htemel.PhrasingContent) *CodeElement {
 	if condition {
 		return Code(children...)
 	}
@@ -43,7 +47,7 @@ func CodeIf(condition bool, children ...htemel.Node) *CodeElement {
 }
 
 // CodeTernary creates a tag <code> containing then when condition is true, otherwise containing otherwise.
-func CodeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CodeElement {
+func CodeTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *CodeElement {
 	if condition {
 		return Code(then)
 	}
@@ -51,7 +55,7 @@ func CodeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CodeE
 }
 
 // Children appends children to this element.
-func (e *CodeElement) Children(children ...htemel.Node) *CodeElement {
+func (e *CodeElement) Children(children ...htemel.PhrasingContent) *CodeElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *CodeElement) Textf(format string, args ...any) *CodeElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *CodeElement) If(cond bool, child htemel.Node) *CodeElement {
+func (e *CodeElement) If(cond bool, child htemel.PhrasingContent) *CodeElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *CodeElement) If(cond bool, child htemel.Node) *CodeElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *CodeElement) IfElse(cond bool, then, els htemel.Node) *CodeElement {
+func (e *CodeElement) IfElse(cond bool, then, els htemel.PhrasingContent) *CodeElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *CodeElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type CodeAutocapitalize string
-
-const (
-	CodeAutocapitalizeCharacters CodeAutocapitalize = "characters"
-	CodeAutocapitalizeNone       CodeAutocapitalize = "none"
-	CodeAutocapitalizeOff        CodeAutocapitalize = "off"
-	CodeAutocapitalizeOn         CodeAutocapitalize = "on"
-	CodeAutocapitalizeSentences  CodeAutocapitalize = "sentences"
-	CodeAutocapitalizeWords      CodeAutocapitalize = "words"
-)
-
-type CodeAutocorrect string
-
-const (
-	CodeAutocorrectOff   CodeAutocorrect = "off"
-	CodeAutocorrectOn    CodeAutocorrect = "on"
-	CodeAutocorrectEmpty CodeAutocorrect = ""
-)
-
-type CodeContenteditable string
-
-const (
-	CodeContenteditableFalse         CodeContenteditable = "false"
-	CodeContenteditablePlaintextOnly CodeContenteditable = "plaintext-only"
-	CodeContenteditableTrue          CodeContenteditable = "true"
-	CodeContenteditableEmpty         CodeContenteditable = ""
-)
-
-type CodeDir string
-
-const (
-	CodeDirAuto CodeDir = "auto"
-	CodeDirLtr  CodeDir = "ltr"
-	CodeDirRtl  CodeDir = "rtl"
-)
-
-type CodeDraggable string
-
-const (
-	CodeDraggableFalse CodeDraggable = "false"
-	CodeDraggableTrue  CodeDraggable = "true"
-)
-
-type CodeEnterkeyhint string
-
-const (
-	CodeEnterkeyhintDone     CodeEnterkeyhint = "done"
-	CodeEnterkeyhintEnter    CodeEnterkeyhint = "enter"
-	CodeEnterkeyhintGo       CodeEnterkeyhint = "go"
-	CodeEnterkeyhintNext     CodeEnterkeyhint = "next"
-	CodeEnterkeyhintPrevious CodeEnterkeyhint = "previous"
-	CodeEnterkeyhintSearch   CodeEnterkeyhint = "search"
-	CodeEnterkeyhintSend     CodeEnterkeyhint = "send"
-)
-
-type CodeHidden string
-
-const (
-	CodeHiddenHidden     CodeHidden = "hidden"
-	CodeHiddenUntilFound CodeHidden = "until-found"
-	CodeHiddenEmpty      CodeHidden = ""
-)
-
-type CodeInputmode string
-
-const (
-	CodeInputmodeDecimal CodeInputmode = "decimal"
-	CodeInputmodeEmail   CodeInputmode = "email"
-	CodeInputmodeNone    CodeInputmode = "none"
-	CodeInputmodeNumeric CodeInputmode = "numeric"
-	CodeInputmodeSearch  CodeInputmode = "search"
-	CodeInputmodeTel     CodeInputmode = "tel"
-	CodeInputmodeText    CodeInputmode = "text"
-	CodeInputmodeUrl     CodeInputmode = "url"
-)
-
-type CodePopover string
-
-const (
-	CodePopoverAuto   CodePopover = "auto"
-	CodePopoverHint   CodePopover = "hint"
-	CodePopoverManual CodePopover = "manual"
-	CodePopoverEmpty  CodePopover = ""
-)
-
-type CodeSpellcheck string
-
-const (
-	CodeSpellcheckFalse CodeSpellcheck = "false"
-	CodeSpellcheckTrue  CodeSpellcheck = "true"
-	CodeSpellcheckEmpty CodeSpellcheck = ""
-)
-
-type CodeTranslate string
-
-const (
-	CodeTranslateNo    CodeTranslate = "no"
-	CodeTranslateYes   CodeTranslate = "yes"
-	CodeTranslateEmpty CodeTranslate = ""
-)
-
-type CodeWritingsuggestions string
-
-const (
-	CodeWritingsuggestionsFalse CodeWritingsuggestions = "false"
-	CodeWritingsuggestionsTrue  CodeWritingsuggestions = "true"
-	CodeWritingsuggestionsEmpty CodeWritingsuggestions = ""
-)
-
 func (e *CodeElement) Accesskey(r rune) *CodeElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *CodeElement) Aria(name string, s string) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Autocapitalize(a CodeAutocapitalize) *CodeElement {
+func (e *CodeElement) Autocapitalize(a Autocapitalize) *CodeElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *CodeElement) Autocapitalize(a CodeAutocapitalize) *CodeElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Autocorrect(v ...CodeAutocorrect) *CodeElement {
-	var val CodeAutocorrect
+func (e *CodeElement) Autocorrect(v ...Autocorrect) *CodeElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *CodeElement) Class(s ...string) *CodeElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Contenteditable(v ...CodeContenteditable) *CodeElement {
-	var val CodeContenteditable
+func (e *CodeElement) Contenteditable(v ...Contenteditable) *CodeElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *CodeElement) Data(name string, s string) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Dir(a CodeDir) *CodeElement {
+func (e *CodeElement) Dir(a Dir) *CodeElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *CodeElement) Draggable(a CodeDraggable) *CodeElement {
+func (e *CodeElement) Draggable(a Draggable) *CodeElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *CodeElement) Enterkeyhint(a CodeEnterkeyhint) *CodeElement {
+func (e *CodeElement) Enterkeyhint(a Enterkeyhint) *CodeElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *CodeElement) Headingreset(b bool) *CodeElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Hidden(v ...CodeHidden) *CodeElement {
-	var val CodeHidden
+func (e *CodeElement) Hidden(v ...Hidden) *CodeElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *CodeElement) Inert(b bool) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Inputmode(a CodeInputmode) *CodeElement {
+func (e *CodeElement) Inputmode(a Inputmode) *CodeElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *CodeElement) Part(s ...string) *CodeElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Popover(v ...CodePopover) *CodeElement {
-	var val CodePopover
+func (e *CodeElement) Popover(v ...Popover) *CodeElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *CodeElement) Slot(s string) *CodeElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Spellcheck(v ...CodeSpellcheck) *CodeElement {
-	var val CodeSpellcheck
+func (e *CodeElement) Spellcheck(v ...Spellcheck) *CodeElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *CodeElement) Title(s string) *CodeElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Translate(v ...CodeTranslate) *CodeElement {
-	var val CodeTranslate
+func (e *CodeElement) Translate(v ...Translate) *CodeElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *CodeElement) Translate(v ...CodeTranslate) *CodeElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CodeElement) Writingsuggestions(v ...CodeWritingsuggestions) *CodeElement {
-	var val CodeWritingsuggestions
+func (e *CodeElement) Writingsuggestions(v ...Writingsuggestions) *CodeElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

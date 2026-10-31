@@ -13,16 +13,20 @@ import (
 )
 
 type EmElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Em creates a tag <em> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The em element represents stress emphasis of its contents.
-func Em(children ...htemel.Node) *EmElement {
+func Em(children ...htemel.PhrasingContent) *EmElement {
 	node := &EmElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Em(children ...htemel.Node) *EmElement {
 }
 
 // EmIf creates a tag <em> instance that is only rendered when condition is true.
-func EmIf(condition bool, children ...htemel.Node) *EmElement {
+func EmIf(condition bool, children ...htemel.PhrasingContent) *EmElement {
 	if condition {
 		return Em(children...)
 	}
@@ -43,7 +47,7 @@ func EmIf(condition bool, children ...htemel.Node) *EmElement {
 }
 
 // EmTernary creates a tag <em> containing then when condition is true, otherwise containing otherwise.
-func EmTernary(condition bool, then htemel.Node, otherwise htemel.Node) *EmElement {
+func EmTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *EmElement {
 	if condition {
 		return Em(then)
 	}
@@ -51,7 +55,7 @@ func EmTernary(condition bool, then htemel.Node, otherwise htemel.Node) *EmEleme
 }
 
 // Children appends children to this element.
-func (e *EmElement) Children(children ...htemel.Node) *EmElement {
+func (e *EmElement) Children(children ...htemel.PhrasingContent) *EmElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *EmElement) Textf(format string, args ...any) *EmElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *EmElement) If(cond bool, child htemel.Node) *EmElement {
+func (e *EmElement) If(cond bool, child htemel.PhrasingContent) *EmElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *EmElement) If(cond bool, child htemel.Node) *EmElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *EmElement) IfElse(cond bool, then, els htemel.Node) *EmElement {
+func (e *EmElement) IfElse(cond bool, then, els htemel.PhrasingContent) *EmElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *EmElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type EmAutocapitalize string
-
-const (
-	EmAutocapitalizeCharacters EmAutocapitalize = "characters"
-	EmAutocapitalizeNone       EmAutocapitalize = "none"
-	EmAutocapitalizeOff        EmAutocapitalize = "off"
-	EmAutocapitalizeOn         EmAutocapitalize = "on"
-	EmAutocapitalizeSentences  EmAutocapitalize = "sentences"
-	EmAutocapitalizeWords      EmAutocapitalize = "words"
-)
-
-type EmAutocorrect string
-
-const (
-	EmAutocorrectOff   EmAutocorrect = "off"
-	EmAutocorrectOn    EmAutocorrect = "on"
-	EmAutocorrectEmpty EmAutocorrect = ""
-)
-
-type EmContenteditable string
-
-const (
-	EmContenteditableFalse         EmContenteditable = "false"
-	EmContenteditablePlaintextOnly EmContenteditable = "plaintext-only"
-	EmContenteditableTrue          EmContenteditable = "true"
-	EmContenteditableEmpty         EmContenteditable = ""
-)
-
-type EmDir string
-
-const (
-	EmDirAuto EmDir = "auto"
-	EmDirLtr  EmDir = "ltr"
-	EmDirRtl  EmDir = "rtl"
-)
-
-type EmDraggable string
-
-const (
-	EmDraggableFalse EmDraggable = "false"
-	EmDraggableTrue  EmDraggable = "true"
-)
-
-type EmEnterkeyhint string
-
-const (
-	EmEnterkeyhintDone     EmEnterkeyhint = "done"
-	EmEnterkeyhintEnter    EmEnterkeyhint = "enter"
-	EmEnterkeyhintGo       EmEnterkeyhint = "go"
-	EmEnterkeyhintNext     EmEnterkeyhint = "next"
-	EmEnterkeyhintPrevious EmEnterkeyhint = "previous"
-	EmEnterkeyhintSearch   EmEnterkeyhint = "search"
-	EmEnterkeyhintSend     EmEnterkeyhint = "send"
-)
-
-type EmHidden string
-
-const (
-	EmHiddenHidden     EmHidden = "hidden"
-	EmHiddenUntilFound EmHidden = "until-found"
-	EmHiddenEmpty      EmHidden = ""
-)
-
-type EmInputmode string
-
-const (
-	EmInputmodeDecimal EmInputmode = "decimal"
-	EmInputmodeEmail   EmInputmode = "email"
-	EmInputmodeNone    EmInputmode = "none"
-	EmInputmodeNumeric EmInputmode = "numeric"
-	EmInputmodeSearch  EmInputmode = "search"
-	EmInputmodeTel     EmInputmode = "tel"
-	EmInputmodeText    EmInputmode = "text"
-	EmInputmodeUrl     EmInputmode = "url"
-)
-
-type EmPopover string
-
-const (
-	EmPopoverAuto   EmPopover = "auto"
-	EmPopoverHint   EmPopover = "hint"
-	EmPopoverManual EmPopover = "manual"
-	EmPopoverEmpty  EmPopover = ""
-)
-
-type EmSpellcheck string
-
-const (
-	EmSpellcheckFalse EmSpellcheck = "false"
-	EmSpellcheckTrue  EmSpellcheck = "true"
-	EmSpellcheckEmpty EmSpellcheck = ""
-)
-
-type EmTranslate string
-
-const (
-	EmTranslateNo    EmTranslate = "no"
-	EmTranslateYes   EmTranslate = "yes"
-	EmTranslateEmpty EmTranslate = ""
-)
-
-type EmWritingsuggestions string
-
-const (
-	EmWritingsuggestionsFalse EmWritingsuggestions = "false"
-	EmWritingsuggestionsTrue  EmWritingsuggestions = "true"
-	EmWritingsuggestionsEmpty EmWritingsuggestions = ""
-)
-
 func (e *EmElement) Accesskey(r rune) *EmElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *EmElement) Aria(name string, s string) *EmElement {
 	return e
 }
 
-func (e *EmElement) Autocapitalize(a EmAutocapitalize) *EmElement {
+func (e *EmElement) Autocapitalize(a Autocapitalize) *EmElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *EmElement) Autocapitalize(a EmAutocapitalize) *EmElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Autocorrect(v ...EmAutocorrect) *EmElement {
-	var val EmAutocorrect
+func (e *EmElement) Autocorrect(v ...Autocorrect) *EmElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *EmElement) Class(s ...string) *EmElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Contenteditable(v ...EmContenteditable) *EmElement {
-	var val EmContenteditable
+func (e *EmElement) Contenteditable(v ...Contenteditable) *EmElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *EmElement) Data(name string, s string) *EmElement {
 	return e
 }
 
-func (e *EmElement) Dir(a EmDir) *EmElement {
+func (e *EmElement) Dir(a Dir) *EmElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *EmElement) Draggable(a EmDraggable) *EmElement {
+func (e *EmElement) Draggable(a Draggable) *EmElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *EmElement) Enterkeyhint(a EmEnterkeyhint) *EmElement {
+func (e *EmElement) Enterkeyhint(a Enterkeyhint) *EmElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *EmElement) Headingreset(b bool) *EmElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Hidden(v ...EmHidden) *EmElement {
-	var val EmHidden
+func (e *EmElement) Hidden(v ...Hidden) *EmElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *EmElement) Inert(b bool) *EmElement {
 	return e
 }
 
-func (e *EmElement) Inputmode(a EmInputmode) *EmElement {
+func (e *EmElement) Inputmode(a Inputmode) *EmElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *EmElement) Part(s ...string) *EmElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Popover(v ...EmPopover) *EmElement {
-	var val EmPopover
+func (e *EmElement) Popover(v ...Popover) *EmElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *EmElement) Slot(s string) *EmElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Spellcheck(v ...EmSpellcheck) *EmElement {
-	var val EmSpellcheck
+func (e *EmElement) Spellcheck(v ...Spellcheck) *EmElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *EmElement) Title(s string) *EmElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Translate(v ...EmTranslate) *EmElement {
-	var val EmTranslate
+func (e *EmElement) Translate(v ...Translate) *EmElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *EmElement) Translate(v ...EmTranslate) *EmElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmElement) Writingsuggestions(v ...EmWritingsuggestions) *EmElement {
-	var val EmWritingsuggestions
+func (e *EmElement) Writingsuggestions(v ...Writingsuggestions) *EmElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

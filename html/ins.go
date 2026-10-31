@@ -13,16 +13,22 @@ import (
 )
 
 type InsElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Ins creates a tag <ins> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <ins> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The ins element represents an addition to the document.
-func Ins(children ...htemel.Node) *InsElement {
+func Ins(children ...htemel.FlowContent) *InsElement {
 	node := &InsElement{
 		children: children,
 	}
@@ -31,7 +37,7 @@ func Ins(children ...htemel.Node) *InsElement {
 }
 
 // InsIf creates a tag <ins> instance that is only rendered when condition is true.
-func InsIf(condition bool, children ...htemel.Node) *InsElement {
+func InsIf(condition bool, children ...htemel.FlowContent) *InsElement {
 	if condition {
 		return Ins(children...)
 	}
@@ -43,7 +49,7 @@ func InsIf(condition bool, children ...htemel.Node) *InsElement {
 }
 
 // InsTernary creates a tag <ins> containing then when condition is true, otherwise containing otherwise.
-func InsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *InsElement {
+func InsTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *InsElement {
 	if condition {
 		return Ins(then)
 	}
@@ -51,7 +57,7 @@ func InsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *InsEle
 }
 
 // Children appends children to this element.
-func (e *InsElement) Children(children ...htemel.Node) *InsElement {
+func (e *InsElement) Children(children ...htemel.FlowContent) *InsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +80,7 @@ func (e *InsElement) Textf(format string, args ...any) *InsElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *InsElement) If(cond bool, child htemel.Node) *InsElement {
+func (e *InsElement) If(cond bool, child htemel.FlowContent) *InsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +88,7 @@ func (e *InsElement) If(cond bool, child htemel.Node) *InsElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *InsElement) IfElse(cond bool, then, els htemel.Node) *InsElement {
+func (e *InsElement) IfElse(cond bool, then, els htemel.FlowContent) *InsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +170,6 @@ func (e *InsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type InsAutocapitalize string
-
-const (
-	InsAutocapitalizeCharacters InsAutocapitalize = "characters"
-	InsAutocapitalizeNone       InsAutocapitalize = "none"
-	InsAutocapitalizeOff        InsAutocapitalize = "off"
-	InsAutocapitalizeOn         InsAutocapitalize = "on"
-	InsAutocapitalizeSentences  InsAutocapitalize = "sentences"
-	InsAutocapitalizeWords      InsAutocapitalize = "words"
-)
-
-type InsAutocorrect string
-
-const (
-	InsAutocorrectOff   InsAutocorrect = "off"
-	InsAutocorrectOn    InsAutocorrect = "on"
-	InsAutocorrectEmpty InsAutocorrect = ""
-)
-
-type InsContenteditable string
-
-const (
-	InsContenteditableFalse         InsContenteditable = "false"
-	InsContenteditablePlaintextOnly InsContenteditable = "plaintext-only"
-	InsContenteditableTrue          InsContenteditable = "true"
-	InsContenteditableEmpty         InsContenteditable = ""
-)
-
-type InsDir string
-
-const (
-	InsDirAuto InsDir = "auto"
-	InsDirLtr  InsDir = "ltr"
-	InsDirRtl  InsDir = "rtl"
-)
-
-type InsDraggable string
-
-const (
-	InsDraggableFalse InsDraggable = "false"
-	InsDraggableTrue  InsDraggable = "true"
-)
-
-type InsEnterkeyhint string
-
-const (
-	InsEnterkeyhintDone     InsEnterkeyhint = "done"
-	InsEnterkeyhintEnter    InsEnterkeyhint = "enter"
-	InsEnterkeyhintGo       InsEnterkeyhint = "go"
-	InsEnterkeyhintNext     InsEnterkeyhint = "next"
-	InsEnterkeyhintPrevious InsEnterkeyhint = "previous"
-	InsEnterkeyhintSearch   InsEnterkeyhint = "search"
-	InsEnterkeyhintSend     InsEnterkeyhint = "send"
-)
-
-type InsHidden string
-
-const (
-	InsHiddenHidden     InsHidden = "hidden"
-	InsHiddenUntilFound InsHidden = "until-found"
-	InsHiddenEmpty      InsHidden = ""
-)
-
-type InsInputmode string
-
-const (
-	InsInputmodeDecimal InsInputmode = "decimal"
-	InsInputmodeEmail   InsInputmode = "email"
-	InsInputmodeNone    InsInputmode = "none"
-	InsInputmodeNumeric InsInputmode = "numeric"
-	InsInputmodeSearch  InsInputmode = "search"
-	InsInputmodeTel     InsInputmode = "tel"
-	InsInputmodeText    InsInputmode = "text"
-	InsInputmodeUrl     InsInputmode = "url"
-)
-
-type InsPopover string
-
-const (
-	InsPopoverAuto   InsPopover = "auto"
-	InsPopoverHint   InsPopover = "hint"
-	InsPopoverManual InsPopover = "manual"
-	InsPopoverEmpty  InsPopover = ""
-)
-
-type InsSpellcheck string
-
-const (
-	InsSpellcheckFalse InsSpellcheck = "false"
-	InsSpellcheckTrue  InsSpellcheck = "true"
-	InsSpellcheckEmpty InsSpellcheck = ""
-)
-
-type InsTranslate string
-
-const (
-	InsTranslateNo    InsTranslate = "no"
-	InsTranslateYes   InsTranslate = "yes"
-	InsTranslateEmpty InsTranslate = ""
-)
-
-type InsWritingsuggestions string
-
-const (
-	InsWritingsuggestionsFalse InsWritingsuggestions = "false"
-	InsWritingsuggestionsTrue  InsWritingsuggestions = "true"
-	InsWritingsuggestionsEmpty InsWritingsuggestions = ""
-)
-
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *InsElement) Cite(s string) *InsElement {
@@ -309,7 +206,7 @@ func (e *InsElement) Aria(name string, s string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Autocapitalize(a InsAutocapitalize) *InsElement {
+func (e *InsElement) Autocapitalize(a Autocapitalize) *InsElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -317,8 +214,8 @@ func (e *InsElement) Autocapitalize(a InsAutocapitalize) *InsElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Autocorrect(v ...InsAutocorrect) *InsElement {
-	var val InsAutocorrect
+func (e *InsElement) Autocorrect(v ...Autocorrect) *InsElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -343,8 +240,8 @@ func (e *InsElement) Class(s ...string) *InsElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Contenteditable(v ...InsContenteditable) *InsElement {
-	var val InsContenteditable
+func (e *InsElement) Contenteditable(v ...Contenteditable) *InsElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -369,19 +266,19 @@ func (e *InsElement) Data(name string, s string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Dir(a InsDir) *InsElement {
+func (e *InsElement) Dir(a Dir) *InsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *InsElement) Draggable(a InsDraggable) *InsElement {
+func (e *InsElement) Draggable(a Draggable) *InsElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *InsElement) Enterkeyhint(a InsEnterkeyhint) *InsElement {
+func (e *InsElement) Enterkeyhint(a Enterkeyhint) *InsElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -409,8 +306,8 @@ func (e *InsElement) Headingreset(b bool) *InsElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Hidden(v ...InsHidden) *InsElement {
-	var val InsHidden
+func (e *InsElement) Hidden(v ...Hidden) *InsElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -433,7 +330,7 @@ func (e *InsElement) Inert(b bool) *InsElement {
 	return e
 }
 
-func (e *InsElement) Inputmode(a InsInputmode) *InsElement {
+func (e *InsElement) Inputmode(a Inputmode) *InsElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -499,8 +396,8 @@ func (e *InsElement) Part(s ...string) *InsElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Popover(v ...InsPopover) *InsElement {
-	var val InsPopover
+func (e *InsElement) Popover(v ...Popover) *InsElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -523,8 +420,8 @@ func (e *InsElement) Slot(s string) *InsElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Spellcheck(v ...InsSpellcheck) *InsElement {
-	var val InsSpellcheck
+func (e *InsElement) Spellcheck(v ...Spellcheck) *InsElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -553,8 +450,8 @@ func (e *InsElement) Title(s string) *InsElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Translate(v ...InsTranslate) *InsElement {
-	var val InsTranslate
+func (e *InsElement) Translate(v ...Translate) *InsElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -565,8 +462,8 @@ func (e *InsElement) Translate(v ...InsTranslate) *InsElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InsElement) Writingsuggestions(v ...InsWritingsuggestions) *InsElement {
-	var val InsWritingsuggestions
+func (e *InsElement) Writingsuggestions(v ...Writingsuggestions) *InsElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

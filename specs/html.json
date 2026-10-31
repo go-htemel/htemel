@@ -69,7 +69,11 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent*"
+      }
     },
     {
       "tag": "abbr",
@@ -80,7 +84,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "address",
@@ -90,7 +102,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "area",
@@ -179,7 +199,11 @@
       "categories": [
         "flow",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "article",
@@ -190,7 +214,15 @@
         "flow",
         "palpable",
         "sectioning"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "aside",
@@ -201,7 +233,15 @@
         "flow",
         "palpable",
         "sectioning"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "audio",
@@ -284,7 +324,15 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "elements": [
+          "source",
+          "track"
+        ],
+        "note": "source*; track*; transparent*"
+      }
     },
     {
       "tag": "b",
@@ -295,7 +343,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "base",
@@ -317,7 +373,11 @@
       "interface": "HTMLBaseElement",
       "categories": [
         "metadata"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "bdi",
@@ -328,7 +388,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "bdo",
@@ -339,7 +407,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "blockquote",
@@ -357,7 +433,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "body",
@@ -437,7 +521,15 @@
         }
       ],
       "text": true,
-      "interface": "HTMLBodyElement"
+      "interface": "HTMLBodyElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "br",
@@ -447,7 +539,11 @@
       "categories": [
         "flow",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "button",
@@ -574,7 +670,15 @@
         "palpable",
         "phrasing",
         "submittable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*"
+      }
     },
     {
       "tag": "canvas",
@@ -598,13 +702,25 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent"
+      }
     },
     {
       "tag": "caption",
       "description": "The caption element represents the title of the table that is its parent, if it has a parent and that is a table element.",
       "text": true,
-      "interface": "HTMLTableCaptionElement"
+      "interface": "HTMLTableCaptionElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "cite",
@@ -615,7 +731,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "code",
@@ -626,7 +750,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "col",
@@ -639,7 +771,11 @@
         }
       ],
       "void": true,
-      "interface": "HTMLTableColElement"
+      "interface": "HTMLTableColElement",
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "colgroup",
@@ -651,7 +787,15 @@
           "attribute_type": "AttributeTypeNumber"
         }
       ],
-      "interface": "HTMLTableColElement"
+      "interface": "HTMLTableColElement",
+      "content_model": {
+        "kind": "children",
+        "elements": [
+          "col",
+          "template"
+        ],
+        "note": "col*; template*"
+      }
     },
     {
       "tag": "data",
@@ -669,7 +813,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "datalist",
@@ -679,13 +831,33 @@
       "categories": [
         "flow",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing",
+          "script-supporting"
+        ],
+        "elements": [
+          "option"
+        ],
+        "text": true,
+        "note": "phrasing*; option*; script-supporting elements*"
+      }
     },
     {
       "tag": "dd",
       "description": "The dd element represents the description, definition, or value, part of a term-description group in a description list (dl element).",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "del",
@@ -709,7 +881,11 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent"
+      }
     },
     {
       "tag": "details",
@@ -732,7 +908,18 @@
         "flow",
         "interactive",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "elements": [
+          "summary"
+        ],
+        "text": true,
+        "note": "summary*; flow"
+      }
     },
     {
       "tag": "dfn",
@@ -743,7 +930,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*"
+      }
     },
     {
       "tag": "dialog",
@@ -771,7 +966,15 @@
       "interface": "HTMLDialogElement",
       "categories": [
         "flow"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "div",
@@ -781,7 +984,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "dl",
@@ -790,13 +1001,33 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "dd",
+          "div",
+          "dt"
+        ],
+        "note": "dt*; dd*; div*; script-supporting elements"
+      }
     },
     {
       "tag": "dt",
       "description": "The dt element represents the term, or name, part of a term-description group in a description list (dl element).",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "em",
@@ -807,7 +1038,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "embed",
@@ -843,7 +1082,11 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "fieldset",
@@ -872,13 +1115,32 @@
         "form-associated",
         "listed",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "elements": [
+          "legend"
+        ],
+        "text": true,
+        "note": "legend*; flow"
+      }
     },
     {
       "tag": "figcaption",
       "description": "The figcaption element represents a caption or legend for the rest of the contents of the figcaption element's parent figure element, if any.",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "figure",
@@ -888,7 +1150,18 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "elements": [
+          "figcaption"
+        ],
+        "text": true,
+        "note": "figcaption*; flow"
+      }
     },
     {
       "tag": "footer",
@@ -898,7 +1171,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "form",
@@ -976,7 +1257,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "h1",
@@ -987,7 +1276,15 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "h2",
@@ -998,7 +1295,15 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "h3",
@@ -1009,7 +1314,15 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "h4",
@@ -1020,7 +1333,15 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "h5",
@@ -1031,7 +1352,15 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "h6",
@@ -1042,12 +1371,27 @@
         "flow",
         "heading",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "head",
       "description": "The head element represents a collection of metadata for the Document.",
-      "interface": "HTMLHeadElement"
+      "interface": "HTMLHeadElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "metadata"
+        ],
+        "note": "metadata content*"
+      }
     },
     {
       "tag": "header",
@@ -1057,7 +1401,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "hgroup",
@@ -1066,7 +1418,23 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "p"
+        ],
+        "note": "h1; h2; h3; h4; h5; h6; p; script-supporting elements"
+      }
     },
     {
       "tag": "hr",
@@ -1075,12 +1443,24 @@
       "interface": "HTMLHRElement",
       "categories": [
         "flow"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "html",
       "description": "The html element represents the root of an HTML document.",
-      "interface": "HTMLHtmlElement"
+      "interface": "HTMLHtmlElement",
+      "content_model": {
+        "kind": "children",
+        "elements": [
+          "body",
+          "head"
+        ],
+        "note": "head*; body*"
+      }
     },
     {
       "tag": "i",
@@ -1091,7 +1471,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "iframe",
@@ -1174,7 +1562,11 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty (Content model nothing, but not a void element: it takes an end tag.)"
+      }
     },
     {
       "tag": "img",
@@ -1299,7 +1691,11 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "input",
@@ -1557,7 +1953,11 @@
         "phrasing",
         "resettable",
         "submittable"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "ins",
@@ -1581,7 +1981,11 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent"
+      }
     },
     {
       "tag": "kbd",
@@ -1592,7 +1996,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "label",
@@ -1611,13 +2023,30 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*"
+      }
     },
     {
       "tag": "legend",
       "description": "The legend element represents a caption for the rest of the contents of the legend element's parent fieldset element, if any. Otherwise, if the legend has a parent optgroup element, then the legend represents the optgroup's label.",
       "text": true,
-      "interface": "HTMLLegendElement"
+      "interface": "HTMLLegendElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "heading",
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*; heading content"
+      }
     },
     {
       "tag": "li",
@@ -1630,7 +2059,15 @@
         }
       ],
       "text": true,
-      "interface": "HTMLLIElement"
+      "interface": "HTMLLIElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "link",
@@ -1749,7 +2186,11 @@
         "flow",
         "metadata",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "main",
@@ -1759,7 +2200,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "map",
@@ -1777,7 +2226,14 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "elements": [
+          "area"
+        ],
+        "note": "transparent; area*"
+      }
     },
     {
       "tag": "mark",
@@ -1788,7 +2244,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "menu",
@@ -1797,7 +2261,17 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "li"
+        ],
+        "note": "li; script-supporting elements"
+      }
     },
     {
       "tag": "meta",
@@ -1849,7 +2323,11 @@
         "flow",
         "metadata",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "meter",
@@ -1893,7 +2371,15 @@
         "labelable",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*"
+      }
     },
     {
       "tag": "nav",
@@ -1904,7 +2390,15 @@
         "flow",
         "palpable",
         "sectioning"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "noscript",
@@ -1915,7 +2409,16 @@
         "flow",
         "metadata",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "elements": [
+          "link",
+          "meta",
+          "style"
+        ],
+        "note": "varies* (index). When scripting is disabled: in head, zero or more link, style and meta elements; elsewhere transparent (with no noscript descendants). When scripting is enabled: text that would parse as described."
+      }
     },
     {
       "tag": "object",
@@ -1963,7 +2466,11 @@
         "listed",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent"
+      }
     },
     {
       "tag": "ol",
@@ -1989,7 +2496,17 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "li"
+        ],
+        "note": "li; script-supporting elements"
+      }
     },
     {
       "tag": "optgroup",
@@ -2006,7 +2523,20 @@
           "attribute_type": "AttributeTypeString"
         }
       ],
-      "interface": "HTMLOptGroupElement"
+      "interface": "HTMLOptGroupElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "div",
+          "legend",
+          "noscript",
+          "option"
+        ],
+        "note": "option*; script-supporting elements*; noscript*; div*; legend*"
+      }
     },
     {
       "tag": "option",
@@ -2034,7 +2564,18 @@
         }
       ],
       "text": true,
-      "interface": "HTMLOptionElement"
+      "interface": "HTMLOptionElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "elements": [
+          "div"
+        ],
+        "text": true,
+        "note": "text*; div*; phrasing*"
+      }
     },
     {
       "tag": "output",
@@ -2066,7 +2607,15 @@
         "palpable",
         "phrasing",
         "resettable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "p",
@@ -2076,7 +2625,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "picture",
@@ -2087,7 +2644,18 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "img",
+          "source"
+        ],
+        "note": "source*; one img; script-supporting elements"
+      }
     },
     {
       "tag": "pre",
@@ -2097,7 +2665,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "progress",
@@ -2121,7 +2697,15 @@
         "labelable",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing*"
+      }
     },
     {
       "tag": "q",
@@ -2140,19 +2724,40 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "rp",
       "description": "The rp element can be used to provide parentheses or other content around a ruby text component of a ruby annotation, to be shown by user agents that don't support ruby annotations.",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "text"
+      }
     },
     {
       "tag": "rt",
       "description": "The rt element marks the ruby text component of a ruby annotation. When it is the child of a ruby element, it doesn't represent anything itself, but the ruby element uses it as part of determining what it represents.",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "ruby",
@@ -2163,7 +2768,19 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "elements": [
+          "rp",
+          "rt"
+        ],
+        "text": true,
+        "note": "phrasing; rt; rp*"
+      }
     },
     {
       "tag": "s",
@@ -2174,7 +2791,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "samp",
@@ -2185,7 +2810,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "script",
@@ -2283,7 +2916,12 @@
         "metadata",
         "phrasing",
         "script-supporting"
-      ]
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "script, data, or script documentation*"
+      }
     },
     {
       "tag": "search",
@@ -2293,7 +2931,15 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "section",
@@ -2304,7 +2950,15 @@
         "flow",
         "palpable",
         "sectioning"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "select",
@@ -2357,13 +3011,32 @@
         "phrasing",
         "resettable",
         "submittable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "button",
+          "div",
+          "hr",
+          "noscript",
+          "optgroup",
+          "option"
+        ],
+        "note": "option*; optgroup*; hr*; script-supporting elements*; noscript*; div*; button*"
+      }
     },
     {
       "tag": "selectedcontent",
       "description": "The selectedcontent element reflects the contents of a select element's currently selected option element. selectedcontent elements can be used to declaratively show the selected option element's contents within the select element's first child button element.",
       "text": true,
-      "interface": "HTMLSelectedContentElement"
+      "interface": "HTMLSelectedContentElement",
+      "content_model": {
+        "kind": "empty",
+        "note": "empty (Content model nothing, but not a void element: it takes an end tag.)"
+      }
     },
     {
       "tag": "slot",
@@ -2380,7 +3053,11 @@
       "categories": [
         "flow",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent"
+      }
     },
     {
       "tag": "small",
@@ -2391,7 +3068,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "source",
@@ -2435,7 +3120,11 @@
         }
       ],
       "void": true,
-      "interface": "HTMLSourceElement"
+      "interface": "HTMLSourceElement",
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "span",
@@ -2446,7 +3135,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "strong",
@@ -2457,7 +3154,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "style",
@@ -2480,7 +3185,12 @@
       "categories": [
         "flow",
         "metadata"
-      ]
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "text*"
+      }
     },
     {
       "tag": "sub",
@@ -2491,13 +3201,30 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "summary",
       "description": "The summary element represents a summary, caption, or legend for the rest of the contents of the summary element's parent details element, if any.",
       "text": true,
-      "interface": "HTMLElement"
+      "interface": "HTMLElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "heading",
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing; heading content"
+      }
     },
     {
       "tag": "sup",
@@ -2508,7 +3235,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "table",
@@ -2517,12 +3252,37 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "caption",
+          "colgroup",
+          "tbody",
+          "tfoot",
+          "thead",
+          "tr"
+        ],
+        "note": "caption*; colgroup*; thead*; tbody*; tfoot*; tr*; script-supporting elements"
+      }
     },
     {
       "tag": "tbody",
       "description": "The tbody element represents a block of rows that consist of a body of data for the parent table element, if the tbody element has a parent and it is a table.",
-      "interface": "HTMLTableSectionElement"
+      "interface": "HTMLTableSectionElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "tr"
+        ],
+        "note": "tr; script-supporting elements"
+      }
     },
     {
       "tag": "td",
@@ -2545,7 +3305,15 @@
         }
       ],
       "text": true,
-      "interface": "HTMLTableCellElement"
+      "interface": "HTMLTableCellElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
     },
     {
       "tag": "template",
@@ -2606,7 +3374,11 @@
         "metadata",
         "phrasing",
         "script-supporting"
-      ]
+      ],
+      "content_model": {
+        "kind": "unknown",
+        "note": "empty (index). The template element itself has no children (content model nothing), but markup written inside it in the HTML syntax becomes the template contents (a DocumentFragment), which may hold any content, including elements such as tr or li that are invalid elsewhere. Treat as unchecked."
+      }
     },
     {
       "tag": "textarea",
@@ -2696,12 +3468,27 @@
         "phrasing",
         "resettable",
         "submittable"
-      ]
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "text"
+      }
     },
     {
       "tag": "tfoot",
       "description": "The tfoot element represents the block of rows that consist of the column summaries (footers) for the parent table element, if the tfoot element has a parent and it is a table.",
-      "interface": "HTMLTableSectionElement"
+      "interface": "HTMLTableSectionElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "tr"
+        ],
+        "note": "tr; script-supporting elements"
+      }
     },
     {
       "tag": "th",
@@ -2745,12 +3532,30 @@
       "interface": "HTMLTableCellElement",
       "categories": [
         "interactive"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
     },
     {
       "tag": "thead",
       "description": "The thead element represents the block of rows that consist of the column labels (headers) and any ancillary non-header cells for the parent table element, if the thead element has a parent and it is a table.",
-      "interface": "HTMLTableSectionElement"
+      "interface": "HTMLTableSectionElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "tr"
+        ],
+        "note": "tr; script-supporting elements"
+      }
     },
     {
       "tag": "time",
@@ -2768,7 +3573,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "title",
@@ -2777,12 +3590,28 @@
       "interface": "HTMLTitleElement",
       "categories": [
         "metadata"
-      ]
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "text*"
+      }
     },
     {
       "tag": "tr",
       "description": "The tr element represents a row of cells in a table.",
-      "interface": "HTMLTableRowElement"
+      "interface": "HTMLTableRowElement",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "td",
+          "th"
+        ],
+        "note": "th*; td; script-supporting elements"
+      }
     },
     {
       "tag": "track",
@@ -2825,7 +3654,11 @@
         }
       ],
       "void": true,
-      "interface": "HTMLTrackElement"
+      "interface": "HTMLTrackElement",
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     },
     {
       "tag": "u",
@@ -2836,7 +3669,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "ul",
@@ -2845,7 +3686,17 @@
       "categories": [
         "flow",
         "palpable"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "li"
+        ],
+        "note": "li; script-supporting elements"
+      }
     },
     {
       "tag": "var",
@@ -2856,7 +3707,15 @@
         "flow",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
     },
     {
       "tag": "video",
@@ -2964,7 +3823,15 @@
         "interactive",
         "palpable",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "elements": [
+          "source",
+          "track"
+        ],
+        "note": "source*; track*; transparent*"
+      }
     },
     {
       "tag": "wbr",
@@ -2974,7 +3841,11 @@
       "categories": [
         "flow",
         "phrasing"
-      ]
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
     }
   ],
   "attributes": [

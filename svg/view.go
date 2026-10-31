@@ -14,15 +14,17 @@ import (
 
 type ViewElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // View creates a tag <view> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The view element defines a named view of the SVG that can be targeted by a URL fragment.
-func View(children ...htemel.Node) *ViewElement {
+func View(children ...Content) *ViewElement {
 	node := &ViewElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func View(children ...htemel.Node) *ViewElement {
 }
 
 // ViewIf creates a tag <view> instance that is only rendered when condition is true.
-func ViewIf(condition bool, children ...htemel.Node) *ViewElement {
+func ViewIf(condition bool, children ...Content) *ViewElement {
 	if condition {
 		return View(children...)
 	}
@@ -43,7 +45,7 @@ func ViewIf(condition bool, children ...htemel.Node) *ViewElement {
 }
 
 // ViewTernary creates a tag <view> containing then when condition is true, otherwise containing otherwise.
-func ViewTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ViewElement {
+func ViewTernary(condition bool, then Content, otherwise Content) *ViewElement {
 	if condition {
 		return View(then)
 	}
@@ -51,7 +53,7 @@ func ViewTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ViewE
 }
 
 // Children appends children to this element.
-func (e *ViewElement) Children(children ...htemel.Node) *ViewElement {
+func (e *ViewElement) Children(children ...Content) *ViewElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *ViewElement) Textf(format string, args ...any) *ViewElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ViewElement) If(cond bool, child htemel.Node) *ViewElement {
+func (e *ViewElement) If(cond bool, child Content) *ViewElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *ViewElement) If(cond bool, child htemel.Node) *ViewElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ViewElement) IfElse(cond bool, then, els htemel.Node) *ViewElement {
+func (e *ViewElement) IfElse(cond bool, then, els Content) *ViewElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,226 +166,8 @@ func (e *ViewElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ViewZoomAndPan string
-
-const (
-	ViewZoomAndPanDisable ViewZoomAndPan = "disable"
-	ViewZoomAndPanMagnify ViewZoomAndPan = "magnify"
-)
-
-type ViewAlignmentBaseline string
-
-const (
-	ViewAlignmentBaselineAfterEdge      ViewAlignmentBaseline = "after-edge"
-	ViewAlignmentBaselineAlphabetic     ViewAlignmentBaseline = "alphabetic"
-	ViewAlignmentBaselineAuto           ViewAlignmentBaseline = "auto"
-	ViewAlignmentBaselineBaseline       ViewAlignmentBaseline = "baseline"
-	ViewAlignmentBaselineBeforeEdge     ViewAlignmentBaseline = "before-edge"
-	ViewAlignmentBaselineBottom         ViewAlignmentBaseline = "bottom"
-	ViewAlignmentBaselineCenter         ViewAlignmentBaseline = "center"
-	ViewAlignmentBaselineCentral        ViewAlignmentBaseline = "central"
-	ViewAlignmentBaselineHanging        ViewAlignmentBaseline = "hanging"
-	ViewAlignmentBaselineIdeographic    ViewAlignmentBaseline = "ideographic"
-	ViewAlignmentBaselineMathematical   ViewAlignmentBaseline = "mathematical"
-	ViewAlignmentBaselineMiddle         ViewAlignmentBaseline = "middle"
-	ViewAlignmentBaselineTextAfterEdge  ViewAlignmentBaseline = "text-after-edge"
-	ViewAlignmentBaselineTextBeforeEdge ViewAlignmentBaseline = "text-before-edge"
-	ViewAlignmentBaselineTextBottom     ViewAlignmentBaseline = "text-bottom"
-	ViewAlignmentBaselineTextTop        ViewAlignmentBaseline = "text-top"
-	ViewAlignmentBaselineTop            ViewAlignmentBaseline = "top"
-)
-
-type ViewClipRule string
-
-const (
-	ViewClipRuleEvenodd ViewClipRule = "evenodd"
-	ViewClipRuleNonzero ViewClipRule = "nonzero"
-)
-
-type ViewColorInterpolation string
-
-const (
-	ViewColorInterpolationAuto      ViewColorInterpolation = "auto"
-	ViewColorInterpolationLinearRGB ViewColorInterpolation = "linearRGB"
-	ViewColorInterpolationSRGB      ViewColorInterpolation = "sRGB"
-)
-
-type ViewColorInterpolationFilters string
-
-const (
-	ViewColorInterpolationFiltersAuto      ViewColorInterpolationFilters = "auto"
-	ViewColorInterpolationFiltersLinearRGB ViewColorInterpolationFilters = "linearRGB"
-	ViewColorInterpolationFiltersSRGB      ViewColorInterpolationFilters = "sRGB"
-)
-
-type ViewDirection string
-
-const (
-	ViewDirectionLtr ViewDirection = "ltr"
-	ViewDirectionRtl ViewDirection = "rtl"
-)
-
-type ViewDominantBaseline string
-
-const (
-	ViewDominantBaselineAlphabetic   ViewDominantBaseline = "alphabetic"
-	ViewDominantBaselineAuto         ViewDominantBaseline = "auto"
-	ViewDominantBaselineCentral      ViewDominantBaseline = "central"
-	ViewDominantBaselineHanging      ViewDominantBaseline = "hanging"
-	ViewDominantBaselineIdeographic  ViewDominantBaseline = "ideographic"
-	ViewDominantBaselineMathematical ViewDominantBaseline = "mathematical"
-	ViewDominantBaselineMiddle       ViewDominantBaseline = "middle"
-	ViewDominantBaselineTextBottom   ViewDominantBaseline = "text-bottom"
-	ViewDominantBaselineTextTop      ViewDominantBaseline = "text-top"
-)
-
-type ViewFillRule string
-
-const (
-	ViewFillRuleEvenodd ViewFillRule = "evenodd"
-	ViewFillRuleNonzero ViewFillRule = "nonzero"
-)
-
-type ViewFontStyle string
-
-const (
-	ViewFontStyleItalic  ViewFontStyle = "italic"
-	ViewFontStyleNormal  ViewFontStyle = "normal"
-	ViewFontStyleOblique ViewFontStyle = "oblique"
-)
-
-type ViewImageRendering string
-
-const (
-	ViewImageRenderingAuto            ViewImageRendering = "auto"
-	ViewImageRenderingCrispEdges      ViewImageRendering = "crisp-edges"
-	ViewImageRenderingHighQuality     ViewImageRendering = "high-quality"
-	ViewImageRenderingOptimizeQuality ViewImageRendering = "optimizeQuality"
-	ViewImageRenderingOptimizeSpeed   ViewImageRendering = "optimizeSpeed"
-	ViewImageRenderingPixelated       ViewImageRendering = "pixelated"
-	ViewImageRenderingSmooth          ViewImageRendering = "smooth"
-)
-
-type ViewOverflow string
-
-const (
-	ViewOverflowAuto    ViewOverflow = "auto"
-	ViewOverflowClip    ViewOverflow = "clip"
-	ViewOverflowHidden  ViewOverflow = "hidden"
-	ViewOverflowScroll  ViewOverflow = "scroll"
-	ViewOverflowVisible ViewOverflow = "visible"
-)
-
-type ViewPointerEvents string
-
-const (
-	ViewPointerEventsAll            ViewPointerEvents = "all"
-	ViewPointerEventsAuto           ViewPointerEvents = "auto"
-	ViewPointerEventsBoundingBox    ViewPointerEvents = "bounding-box"
-	ViewPointerEventsFill           ViewPointerEvents = "fill"
-	ViewPointerEventsNone           ViewPointerEvents = "none"
-	ViewPointerEventsPainted        ViewPointerEvents = "painted"
-	ViewPointerEventsStroke         ViewPointerEvents = "stroke"
-	ViewPointerEventsVisible        ViewPointerEvents = "visible"
-	ViewPointerEventsVisibleFill    ViewPointerEvents = "visibleFill"
-	ViewPointerEventsVisiblePainted ViewPointerEvents = "visiblePainted"
-	ViewPointerEventsVisibleStroke  ViewPointerEvents = "visibleStroke"
-)
-
-type ViewShapeRendering string
-
-const (
-	ViewShapeRenderingAuto               ViewShapeRendering = "auto"
-	ViewShapeRenderingCrispEdges         ViewShapeRendering = "crispEdges"
-	ViewShapeRenderingGeometricPrecision ViewShapeRendering = "geometricPrecision"
-	ViewShapeRenderingOptimizeSpeed      ViewShapeRendering = "optimizeSpeed"
-)
-
-type ViewStrokeLinecap string
-
-const (
-	ViewStrokeLinecapButt   ViewStrokeLinecap = "butt"
-	ViewStrokeLinecapRound  ViewStrokeLinecap = "round"
-	ViewStrokeLinecapSquare ViewStrokeLinecap = "square"
-)
-
-type ViewStrokeLinejoin string
-
-const (
-	ViewStrokeLinejoinArcs      ViewStrokeLinejoin = "arcs"
-	ViewStrokeLinejoinBevel     ViewStrokeLinejoin = "bevel"
-	ViewStrokeLinejoinMiter     ViewStrokeLinejoin = "miter"
-	ViewStrokeLinejoinMiterClip ViewStrokeLinejoin = "miter-clip"
-	ViewStrokeLinejoinRound     ViewStrokeLinejoin = "round"
-)
-
-type ViewTextAnchor string
-
-const (
-	ViewTextAnchorEnd    ViewTextAnchor = "end"
-	ViewTextAnchorMiddle ViewTextAnchor = "middle"
-	ViewTextAnchorStart  ViewTextAnchor = "start"
-)
-
-type ViewTextRendering string
-
-const (
-	ViewTextRenderingAuto               ViewTextRendering = "auto"
-	ViewTextRenderingGeometricPrecision ViewTextRendering = "geometricPrecision"
-	ViewTextRenderingOptimizeLegibility ViewTextRendering = "optimizeLegibility"
-	ViewTextRenderingOptimizeSpeed      ViewTextRendering = "optimizeSpeed"
-)
-
-type ViewTransformBox string
-
-const (
-	ViewTransformBoxBorderBox  ViewTransformBox = "border-box"
-	ViewTransformBoxContentBox ViewTransformBox = "content-box"
-	ViewTransformBoxFillBox    ViewTransformBox = "fill-box"
-	ViewTransformBoxStrokeBox  ViewTransformBox = "stroke-box"
-	ViewTransformBoxViewBox    ViewTransformBox = "view-box"
-)
-
-type ViewVectorEffect string
-
-const (
-	ViewVectorEffectFixedPosition    ViewVectorEffect = "fixed-position"
-	ViewVectorEffectNonRotation      ViewVectorEffect = "non-rotation"
-	ViewVectorEffectNonScalingSize   ViewVectorEffect = "non-scaling-size"
-	ViewVectorEffectNonScalingStroke ViewVectorEffect = "non-scaling-stroke"
-	ViewVectorEffectNone             ViewVectorEffect = "none"
-)
-
-type ViewVisibility string
-
-const (
-	ViewVisibilityCollapse ViewVisibility = "collapse"
-	ViewVisibilityHidden   ViewVisibility = "hidden"
-	ViewVisibilityVisible  ViewVisibility = "visible"
-)
-
-type ViewWritingMode string
-
-const (
-	ViewWritingModeHorizontalTb ViewWritingMode = "horizontal-tb"
-	ViewWritingModeLr           ViewWritingMode = "lr"
-	ViewWritingModeLrTb         ViewWritingMode = "lr-tb"
-	ViewWritingModeRl           ViewWritingMode = "rl"
-	ViewWritingModeRlTb         ViewWritingMode = "rl-tb"
-	ViewWritingModeSidewaysLr   ViewWritingMode = "sideways-lr"
-	ViewWritingModeSidewaysRl   ViewWritingMode = "sideways-rl"
-	ViewWritingModeTb           ViewWritingMode = "tb"
-	ViewWritingModeTbRl         ViewWritingMode = "tb-rl"
-	ViewWritingModeVerticalLr   ViewWritingMode = "vertical-lr"
-	ViewWritingModeVerticalRl   ViewWritingMode = "vertical-rl"
-)
-
-type ViewXmlSpace string
-
-const (
-	ViewXmlSpaceDefault  ViewXmlSpace = "default"
-	ViewXmlSpacePreserve ViewXmlSpace = "preserve"
-)
+// SVGContent marks <view> as a permitted child (Content).
+func (*ViewElement) SVGContent() {}
 
 func (e *ViewElement) PreserveAspectRatio(s string) *ViewElement {
 	e.attributes.Set("preserveAspectRatio", s)
@@ -400,20 +184,16 @@ func (e *ViewElement) ViewBox(s string) *ViewElement {
 // ZoomAndPan sets the "zoomAndPan" attribute.
 //
 // Deprecated: the "zoomAndPan" attribute is deprecated or obsolete in its source specification.
-func (e *ViewElement) ZoomAndPan(a ViewZoomAndPan) *ViewElement {
+func (e *ViewElement) ZoomAndPan(a ZoomAndPan) *ViewElement {
 	e.attributes.Set("zoomAndPan", string(a))
 
 	return e
 }
 
-func (e *ViewElement) AlignmentBaseline(a ViewAlignmentBaseline) *ViewElement {
+func (e *ViewElement) AlignmentBaseline(a AlignmentBaseline) *ViewElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func ViewAlignmentBaselineCustom(s string) ViewAlignmentBaseline {
-	return ViewAlignmentBaseline(s)
 }
 
 func (e *ViewElement) AriaUnsafe(name string, s string) *ViewElement {
@@ -467,14 +247,10 @@ func (e *ViewElement) ClipPath(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) ClipRule(a ViewClipRule) *ViewElement {
+func (e *ViewElement) ClipRule(a ClipRule) *ViewElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func ViewClipRuleCustom(s string) ViewClipRule {
-	return ViewClipRule(s)
 }
 
 func (e *ViewElement) Color(s string) *ViewElement {
@@ -483,24 +259,16 @@ func (e *ViewElement) Color(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) ColorInterpolation(a ViewColorInterpolation) *ViewElement {
+func (e *ViewElement) ColorInterpolation(a ColorInterpolation) *ViewElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func ViewColorInterpolationCustom(s string) ViewColorInterpolation {
-	return ViewColorInterpolation(s)
-}
-
-func (e *ViewElement) ColorInterpolationFilters(a ViewColorInterpolationFilters) *ViewElement {
+func (e *ViewElement) ColorInterpolationFilters(a ColorInterpolationFilters) *ViewElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func ViewColorInterpolationFiltersCustom(s string) ViewColorInterpolationFilters {
-	return ViewColorInterpolationFilters(s)
 }
 
 func (e *ViewElement) Cursor(s string) *ViewElement {
@@ -525,14 +293,10 @@ func (e *ViewElement) Data(name string, s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) Direction(a ViewDirection) *ViewElement {
+func (e *ViewElement) Direction(a Direction) *ViewElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func ViewDirectionCustom(s string) ViewDirection {
-	return ViewDirection(s)
 }
 
 func (e *ViewElement) Display(s string) *ViewElement {
@@ -541,14 +305,10 @@ func (e *ViewElement) Display(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) DominantBaseline(a ViewDominantBaseline) *ViewElement {
+func (e *ViewElement) DominantBaseline(a DominantBaseline) *ViewElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func ViewDominantBaselineCustom(s string) ViewDominantBaseline {
-	return ViewDominantBaseline(s)
 }
 
 func (e *ViewElement) Fill(s string) *ViewElement {
@@ -563,14 +323,10 @@ func (e *ViewElement) FillOpacity(f float64) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) FillRule(a ViewFillRule) *ViewElement {
+func (e *ViewElement) FillRule(a FillRule) *ViewElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func ViewFillRuleCustom(s string) ViewFillRule {
-	return ViewFillRule(s)
 }
 
 func (e *ViewElement) Filter(s string) *ViewElement {
@@ -615,14 +371,10 @@ func (e *ViewElement) FontStretch(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) FontStyle(a ViewFontStyle) *ViewElement {
+func (e *ViewElement) FontStyle(a FontStyle) *ViewElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func ViewFontStyleCustom(s string) ViewFontStyle {
-	return ViewFontStyle(s)
 }
 
 func (e *ViewElement) FontVariant(s string) *ViewElement {
@@ -661,14 +413,10 @@ func (e *ViewElement) Id(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) ImageRendering(a ViewImageRendering) *ViewElement {
+func (e *ViewElement) ImageRendering(a ImageRendering) *ViewElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func ViewImageRenderingCustom(s string) ViewImageRendering {
-	return ViewImageRendering(s)
 }
 
 func (e *ViewElement) Lang(s string) *ViewElement {
@@ -719,14 +467,10 @@ func (e *ViewElement) Opacity(f float64) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) Overflow(a ViewOverflow) *ViewElement {
+func (e *ViewElement) Overflow(a Overflow) *ViewElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func ViewOverflowCustom(s string) ViewOverflow {
-	return ViewOverflow(s)
 }
 
 func (e *ViewElement) PaintOrder(s string) *ViewElement {
@@ -735,14 +479,10 @@ func (e *ViewElement) PaintOrder(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) PointerEvents(a ViewPointerEvents) *ViewElement {
+func (e *ViewElement) PointerEvents(a PointerEvents) *ViewElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func ViewPointerEventsCustom(s string) ViewPointerEvents {
-	return ViewPointerEvents(s)
 }
 
 func (e *ViewElement) RequiredExtensions(s string) *ViewElement {
@@ -751,14 +491,10 @@ func (e *ViewElement) RequiredExtensions(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) ShapeRendering(a ViewShapeRendering) *ViewElement {
+func (e *ViewElement) ShapeRendering(a ShapeRendering) *ViewElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func ViewShapeRenderingCustom(s string) ViewShapeRendering {
-	return ViewShapeRendering(s)
 }
 
 func (e *ViewElement) StopColor(s string) *ViewElement {
@@ -791,24 +527,16 @@ func (e *ViewElement) StrokeDashoffset(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) StrokeLinecap(a ViewStrokeLinecap) *ViewElement {
+func (e *ViewElement) StrokeLinecap(a StrokeLinecap) *ViewElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func ViewStrokeLinecapCustom(s string) ViewStrokeLinecap {
-	return ViewStrokeLinecap(s)
-}
-
-func (e *ViewElement) StrokeLinejoin(a ViewStrokeLinejoin) *ViewElement {
+func (e *ViewElement) StrokeLinejoin(a StrokeLinejoin) *ViewElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func ViewStrokeLinejoinCustom(s string) ViewStrokeLinejoin {
-	return ViewStrokeLinejoin(s)
 }
 
 func (e *ViewElement) StrokeMiterlimit(f float64) *ViewElement {
@@ -841,14 +569,10 @@ func (e *ViewElement) Tabindex(i int) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) TextAnchor(a ViewTextAnchor) *ViewElement {
+func (e *ViewElement) TextAnchor(a TextAnchor) *ViewElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func ViewTextAnchorCustom(s string) ViewTextAnchor {
-	return ViewTextAnchor(s)
 }
 
 func (e *ViewElement) TextDecoration(s string) *ViewElement {
@@ -863,14 +587,10 @@ func (e *ViewElement) TextOverflow(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) TextRendering(a ViewTextRendering) *ViewElement {
+func (e *ViewElement) TextRendering(a TextRendering) *ViewElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func ViewTextRenderingCustom(s string) ViewTextRendering {
-	return ViewTextRendering(s)
 }
 
 func (e *ViewElement) Transform(s string) *ViewElement {
@@ -879,14 +599,10 @@ func (e *ViewElement) Transform(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) TransformBox(a ViewTransformBox) *ViewElement {
+func (e *ViewElement) TransformBox(a TransformBox) *ViewElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func ViewTransformBoxCustom(s string) ViewTransformBox {
-	return ViewTransformBox(s)
 }
 
 func (e *ViewElement) TransformOrigin(s string) *ViewElement {
@@ -901,24 +617,16 @@ func (e *ViewElement) UnicodeBidi(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) VectorEffect(a ViewVectorEffect) *ViewElement {
+func (e *ViewElement) VectorEffect(a VectorEffect) *ViewElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func ViewVectorEffectCustom(s string) ViewVectorEffect {
-	return ViewVectorEffect(s)
-}
-
-func (e *ViewElement) Visibility(a ViewVisibility) *ViewElement {
+func (e *ViewElement) Visibility(a Visibility) *ViewElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func ViewVisibilityCustom(s string) ViewVisibility {
-	return ViewVisibility(s)
 }
 
 func (e *ViewElement) WhiteSpace(s string) *ViewElement {
@@ -933,14 +641,10 @@ func (e *ViewElement) WordSpacing(s string) *ViewElement {
 	return e
 }
 
-func (e *ViewElement) WritingMode(a ViewWritingMode) *ViewElement {
+func (e *ViewElement) WritingMode(a WritingMode) *ViewElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func ViewWritingModeCustom(s string) ViewWritingMode {
-	return ViewWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -955,7 +659,7 @@ func (e *ViewElement) XmlLang(s string) *ViewElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *ViewElement) XmlSpace(a ViewXmlSpace) *ViewElement {
+func (e *ViewElement) XmlSpace(a XmlSpace) *ViewElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

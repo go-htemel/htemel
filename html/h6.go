@@ -13,16 +13,21 @@ import (
 )
 
 type H6Element struct {
+	htemel.FlowMarker
+	htemel.HeadingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // H6 creates a tag <h6> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: These elements represent headings for their sections.
-func H6(children ...htemel.Node) *H6Element {
+func H6(children ...htemel.PhrasingContent) *H6Element {
 	node := &H6Element{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func H6(children ...htemel.Node) *H6Element {
 }
 
 // H6If creates a tag <h6> instance that is only rendered when condition is true.
-func H6If(condition bool, children ...htemel.Node) *H6Element {
+func H6If(condition bool, children ...htemel.PhrasingContent) *H6Element {
 	if condition {
 		return H6(children...)
 	}
@@ -43,7 +48,7 @@ func H6If(condition bool, children ...htemel.Node) *H6Element {
 }
 
 // H6Ternary creates a tag <h6> containing then when condition is true, otherwise containing otherwise.
-func H6Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H6Element {
+func H6Ternary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *H6Element {
 	if condition {
 		return H6(then)
 	}
@@ -51,7 +56,7 @@ func H6Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H6Eleme
 }
 
 // Children appends children to this element.
-func (e *H6Element) Children(children ...htemel.Node) *H6Element {
+func (e *H6Element) Children(children ...htemel.PhrasingContent) *H6Element {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *H6Element) Textf(format string, args ...any) *H6Element {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *H6Element) If(cond bool, child htemel.Node) *H6Element {
+func (e *H6Element) If(cond bool, child htemel.PhrasingContent) *H6Element {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *H6Element) If(cond bool, child htemel.Node) *H6Element {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *H6Element) IfElse(cond bool, then, els htemel.Node) *H6Element {
+func (e *H6Element) IfElse(cond bool, then, els htemel.PhrasingContent) *H6Element {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +169,8 @@ func (e *H6Element) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type H6Autocapitalize string
-
-const (
-	H6AutocapitalizeCharacters H6Autocapitalize = "characters"
-	H6AutocapitalizeNone       H6Autocapitalize = "none"
-	H6AutocapitalizeOff        H6Autocapitalize = "off"
-	H6AutocapitalizeOn         H6Autocapitalize = "on"
-	H6AutocapitalizeSentences  H6Autocapitalize = "sentences"
-	H6AutocapitalizeWords      H6Autocapitalize = "words"
-)
-
-type H6Autocorrect string
-
-const (
-	H6AutocorrectOff   H6Autocorrect = "off"
-	H6AutocorrectOn    H6Autocorrect = "on"
-	H6AutocorrectEmpty H6Autocorrect = ""
-)
-
-type H6Contenteditable string
-
-const (
-	H6ContenteditableFalse         H6Contenteditable = "false"
-	H6ContenteditablePlaintextOnly H6Contenteditable = "plaintext-only"
-	H6ContenteditableTrue          H6Contenteditable = "true"
-	H6ContenteditableEmpty         H6Contenteditable = ""
-)
-
-type H6Dir string
-
-const (
-	H6DirAuto H6Dir = "auto"
-	H6DirLtr  H6Dir = "ltr"
-	H6DirRtl  H6Dir = "rtl"
-)
-
-type H6Draggable string
-
-const (
-	H6DraggableFalse H6Draggable = "false"
-	H6DraggableTrue  H6Draggable = "true"
-)
-
-type H6Enterkeyhint string
-
-const (
-	H6EnterkeyhintDone     H6Enterkeyhint = "done"
-	H6EnterkeyhintEnter    H6Enterkeyhint = "enter"
-	H6EnterkeyhintGo       H6Enterkeyhint = "go"
-	H6EnterkeyhintNext     H6Enterkeyhint = "next"
-	H6EnterkeyhintPrevious H6Enterkeyhint = "previous"
-	H6EnterkeyhintSearch   H6Enterkeyhint = "search"
-	H6EnterkeyhintSend     H6Enterkeyhint = "send"
-)
-
-type H6Hidden string
-
-const (
-	H6HiddenHidden     H6Hidden = "hidden"
-	H6HiddenUntilFound H6Hidden = "until-found"
-	H6HiddenEmpty      H6Hidden = ""
-)
-
-type H6Inputmode string
-
-const (
-	H6InputmodeDecimal H6Inputmode = "decimal"
-	H6InputmodeEmail   H6Inputmode = "email"
-	H6InputmodeNone    H6Inputmode = "none"
-	H6InputmodeNumeric H6Inputmode = "numeric"
-	H6InputmodeSearch  H6Inputmode = "search"
-	H6InputmodeTel     H6Inputmode = "tel"
-	H6InputmodeText    H6Inputmode = "text"
-	H6InputmodeUrl     H6Inputmode = "url"
-)
-
-type H6Popover string
-
-const (
-	H6PopoverAuto   H6Popover = "auto"
-	H6PopoverHint   H6Popover = "hint"
-	H6PopoverManual H6Popover = "manual"
-	H6PopoverEmpty  H6Popover = ""
-)
-
-type H6Spellcheck string
-
-const (
-	H6SpellcheckFalse H6Spellcheck = "false"
-	H6SpellcheckTrue  H6Spellcheck = "true"
-	H6SpellcheckEmpty H6Spellcheck = ""
-)
-
-type H6Translate string
-
-const (
-	H6TranslateNo    H6Translate = "no"
-	H6TranslateYes   H6Translate = "yes"
-	H6TranslateEmpty H6Translate = ""
-)
-
-type H6Writingsuggestions string
-
-const (
-	H6WritingsuggestionsFalse H6Writingsuggestions = "false"
-	H6WritingsuggestionsTrue  H6Writingsuggestions = "true"
-	H6WritingsuggestionsEmpty H6Writingsuggestions = ""
-)
+// HTMLHgroupChild marks <h6> as a permitted child of <hgroup> (HgroupChild).
+func (*H6Element) HTMLHgroupChild() {}
 
 func (e *H6Element) Accesskey(r rune) *H6Element {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +194,7 @@ func (e *H6Element) Aria(name string, s string) *H6Element {
 	return e
 }
 
-func (e *H6Element) Autocapitalize(a H6Autocapitalize) *H6Element {
+func (e *H6Element) Autocapitalize(a Autocapitalize) *H6Element {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +202,8 @@ func (e *H6Element) Autocapitalize(a H6Autocapitalize) *H6Element {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Autocorrect(v ...H6Autocorrect) *H6Element {
-	var val H6Autocorrect
+func (e *H6Element) Autocorrect(v ...Autocorrect) *H6Element {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +228,8 @@ func (e *H6Element) Class(s ...string) *H6Element {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Contenteditable(v ...H6Contenteditable) *H6Element {
-	var val H6Contenteditable
+func (e *H6Element) Contenteditable(v ...Contenteditable) *H6Element {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +254,19 @@ func (e *H6Element) Data(name string, s string) *H6Element {
 	return e
 }
 
-func (e *H6Element) Dir(a H6Dir) *H6Element {
+func (e *H6Element) Dir(a Dir) *H6Element {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *H6Element) Draggable(a H6Draggable) *H6Element {
+func (e *H6Element) Draggable(a Draggable) *H6Element {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *H6Element) Enterkeyhint(a H6Enterkeyhint) *H6Element {
+func (e *H6Element) Enterkeyhint(a Enterkeyhint) *H6Element {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +294,8 @@ func (e *H6Element) Headingreset(b bool) *H6Element {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Hidden(v ...H6Hidden) *H6Element {
-	var val H6Hidden
+func (e *H6Element) Hidden(v ...Hidden) *H6Element {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +318,7 @@ func (e *H6Element) Inert(b bool) *H6Element {
 	return e
 }
 
-func (e *H6Element) Inputmode(a H6Inputmode) *H6Element {
+func (e *H6Element) Inputmode(a Inputmode) *H6Element {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +384,8 @@ func (e *H6Element) Part(s ...string) *H6Element {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Popover(v ...H6Popover) *H6Element {
-	var val H6Popover
+func (e *H6Element) Popover(v ...Popover) *H6Element {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +408,8 @@ func (e *H6Element) Slot(s string) *H6Element {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Spellcheck(v ...H6Spellcheck) *H6Element {
-	var val H6Spellcheck
+func (e *H6Element) Spellcheck(v ...Spellcheck) *H6Element {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +438,8 @@ func (e *H6Element) Title(s string) *H6Element {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Translate(v ...H6Translate) *H6Element {
-	var val H6Translate
+func (e *H6Element) Translate(v ...Translate) *H6Element {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +450,8 @@ func (e *H6Element) Translate(v ...H6Translate) *H6Element {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H6Element) Writingsuggestions(v ...H6Writingsuggestions) *H6Element {
-	var val H6Writingsuggestions
+func (e *H6Element) Writingsuggestions(v ...Writingsuggestions) *H6Element {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

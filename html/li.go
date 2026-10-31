@@ -14,15 +14,17 @@ import (
 
 type LiElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Li creates a tag <li> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The li element represents a list item. If its parent element is an ol, ul, or menu element, then the element is an item of the parent element's list, as defined for those elements. Otherwise, the list item has no defined list-related relationship to any other li element.
-func Li(children ...htemel.Node) *LiElement {
+func Li(children ...htemel.FlowContent) *LiElement {
 	node := &LiElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Li(children ...htemel.Node) *LiElement {
 }
 
 // LiIf creates a tag <li> instance that is only rendered when condition is true.
-func LiIf(condition bool, children ...htemel.Node) *LiElement {
+func LiIf(condition bool, children ...htemel.FlowContent) *LiElement {
 	if condition {
 		return Li(children...)
 	}
@@ -43,7 +45,7 @@ func LiIf(condition bool, children ...htemel.Node) *LiElement {
 }
 
 // LiTernary creates a tag <li> containing then when condition is true, otherwise containing otherwise.
-func LiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LiElement {
+func LiTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *LiElement {
 	if condition {
 		return Li(then)
 	}
@@ -51,7 +53,7 @@ func LiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LiEleme
 }
 
 // Children appends children to this element.
-func (e *LiElement) Children(children ...htemel.Node) *LiElement {
+func (e *LiElement) Children(children ...htemel.FlowContent) *LiElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *LiElement) Textf(format string, args ...any) *LiElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LiElement) If(cond bool, child htemel.Node) *LiElement {
+func (e *LiElement) If(cond bool, child htemel.FlowContent) *LiElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *LiElement) If(cond bool, child htemel.Node) *LiElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LiElement) IfElse(cond bool, then, els htemel.Node) *LiElement {
+func (e *LiElement) IfElse(cond bool, then, els htemel.FlowContent) *LiElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,14 @@ func (e *LiElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LiAutocapitalize string
+// HTMLMenuChild marks <li> as a permitted child of <menu> (MenuChild).
+func (*LiElement) HTMLMenuChild() {}
 
-const (
-	LiAutocapitalizeCharacters LiAutocapitalize = "characters"
-	LiAutocapitalizeNone       LiAutocapitalize = "none"
-	LiAutocapitalizeOff        LiAutocapitalize = "off"
-	LiAutocapitalizeOn         LiAutocapitalize = "on"
-	LiAutocapitalizeSentences  LiAutocapitalize = "sentences"
-	LiAutocapitalizeWords      LiAutocapitalize = "words"
-)
+// HTMLOlChild marks <li> as a permitted child of <ol> (OlChild).
+func (*LiElement) HTMLOlChild() {}
 
-type LiAutocorrect string
-
-const (
-	LiAutocorrectOff   LiAutocorrect = "off"
-	LiAutocorrectOn    LiAutocorrect = "on"
-	LiAutocorrectEmpty LiAutocorrect = ""
-)
-
-type LiContenteditable string
-
-const (
-	LiContenteditableFalse         LiContenteditable = "false"
-	LiContenteditablePlaintextOnly LiContenteditable = "plaintext-only"
-	LiContenteditableTrue          LiContenteditable = "true"
-	LiContenteditableEmpty         LiContenteditable = ""
-)
-
-type LiDir string
-
-const (
-	LiDirAuto LiDir = "auto"
-	LiDirLtr  LiDir = "ltr"
-	LiDirRtl  LiDir = "rtl"
-)
-
-type LiDraggable string
-
-const (
-	LiDraggableFalse LiDraggable = "false"
-	LiDraggableTrue  LiDraggable = "true"
-)
-
-type LiEnterkeyhint string
-
-const (
-	LiEnterkeyhintDone     LiEnterkeyhint = "done"
-	LiEnterkeyhintEnter    LiEnterkeyhint = "enter"
-	LiEnterkeyhintGo       LiEnterkeyhint = "go"
-	LiEnterkeyhintNext     LiEnterkeyhint = "next"
-	LiEnterkeyhintPrevious LiEnterkeyhint = "previous"
-	LiEnterkeyhintSearch   LiEnterkeyhint = "search"
-	LiEnterkeyhintSend     LiEnterkeyhint = "send"
-)
-
-type LiHidden string
-
-const (
-	LiHiddenHidden     LiHidden = "hidden"
-	LiHiddenUntilFound LiHidden = "until-found"
-	LiHiddenEmpty      LiHidden = ""
-)
-
-type LiInputmode string
-
-const (
-	LiInputmodeDecimal LiInputmode = "decimal"
-	LiInputmodeEmail   LiInputmode = "email"
-	LiInputmodeNone    LiInputmode = "none"
-	LiInputmodeNumeric LiInputmode = "numeric"
-	LiInputmodeSearch  LiInputmode = "search"
-	LiInputmodeTel     LiInputmode = "tel"
-	LiInputmodeText    LiInputmode = "text"
-	LiInputmodeUrl     LiInputmode = "url"
-)
-
-type LiPopover string
-
-const (
-	LiPopoverAuto   LiPopover = "auto"
-	LiPopoverHint   LiPopover = "hint"
-	LiPopoverManual LiPopover = "manual"
-	LiPopoverEmpty  LiPopover = ""
-)
-
-type LiSpellcheck string
-
-const (
-	LiSpellcheckFalse LiSpellcheck = "false"
-	LiSpellcheckTrue  LiSpellcheck = "true"
-	LiSpellcheckEmpty LiSpellcheck = ""
-)
-
-type LiTranslate string
-
-const (
-	LiTranslateNo    LiTranslate = "no"
-	LiTranslateYes   LiTranslate = "yes"
-	LiTranslateEmpty LiTranslate = ""
-)
-
-type LiWritingsuggestions string
-
-const (
-	LiWritingsuggestionsFalse LiWritingsuggestions = "false"
-	LiWritingsuggestionsTrue  LiWritingsuggestions = "true"
-	LiWritingsuggestionsEmpty LiWritingsuggestions = ""
-)
+// HTMLUlChild marks <li> as a permitted child of <ul> (UlChild).
+func (*LiElement) HTMLUlChild() {}
 
 func (e *LiElement) Value(i int) *LiElement {
 	e.attributes.Set("value", strconv.Itoa(i))
@@ -301,7 +203,7 @@ func (e *LiElement) Aria(name string, s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Autocapitalize(a LiAutocapitalize) *LiElement {
+func (e *LiElement) Autocapitalize(a Autocapitalize) *LiElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +211,8 @@ func (e *LiElement) Autocapitalize(a LiAutocapitalize) *LiElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Autocorrect(v ...LiAutocorrect) *LiElement {
-	var val LiAutocorrect
+func (e *LiElement) Autocorrect(v ...Autocorrect) *LiElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +237,8 @@ func (e *LiElement) Class(s ...string) *LiElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Contenteditable(v ...LiContenteditable) *LiElement {
-	var val LiContenteditable
+func (e *LiElement) Contenteditable(v ...Contenteditable) *LiElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +263,19 @@ func (e *LiElement) Data(name string, s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Dir(a LiDir) *LiElement {
+func (e *LiElement) Dir(a Dir) *LiElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *LiElement) Draggable(a LiDraggable) *LiElement {
+func (e *LiElement) Draggable(a Draggable) *LiElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *LiElement) Enterkeyhint(a LiEnterkeyhint) *LiElement {
+func (e *LiElement) Enterkeyhint(a Enterkeyhint) *LiElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +303,8 @@ func (e *LiElement) Headingreset(b bool) *LiElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Hidden(v ...LiHidden) *LiElement {
-	var val LiHidden
+func (e *LiElement) Hidden(v ...Hidden) *LiElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +327,7 @@ func (e *LiElement) Inert(b bool) *LiElement {
 	return e
 }
 
-func (e *LiElement) Inputmode(a LiInputmode) *LiElement {
+func (e *LiElement) Inputmode(a Inputmode) *LiElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +393,8 @@ func (e *LiElement) Part(s ...string) *LiElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Popover(v ...LiPopover) *LiElement {
-	var val LiPopover
+func (e *LiElement) Popover(v ...Popover) *LiElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +417,8 @@ func (e *LiElement) Slot(s string) *LiElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Spellcheck(v ...LiSpellcheck) *LiElement {
-	var val LiSpellcheck
+func (e *LiElement) Spellcheck(v ...Spellcheck) *LiElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +447,8 @@ func (e *LiElement) Title(s string) *LiElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Translate(v ...LiTranslate) *LiElement {
-	var val LiTranslate
+func (e *LiElement) Translate(v ...Translate) *LiElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +459,8 @@ func (e *LiElement) Translate(v ...LiTranslate) *LiElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LiElement) Writingsuggestions(v ...LiWritingsuggestions) *LiElement {
-	var val LiWritingsuggestions
+func (e *LiElement) Writingsuggestions(v ...Writingsuggestions) *LiElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -13,16 +13,20 @@ import (
 )
 
 type MainElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Main creates a tag <main> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The main element represents the dominant contents of the document.
-func Main(children ...htemel.Node) *MainElement {
+func Main(children ...htemel.FlowContent) *MainElement {
 	node := &MainElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Main(children ...htemel.Node) *MainElement {
 }
 
 // MainIf creates a tag <main> instance that is only rendered when condition is true.
-func MainIf(condition bool, children ...htemel.Node) *MainElement {
+func MainIf(condition bool, children ...htemel.FlowContent) *MainElement {
 	if condition {
 		return Main(children...)
 	}
@@ -43,7 +47,7 @@ func MainIf(condition bool, children ...htemel.Node) *MainElement {
 }
 
 // MainTernary creates a tag <main> containing then when condition is true, otherwise containing otherwise.
-func MainTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MainElement {
+func MainTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *MainElement {
 	if condition {
 		return Main(then)
 	}
@@ -51,7 +55,7 @@ func MainTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MainE
 }
 
 // Children appends children to this element.
-func (e *MainElement) Children(children ...htemel.Node) *MainElement {
+func (e *MainElement) Children(children ...htemel.FlowContent) *MainElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *MainElement) Textf(format string, args ...any) *MainElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MainElement) If(cond bool, child htemel.Node) *MainElement {
+func (e *MainElement) If(cond bool, child htemel.FlowContent) *MainElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *MainElement) If(cond bool, child htemel.Node) *MainElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MainElement) IfElse(cond bool, then, els htemel.Node) *MainElement {
+func (e *MainElement) IfElse(cond bool, then, els htemel.FlowContent) *MainElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *MainElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MainAutocapitalize string
-
-const (
-	MainAutocapitalizeCharacters MainAutocapitalize = "characters"
-	MainAutocapitalizeNone       MainAutocapitalize = "none"
-	MainAutocapitalizeOff        MainAutocapitalize = "off"
-	MainAutocapitalizeOn         MainAutocapitalize = "on"
-	MainAutocapitalizeSentences  MainAutocapitalize = "sentences"
-	MainAutocapitalizeWords      MainAutocapitalize = "words"
-)
-
-type MainAutocorrect string
-
-const (
-	MainAutocorrectOff   MainAutocorrect = "off"
-	MainAutocorrectOn    MainAutocorrect = "on"
-	MainAutocorrectEmpty MainAutocorrect = ""
-)
-
-type MainContenteditable string
-
-const (
-	MainContenteditableFalse         MainContenteditable = "false"
-	MainContenteditablePlaintextOnly MainContenteditable = "plaintext-only"
-	MainContenteditableTrue          MainContenteditable = "true"
-	MainContenteditableEmpty         MainContenteditable = ""
-)
-
-type MainDir string
-
-const (
-	MainDirAuto MainDir = "auto"
-	MainDirLtr  MainDir = "ltr"
-	MainDirRtl  MainDir = "rtl"
-)
-
-type MainDraggable string
-
-const (
-	MainDraggableFalse MainDraggable = "false"
-	MainDraggableTrue  MainDraggable = "true"
-)
-
-type MainEnterkeyhint string
-
-const (
-	MainEnterkeyhintDone     MainEnterkeyhint = "done"
-	MainEnterkeyhintEnter    MainEnterkeyhint = "enter"
-	MainEnterkeyhintGo       MainEnterkeyhint = "go"
-	MainEnterkeyhintNext     MainEnterkeyhint = "next"
-	MainEnterkeyhintPrevious MainEnterkeyhint = "previous"
-	MainEnterkeyhintSearch   MainEnterkeyhint = "search"
-	MainEnterkeyhintSend     MainEnterkeyhint = "send"
-)
-
-type MainHidden string
-
-const (
-	MainHiddenHidden     MainHidden = "hidden"
-	MainHiddenUntilFound MainHidden = "until-found"
-	MainHiddenEmpty      MainHidden = ""
-)
-
-type MainInputmode string
-
-const (
-	MainInputmodeDecimal MainInputmode = "decimal"
-	MainInputmodeEmail   MainInputmode = "email"
-	MainInputmodeNone    MainInputmode = "none"
-	MainInputmodeNumeric MainInputmode = "numeric"
-	MainInputmodeSearch  MainInputmode = "search"
-	MainInputmodeTel     MainInputmode = "tel"
-	MainInputmodeText    MainInputmode = "text"
-	MainInputmodeUrl     MainInputmode = "url"
-)
-
-type MainPopover string
-
-const (
-	MainPopoverAuto   MainPopover = "auto"
-	MainPopoverHint   MainPopover = "hint"
-	MainPopoverManual MainPopover = "manual"
-	MainPopoverEmpty  MainPopover = ""
-)
-
-type MainSpellcheck string
-
-const (
-	MainSpellcheckFalse MainSpellcheck = "false"
-	MainSpellcheckTrue  MainSpellcheck = "true"
-	MainSpellcheckEmpty MainSpellcheck = ""
-)
-
-type MainTranslate string
-
-const (
-	MainTranslateNo    MainTranslate = "no"
-	MainTranslateYes   MainTranslate = "yes"
-	MainTranslateEmpty MainTranslate = ""
-)
-
-type MainWritingsuggestions string
-
-const (
-	MainWritingsuggestionsFalse MainWritingsuggestions = "false"
-	MainWritingsuggestionsTrue  MainWritingsuggestions = "true"
-	MainWritingsuggestionsEmpty MainWritingsuggestions = ""
-)
-
 func (e *MainElement) Accesskey(r rune) *MainElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *MainElement) Aria(name string, s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Autocapitalize(a MainAutocapitalize) *MainElement {
+func (e *MainElement) Autocapitalize(a Autocapitalize) *MainElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *MainElement) Autocapitalize(a MainAutocapitalize) *MainElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Autocorrect(v ...MainAutocorrect) *MainElement {
-	var val MainAutocorrect
+func (e *MainElement) Autocorrect(v ...Autocorrect) *MainElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *MainElement) Class(s ...string) *MainElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Contenteditable(v ...MainContenteditable) *MainElement {
-	var val MainContenteditable
+func (e *MainElement) Contenteditable(v ...Contenteditable) *MainElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *MainElement) Data(name string, s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Dir(a MainDir) *MainElement {
+func (e *MainElement) Dir(a Dir) *MainElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MainElement) Draggable(a MainDraggable) *MainElement {
+func (e *MainElement) Draggable(a Draggable) *MainElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MainElement) Enterkeyhint(a MainEnterkeyhint) *MainElement {
+func (e *MainElement) Enterkeyhint(a Enterkeyhint) *MainElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *MainElement) Headingreset(b bool) *MainElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Hidden(v ...MainHidden) *MainElement {
-	var val MainHidden
+func (e *MainElement) Hidden(v ...Hidden) *MainElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *MainElement) Inert(b bool) *MainElement {
 	return e
 }
 
-func (e *MainElement) Inputmode(a MainInputmode) *MainElement {
+func (e *MainElement) Inputmode(a Inputmode) *MainElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *MainElement) Part(s ...string) *MainElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Popover(v ...MainPopover) *MainElement {
-	var val MainPopover
+func (e *MainElement) Popover(v ...Popover) *MainElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *MainElement) Slot(s string) *MainElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Spellcheck(v ...MainSpellcheck) *MainElement {
-	var val MainSpellcheck
+func (e *MainElement) Spellcheck(v ...Spellcheck) *MainElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *MainElement) Title(s string) *MainElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Translate(v ...MainTranslate) *MainElement {
-	var val MainTranslate
+func (e *MainElement) Translate(v ...Translate) *MainElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *MainElement) Translate(v ...MainTranslate) *MainElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MainElement) Writingsuggestions(v ...MainWritingsuggestions) *MainElement {
-	var val MainWritingsuggestions
+func (e *MainElement) Writingsuggestions(v ...Writingsuggestions) *MainElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type MetadataElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Metadata creates a tag <metadata> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The metadata element holds structured metadata about the SVG content.
-func Metadata(children ...htemel.Node) *MetadataElement {
+func Metadata(children ...Content) *MetadataElement {
 	node := &MetadataElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Metadata(children ...htemel.Node) *MetadataElement {
 }
 
 // MetadataIf creates a tag <metadata> instance that is only rendered when condition is true.
-func MetadataIf(condition bool, children ...htemel.Node) *MetadataElement {
+func MetadataIf(condition bool, children ...Content) *MetadataElement {
 	if condition {
 		return Metadata(children...)
 	}
@@ -43,7 +45,7 @@ func MetadataIf(condition bool, children ...htemel.Node) *MetadataElement {
 }
 
 // MetadataTernary creates a tag <metadata> containing then when condition is true, otherwise containing otherwise.
-func MetadataTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MetadataElement {
+func MetadataTernary(condition bool, then Content, otherwise Content) *MetadataElement {
 	if condition {
 		return Metadata(then)
 	}
@@ -51,7 +53,7 @@ func MetadataTernary(condition bool, then htemel.Node, otherwise htemel.Node) *M
 }
 
 // Children appends children to this element.
-func (e *MetadataElement) Children(children ...htemel.Node) *MetadataElement {
+func (e *MetadataElement) Children(children ...Content) *MetadataElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MetadataElement) Textf(format string, args ...any) *MetadataElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MetadataElement) If(cond bool, child htemel.Node) *MetadataElement {
+func (e *MetadataElement) If(cond bool, child Content) *MetadataElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MetadataElement) If(cond bool, child htemel.Node) *MetadataElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MetadataElement) IfElse(cond bool, then, els htemel.Node) *MetadataElement {
+func (e *MetadataElement) IfElse(cond bool, then, els Content) *MetadataElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,228 +166,13 @@ func (e *MetadataElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MetadataAlignmentBaseline string
+// SVGContent marks <metadata> as a permitted child (Content).
+func (*MetadataElement) SVGContent() {}
 
-const (
-	MetadataAlignmentBaselineAfterEdge      MetadataAlignmentBaseline = "after-edge"
-	MetadataAlignmentBaselineAlphabetic     MetadataAlignmentBaseline = "alphabetic"
-	MetadataAlignmentBaselineAuto           MetadataAlignmentBaseline = "auto"
-	MetadataAlignmentBaselineBaseline       MetadataAlignmentBaseline = "baseline"
-	MetadataAlignmentBaselineBeforeEdge     MetadataAlignmentBaseline = "before-edge"
-	MetadataAlignmentBaselineBottom         MetadataAlignmentBaseline = "bottom"
-	MetadataAlignmentBaselineCenter         MetadataAlignmentBaseline = "center"
-	MetadataAlignmentBaselineCentral        MetadataAlignmentBaseline = "central"
-	MetadataAlignmentBaselineHanging        MetadataAlignmentBaseline = "hanging"
-	MetadataAlignmentBaselineIdeographic    MetadataAlignmentBaseline = "ideographic"
-	MetadataAlignmentBaselineMathematical   MetadataAlignmentBaseline = "mathematical"
-	MetadataAlignmentBaselineMiddle         MetadataAlignmentBaseline = "middle"
-	MetadataAlignmentBaselineTextAfterEdge  MetadataAlignmentBaseline = "text-after-edge"
-	MetadataAlignmentBaselineTextBeforeEdge MetadataAlignmentBaseline = "text-before-edge"
-	MetadataAlignmentBaselineTextBottom     MetadataAlignmentBaseline = "text-bottom"
-	MetadataAlignmentBaselineTextTop        MetadataAlignmentBaseline = "text-top"
-	MetadataAlignmentBaselineTop            MetadataAlignmentBaseline = "top"
-)
-
-type MetadataClipRule string
-
-const (
-	MetadataClipRuleEvenodd MetadataClipRule = "evenodd"
-	MetadataClipRuleNonzero MetadataClipRule = "nonzero"
-)
-
-type MetadataColorInterpolation string
-
-const (
-	MetadataColorInterpolationAuto      MetadataColorInterpolation = "auto"
-	MetadataColorInterpolationLinearRGB MetadataColorInterpolation = "linearRGB"
-	MetadataColorInterpolationSRGB      MetadataColorInterpolation = "sRGB"
-)
-
-type MetadataColorInterpolationFilters string
-
-const (
-	MetadataColorInterpolationFiltersAuto      MetadataColorInterpolationFilters = "auto"
-	MetadataColorInterpolationFiltersLinearRGB MetadataColorInterpolationFilters = "linearRGB"
-	MetadataColorInterpolationFiltersSRGB      MetadataColorInterpolationFilters = "sRGB"
-)
-
-type MetadataDirection string
-
-const (
-	MetadataDirectionLtr MetadataDirection = "ltr"
-	MetadataDirectionRtl MetadataDirection = "rtl"
-)
-
-type MetadataDominantBaseline string
-
-const (
-	MetadataDominantBaselineAlphabetic   MetadataDominantBaseline = "alphabetic"
-	MetadataDominantBaselineAuto         MetadataDominantBaseline = "auto"
-	MetadataDominantBaselineCentral      MetadataDominantBaseline = "central"
-	MetadataDominantBaselineHanging      MetadataDominantBaseline = "hanging"
-	MetadataDominantBaselineIdeographic  MetadataDominantBaseline = "ideographic"
-	MetadataDominantBaselineMathematical MetadataDominantBaseline = "mathematical"
-	MetadataDominantBaselineMiddle       MetadataDominantBaseline = "middle"
-	MetadataDominantBaselineTextBottom   MetadataDominantBaseline = "text-bottom"
-	MetadataDominantBaselineTextTop      MetadataDominantBaseline = "text-top"
-)
-
-type MetadataFillRule string
-
-const (
-	MetadataFillRuleEvenodd MetadataFillRule = "evenodd"
-	MetadataFillRuleNonzero MetadataFillRule = "nonzero"
-)
-
-type MetadataFontStyle string
-
-const (
-	MetadataFontStyleItalic  MetadataFontStyle = "italic"
-	MetadataFontStyleNormal  MetadataFontStyle = "normal"
-	MetadataFontStyleOblique MetadataFontStyle = "oblique"
-)
-
-type MetadataImageRendering string
-
-const (
-	MetadataImageRenderingAuto            MetadataImageRendering = "auto"
-	MetadataImageRenderingCrispEdges      MetadataImageRendering = "crisp-edges"
-	MetadataImageRenderingHighQuality     MetadataImageRendering = "high-quality"
-	MetadataImageRenderingOptimizeQuality MetadataImageRendering = "optimizeQuality"
-	MetadataImageRenderingOptimizeSpeed   MetadataImageRendering = "optimizeSpeed"
-	MetadataImageRenderingPixelated       MetadataImageRendering = "pixelated"
-	MetadataImageRenderingSmooth          MetadataImageRendering = "smooth"
-)
-
-type MetadataOverflow string
-
-const (
-	MetadataOverflowAuto    MetadataOverflow = "auto"
-	MetadataOverflowClip    MetadataOverflow = "clip"
-	MetadataOverflowHidden  MetadataOverflow = "hidden"
-	MetadataOverflowScroll  MetadataOverflow = "scroll"
-	MetadataOverflowVisible MetadataOverflow = "visible"
-)
-
-type MetadataPointerEvents string
-
-const (
-	MetadataPointerEventsAll            MetadataPointerEvents = "all"
-	MetadataPointerEventsAuto           MetadataPointerEvents = "auto"
-	MetadataPointerEventsBoundingBox    MetadataPointerEvents = "bounding-box"
-	MetadataPointerEventsFill           MetadataPointerEvents = "fill"
-	MetadataPointerEventsNone           MetadataPointerEvents = "none"
-	MetadataPointerEventsPainted        MetadataPointerEvents = "painted"
-	MetadataPointerEventsStroke         MetadataPointerEvents = "stroke"
-	MetadataPointerEventsVisible        MetadataPointerEvents = "visible"
-	MetadataPointerEventsVisibleFill    MetadataPointerEvents = "visibleFill"
-	MetadataPointerEventsVisiblePainted MetadataPointerEvents = "visiblePainted"
-	MetadataPointerEventsVisibleStroke  MetadataPointerEvents = "visibleStroke"
-)
-
-type MetadataShapeRendering string
-
-const (
-	MetadataShapeRenderingAuto               MetadataShapeRendering = "auto"
-	MetadataShapeRenderingCrispEdges         MetadataShapeRendering = "crispEdges"
-	MetadataShapeRenderingGeometricPrecision MetadataShapeRendering = "geometricPrecision"
-	MetadataShapeRenderingOptimizeSpeed      MetadataShapeRendering = "optimizeSpeed"
-)
-
-type MetadataStrokeLinecap string
-
-const (
-	MetadataStrokeLinecapButt   MetadataStrokeLinecap = "butt"
-	MetadataStrokeLinecapRound  MetadataStrokeLinecap = "round"
-	MetadataStrokeLinecapSquare MetadataStrokeLinecap = "square"
-)
-
-type MetadataStrokeLinejoin string
-
-const (
-	MetadataStrokeLinejoinArcs      MetadataStrokeLinejoin = "arcs"
-	MetadataStrokeLinejoinBevel     MetadataStrokeLinejoin = "bevel"
-	MetadataStrokeLinejoinMiter     MetadataStrokeLinejoin = "miter"
-	MetadataStrokeLinejoinMiterClip MetadataStrokeLinejoin = "miter-clip"
-	MetadataStrokeLinejoinRound     MetadataStrokeLinejoin = "round"
-)
-
-type MetadataTextAnchor string
-
-const (
-	MetadataTextAnchorEnd    MetadataTextAnchor = "end"
-	MetadataTextAnchorMiddle MetadataTextAnchor = "middle"
-	MetadataTextAnchorStart  MetadataTextAnchor = "start"
-)
-
-type MetadataTextRendering string
-
-const (
-	MetadataTextRenderingAuto               MetadataTextRendering = "auto"
-	MetadataTextRenderingGeometricPrecision MetadataTextRendering = "geometricPrecision"
-	MetadataTextRenderingOptimizeLegibility MetadataTextRendering = "optimizeLegibility"
-	MetadataTextRenderingOptimizeSpeed      MetadataTextRendering = "optimizeSpeed"
-)
-
-type MetadataTransformBox string
-
-const (
-	MetadataTransformBoxBorderBox  MetadataTransformBox = "border-box"
-	MetadataTransformBoxContentBox MetadataTransformBox = "content-box"
-	MetadataTransformBoxFillBox    MetadataTransformBox = "fill-box"
-	MetadataTransformBoxStrokeBox  MetadataTransformBox = "stroke-box"
-	MetadataTransformBoxViewBox    MetadataTransformBox = "view-box"
-)
-
-type MetadataVectorEffect string
-
-const (
-	MetadataVectorEffectFixedPosition    MetadataVectorEffect = "fixed-position"
-	MetadataVectorEffectNonRotation      MetadataVectorEffect = "non-rotation"
-	MetadataVectorEffectNonScalingSize   MetadataVectorEffect = "non-scaling-size"
-	MetadataVectorEffectNonScalingStroke MetadataVectorEffect = "non-scaling-stroke"
-	MetadataVectorEffectNone             MetadataVectorEffect = "none"
-)
-
-type MetadataVisibility string
-
-const (
-	MetadataVisibilityCollapse MetadataVisibility = "collapse"
-	MetadataVisibilityHidden   MetadataVisibility = "hidden"
-	MetadataVisibilityVisible  MetadataVisibility = "visible"
-)
-
-type MetadataWritingMode string
-
-const (
-	MetadataWritingModeHorizontalTb MetadataWritingMode = "horizontal-tb"
-	MetadataWritingModeLr           MetadataWritingMode = "lr"
-	MetadataWritingModeLrTb         MetadataWritingMode = "lr-tb"
-	MetadataWritingModeRl           MetadataWritingMode = "rl"
-	MetadataWritingModeRlTb         MetadataWritingMode = "rl-tb"
-	MetadataWritingModeSidewaysLr   MetadataWritingMode = "sideways-lr"
-	MetadataWritingModeSidewaysRl   MetadataWritingMode = "sideways-rl"
-	MetadataWritingModeTb           MetadataWritingMode = "tb"
-	MetadataWritingModeTbRl         MetadataWritingMode = "tb-rl"
-	MetadataWritingModeVerticalLr   MetadataWritingMode = "vertical-lr"
-	MetadataWritingModeVerticalRl   MetadataWritingMode = "vertical-rl"
-)
-
-type MetadataXmlSpace string
-
-const (
-	MetadataXmlSpaceDefault  MetadataXmlSpace = "default"
-	MetadataXmlSpacePreserve MetadataXmlSpace = "preserve"
-)
-
-func (e *MetadataElement) AlignmentBaseline(a MetadataAlignmentBaseline) *MetadataElement {
+func (e *MetadataElement) AlignmentBaseline(a AlignmentBaseline) *MetadataElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func MetadataAlignmentBaselineCustom(s string) MetadataAlignmentBaseline {
-	return MetadataAlignmentBaseline(s)
 }
 
 func (e *MetadataElement) AriaUnsafe(name string, s string) *MetadataElement {
@@ -439,14 +226,10 @@ func (e *MetadataElement) ClipPath(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) ClipRule(a MetadataClipRule) *MetadataElement {
+func (e *MetadataElement) ClipRule(a ClipRule) *MetadataElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func MetadataClipRuleCustom(s string) MetadataClipRule {
-	return MetadataClipRule(s)
 }
 
 func (e *MetadataElement) Color(s string) *MetadataElement {
@@ -455,24 +238,16 @@ func (e *MetadataElement) Color(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) ColorInterpolation(a MetadataColorInterpolation) *MetadataElement {
+func (e *MetadataElement) ColorInterpolation(a ColorInterpolation) *MetadataElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func MetadataColorInterpolationCustom(s string) MetadataColorInterpolation {
-	return MetadataColorInterpolation(s)
-}
-
-func (e *MetadataElement) ColorInterpolationFilters(a MetadataColorInterpolationFilters) *MetadataElement {
+func (e *MetadataElement) ColorInterpolationFilters(a ColorInterpolationFilters) *MetadataElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func MetadataColorInterpolationFiltersCustom(s string) MetadataColorInterpolationFilters {
-	return MetadataColorInterpolationFilters(s)
 }
 
 func (e *MetadataElement) Cursor(s string) *MetadataElement {
@@ -497,14 +272,10 @@ func (e *MetadataElement) Data(name string, s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) Direction(a MetadataDirection) *MetadataElement {
+func (e *MetadataElement) Direction(a Direction) *MetadataElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func MetadataDirectionCustom(s string) MetadataDirection {
-	return MetadataDirection(s)
 }
 
 func (e *MetadataElement) Display(s string) *MetadataElement {
@@ -513,14 +284,10 @@ func (e *MetadataElement) Display(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) DominantBaseline(a MetadataDominantBaseline) *MetadataElement {
+func (e *MetadataElement) DominantBaseline(a DominantBaseline) *MetadataElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func MetadataDominantBaselineCustom(s string) MetadataDominantBaseline {
-	return MetadataDominantBaseline(s)
 }
 
 func (e *MetadataElement) Fill(s string) *MetadataElement {
@@ -535,14 +302,10 @@ func (e *MetadataElement) FillOpacity(f float64) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) FillRule(a MetadataFillRule) *MetadataElement {
+func (e *MetadataElement) FillRule(a FillRule) *MetadataElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func MetadataFillRuleCustom(s string) MetadataFillRule {
-	return MetadataFillRule(s)
 }
 
 func (e *MetadataElement) Filter(s string) *MetadataElement {
@@ -587,14 +350,10 @@ func (e *MetadataElement) FontStretch(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) FontStyle(a MetadataFontStyle) *MetadataElement {
+func (e *MetadataElement) FontStyle(a FontStyle) *MetadataElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func MetadataFontStyleCustom(s string) MetadataFontStyle {
-	return MetadataFontStyle(s)
 }
 
 func (e *MetadataElement) FontVariant(s string) *MetadataElement {
@@ -633,14 +392,10 @@ func (e *MetadataElement) Id(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) ImageRendering(a MetadataImageRendering) *MetadataElement {
+func (e *MetadataElement) ImageRendering(a ImageRendering) *MetadataElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func MetadataImageRenderingCustom(s string) MetadataImageRendering {
-	return MetadataImageRendering(s)
 }
 
 func (e *MetadataElement) Lang(s string) *MetadataElement {
@@ -691,14 +446,10 @@ func (e *MetadataElement) Opacity(f float64) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) Overflow(a MetadataOverflow) *MetadataElement {
+func (e *MetadataElement) Overflow(a Overflow) *MetadataElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func MetadataOverflowCustom(s string) MetadataOverflow {
-	return MetadataOverflow(s)
 }
 
 func (e *MetadataElement) PaintOrder(s string) *MetadataElement {
@@ -707,14 +458,10 @@ func (e *MetadataElement) PaintOrder(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) PointerEvents(a MetadataPointerEvents) *MetadataElement {
+func (e *MetadataElement) PointerEvents(a PointerEvents) *MetadataElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func MetadataPointerEventsCustom(s string) MetadataPointerEvents {
-	return MetadataPointerEvents(s)
 }
 
 func (e *MetadataElement) RequiredExtensions(s string) *MetadataElement {
@@ -723,14 +470,10 @@ func (e *MetadataElement) RequiredExtensions(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) ShapeRendering(a MetadataShapeRendering) *MetadataElement {
+func (e *MetadataElement) ShapeRendering(a ShapeRendering) *MetadataElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func MetadataShapeRenderingCustom(s string) MetadataShapeRendering {
-	return MetadataShapeRendering(s)
 }
 
 func (e *MetadataElement) StopColor(s string) *MetadataElement {
@@ -763,24 +506,16 @@ func (e *MetadataElement) StrokeDashoffset(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) StrokeLinecap(a MetadataStrokeLinecap) *MetadataElement {
+func (e *MetadataElement) StrokeLinecap(a StrokeLinecap) *MetadataElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func MetadataStrokeLinecapCustom(s string) MetadataStrokeLinecap {
-	return MetadataStrokeLinecap(s)
-}
-
-func (e *MetadataElement) StrokeLinejoin(a MetadataStrokeLinejoin) *MetadataElement {
+func (e *MetadataElement) StrokeLinejoin(a StrokeLinejoin) *MetadataElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func MetadataStrokeLinejoinCustom(s string) MetadataStrokeLinejoin {
-	return MetadataStrokeLinejoin(s)
 }
 
 func (e *MetadataElement) StrokeMiterlimit(f float64) *MetadataElement {
@@ -813,14 +548,10 @@ func (e *MetadataElement) Tabindex(i int) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) TextAnchor(a MetadataTextAnchor) *MetadataElement {
+func (e *MetadataElement) TextAnchor(a TextAnchor) *MetadataElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func MetadataTextAnchorCustom(s string) MetadataTextAnchor {
-	return MetadataTextAnchor(s)
 }
 
 func (e *MetadataElement) TextDecoration(s string) *MetadataElement {
@@ -835,14 +566,10 @@ func (e *MetadataElement) TextOverflow(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) TextRendering(a MetadataTextRendering) *MetadataElement {
+func (e *MetadataElement) TextRendering(a TextRendering) *MetadataElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func MetadataTextRenderingCustom(s string) MetadataTextRendering {
-	return MetadataTextRendering(s)
 }
 
 func (e *MetadataElement) Transform(s string) *MetadataElement {
@@ -851,14 +578,10 @@ func (e *MetadataElement) Transform(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) TransformBox(a MetadataTransformBox) *MetadataElement {
+func (e *MetadataElement) TransformBox(a TransformBox) *MetadataElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func MetadataTransformBoxCustom(s string) MetadataTransformBox {
-	return MetadataTransformBox(s)
 }
 
 func (e *MetadataElement) TransformOrigin(s string) *MetadataElement {
@@ -873,24 +596,16 @@ func (e *MetadataElement) UnicodeBidi(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) VectorEffect(a MetadataVectorEffect) *MetadataElement {
+func (e *MetadataElement) VectorEffect(a VectorEffect) *MetadataElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func MetadataVectorEffectCustom(s string) MetadataVectorEffect {
-	return MetadataVectorEffect(s)
-}
-
-func (e *MetadataElement) Visibility(a MetadataVisibility) *MetadataElement {
+func (e *MetadataElement) Visibility(a Visibility) *MetadataElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func MetadataVisibilityCustom(s string) MetadataVisibility {
-	return MetadataVisibility(s)
 }
 
 func (e *MetadataElement) WhiteSpace(s string) *MetadataElement {
@@ -905,14 +620,10 @@ func (e *MetadataElement) WordSpacing(s string) *MetadataElement {
 	return e
 }
 
-func (e *MetadataElement) WritingMode(a MetadataWritingMode) *MetadataElement {
+func (e *MetadataElement) WritingMode(a WritingMode) *MetadataElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func MetadataWritingModeCustom(s string) MetadataWritingMode {
-	return MetadataWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -927,7 +638,7 @@ func (e *MetadataElement) XmlLang(s string) *MetadataElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *MetadataElement) XmlSpace(a MetadataXmlSpace) *MetadataElement {
+func (e *MetadataElement) XmlSpace(a XmlSpace) *MetadataElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

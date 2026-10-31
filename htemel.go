@@ -1,8 +1,8 @@
 package htemel
 
-//go:generate go run ./cmd/genelements -spec specs/html.json -out html
-//go:generate go run ./cmd/genelements -spec specs/svg.json -out svg
-//go:generate go run ./cmd/genelements -spec specs/mathml.json -out mathml
+//go:generate go run ./cmd/genelements -spec specs/html.json -out html -slots slots_html.go
+//go:generate go run ./cmd/genelements -spec specs/svg.json -out svg -slots slots_svg.go
+//go:generate go run ./cmd/genelements -spec specs/mathml.json -out mathml -slots slots_mathml.go
 
 import (
 	"bufio"
@@ -103,10 +103,14 @@ func RenderBytes(n Node) ([]byte, error) {
 
 // GroupElement is a struct that backs the Group function.
 type GroupElement struct {
+	Wildcard
 	children []Node
 }
 
 // Group is a generic wrapper that can be used to wrap one or more elements that may not have a suitable parent type.
+//
+// A Group is a Wildcard: it is accepted as a child of any element, and its own children are not
+// checked against the parent's content model.
 func Group(children ...Node) *GroupElement {
 	return &GroupElement{
 		children: children,
@@ -125,7 +129,10 @@ func (e *GroupElement) Render(w io.Writer) error {
 }
 
 // GenericElement struct backs the Generic element functions.
+//
+// A GenericElement is a Wildcard: it is accepted as a child of any element.
 type GenericElement struct {
+	Wildcard
 	tag      string
 	attrs    map[string]any
 	void     bool
@@ -247,8 +254,8 @@ func writeGenericAttr(w io.Writer, key, value string) error {
 	return err
 }
 
-// DoctypeElement renders the HTML5 document type declaration.
-type DoctypeElement struct{}
+// DoctypeElement renders the HTML5 document type declaration. It is a Wildcard.
+type DoctypeElement struct{ Wildcard }
 
 // Doctype returns a node that renders <!DOCTYPE html>.
 func Doctype() DoctypeElement { return DoctypeElement{} }
@@ -259,11 +266,16 @@ func (DoctypeElement) Render(w io.Writer) error {
 	return err
 }
 
-// TextElement backs the Text and TextUnsafe functions.
+// TextElement backs the Text and TextUnsafe functions. Text is phrasing content (and so flow
+// content) and TextContent, so it is accepted by every element whose content model permits text.
 type TextElement struct {
 	text     string
 	children []Node
 }
+
+func (*TextElement) flowContent()     {}
+func (*TextElement) phrasingContent() {}
+func (*TextElement) textContent()     {}
 
 // TextUnsafe renders text verbatim, without HTML escaping. Never pass untrusted input.
 func TextUnsafe(text string, children ...Node) *TextElement {

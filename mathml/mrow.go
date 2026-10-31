@@ -14,15 +14,17 @@ import (
 
 type MrowElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mrow creates a tag <mrow> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mrow(children ...htemel.Node) *MrowElement {
+func Mrow(children ...Content) *MrowElement {
 	node := &MrowElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mrow(children ...htemel.Node) *MrowElement {
 }
 
 // MrowIf creates a tag <mrow> instance that is only rendered when condition is true.
-func MrowIf(condition bool, children ...htemel.Node) *MrowElement {
+func MrowIf(condition bool, children ...Content) *MrowElement {
 	if condition {
 		return Mrow(children...)
 	}
@@ -43,7 +45,7 @@ func MrowIf(condition bool, children ...htemel.Node) *MrowElement {
 }
 
 // MrowTernary creates a tag <mrow> containing then when condition is true, otherwise containing otherwise.
-func MrowTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MrowElement {
+func MrowTernary(condition bool, then Content, otherwise Content) *MrowElement {
 	if condition {
 		return Mrow(then)
 	}
@@ -51,7 +53,7 @@ func MrowTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MrowE
 }
 
 // Children appends children to this element.
-func (e *MrowElement) Children(children ...htemel.Node) *MrowElement {
+func (e *MrowElement) Children(children ...Content) *MrowElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MrowElement) Textf(format string, args ...any) *MrowElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MrowElement) If(cond bool, child htemel.Node) *MrowElement {
+func (e *MrowElement) If(cond bool, child Content) *MrowElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MrowElement) If(cond bool, child htemel.Node) *MrowElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MrowElement) IfElse(cond bool, then, els htemel.Node) *MrowElement {
+func (e *MrowElement) IfElse(cond bool, then, els Content) *MrowElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MrowElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MrowDir string
-
-const (
-	MrowDirLtr MrowDir = "ltr"
-	MrowDirRtl MrowDir = "rtl"
-)
-
-type MrowDisplaystyle string
-
-const (
-	MrowDisplaystyleFalse MrowDisplaystyle = "false"
-	MrowDisplaystyleTrue  MrowDisplaystyle = "true"
-)
+// MathMLContent marks <mrow> as a permitted child (Content).
+func (*MrowElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MrowElement) Data(name string, s string) *MrowElement {
 	return e
 }
 
-func (e *MrowElement) Dir(a MrowDir) *MrowElement {
+func (e *MrowElement) Dir(a Dir) *MrowElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MrowElement) Displaystyle(a MrowDisplaystyle) *MrowElement {
+func (e *MrowElement) Displaystyle(a Displaystyle) *MrowElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

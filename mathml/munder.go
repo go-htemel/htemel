@@ -14,15 +14,17 @@ import (
 
 type MunderElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Munder creates a tag <munder> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Munder(children ...htemel.Node) *MunderElement {
+func Munder(children ...Content) *MunderElement {
 	node := &MunderElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Munder(children ...htemel.Node) *MunderElement {
 }
 
 // MunderIf creates a tag <munder> instance that is only rendered when condition is true.
-func MunderIf(condition bool, children ...htemel.Node) *MunderElement {
+func MunderIf(condition bool, children ...Content) *MunderElement {
 	if condition {
 		return Munder(children...)
 	}
@@ -43,7 +45,7 @@ func MunderIf(condition bool, children ...htemel.Node) *MunderElement {
 }
 
 // MunderTernary creates a tag <munder> containing then when condition is true, otherwise containing otherwise.
-func MunderTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MunderElement {
+func MunderTernary(condition bool, then Content, otherwise Content) *MunderElement {
 	if condition {
 		return Munder(then)
 	}
@@ -51,7 +53,7 @@ func MunderTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mun
 }
 
 // Children appends children to this element.
-func (e *MunderElement) Children(children ...htemel.Node) *MunderElement {
+func (e *MunderElement) Children(children ...Content) *MunderElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MunderElement) Textf(format string, args ...any) *MunderElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MunderElement) If(cond bool, child htemel.Node) *MunderElement {
+func (e *MunderElement) If(cond bool, child Content) *MunderElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MunderElement) If(cond bool, child htemel.Node) *MunderElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MunderElement) IfElse(cond bool, then, els htemel.Node) *MunderElement {
+func (e *MunderElement) IfElse(cond bool, then, els Content) *MunderElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,28 +166,10 @@ func (e *MunderElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MunderAccentunder string
+// MathMLContent marks <munder> as a permitted child (Content).
+func (*MunderElement) MathMLContent() {}
 
-const (
-	MunderAccentunderFalse MunderAccentunder = "false"
-	MunderAccentunderTrue  MunderAccentunder = "true"
-)
-
-type MunderDir string
-
-const (
-	MunderDirLtr MunderDir = "ltr"
-	MunderDirRtl MunderDir = "rtl"
-)
-
-type MunderDisplaystyle string
-
-const (
-	MunderDisplaystyleFalse MunderDisplaystyle = "false"
-	MunderDisplaystyleTrue  MunderDisplaystyle = "true"
-)
-
-func (e *MunderElement) Accentunder(a MunderAccentunder) *MunderElement {
+func (e *MunderElement) Accentunder(a Accentunder) *MunderElement {
 	e.attributes.Set("accentunder", string(a))
 
 	return e
@@ -221,13 +205,13 @@ func (e *MunderElement) Data(name string, s string) *MunderElement {
 	return e
 }
 
-func (e *MunderElement) Dir(a MunderDir) *MunderElement {
+func (e *MunderElement) Dir(a Dir) *MunderElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MunderElement) Displaystyle(a MunderDisplaystyle) *MunderElement {
+func (e *MunderElement) Displaystyle(a Displaystyle) *MunderElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

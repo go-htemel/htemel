@@ -13,16 +13,20 @@ import (
 )
 
 type SpanElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Span creates a tag <span> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The span element doesn't mean anything on its own, but can be useful when used together with the global attributes, e.g. class, lang, or dir. It represents its children.
-func Span(children ...htemel.Node) *SpanElement {
+func Span(children ...htemel.PhrasingContent) *SpanElement {
 	node := &SpanElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Span(children ...htemel.Node) *SpanElement {
 }
 
 // SpanIf creates a tag <span> instance that is only rendered when condition is true.
-func SpanIf(condition bool, children ...htemel.Node) *SpanElement {
+func SpanIf(condition bool, children ...htemel.PhrasingContent) *SpanElement {
 	if condition {
 		return Span(children...)
 	}
@@ -43,7 +47,7 @@ func SpanIf(condition bool, children ...htemel.Node) *SpanElement {
 }
 
 // SpanTernary creates a tag <span> containing then when condition is true, otherwise containing otherwise.
-func SpanTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SpanElement {
+func SpanTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SpanElement {
 	if condition {
 		return Span(then)
 	}
@@ -51,7 +55,7 @@ func SpanTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SpanE
 }
 
 // Children appends children to this element.
-func (e *SpanElement) Children(children ...htemel.Node) *SpanElement {
+func (e *SpanElement) Children(children ...htemel.PhrasingContent) *SpanElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SpanElement) Textf(format string, args ...any) *SpanElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SpanElement) If(cond bool, child htemel.Node) *SpanElement {
+func (e *SpanElement) If(cond bool, child htemel.PhrasingContent) *SpanElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SpanElement) If(cond bool, child htemel.Node) *SpanElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SpanElement) IfElse(cond bool, then, els htemel.Node) *SpanElement {
+func (e *SpanElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SpanElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SpanElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SpanAutocapitalize string
-
-const (
-	SpanAutocapitalizeCharacters SpanAutocapitalize = "characters"
-	SpanAutocapitalizeNone       SpanAutocapitalize = "none"
-	SpanAutocapitalizeOff        SpanAutocapitalize = "off"
-	SpanAutocapitalizeOn         SpanAutocapitalize = "on"
-	SpanAutocapitalizeSentences  SpanAutocapitalize = "sentences"
-	SpanAutocapitalizeWords      SpanAutocapitalize = "words"
-)
-
-type SpanAutocorrect string
-
-const (
-	SpanAutocorrectOff   SpanAutocorrect = "off"
-	SpanAutocorrectOn    SpanAutocorrect = "on"
-	SpanAutocorrectEmpty SpanAutocorrect = ""
-)
-
-type SpanContenteditable string
-
-const (
-	SpanContenteditableFalse         SpanContenteditable = "false"
-	SpanContenteditablePlaintextOnly SpanContenteditable = "plaintext-only"
-	SpanContenteditableTrue          SpanContenteditable = "true"
-	SpanContenteditableEmpty         SpanContenteditable = ""
-)
-
-type SpanDir string
-
-const (
-	SpanDirAuto SpanDir = "auto"
-	SpanDirLtr  SpanDir = "ltr"
-	SpanDirRtl  SpanDir = "rtl"
-)
-
-type SpanDraggable string
-
-const (
-	SpanDraggableFalse SpanDraggable = "false"
-	SpanDraggableTrue  SpanDraggable = "true"
-)
-
-type SpanEnterkeyhint string
-
-const (
-	SpanEnterkeyhintDone     SpanEnterkeyhint = "done"
-	SpanEnterkeyhintEnter    SpanEnterkeyhint = "enter"
-	SpanEnterkeyhintGo       SpanEnterkeyhint = "go"
-	SpanEnterkeyhintNext     SpanEnterkeyhint = "next"
-	SpanEnterkeyhintPrevious SpanEnterkeyhint = "previous"
-	SpanEnterkeyhintSearch   SpanEnterkeyhint = "search"
-	SpanEnterkeyhintSend     SpanEnterkeyhint = "send"
-)
-
-type SpanHidden string
-
-const (
-	SpanHiddenHidden     SpanHidden = "hidden"
-	SpanHiddenUntilFound SpanHidden = "until-found"
-	SpanHiddenEmpty      SpanHidden = ""
-)
-
-type SpanInputmode string
-
-const (
-	SpanInputmodeDecimal SpanInputmode = "decimal"
-	SpanInputmodeEmail   SpanInputmode = "email"
-	SpanInputmodeNone    SpanInputmode = "none"
-	SpanInputmodeNumeric SpanInputmode = "numeric"
-	SpanInputmodeSearch  SpanInputmode = "search"
-	SpanInputmodeTel     SpanInputmode = "tel"
-	SpanInputmodeText    SpanInputmode = "text"
-	SpanInputmodeUrl     SpanInputmode = "url"
-)
-
-type SpanPopover string
-
-const (
-	SpanPopoverAuto   SpanPopover = "auto"
-	SpanPopoverHint   SpanPopover = "hint"
-	SpanPopoverManual SpanPopover = "manual"
-	SpanPopoverEmpty  SpanPopover = ""
-)
-
-type SpanSpellcheck string
-
-const (
-	SpanSpellcheckFalse SpanSpellcheck = "false"
-	SpanSpellcheckTrue  SpanSpellcheck = "true"
-	SpanSpellcheckEmpty SpanSpellcheck = ""
-)
-
-type SpanTranslate string
-
-const (
-	SpanTranslateNo    SpanTranslate = "no"
-	SpanTranslateYes   SpanTranslate = "yes"
-	SpanTranslateEmpty SpanTranslate = ""
-)
-
-type SpanWritingsuggestions string
-
-const (
-	SpanWritingsuggestionsFalse SpanWritingsuggestions = "false"
-	SpanWritingsuggestionsTrue  SpanWritingsuggestions = "true"
-	SpanWritingsuggestionsEmpty SpanWritingsuggestions = ""
-)
-
 func (e *SpanElement) Accesskey(r rune) *SpanElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SpanElement) Aria(name string, s string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Autocapitalize(a SpanAutocapitalize) *SpanElement {
+func (e *SpanElement) Autocapitalize(a Autocapitalize) *SpanElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SpanElement) Autocapitalize(a SpanAutocapitalize) *SpanElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Autocorrect(v ...SpanAutocorrect) *SpanElement {
-	var val SpanAutocorrect
+func (e *SpanElement) Autocorrect(v ...Autocorrect) *SpanElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SpanElement) Class(s ...string) *SpanElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Contenteditable(v ...SpanContenteditable) *SpanElement {
-	var val SpanContenteditable
+func (e *SpanElement) Contenteditable(v ...Contenteditable) *SpanElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SpanElement) Data(name string, s string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Dir(a SpanDir) *SpanElement {
+func (e *SpanElement) Dir(a Dir) *SpanElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SpanElement) Draggable(a SpanDraggable) *SpanElement {
+func (e *SpanElement) Draggable(a Draggable) *SpanElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SpanElement) Enterkeyhint(a SpanEnterkeyhint) *SpanElement {
+func (e *SpanElement) Enterkeyhint(a Enterkeyhint) *SpanElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SpanElement) Headingreset(b bool) *SpanElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Hidden(v ...SpanHidden) *SpanElement {
-	var val SpanHidden
+func (e *SpanElement) Hidden(v ...Hidden) *SpanElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SpanElement) Inert(b bool) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Inputmode(a SpanInputmode) *SpanElement {
+func (e *SpanElement) Inputmode(a Inputmode) *SpanElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SpanElement) Part(s ...string) *SpanElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Popover(v ...SpanPopover) *SpanElement {
-	var val SpanPopover
+func (e *SpanElement) Popover(v ...Popover) *SpanElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SpanElement) Slot(s string) *SpanElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Spellcheck(v ...SpanSpellcheck) *SpanElement {
-	var val SpanSpellcheck
+func (e *SpanElement) Spellcheck(v ...Spellcheck) *SpanElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SpanElement) Title(s string) *SpanElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Translate(v ...SpanTranslate) *SpanElement {
-	var val SpanTranslate
+func (e *SpanElement) Translate(v ...Translate) *SpanElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SpanElement) Translate(v ...SpanTranslate) *SpanElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SpanElement) Writingsuggestions(v ...SpanWritingsuggestions) *SpanElement {
-	var val SpanWritingsuggestions
+func (e *SpanElement) Writingsuggestions(v ...Writingsuggestions) *SpanElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

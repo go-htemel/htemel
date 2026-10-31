@@ -13,16 +13,20 @@ import (
 )
 
 type CiteElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Cite creates a tag <cite> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The cite element represents the title of a work (e.g. a book, a paper, an essay, a poem, a score, a song, a script, a film, a TV show, a game, a sculpture, a painting, a theatre production, a play, an opera, a musical, an exhibition, a legal case report, a computer program,  etc.). This can be a work that is being quoted or referenced in detail (i.e., a citation), or it can just be a work that is mentioned in passing.
-func Cite(children ...htemel.Node) *CiteElement {
+func Cite(children ...htemel.PhrasingContent) *CiteElement {
 	node := &CiteElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Cite(children ...htemel.Node) *CiteElement {
 }
 
 // CiteIf creates a tag <cite> instance that is only rendered when condition is true.
-func CiteIf(condition bool, children ...htemel.Node) *CiteElement {
+func CiteIf(condition bool, children ...htemel.PhrasingContent) *CiteElement {
 	if condition {
 		return Cite(children...)
 	}
@@ -43,7 +47,7 @@ func CiteIf(condition bool, children ...htemel.Node) *CiteElement {
 }
 
 // CiteTernary creates a tag <cite> containing then when condition is true, otherwise containing otherwise.
-func CiteTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CiteElement {
+func CiteTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *CiteElement {
 	if condition {
 		return Cite(then)
 	}
@@ -51,7 +55,7 @@ func CiteTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CiteE
 }
 
 // Children appends children to this element.
-func (e *CiteElement) Children(children ...htemel.Node) *CiteElement {
+func (e *CiteElement) Children(children ...htemel.PhrasingContent) *CiteElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *CiteElement) Textf(format string, args ...any) *CiteElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *CiteElement) If(cond bool, child htemel.Node) *CiteElement {
+func (e *CiteElement) If(cond bool, child htemel.PhrasingContent) *CiteElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *CiteElement) If(cond bool, child htemel.Node) *CiteElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *CiteElement) IfElse(cond bool, then, els htemel.Node) *CiteElement {
+func (e *CiteElement) IfElse(cond bool, then, els htemel.PhrasingContent) *CiteElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *CiteElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type CiteAutocapitalize string
-
-const (
-	CiteAutocapitalizeCharacters CiteAutocapitalize = "characters"
-	CiteAutocapitalizeNone       CiteAutocapitalize = "none"
-	CiteAutocapitalizeOff        CiteAutocapitalize = "off"
-	CiteAutocapitalizeOn         CiteAutocapitalize = "on"
-	CiteAutocapitalizeSentences  CiteAutocapitalize = "sentences"
-	CiteAutocapitalizeWords      CiteAutocapitalize = "words"
-)
-
-type CiteAutocorrect string
-
-const (
-	CiteAutocorrectOff   CiteAutocorrect = "off"
-	CiteAutocorrectOn    CiteAutocorrect = "on"
-	CiteAutocorrectEmpty CiteAutocorrect = ""
-)
-
-type CiteContenteditable string
-
-const (
-	CiteContenteditableFalse         CiteContenteditable = "false"
-	CiteContenteditablePlaintextOnly CiteContenteditable = "plaintext-only"
-	CiteContenteditableTrue          CiteContenteditable = "true"
-	CiteContenteditableEmpty         CiteContenteditable = ""
-)
-
-type CiteDir string
-
-const (
-	CiteDirAuto CiteDir = "auto"
-	CiteDirLtr  CiteDir = "ltr"
-	CiteDirRtl  CiteDir = "rtl"
-)
-
-type CiteDraggable string
-
-const (
-	CiteDraggableFalse CiteDraggable = "false"
-	CiteDraggableTrue  CiteDraggable = "true"
-)
-
-type CiteEnterkeyhint string
-
-const (
-	CiteEnterkeyhintDone     CiteEnterkeyhint = "done"
-	CiteEnterkeyhintEnter    CiteEnterkeyhint = "enter"
-	CiteEnterkeyhintGo       CiteEnterkeyhint = "go"
-	CiteEnterkeyhintNext     CiteEnterkeyhint = "next"
-	CiteEnterkeyhintPrevious CiteEnterkeyhint = "previous"
-	CiteEnterkeyhintSearch   CiteEnterkeyhint = "search"
-	CiteEnterkeyhintSend     CiteEnterkeyhint = "send"
-)
-
-type CiteHidden string
-
-const (
-	CiteHiddenHidden     CiteHidden = "hidden"
-	CiteHiddenUntilFound CiteHidden = "until-found"
-	CiteHiddenEmpty      CiteHidden = ""
-)
-
-type CiteInputmode string
-
-const (
-	CiteInputmodeDecimal CiteInputmode = "decimal"
-	CiteInputmodeEmail   CiteInputmode = "email"
-	CiteInputmodeNone    CiteInputmode = "none"
-	CiteInputmodeNumeric CiteInputmode = "numeric"
-	CiteInputmodeSearch  CiteInputmode = "search"
-	CiteInputmodeTel     CiteInputmode = "tel"
-	CiteInputmodeText    CiteInputmode = "text"
-	CiteInputmodeUrl     CiteInputmode = "url"
-)
-
-type CitePopover string
-
-const (
-	CitePopoverAuto   CitePopover = "auto"
-	CitePopoverHint   CitePopover = "hint"
-	CitePopoverManual CitePopover = "manual"
-	CitePopoverEmpty  CitePopover = ""
-)
-
-type CiteSpellcheck string
-
-const (
-	CiteSpellcheckFalse CiteSpellcheck = "false"
-	CiteSpellcheckTrue  CiteSpellcheck = "true"
-	CiteSpellcheckEmpty CiteSpellcheck = ""
-)
-
-type CiteTranslate string
-
-const (
-	CiteTranslateNo    CiteTranslate = "no"
-	CiteTranslateYes   CiteTranslate = "yes"
-	CiteTranslateEmpty CiteTranslate = ""
-)
-
-type CiteWritingsuggestions string
-
-const (
-	CiteWritingsuggestionsFalse CiteWritingsuggestions = "false"
-	CiteWritingsuggestionsTrue  CiteWritingsuggestions = "true"
-	CiteWritingsuggestionsEmpty CiteWritingsuggestions = ""
-)
-
 func (e *CiteElement) Accesskey(r rune) *CiteElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *CiteElement) Aria(name string, s string) *CiteElement {
 	return e
 }
 
-func (e *CiteElement) Autocapitalize(a CiteAutocapitalize) *CiteElement {
+func (e *CiteElement) Autocapitalize(a Autocapitalize) *CiteElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *CiteElement) Autocapitalize(a CiteAutocapitalize) *CiteElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Autocorrect(v ...CiteAutocorrect) *CiteElement {
-	var val CiteAutocorrect
+func (e *CiteElement) Autocorrect(v ...Autocorrect) *CiteElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *CiteElement) Class(s ...string) *CiteElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Contenteditable(v ...CiteContenteditable) *CiteElement {
-	var val CiteContenteditable
+func (e *CiteElement) Contenteditable(v ...Contenteditable) *CiteElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *CiteElement) Data(name string, s string) *CiteElement {
 	return e
 }
 
-func (e *CiteElement) Dir(a CiteDir) *CiteElement {
+func (e *CiteElement) Dir(a Dir) *CiteElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *CiteElement) Draggable(a CiteDraggable) *CiteElement {
+func (e *CiteElement) Draggable(a Draggable) *CiteElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *CiteElement) Enterkeyhint(a CiteEnterkeyhint) *CiteElement {
+func (e *CiteElement) Enterkeyhint(a Enterkeyhint) *CiteElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *CiteElement) Headingreset(b bool) *CiteElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Hidden(v ...CiteHidden) *CiteElement {
-	var val CiteHidden
+func (e *CiteElement) Hidden(v ...Hidden) *CiteElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *CiteElement) Inert(b bool) *CiteElement {
 	return e
 }
 
-func (e *CiteElement) Inputmode(a CiteInputmode) *CiteElement {
+func (e *CiteElement) Inputmode(a Inputmode) *CiteElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *CiteElement) Part(s ...string) *CiteElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Popover(v ...CitePopover) *CiteElement {
-	var val CitePopover
+func (e *CiteElement) Popover(v ...Popover) *CiteElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *CiteElement) Slot(s string) *CiteElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Spellcheck(v ...CiteSpellcheck) *CiteElement {
-	var val CiteSpellcheck
+func (e *CiteElement) Spellcheck(v ...Spellcheck) *CiteElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *CiteElement) Title(s string) *CiteElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Translate(v ...CiteTranslate) *CiteElement {
-	var val CiteTranslate
+func (e *CiteElement) Translate(v ...Translate) *CiteElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *CiteElement) Translate(v ...CiteTranslate) *CiteElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CiteElement) Writingsuggestions(v ...CiteWritingsuggestions) *CiteElement {
-	var val CiteWritingsuggestions
+func (e *CiteElement) Writingsuggestions(v ...Writingsuggestions) *CiteElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

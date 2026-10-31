@@ -12,17 +12,38 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// FigureChild is a permitted child of <figure>: <figcaption>, flow content.
+//
+// It is implemented by <a>, <abbr>, <address>, <area>, <article>, <aside>, <audio>, <b>, <bdi>,
+// <bdo>, <blockquote>, <br>, <button>, <canvas>, <cite>, <code>, <data>, <datalist>, <del>,
+// <details>, <dfn>, <dialog>, <div>, <dl>, <em>, <embed>, <fieldset>, <figcaption>, <figure>,
+// <footer>, <form>, <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <header>, <hgroup>, <hr>, <i>, <iframe>,
+// <img>, <input>, <ins>, <kbd>, <label>, <link>, <main>, <map>, <mark>, <menu>, <meta>, <meter>,
+// <nav>, <noscript>, <object>, <ol>, <output>, <p>, <picture>, <pre>, <progress>, <q>, <ruby>,
+// <s>, <samp>, <script>, <search>, <section>, <select>, <slot>, <small>, <span>, <strong>,
+// <style>, <sub>, <sup>, <table>, <template>, <textarea>, <time>, <u>, <ul>, <var>, <video>,
+// <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.FlowMarker and by
+// the unchecked nodes of package htemel (Group, Each, If, Unchecked, ...).
+type FigureChild interface {
+	htemel.Node
+	HTMLFigureChild()
+}
+
 type FigureElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []FigureChild
 	skipRender bool
 }
 
 // Figure creates a tag <figure> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <figcaption>, flow content (FigureChild).
+//
 // Spec Description: The figure element represents some flow content, optionally with a caption, that is self-contained (like a complete sentence) and is typically referenced as a single unit from the main flow of the document.
-func Figure(children ...htemel.Node) *FigureElement {
+func Figure(children ...FigureChild) *FigureElement {
 	node := &FigureElement{
 		children: children,
 	}
@@ -31,7 +52,7 @@ func Figure(children ...htemel.Node) *FigureElement {
 }
 
 // FigureIf creates a tag <figure> instance that is only rendered when condition is true.
-func FigureIf(condition bool, children ...htemel.Node) *FigureElement {
+func FigureIf(condition bool, children ...FigureChild) *FigureElement {
 	if condition {
 		return Figure(children...)
 	}
@@ -43,7 +64,7 @@ func FigureIf(condition bool, children ...htemel.Node) *FigureElement {
 }
 
 // FigureTernary creates a tag <figure> containing then when condition is true, otherwise containing otherwise.
-func FigureTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FigureElement {
+func FigureTernary(condition bool, then FigureChild, otherwise FigureChild) *FigureElement {
 	if condition {
 		return Figure(then)
 	}
@@ -51,7 +72,7 @@ func FigureTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Fig
 }
 
 // Children appends children to this element.
-func (e *FigureElement) Children(children ...htemel.Node) *FigureElement {
+func (e *FigureElement) Children(children ...FigureChild) *FigureElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +95,7 @@ func (e *FigureElement) Textf(format string, args ...any) *FigureElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FigureElement) If(cond bool, child htemel.Node) *FigureElement {
+func (e *FigureElement) If(cond bool, child FigureChild) *FigureElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +103,7 @@ func (e *FigureElement) If(cond bool, child htemel.Node) *FigureElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FigureElement) IfElse(cond bool, then, els htemel.Node) *FigureElement {
+func (e *FigureElement) IfElse(cond bool, then, els FigureChild) *FigureElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +185,6 @@ func (e *FigureElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FigureAutocapitalize string
-
-const (
-	FigureAutocapitalizeCharacters FigureAutocapitalize = "characters"
-	FigureAutocapitalizeNone       FigureAutocapitalize = "none"
-	FigureAutocapitalizeOff        FigureAutocapitalize = "off"
-	FigureAutocapitalizeOn         FigureAutocapitalize = "on"
-	FigureAutocapitalizeSentences  FigureAutocapitalize = "sentences"
-	FigureAutocapitalizeWords      FigureAutocapitalize = "words"
-)
-
-type FigureAutocorrect string
-
-const (
-	FigureAutocorrectOff   FigureAutocorrect = "off"
-	FigureAutocorrectOn    FigureAutocorrect = "on"
-	FigureAutocorrectEmpty FigureAutocorrect = ""
-)
-
-type FigureContenteditable string
-
-const (
-	FigureContenteditableFalse         FigureContenteditable = "false"
-	FigureContenteditablePlaintextOnly FigureContenteditable = "plaintext-only"
-	FigureContenteditableTrue          FigureContenteditable = "true"
-	FigureContenteditableEmpty         FigureContenteditable = ""
-)
-
-type FigureDir string
-
-const (
-	FigureDirAuto FigureDir = "auto"
-	FigureDirLtr  FigureDir = "ltr"
-	FigureDirRtl  FigureDir = "rtl"
-)
-
-type FigureDraggable string
-
-const (
-	FigureDraggableFalse FigureDraggable = "false"
-	FigureDraggableTrue  FigureDraggable = "true"
-)
-
-type FigureEnterkeyhint string
-
-const (
-	FigureEnterkeyhintDone     FigureEnterkeyhint = "done"
-	FigureEnterkeyhintEnter    FigureEnterkeyhint = "enter"
-	FigureEnterkeyhintGo       FigureEnterkeyhint = "go"
-	FigureEnterkeyhintNext     FigureEnterkeyhint = "next"
-	FigureEnterkeyhintPrevious FigureEnterkeyhint = "previous"
-	FigureEnterkeyhintSearch   FigureEnterkeyhint = "search"
-	FigureEnterkeyhintSend     FigureEnterkeyhint = "send"
-)
-
-type FigureHidden string
-
-const (
-	FigureHiddenHidden     FigureHidden = "hidden"
-	FigureHiddenUntilFound FigureHidden = "until-found"
-	FigureHiddenEmpty      FigureHidden = ""
-)
-
-type FigureInputmode string
-
-const (
-	FigureInputmodeDecimal FigureInputmode = "decimal"
-	FigureInputmodeEmail   FigureInputmode = "email"
-	FigureInputmodeNone    FigureInputmode = "none"
-	FigureInputmodeNumeric FigureInputmode = "numeric"
-	FigureInputmodeSearch  FigureInputmode = "search"
-	FigureInputmodeTel     FigureInputmode = "tel"
-	FigureInputmodeText    FigureInputmode = "text"
-	FigureInputmodeUrl     FigureInputmode = "url"
-)
-
-type FigurePopover string
-
-const (
-	FigurePopoverAuto   FigurePopover = "auto"
-	FigurePopoverHint   FigurePopover = "hint"
-	FigurePopoverManual FigurePopover = "manual"
-	FigurePopoverEmpty  FigurePopover = ""
-)
-
-type FigureSpellcheck string
-
-const (
-	FigureSpellcheckFalse FigureSpellcheck = "false"
-	FigureSpellcheckTrue  FigureSpellcheck = "true"
-	FigureSpellcheckEmpty FigureSpellcheck = ""
-)
-
-type FigureTranslate string
-
-const (
-	FigureTranslateNo    FigureTranslate = "no"
-	FigureTranslateYes   FigureTranslate = "yes"
-	FigureTranslateEmpty FigureTranslate = ""
-)
-
-type FigureWritingsuggestions string
-
-const (
-	FigureWritingsuggestionsFalse FigureWritingsuggestions = "false"
-	FigureWritingsuggestionsTrue  FigureWritingsuggestions = "true"
-	FigureWritingsuggestionsEmpty FigureWritingsuggestions = ""
-)
-
 func (e *FigureElement) Accesskey(r rune) *FigureElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +207,7 @@ func (e *FigureElement) Aria(name string, s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Autocapitalize(a FigureAutocapitalize) *FigureElement {
+func (e *FigureElement) Autocapitalize(a Autocapitalize) *FigureElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +215,8 @@ func (e *FigureElement) Autocapitalize(a FigureAutocapitalize) *FigureElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Autocorrect(v ...FigureAutocorrect) *FigureElement {
-	var val FigureAutocorrect
+func (e *FigureElement) Autocorrect(v ...Autocorrect) *FigureElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +241,8 @@ func (e *FigureElement) Class(s ...string) *FigureElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Contenteditable(v ...FigureContenteditable) *FigureElement {
-	var val FigureContenteditable
+func (e *FigureElement) Contenteditable(v ...Contenteditable) *FigureElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +267,19 @@ func (e *FigureElement) Data(name string, s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Dir(a FigureDir) *FigureElement {
+func (e *FigureElement) Dir(a Dir) *FigureElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *FigureElement) Draggable(a FigureDraggable) *FigureElement {
+func (e *FigureElement) Draggable(a Draggable) *FigureElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *FigureElement) Enterkeyhint(a FigureEnterkeyhint) *FigureElement {
+func (e *FigureElement) Enterkeyhint(a Enterkeyhint) *FigureElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +307,8 @@ func (e *FigureElement) Headingreset(b bool) *FigureElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Hidden(v ...FigureHidden) *FigureElement {
-	var val FigureHidden
+func (e *FigureElement) Hidden(v ...Hidden) *FigureElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +331,7 @@ func (e *FigureElement) Inert(b bool) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Inputmode(a FigureInputmode) *FigureElement {
+func (e *FigureElement) Inputmode(a Inputmode) *FigureElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +397,8 @@ func (e *FigureElement) Part(s ...string) *FigureElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Popover(v ...FigurePopover) *FigureElement {
-	var val FigurePopover
+func (e *FigureElement) Popover(v ...Popover) *FigureElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +421,8 @@ func (e *FigureElement) Slot(s string) *FigureElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Spellcheck(v ...FigureSpellcheck) *FigureElement {
-	var val FigureSpellcheck
+func (e *FigureElement) Spellcheck(v ...Spellcheck) *FigureElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +451,8 @@ func (e *FigureElement) Title(s string) *FigureElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Translate(v ...FigureTranslate) *FigureElement {
-	var val FigureTranslate
+func (e *FigureElement) Translate(v ...Translate) *FigureElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +463,8 @@ func (e *FigureElement) Translate(v ...FigureTranslate) *FigureElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigureElement) Writingsuggestions(v ...FigureWritingsuggestions) *FigureElement {
-	var val FigureWritingsuggestions
+func (e *FigureElement) Writingsuggestions(v ...Writingsuggestions) *FigureElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

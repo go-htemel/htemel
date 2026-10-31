@@ -2,7 +2,6 @@ package generators
 
 import (
 	"bytes"
-	"sort"
 	"strings"
 	"text/template"
 
@@ -25,7 +24,7 @@ func attrDoc(name string, a spec.Attribute) string {
 	return doc
 }
 
-func BuildAttributes(e *spec.Element) func() (*template.Template, ImportSet) {
+func BuildAttributes(p *Plan, e *ElementPlan) func() (*template.Template, ImportSet) {
 	return func() (*template.Template, ImportSet) {
 		imports := ImportSet{}
 
@@ -78,26 +77,12 @@ func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(b bool) *` + goI
 }
 `)
 			case *spec.AttributeTypeEnum:
-				typeName := goIdent(e.Tag) + goIdent(a.Name)
-
-				addTypes.WriteString("\ntype " + typeName + " string\n")
-
-				addTypes.WriteString("\nconst (\n")
-				allowedKeys := make([]string, 0, len(a.Allowed))
-				for allowed := range a.Allowed {
-					allowedKeys = append(allowedKeys, allowed)
+				typeName := p.EnumType(e.Tag, a.Name)
+				if _, shared := p.SharedEnums[a.Name]; !shared {
+					// The allowed values differ from other elements' "name" attribute: a type of its own.
+					addTypes.WriteString("\n// " + typeName + " is a value of the \"" + a.Name + "\" attribute of <" + e.Tag + ">.\ntype " + typeName + " string\n")
+					addTypes.WriteString(enumConsts(typeName, a))
 				}
-				sort.Strings(allowedKeys)
-				for _, allowed := range allowedKeys {
-					fixed := goIdent(allowed)
-					addTypes.WriteString("\t" + typeName + fixed + " " + typeName + " = \"" + allowed + "\"\n")
-				}
-
-				// Generate function to allow empty attribute value
-				if a.AllowEmpty {
-					addTypes.WriteString("\t" + typeName + "Empty " + typeName + " = \"\"\n")
-				}
-				addTypes.WriteString(")\n")
 
 				if a.AllowEmpty {
 					// Variadic: no argument renders the bare attribute; with several, the last wins.
@@ -120,14 +105,6 @@ func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(a ` + typeName +
 	e.attributes.Set("` + a.Name + `", string(a))
 	
 	return e
-}
-`)
-				}
-				if a.AllowCustom {
-					// Generate func to return a custom attribute value
-					buf.WriteString(`
-func  ` + goIdent(e.Tag) + goIdent(a.Name) + `Custom(s string) ` + typeName + ` {
-	return ` + typeName + `(s)
 }
 `)
 				}

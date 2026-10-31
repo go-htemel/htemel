@@ -12,6 +12,10 @@ import (
 )
 
 type EmbedElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +45,14 @@ func EmbedIf(condition bool) *EmbedElement {
 // With allows passing a function to modify the element via a closure.
 func (e *EmbedElement) With(fn func(*EmbedElement)) *EmbedElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *EmbedElement) IfThen(cond bool, fn func(*EmbedElement)) *EmbedElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,115 +121,6 @@ func (e *EmbedElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type EmbedAutocapitalize string
-
-const (
-	EmbedAutocapitalizeCharacters EmbedAutocapitalize = "characters"
-	EmbedAutocapitalizeNone       EmbedAutocapitalize = "none"
-	EmbedAutocapitalizeOff        EmbedAutocapitalize = "off"
-	EmbedAutocapitalizeOn         EmbedAutocapitalize = "on"
-	EmbedAutocapitalizeSentences  EmbedAutocapitalize = "sentences"
-	EmbedAutocapitalizeWords      EmbedAutocapitalize = "words"
-)
-
-type EmbedAutocorrect string
-
-const (
-	EmbedAutocorrectOff   EmbedAutocorrect = "off"
-	EmbedAutocorrectOn    EmbedAutocorrect = "on"
-	EmbedAutocorrectEmpty EmbedAutocorrect = ""
-)
-
-type EmbedContenteditable string
-
-const (
-	EmbedContenteditableFalse         EmbedContenteditable = "false"
-	EmbedContenteditablePlaintextOnly EmbedContenteditable = "plaintext-only"
-	EmbedContenteditableTrue          EmbedContenteditable = "true"
-	EmbedContenteditableEmpty         EmbedContenteditable = ""
-)
-
-type EmbedDir string
-
-const (
-	EmbedDirAuto EmbedDir = "auto"
-	EmbedDirLtr  EmbedDir = "ltr"
-	EmbedDirRtl  EmbedDir = "rtl"
-)
-
-type EmbedDraggable string
-
-const (
-	EmbedDraggableFalse EmbedDraggable = "false"
-	EmbedDraggableTrue  EmbedDraggable = "true"
-)
-
-type EmbedEnterkeyhint string
-
-const (
-	EmbedEnterkeyhintDone     EmbedEnterkeyhint = "done"
-	EmbedEnterkeyhintEnter    EmbedEnterkeyhint = "enter"
-	EmbedEnterkeyhintGo       EmbedEnterkeyhint = "go"
-	EmbedEnterkeyhintNext     EmbedEnterkeyhint = "next"
-	EmbedEnterkeyhintPrevious EmbedEnterkeyhint = "previous"
-	EmbedEnterkeyhintSearch   EmbedEnterkeyhint = "search"
-	EmbedEnterkeyhintSend     EmbedEnterkeyhint = "send"
-)
-
-type EmbedHidden string
-
-const (
-	EmbedHiddenHidden     EmbedHidden = "hidden"
-	EmbedHiddenUntilFound EmbedHidden = "until-found"
-	EmbedHiddenEmpty      EmbedHidden = ""
-)
-
-type EmbedInputmode string
-
-const (
-	EmbedInputmodeDecimal EmbedInputmode = "decimal"
-	EmbedInputmodeEmail   EmbedInputmode = "email"
-	EmbedInputmodeNone    EmbedInputmode = "none"
-	EmbedInputmodeNumeric EmbedInputmode = "numeric"
-	EmbedInputmodeSearch  EmbedInputmode = "search"
-	EmbedInputmodeTel     EmbedInputmode = "tel"
-	EmbedInputmodeText    EmbedInputmode = "text"
-	EmbedInputmodeUrl     EmbedInputmode = "url"
-)
-
-type EmbedPopover string
-
-const (
-	EmbedPopoverAuto   EmbedPopover = "auto"
-	EmbedPopoverHint   EmbedPopover = "hint"
-	EmbedPopoverManual EmbedPopover = "manual"
-	EmbedPopoverEmpty  EmbedPopover = ""
-)
-
-type EmbedSpellcheck string
-
-const (
-	EmbedSpellcheckFalse EmbedSpellcheck = "false"
-	EmbedSpellcheckTrue  EmbedSpellcheck = "true"
-	EmbedSpellcheckEmpty EmbedSpellcheck = ""
-)
-
-type EmbedTranslate string
-
-const (
-	EmbedTranslateNo    EmbedTranslate = "no"
-	EmbedTranslateYes   EmbedTranslate = "yes"
-	EmbedTranslateEmpty EmbedTranslate = ""
-)
-
-type EmbedWritingsuggestions string
-
-const (
-	EmbedWritingsuggestionsFalse EmbedWritingsuggestions = "false"
-	EmbedWritingsuggestionsTrue  EmbedWritingsuggestions = "true"
-	EmbedWritingsuggestionsEmpty EmbedWritingsuggestions = ""
-)
-
 func (e *EmbedElement) Height(i int) *EmbedElement {
 	e.attributes.Set("height", strconv.Itoa(i))
 
@@ -266,7 +169,7 @@ func (e *EmbedElement) Aria(name string, s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Autocapitalize(a EmbedAutocapitalize) *EmbedElement {
+func (e *EmbedElement) Autocapitalize(a Autocapitalize) *EmbedElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -274,8 +177,8 @@ func (e *EmbedElement) Autocapitalize(a EmbedAutocapitalize) *EmbedElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Autocorrect(v ...EmbedAutocorrect) *EmbedElement {
-	var val EmbedAutocorrect
+func (e *EmbedElement) Autocorrect(v ...Autocorrect) *EmbedElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -300,8 +203,8 @@ func (e *EmbedElement) Class(s ...string) *EmbedElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Contenteditable(v ...EmbedContenteditable) *EmbedElement {
-	var val EmbedContenteditable
+func (e *EmbedElement) Contenteditable(v ...Contenteditable) *EmbedElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -326,19 +229,19 @@ func (e *EmbedElement) Data(name string, s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Dir(a EmbedDir) *EmbedElement {
+func (e *EmbedElement) Dir(a Dir) *EmbedElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *EmbedElement) Draggable(a EmbedDraggable) *EmbedElement {
+func (e *EmbedElement) Draggable(a Draggable) *EmbedElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *EmbedElement) Enterkeyhint(a EmbedEnterkeyhint) *EmbedElement {
+func (e *EmbedElement) Enterkeyhint(a Enterkeyhint) *EmbedElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -366,8 +269,8 @@ func (e *EmbedElement) Headingreset(b bool) *EmbedElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Hidden(v ...EmbedHidden) *EmbedElement {
-	var val EmbedHidden
+func (e *EmbedElement) Hidden(v ...Hidden) *EmbedElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -390,7 +293,7 @@ func (e *EmbedElement) Inert(b bool) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Inputmode(a EmbedInputmode) *EmbedElement {
+func (e *EmbedElement) Inputmode(a Inputmode) *EmbedElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -456,8 +359,8 @@ func (e *EmbedElement) Part(s ...string) *EmbedElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Popover(v ...EmbedPopover) *EmbedElement {
-	var val EmbedPopover
+func (e *EmbedElement) Popover(v ...Popover) *EmbedElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -480,8 +383,8 @@ func (e *EmbedElement) Slot(s string) *EmbedElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Spellcheck(v ...EmbedSpellcheck) *EmbedElement {
-	var val EmbedSpellcheck
+func (e *EmbedElement) Spellcheck(v ...Spellcheck) *EmbedElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -510,8 +413,8 @@ func (e *EmbedElement) Title(s string) *EmbedElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Translate(v ...EmbedTranslate) *EmbedElement {
-	var val EmbedTranslate
+func (e *EmbedElement) Translate(v ...Translate) *EmbedElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -522,8 +425,8 @@ func (e *EmbedElement) Translate(v ...EmbedTranslate) *EmbedElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *EmbedElement) Writingsuggestions(v ...EmbedWritingsuggestions) *EmbedElement {
-	var val EmbedWritingsuggestions
+func (e *EmbedElement) Writingsuggestions(v ...Writingsuggestions) *EmbedElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

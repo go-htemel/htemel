@@ -13,16 +13,20 @@ import (
 )
 
 type SearchElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Search creates a tag <search> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The search element represents a part of a document or application that contains a set of form controls or other content related to performing a search or filtering operation. This could be a search of the web site or application; a way of searching or filtering search results on the current web page; or a global or Internet-wide search function.
-func Search(children ...htemel.Node) *SearchElement {
+func Search(children ...htemel.FlowContent) *SearchElement {
 	node := &SearchElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Search(children ...htemel.Node) *SearchElement {
 }
 
 // SearchIf creates a tag <search> instance that is only rendered when condition is true.
-func SearchIf(condition bool, children ...htemel.Node) *SearchElement {
+func SearchIf(condition bool, children ...htemel.FlowContent) *SearchElement {
 	if condition {
 		return Search(children...)
 	}
@@ -43,7 +47,7 @@ func SearchIf(condition bool, children ...htemel.Node) *SearchElement {
 }
 
 // SearchTernary creates a tag <search> containing then when condition is true, otherwise containing otherwise.
-func SearchTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SearchElement {
+func SearchTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *SearchElement {
 	if condition {
 		return Search(then)
 	}
@@ -51,7 +55,7 @@ func SearchTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Sea
 }
 
 // Children appends children to this element.
-func (e *SearchElement) Children(children ...htemel.Node) *SearchElement {
+func (e *SearchElement) Children(children ...htemel.FlowContent) *SearchElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SearchElement) Textf(format string, args ...any) *SearchElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SearchElement) If(cond bool, child htemel.Node) *SearchElement {
+func (e *SearchElement) If(cond bool, child htemel.FlowContent) *SearchElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SearchElement) If(cond bool, child htemel.Node) *SearchElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SearchElement) IfElse(cond bool, then, els htemel.Node) *SearchElement {
+func (e *SearchElement) IfElse(cond bool, then, els htemel.FlowContent) *SearchElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SearchElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SearchAutocapitalize string
-
-const (
-	SearchAutocapitalizeCharacters SearchAutocapitalize = "characters"
-	SearchAutocapitalizeNone       SearchAutocapitalize = "none"
-	SearchAutocapitalizeOff        SearchAutocapitalize = "off"
-	SearchAutocapitalizeOn         SearchAutocapitalize = "on"
-	SearchAutocapitalizeSentences  SearchAutocapitalize = "sentences"
-	SearchAutocapitalizeWords      SearchAutocapitalize = "words"
-)
-
-type SearchAutocorrect string
-
-const (
-	SearchAutocorrectOff   SearchAutocorrect = "off"
-	SearchAutocorrectOn    SearchAutocorrect = "on"
-	SearchAutocorrectEmpty SearchAutocorrect = ""
-)
-
-type SearchContenteditable string
-
-const (
-	SearchContenteditableFalse         SearchContenteditable = "false"
-	SearchContenteditablePlaintextOnly SearchContenteditable = "plaintext-only"
-	SearchContenteditableTrue          SearchContenteditable = "true"
-	SearchContenteditableEmpty         SearchContenteditable = ""
-)
-
-type SearchDir string
-
-const (
-	SearchDirAuto SearchDir = "auto"
-	SearchDirLtr  SearchDir = "ltr"
-	SearchDirRtl  SearchDir = "rtl"
-)
-
-type SearchDraggable string
-
-const (
-	SearchDraggableFalse SearchDraggable = "false"
-	SearchDraggableTrue  SearchDraggable = "true"
-)
-
-type SearchEnterkeyhint string
-
-const (
-	SearchEnterkeyhintDone     SearchEnterkeyhint = "done"
-	SearchEnterkeyhintEnter    SearchEnterkeyhint = "enter"
-	SearchEnterkeyhintGo       SearchEnterkeyhint = "go"
-	SearchEnterkeyhintNext     SearchEnterkeyhint = "next"
-	SearchEnterkeyhintPrevious SearchEnterkeyhint = "previous"
-	SearchEnterkeyhintSearch   SearchEnterkeyhint = "search"
-	SearchEnterkeyhintSend     SearchEnterkeyhint = "send"
-)
-
-type SearchHidden string
-
-const (
-	SearchHiddenHidden     SearchHidden = "hidden"
-	SearchHiddenUntilFound SearchHidden = "until-found"
-	SearchHiddenEmpty      SearchHidden = ""
-)
-
-type SearchInputmode string
-
-const (
-	SearchInputmodeDecimal SearchInputmode = "decimal"
-	SearchInputmodeEmail   SearchInputmode = "email"
-	SearchInputmodeNone    SearchInputmode = "none"
-	SearchInputmodeNumeric SearchInputmode = "numeric"
-	SearchInputmodeSearch  SearchInputmode = "search"
-	SearchInputmodeTel     SearchInputmode = "tel"
-	SearchInputmodeText    SearchInputmode = "text"
-	SearchInputmodeUrl     SearchInputmode = "url"
-)
-
-type SearchPopover string
-
-const (
-	SearchPopoverAuto   SearchPopover = "auto"
-	SearchPopoverHint   SearchPopover = "hint"
-	SearchPopoverManual SearchPopover = "manual"
-	SearchPopoverEmpty  SearchPopover = ""
-)
-
-type SearchSpellcheck string
-
-const (
-	SearchSpellcheckFalse SearchSpellcheck = "false"
-	SearchSpellcheckTrue  SearchSpellcheck = "true"
-	SearchSpellcheckEmpty SearchSpellcheck = ""
-)
-
-type SearchTranslate string
-
-const (
-	SearchTranslateNo    SearchTranslate = "no"
-	SearchTranslateYes   SearchTranslate = "yes"
-	SearchTranslateEmpty SearchTranslate = ""
-)
-
-type SearchWritingsuggestions string
-
-const (
-	SearchWritingsuggestionsFalse SearchWritingsuggestions = "false"
-	SearchWritingsuggestionsTrue  SearchWritingsuggestions = "true"
-	SearchWritingsuggestionsEmpty SearchWritingsuggestions = ""
-)
-
 func (e *SearchElement) Accesskey(r rune) *SearchElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SearchElement) Aria(name string, s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Autocapitalize(a SearchAutocapitalize) *SearchElement {
+func (e *SearchElement) Autocapitalize(a Autocapitalize) *SearchElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SearchElement) Autocapitalize(a SearchAutocapitalize) *SearchElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Autocorrect(v ...SearchAutocorrect) *SearchElement {
-	var val SearchAutocorrect
+func (e *SearchElement) Autocorrect(v ...Autocorrect) *SearchElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SearchElement) Class(s ...string) *SearchElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Contenteditable(v ...SearchContenteditable) *SearchElement {
-	var val SearchContenteditable
+func (e *SearchElement) Contenteditable(v ...Contenteditable) *SearchElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SearchElement) Data(name string, s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Dir(a SearchDir) *SearchElement {
+func (e *SearchElement) Dir(a Dir) *SearchElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SearchElement) Draggable(a SearchDraggable) *SearchElement {
+func (e *SearchElement) Draggable(a Draggable) *SearchElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SearchElement) Enterkeyhint(a SearchEnterkeyhint) *SearchElement {
+func (e *SearchElement) Enterkeyhint(a Enterkeyhint) *SearchElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SearchElement) Headingreset(b bool) *SearchElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Hidden(v ...SearchHidden) *SearchElement {
-	var val SearchHidden
+func (e *SearchElement) Hidden(v ...Hidden) *SearchElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SearchElement) Inert(b bool) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Inputmode(a SearchInputmode) *SearchElement {
+func (e *SearchElement) Inputmode(a Inputmode) *SearchElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SearchElement) Part(s ...string) *SearchElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Popover(v ...SearchPopover) *SearchElement {
-	var val SearchPopover
+func (e *SearchElement) Popover(v ...Popover) *SearchElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SearchElement) Slot(s string) *SearchElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Spellcheck(v ...SearchSpellcheck) *SearchElement {
-	var val SearchSpellcheck
+func (e *SearchElement) Spellcheck(v ...Spellcheck) *SearchElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SearchElement) Title(s string) *SearchElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Translate(v ...SearchTranslate) *SearchElement {
-	var val SearchTranslate
+func (e *SearchElement) Translate(v ...Translate) *SearchElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SearchElement) Translate(v ...SearchTranslate) *SearchElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SearchElement) Writingsuggestions(v ...SearchWritingsuggestions) *SearchElement {
-	var val SearchWritingsuggestions
+func (e *SearchElement) Writingsuggestions(v ...Writingsuggestions) *SearchElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

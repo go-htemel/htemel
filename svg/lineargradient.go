@@ -14,15 +14,17 @@ import (
 
 type LinearGradientElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // LinearGradient creates a tag <linearGradient> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The linearGradient element defines a linear gradient used to fill or stroke shapes.
-func LinearGradient(children ...htemel.Node) *LinearGradientElement {
+func LinearGradient(children ...Content) *LinearGradientElement {
 	node := &LinearGradientElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func LinearGradient(children ...htemel.Node) *LinearGradientElement {
 }
 
 // LinearGradientIf creates a tag <linearGradient> instance that is only rendered when condition is true.
-func LinearGradientIf(condition bool, children ...htemel.Node) *LinearGradientElement {
+func LinearGradientIf(condition bool, children ...Content) *LinearGradientElement {
 	if condition {
 		return LinearGradient(children...)
 	}
@@ -43,7 +45,7 @@ func LinearGradientIf(condition bool, children ...htemel.Node) *LinearGradientEl
 }
 
 // LinearGradientTernary creates a tag <linearGradient> containing then when condition is true, otherwise containing otherwise.
-func LinearGradientTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LinearGradientElement {
+func LinearGradientTernary(condition bool, then Content, otherwise Content) *LinearGradientElement {
 	if condition {
 		return LinearGradient(then)
 	}
@@ -51,7 +53,7 @@ func LinearGradientTernary(condition bool, then htemel.Node, otherwise htemel.No
 }
 
 // Children appends children to this element.
-func (e *LinearGradientElement) Children(children ...htemel.Node) *LinearGradientElement {
+func (e *LinearGradientElement) Children(children ...Content) *LinearGradientElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *LinearGradientElement) Textf(format string, args ...any) *LinearGradien
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LinearGradientElement) If(cond bool, child htemel.Node) *LinearGradientElement {
+func (e *LinearGradientElement) If(cond bool, child Content) *LinearGradientElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *LinearGradientElement) If(cond bool, child htemel.Node) *LinearGradient
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LinearGradientElement) IfElse(cond bool, then, els htemel.Node) *LinearGradientElement {
+func (e *LinearGradientElement) IfElse(cond bool, then, els Content) *LinearGradientElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,234 +166,8 @@ func (e *LinearGradientElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LinearGradientGradientUnits string
-
-const (
-	LinearGradientGradientUnitsObjectBoundingBox LinearGradientGradientUnits = "objectBoundingBox"
-	LinearGradientGradientUnitsUserSpaceOnUse    LinearGradientGradientUnits = "userSpaceOnUse"
-)
-
-type LinearGradientSpreadMethod string
-
-const (
-	LinearGradientSpreadMethodPad     LinearGradientSpreadMethod = "pad"
-	LinearGradientSpreadMethodReflect LinearGradientSpreadMethod = "reflect"
-	LinearGradientSpreadMethodRepeat  LinearGradientSpreadMethod = "repeat"
-)
-
-type LinearGradientAlignmentBaseline string
-
-const (
-	LinearGradientAlignmentBaselineAfterEdge      LinearGradientAlignmentBaseline = "after-edge"
-	LinearGradientAlignmentBaselineAlphabetic     LinearGradientAlignmentBaseline = "alphabetic"
-	LinearGradientAlignmentBaselineAuto           LinearGradientAlignmentBaseline = "auto"
-	LinearGradientAlignmentBaselineBaseline       LinearGradientAlignmentBaseline = "baseline"
-	LinearGradientAlignmentBaselineBeforeEdge     LinearGradientAlignmentBaseline = "before-edge"
-	LinearGradientAlignmentBaselineBottom         LinearGradientAlignmentBaseline = "bottom"
-	LinearGradientAlignmentBaselineCenter         LinearGradientAlignmentBaseline = "center"
-	LinearGradientAlignmentBaselineCentral        LinearGradientAlignmentBaseline = "central"
-	LinearGradientAlignmentBaselineHanging        LinearGradientAlignmentBaseline = "hanging"
-	LinearGradientAlignmentBaselineIdeographic    LinearGradientAlignmentBaseline = "ideographic"
-	LinearGradientAlignmentBaselineMathematical   LinearGradientAlignmentBaseline = "mathematical"
-	LinearGradientAlignmentBaselineMiddle         LinearGradientAlignmentBaseline = "middle"
-	LinearGradientAlignmentBaselineTextAfterEdge  LinearGradientAlignmentBaseline = "text-after-edge"
-	LinearGradientAlignmentBaselineTextBeforeEdge LinearGradientAlignmentBaseline = "text-before-edge"
-	LinearGradientAlignmentBaselineTextBottom     LinearGradientAlignmentBaseline = "text-bottom"
-	LinearGradientAlignmentBaselineTextTop        LinearGradientAlignmentBaseline = "text-top"
-	LinearGradientAlignmentBaselineTop            LinearGradientAlignmentBaseline = "top"
-)
-
-type LinearGradientClipRule string
-
-const (
-	LinearGradientClipRuleEvenodd LinearGradientClipRule = "evenodd"
-	LinearGradientClipRuleNonzero LinearGradientClipRule = "nonzero"
-)
-
-type LinearGradientColorInterpolation string
-
-const (
-	LinearGradientColorInterpolationAuto      LinearGradientColorInterpolation = "auto"
-	LinearGradientColorInterpolationLinearRGB LinearGradientColorInterpolation = "linearRGB"
-	LinearGradientColorInterpolationSRGB      LinearGradientColorInterpolation = "sRGB"
-)
-
-type LinearGradientColorInterpolationFilters string
-
-const (
-	LinearGradientColorInterpolationFiltersAuto      LinearGradientColorInterpolationFilters = "auto"
-	LinearGradientColorInterpolationFiltersLinearRGB LinearGradientColorInterpolationFilters = "linearRGB"
-	LinearGradientColorInterpolationFiltersSRGB      LinearGradientColorInterpolationFilters = "sRGB"
-)
-
-type LinearGradientDirection string
-
-const (
-	LinearGradientDirectionLtr LinearGradientDirection = "ltr"
-	LinearGradientDirectionRtl LinearGradientDirection = "rtl"
-)
-
-type LinearGradientDominantBaseline string
-
-const (
-	LinearGradientDominantBaselineAlphabetic   LinearGradientDominantBaseline = "alphabetic"
-	LinearGradientDominantBaselineAuto         LinearGradientDominantBaseline = "auto"
-	LinearGradientDominantBaselineCentral      LinearGradientDominantBaseline = "central"
-	LinearGradientDominantBaselineHanging      LinearGradientDominantBaseline = "hanging"
-	LinearGradientDominantBaselineIdeographic  LinearGradientDominantBaseline = "ideographic"
-	LinearGradientDominantBaselineMathematical LinearGradientDominantBaseline = "mathematical"
-	LinearGradientDominantBaselineMiddle       LinearGradientDominantBaseline = "middle"
-	LinearGradientDominantBaselineTextBottom   LinearGradientDominantBaseline = "text-bottom"
-	LinearGradientDominantBaselineTextTop      LinearGradientDominantBaseline = "text-top"
-)
-
-type LinearGradientFillRule string
-
-const (
-	LinearGradientFillRuleEvenodd LinearGradientFillRule = "evenodd"
-	LinearGradientFillRuleNonzero LinearGradientFillRule = "nonzero"
-)
-
-type LinearGradientFontStyle string
-
-const (
-	LinearGradientFontStyleItalic  LinearGradientFontStyle = "italic"
-	LinearGradientFontStyleNormal  LinearGradientFontStyle = "normal"
-	LinearGradientFontStyleOblique LinearGradientFontStyle = "oblique"
-)
-
-type LinearGradientImageRendering string
-
-const (
-	LinearGradientImageRenderingAuto            LinearGradientImageRendering = "auto"
-	LinearGradientImageRenderingCrispEdges      LinearGradientImageRendering = "crisp-edges"
-	LinearGradientImageRenderingHighQuality     LinearGradientImageRendering = "high-quality"
-	LinearGradientImageRenderingOptimizeQuality LinearGradientImageRendering = "optimizeQuality"
-	LinearGradientImageRenderingOptimizeSpeed   LinearGradientImageRendering = "optimizeSpeed"
-	LinearGradientImageRenderingPixelated       LinearGradientImageRendering = "pixelated"
-	LinearGradientImageRenderingSmooth          LinearGradientImageRendering = "smooth"
-)
-
-type LinearGradientOverflow string
-
-const (
-	LinearGradientOverflowAuto    LinearGradientOverflow = "auto"
-	LinearGradientOverflowClip    LinearGradientOverflow = "clip"
-	LinearGradientOverflowHidden  LinearGradientOverflow = "hidden"
-	LinearGradientOverflowScroll  LinearGradientOverflow = "scroll"
-	LinearGradientOverflowVisible LinearGradientOverflow = "visible"
-)
-
-type LinearGradientPointerEvents string
-
-const (
-	LinearGradientPointerEventsAll            LinearGradientPointerEvents = "all"
-	LinearGradientPointerEventsAuto           LinearGradientPointerEvents = "auto"
-	LinearGradientPointerEventsBoundingBox    LinearGradientPointerEvents = "bounding-box"
-	LinearGradientPointerEventsFill           LinearGradientPointerEvents = "fill"
-	LinearGradientPointerEventsNone           LinearGradientPointerEvents = "none"
-	LinearGradientPointerEventsPainted        LinearGradientPointerEvents = "painted"
-	LinearGradientPointerEventsStroke         LinearGradientPointerEvents = "stroke"
-	LinearGradientPointerEventsVisible        LinearGradientPointerEvents = "visible"
-	LinearGradientPointerEventsVisibleFill    LinearGradientPointerEvents = "visibleFill"
-	LinearGradientPointerEventsVisiblePainted LinearGradientPointerEvents = "visiblePainted"
-	LinearGradientPointerEventsVisibleStroke  LinearGradientPointerEvents = "visibleStroke"
-)
-
-type LinearGradientShapeRendering string
-
-const (
-	LinearGradientShapeRenderingAuto               LinearGradientShapeRendering = "auto"
-	LinearGradientShapeRenderingCrispEdges         LinearGradientShapeRendering = "crispEdges"
-	LinearGradientShapeRenderingGeometricPrecision LinearGradientShapeRendering = "geometricPrecision"
-	LinearGradientShapeRenderingOptimizeSpeed      LinearGradientShapeRendering = "optimizeSpeed"
-)
-
-type LinearGradientStrokeLinecap string
-
-const (
-	LinearGradientStrokeLinecapButt   LinearGradientStrokeLinecap = "butt"
-	LinearGradientStrokeLinecapRound  LinearGradientStrokeLinecap = "round"
-	LinearGradientStrokeLinecapSquare LinearGradientStrokeLinecap = "square"
-)
-
-type LinearGradientStrokeLinejoin string
-
-const (
-	LinearGradientStrokeLinejoinArcs      LinearGradientStrokeLinejoin = "arcs"
-	LinearGradientStrokeLinejoinBevel     LinearGradientStrokeLinejoin = "bevel"
-	LinearGradientStrokeLinejoinMiter     LinearGradientStrokeLinejoin = "miter"
-	LinearGradientStrokeLinejoinMiterClip LinearGradientStrokeLinejoin = "miter-clip"
-	LinearGradientStrokeLinejoinRound     LinearGradientStrokeLinejoin = "round"
-)
-
-type LinearGradientTextAnchor string
-
-const (
-	LinearGradientTextAnchorEnd    LinearGradientTextAnchor = "end"
-	LinearGradientTextAnchorMiddle LinearGradientTextAnchor = "middle"
-	LinearGradientTextAnchorStart  LinearGradientTextAnchor = "start"
-)
-
-type LinearGradientTextRendering string
-
-const (
-	LinearGradientTextRenderingAuto               LinearGradientTextRendering = "auto"
-	LinearGradientTextRenderingGeometricPrecision LinearGradientTextRendering = "geometricPrecision"
-	LinearGradientTextRenderingOptimizeLegibility LinearGradientTextRendering = "optimizeLegibility"
-	LinearGradientTextRenderingOptimizeSpeed      LinearGradientTextRendering = "optimizeSpeed"
-)
-
-type LinearGradientTransformBox string
-
-const (
-	LinearGradientTransformBoxBorderBox  LinearGradientTransformBox = "border-box"
-	LinearGradientTransformBoxContentBox LinearGradientTransformBox = "content-box"
-	LinearGradientTransformBoxFillBox    LinearGradientTransformBox = "fill-box"
-	LinearGradientTransformBoxStrokeBox  LinearGradientTransformBox = "stroke-box"
-	LinearGradientTransformBoxViewBox    LinearGradientTransformBox = "view-box"
-)
-
-type LinearGradientVectorEffect string
-
-const (
-	LinearGradientVectorEffectFixedPosition    LinearGradientVectorEffect = "fixed-position"
-	LinearGradientVectorEffectNonRotation      LinearGradientVectorEffect = "non-rotation"
-	LinearGradientVectorEffectNonScalingSize   LinearGradientVectorEffect = "non-scaling-size"
-	LinearGradientVectorEffectNonScalingStroke LinearGradientVectorEffect = "non-scaling-stroke"
-	LinearGradientVectorEffectNone             LinearGradientVectorEffect = "none"
-)
-
-type LinearGradientVisibility string
-
-const (
-	LinearGradientVisibilityCollapse LinearGradientVisibility = "collapse"
-	LinearGradientVisibilityHidden   LinearGradientVisibility = "hidden"
-	LinearGradientVisibilityVisible  LinearGradientVisibility = "visible"
-)
-
-type LinearGradientWritingMode string
-
-const (
-	LinearGradientWritingModeHorizontalTb LinearGradientWritingMode = "horizontal-tb"
-	LinearGradientWritingModeLr           LinearGradientWritingMode = "lr"
-	LinearGradientWritingModeLrTb         LinearGradientWritingMode = "lr-tb"
-	LinearGradientWritingModeRl           LinearGradientWritingMode = "rl"
-	LinearGradientWritingModeRlTb         LinearGradientWritingMode = "rl-tb"
-	LinearGradientWritingModeSidewaysLr   LinearGradientWritingMode = "sideways-lr"
-	LinearGradientWritingModeSidewaysRl   LinearGradientWritingMode = "sideways-rl"
-	LinearGradientWritingModeTb           LinearGradientWritingMode = "tb"
-	LinearGradientWritingModeTbRl         LinearGradientWritingMode = "tb-rl"
-	LinearGradientWritingModeVerticalLr   LinearGradientWritingMode = "vertical-lr"
-	LinearGradientWritingModeVerticalRl   LinearGradientWritingMode = "vertical-rl"
-)
-
-type LinearGradientXmlSpace string
-
-const (
-	LinearGradientXmlSpaceDefault  LinearGradientXmlSpace = "default"
-	LinearGradientXmlSpacePreserve LinearGradientXmlSpace = "preserve"
-)
+// SVGContent marks <linearGradient> as a permitted child (Content).
+func (*LinearGradientElement) SVGContent() {}
 
 func (e *LinearGradientElement) GradientTransform(s string) *LinearGradientElement {
 	e.attributes.Set("gradientTransform", s)
@@ -399,7 +175,7 @@ func (e *LinearGradientElement) GradientTransform(s string) *LinearGradientEleme
 	return e
 }
 
-func (e *LinearGradientElement) GradientUnits(a LinearGradientGradientUnits) *LinearGradientElement {
+func (e *LinearGradientElement) GradientUnits(a GradientUnits) *LinearGradientElement {
 	e.attributes.Set("gradientUnits", string(a))
 
 	return e
@@ -413,7 +189,7 @@ func (e *LinearGradientElement) Href(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) SpreadMethod(a LinearGradientSpreadMethod) *LinearGradientElement {
+func (e *LinearGradientElement) SpreadMethod(a SpreadMethod) *LinearGradientElement {
 	e.attributes.Set("spreadMethod", string(a))
 
 	return e
@@ -453,14 +229,10 @@ func (e *LinearGradientElement) Y2(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) AlignmentBaseline(a LinearGradientAlignmentBaseline) *LinearGradientElement {
+func (e *LinearGradientElement) AlignmentBaseline(a AlignmentBaseline) *LinearGradientElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func LinearGradientAlignmentBaselineCustom(s string) LinearGradientAlignmentBaseline {
-	return LinearGradientAlignmentBaseline(s)
 }
 
 func (e *LinearGradientElement) AriaUnsafe(name string, s string) *LinearGradientElement {
@@ -514,14 +286,10 @@ func (e *LinearGradientElement) ClipPath(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) ClipRule(a LinearGradientClipRule) *LinearGradientElement {
+func (e *LinearGradientElement) ClipRule(a ClipRule) *LinearGradientElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func LinearGradientClipRuleCustom(s string) LinearGradientClipRule {
-	return LinearGradientClipRule(s)
 }
 
 func (e *LinearGradientElement) Color(s string) *LinearGradientElement {
@@ -530,24 +298,16 @@ func (e *LinearGradientElement) Color(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) ColorInterpolation(a LinearGradientColorInterpolation) *LinearGradientElement {
+func (e *LinearGradientElement) ColorInterpolation(a ColorInterpolation) *LinearGradientElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func LinearGradientColorInterpolationCustom(s string) LinearGradientColorInterpolation {
-	return LinearGradientColorInterpolation(s)
-}
-
-func (e *LinearGradientElement) ColorInterpolationFilters(a LinearGradientColorInterpolationFilters) *LinearGradientElement {
+func (e *LinearGradientElement) ColorInterpolationFilters(a ColorInterpolationFilters) *LinearGradientElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func LinearGradientColorInterpolationFiltersCustom(s string) LinearGradientColorInterpolationFilters {
-	return LinearGradientColorInterpolationFilters(s)
 }
 
 func (e *LinearGradientElement) Cursor(s string) *LinearGradientElement {
@@ -572,14 +332,10 @@ func (e *LinearGradientElement) Data(name string, s string) *LinearGradientEleme
 	return e
 }
 
-func (e *LinearGradientElement) Direction(a LinearGradientDirection) *LinearGradientElement {
+func (e *LinearGradientElement) Direction(a Direction) *LinearGradientElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func LinearGradientDirectionCustom(s string) LinearGradientDirection {
-	return LinearGradientDirection(s)
 }
 
 func (e *LinearGradientElement) Display(s string) *LinearGradientElement {
@@ -588,14 +344,10 @@ func (e *LinearGradientElement) Display(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) DominantBaseline(a LinearGradientDominantBaseline) *LinearGradientElement {
+func (e *LinearGradientElement) DominantBaseline(a DominantBaseline) *LinearGradientElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func LinearGradientDominantBaselineCustom(s string) LinearGradientDominantBaseline {
-	return LinearGradientDominantBaseline(s)
 }
 
 func (e *LinearGradientElement) Fill(s string) *LinearGradientElement {
@@ -610,14 +362,10 @@ func (e *LinearGradientElement) FillOpacity(f float64) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) FillRule(a LinearGradientFillRule) *LinearGradientElement {
+func (e *LinearGradientElement) FillRule(a FillRule) *LinearGradientElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func LinearGradientFillRuleCustom(s string) LinearGradientFillRule {
-	return LinearGradientFillRule(s)
 }
 
 func (e *LinearGradientElement) Filter(s string) *LinearGradientElement {
@@ -662,14 +410,10 @@ func (e *LinearGradientElement) FontStretch(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) FontStyle(a LinearGradientFontStyle) *LinearGradientElement {
+func (e *LinearGradientElement) FontStyle(a FontStyle) *LinearGradientElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func LinearGradientFontStyleCustom(s string) LinearGradientFontStyle {
-	return LinearGradientFontStyle(s)
 }
 
 func (e *LinearGradientElement) FontVariant(s string) *LinearGradientElement {
@@ -708,14 +452,10 @@ func (e *LinearGradientElement) Id(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) ImageRendering(a LinearGradientImageRendering) *LinearGradientElement {
+func (e *LinearGradientElement) ImageRendering(a ImageRendering) *LinearGradientElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func LinearGradientImageRenderingCustom(s string) LinearGradientImageRendering {
-	return LinearGradientImageRendering(s)
 }
 
 func (e *LinearGradientElement) Lang(s string) *LinearGradientElement {
@@ -766,14 +506,10 @@ func (e *LinearGradientElement) Opacity(f float64) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) Overflow(a LinearGradientOverflow) *LinearGradientElement {
+func (e *LinearGradientElement) Overflow(a Overflow) *LinearGradientElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func LinearGradientOverflowCustom(s string) LinearGradientOverflow {
-	return LinearGradientOverflow(s)
 }
 
 func (e *LinearGradientElement) PaintOrder(s string) *LinearGradientElement {
@@ -782,14 +518,10 @@ func (e *LinearGradientElement) PaintOrder(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) PointerEvents(a LinearGradientPointerEvents) *LinearGradientElement {
+func (e *LinearGradientElement) PointerEvents(a PointerEvents) *LinearGradientElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func LinearGradientPointerEventsCustom(s string) LinearGradientPointerEvents {
-	return LinearGradientPointerEvents(s)
 }
 
 func (e *LinearGradientElement) RequiredExtensions(s string) *LinearGradientElement {
@@ -798,14 +530,10 @@ func (e *LinearGradientElement) RequiredExtensions(s string) *LinearGradientElem
 	return e
 }
 
-func (e *LinearGradientElement) ShapeRendering(a LinearGradientShapeRendering) *LinearGradientElement {
+func (e *LinearGradientElement) ShapeRendering(a ShapeRendering) *LinearGradientElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func LinearGradientShapeRenderingCustom(s string) LinearGradientShapeRendering {
-	return LinearGradientShapeRendering(s)
 }
 
 func (e *LinearGradientElement) StopColor(s string) *LinearGradientElement {
@@ -838,24 +566,16 @@ func (e *LinearGradientElement) StrokeDashoffset(s string) *LinearGradientElemen
 	return e
 }
 
-func (e *LinearGradientElement) StrokeLinecap(a LinearGradientStrokeLinecap) *LinearGradientElement {
+func (e *LinearGradientElement) StrokeLinecap(a StrokeLinecap) *LinearGradientElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func LinearGradientStrokeLinecapCustom(s string) LinearGradientStrokeLinecap {
-	return LinearGradientStrokeLinecap(s)
-}
-
-func (e *LinearGradientElement) StrokeLinejoin(a LinearGradientStrokeLinejoin) *LinearGradientElement {
+func (e *LinearGradientElement) StrokeLinejoin(a StrokeLinejoin) *LinearGradientElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func LinearGradientStrokeLinejoinCustom(s string) LinearGradientStrokeLinejoin {
-	return LinearGradientStrokeLinejoin(s)
 }
 
 func (e *LinearGradientElement) StrokeMiterlimit(f float64) *LinearGradientElement {
@@ -888,14 +608,10 @@ func (e *LinearGradientElement) Tabindex(i int) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) TextAnchor(a LinearGradientTextAnchor) *LinearGradientElement {
+func (e *LinearGradientElement) TextAnchor(a TextAnchor) *LinearGradientElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func LinearGradientTextAnchorCustom(s string) LinearGradientTextAnchor {
-	return LinearGradientTextAnchor(s)
 }
 
 func (e *LinearGradientElement) TextDecoration(s string) *LinearGradientElement {
@@ -910,14 +626,10 @@ func (e *LinearGradientElement) TextOverflow(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) TextRendering(a LinearGradientTextRendering) *LinearGradientElement {
+func (e *LinearGradientElement) TextRendering(a TextRendering) *LinearGradientElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func LinearGradientTextRenderingCustom(s string) LinearGradientTextRendering {
-	return LinearGradientTextRendering(s)
 }
 
 func (e *LinearGradientElement) Transform(s string) *LinearGradientElement {
@@ -926,14 +638,10 @@ func (e *LinearGradientElement) Transform(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) TransformBox(a LinearGradientTransformBox) *LinearGradientElement {
+func (e *LinearGradientElement) TransformBox(a TransformBox) *LinearGradientElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func LinearGradientTransformBoxCustom(s string) LinearGradientTransformBox {
-	return LinearGradientTransformBox(s)
 }
 
 func (e *LinearGradientElement) TransformOrigin(s string) *LinearGradientElement {
@@ -948,24 +656,16 @@ func (e *LinearGradientElement) UnicodeBidi(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) VectorEffect(a LinearGradientVectorEffect) *LinearGradientElement {
+func (e *LinearGradientElement) VectorEffect(a VectorEffect) *LinearGradientElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func LinearGradientVectorEffectCustom(s string) LinearGradientVectorEffect {
-	return LinearGradientVectorEffect(s)
-}
-
-func (e *LinearGradientElement) Visibility(a LinearGradientVisibility) *LinearGradientElement {
+func (e *LinearGradientElement) Visibility(a Visibility) *LinearGradientElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func LinearGradientVisibilityCustom(s string) LinearGradientVisibility {
-	return LinearGradientVisibility(s)
 }
 
 func (e *LinearGradientElement) WhiteSpace(s string) *LinearGradientElement {
@@ -980,14 +680,10 @@ func (e *LinearGradientElement) WordSpacing(s string) *LinearGradientElement {
 	return e
 }
 
-func (e *LinearGradientElement) WritingMode(a LinearGradientWritingMode) *LinearGradientElement {
+func (e *LinearGradientElement) WritingMode(a WritingMode) *LinearGradientElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func LinearGradientWritingModeCustom(s string) LinearGradientWritingMode {
-	return LinearGradientWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1002,7 +698,7 @@ func (e *LinearGradientElement) XmlLang(s string) *LinearGradientElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *LinearGradientElement) XmlSpace(a LinearGradientXmlSpace) *LinearGradientElement {
+func (e *LinearGradientElement) XmlSpace(a XmlSpace) *LinearGradientElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

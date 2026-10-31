@@ -13,16 +13,21 @@ import (
 )
 
 type SectionElement struct {
+	htemel.FlowMarker
+	htemel.SectioningMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Section creates a tag <section> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The section element represents a generic section of a document or application. A section, in this context, is a thematic grouping of content, typically with a heading.
-func Section(children ...htemel.Node) *SectionElement {
+func Section(children ...htemel.FlowContent) *SectionElement {
 	node := &SectionElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Section(children ...htemel.Node) *SectionElement {
 }
 
 // SectionIf creates a tag <section> instance that is only rendered when condition is true.
-func SectionIf(condition bool, children ...htemel.Node) *SectionElement {
+func SectionIf(condition bool, children ...htemel.FlowContent) *SectionElement {
 	if condition {
 		return Section(children...)
 	}
@@ -43,7 +48,7 @@ func SectionIf(condition bool, children ...htemel.Node) *SectionElement {
 }
 
 // SectionTernary creates a tag <section> containing then when condition is true, otherwise containing otherwise.
-func SectionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SectionElement {
+func SectionTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *SectionElement {
 	if condition {
 		return Section(then)
 	}
@@ -51,7 +56,7 @@ func SectionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Se
 }
 
 // Children appends children to this element.
-func (e *SectionElement) Children(children ...htemel.Node) *SectionElement {
+func (e *SectionElement) Children(children ...htemel.FlowContent) *SectionElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *SectionElement) Textf(format string, args ...any) *SectionElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SectionElement) If(cond bool, child htemel.Node) *SectionElement {
+func (e *SectionElement) If(cond bool, child htemel.FlowContent) *SectionElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *SectionElement) If(cond bool, child htemel.Node) *SectionElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SectionElement) IfElse(cond bool, then, els htemel.Node) *SectionElement {
+func (e *SectionElement) IfElse(cond bool, then, els htemel.FlowContent) *SectionElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *SectionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SectionAutocapitalize string
-
-const (
-	SectionAutocapitalizeCharacters SectionAutocapitalize = "characters"
-	SectionAutocapitalizeNone       SectionAutocapitalize = "none"
-	SectionAutocapitalizeOff        SectionAutocapitalize = "off"
-	SectionAutocapitalizeOn         SectionAutocapitalize = "on"
-	SectionAutocapitalizeSentences  SectionAutocapitalize = "sentences"
-	SectionAutocapitalizeWords      SectionAutocapitalize = "words"
-)
-
-type SectionAutocorrect string
-
-const (
-	SectionAutocorrectOff   SectionAutocorrect = "off"
-	SectionAutocorrectOn    SectionAutocorrect = "on"
-	SectionAutocorrectEmpty SectionAutocorrect = ""
-)
-
-type SectionContenteditable string
-
-const (
-	SectionContenteditableFalse         SectionContenteditable = "false"
-	SectionContenteditablePlaintextOnly SectionContenteditable = "plaintext-only"
-	SectionContenteditableTrue          SectionContenteditable = "true"
-	SectionContenteditableEmpty         SectionContenteditable = ""
-)
-
-type SectionDir string
-
-const (
-	SectionDirAuto SectionDir = "auto"
-	SectionDirLtr  SectionDir = "ltr"
-	SectionDirRtl  SectionDir = "rtl"
-)
-
-type SectionDraggable string
-
-const (
-	SectionDraggableFalse SectionDraggable = "false"
-	SectionDraggableTrue  SectionDraggable = "true"
-)
-
-type SectionEnterkeyhint string
-
-const (
-	SectionEnterkeyhintDone     SectionEnterkeyhint = "done"
-	SectionEnterkeyhintEnter    SectionEnterkeyhint = "enter"
-	SectionEnterkeyhintGo       SectionEnterkeyhint = "go"
-	SectionEnterkeyhintNext     SectionEnterkeyhint = "next"
-	SectionEnterkeyhintPrevious SectionEnterkeyhint = "previous"
-	SectionEnterkeyhintSearch   SectionEnterkeyhint = "search"
-	SectionEnterkeyhintSend     SectionEnterkeyhint = "send"
-)
-
-type SectionHidden string
-
-const (
-	SectionHiddenHidden     SectionHidden = "hidden"
-	SectionHiddenUntilFound SectionHidden = "until-found"
-	SectionHiddenEmpty      SectionHidden = ""
-)
-
-type SectionInputmode string
-
-const (
-	SectionInputmodeDecimal SectionInputmode = "decimal"
-	SectionInputmodeEmail   SectionInputmode = "email"
-	SectionInputmodeNone    SectionInputmode = "none"
-	SectionInputmodeNumeric SectionInputmode = "numeric"
-	SectionInputmodeSearch  SectionInputmode = "search"
-	SectionInputmodeTel     SectionInputmode = "tel"
-	SectionInputmodeText    SectionInputmode = "text"
-	SectionInputmodeUrl     SectionInputmode = "url"
-)
-
-type SectionPopover string
-
-const (
-	SectionPopoverAuto   SectionPopover = "auto"
-	SectionPopoverHint   SectionPopover = "hint"
-	SectionPopoverManual SectionPopover = "manual"
-	SectionPopoverEmpty  SectionPopover = ""
-)
-
-type SectionSpellcheck string
-
-const (
-	SectionSpellcheckFalse SectionSpellcheck = "false"
-	SectionSpellcheckTrue  SectionSpellcheck = "true"
-	SectionSpellcheckEmpty SectionSpellcheck = ""
-)
-
-type SectionTranslate string
-
-const (
-	SectionTranslateNo    SectionTranslate = "no"
-	SectionTranslateYes   SectionTranslate = "yes"
-	SectionTranslateEmpty SectionTranslate = ""
-)
-
-type SectionWritingsuggestions string
-
-const (
-	SectionWritingsuggestionsFalse SectionWritingsuggestions = "false"
-	SectionWritingsuggestionsTrue  SectionWritingsuggestions = "true"
-	SectionWritingsuggestionsEmpty SectionWritingsuggestions = ""
-)
-
 func (e *SectionElement) Accesskey(r rune) *SectionElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +191,7 @@ func (e *SectionElement) Aria(name string, s string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Autocapitalize(a SectionAutocapitalize) *SectionElement {
+func (e *SectionElement) Autocapitalize(a Autocapitalize) *SectionElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *SectionElement) Autocapitalize(a SectionAutocapitalize) *SectionElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Autocorrect(v ...SectionAutocorrect) *SectionElement {
-	var val SectionAutocorrect
+func (e *SectionElement) Autocorrect(v ...Autocorrect) *SectionElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *SectionElement) Class(s ...string) *SectionElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Contenteditable(v ...SectionContenteditable) *SectionElement {
-	var val SectionContenteditable
+func (e *SectionElement) Contenteditable(v ...Contenteditable) *SectionElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *SectionElement) Data(name string, s string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Dir(a SectionDir) *SectionElement {
+func (e *SectionElement) Dir(a Dir) *SectionElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SectionElement) Draggable(a SectionDraggable) *SectionElement {
+func (e *SectionElement) Draggable(a Draggable) *SectionElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SectionElement) Enterkeyhint(a SectionEnterkeyhint) *SectionElement {
+func (e *SectionElement) Enterkeyhint(a Enterkeyhint) *SectionElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *SectionElement) Headingreset(b bool) *SectionElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Hidden(v ...SectionHidden) *SectionElement {
-	var val SectionHidden
+func (e *SectionElement) Hidden(v ...Hidden) *SectionElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *SectionElement) Inert(b bool) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Inputmode(a SectionInputmode) *SectionElement {
+func (e *SectionElement) Inputmode(a Inputmode) *SectionElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *SectionElement) Part(s ...string) *SectionElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Popover(v ...SectionPopover) *SectionElement {
-	var val SectionPopover
+func (e *SectionElement) Popover(v ...Popover) *SectionElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *SectionElement) Slot(s string) *SectionElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Spellcheck(v ...SectionSpellcheck) *SectionElement {
-	var val SectionSpellcheck
+func (e *SectionElement) Spellcheck(v ...Spellcheck) *SectionElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *SectionElement) Title(s string) *SectionElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Translate(v ...SectionTranslate) *SectionElement {
-	var val SectionTranslate
+func (e *SectionElement) Translate(v ...Translate) *SectionElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *SectionElement) Translate(v ...SectionTranslate) *SectionElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SectionElement) Writingsuggestions(v ...SectionWritingsuggestions) *SectionElement {
-	var val SectionWritingsuggestions
+func (e *SectionElement) Writingsuggestions(v ...Writingsuggestions) *SectionElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type StyleElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Style creates a tag <style> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The style element embeds a CSS stylesheet within the SVG document.
-func Style(children ...htemel.Node) *StyleElement {
+func Style(children ...Content) *StyleElement {
 	node := &StyleElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Style(children ...htemel.Node) *StyleElement {
 }
 
 // StyleIf creates a tag <style> instance that is only rendered when condition is true.
-func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
+func StyleIf(condition bool, children ...Content) *StyleElement {
 	if condition {
 		return Style(children...)
 	}
@@ -43,7 +45,7 @@ func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
 }
 
 // StyleTernary creates a tag <style> containing then when condition is true, otherwise containing otherwise.
-func StyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *StyleElement {
+func StyleTernary(condition bool, then Content, otherwise Content) *StyleElement {
 	if condition {
 		return Style(then)
 	}
@@ -51,7 +53,7 @@ func StyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Styl
 }
 
 // Children appends children to this element.
-func (e *StyleElement) Children(children ...htemel.Node) *StyleElement {
+func (e *StyleElement) Children(children ...Content) *StyleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -77,7 +79,7 @@ func (e *StyleElement) Textf(format string, args ...any) *StyleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) If(cond bool, child htemel.Node) *StyleElement {
+func (e *StyleElement) If(cond bool, child Content) *StyleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -85,7 +87,7 @@ func (e *StyleElement) If(cond bool, child htemel.Node) *StyleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StyleElement) IfElse(cond bool, then, els htemel.Node) *StyleElement {
+func (e *StyleElement) IfElse(cond bool, then, els Content) *StyleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -167,219 +169,8 @@ func (e *StyleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type StyleAlignmentBaseline string
-
-const (
-	StyleAlignmentBaselineAfterEdge      StyleAlignmentBaseline = "after-edge"
-	StyleAlignmentBaselineAlphabetic     StyleAlignmentBaseline = "alphabetic"
-	StyleAlignmentBaselineAuto           StyleAlignmentBaseline = "auto"
-	StyleAlignmentBaselineBaseline       StyleAlignmentBaseline = "baseline"
-	StyleAlignmentBaselineBeforeEdge     StyleAlignmentBaseline = "before-edge"
-	StyleAlignmentBaselineBottom         StyleAlignmentBaseline = "bottom"
-	StyleAlignmentBaselineCenter         StyleAlignmentBaseline = "center"
-	StyleAlignmentBaselineCentral        StyleAlignmentBaseline = "central"
-	StyleAlignmentBaselineHanging        StyleAlignmentBaseline = "hanging"
-	StyleAlignmentBaselineIdeographic    StyleAlignmentBaseline = "ideographic"
-	StyleAlignmentBaselineMathematical   StyleAlignmentBaseline = "mathematical"
-	StyleAlignmentBaselineMiddle         StyleAlignmentBaseline = "middle"
-	StyleAlignmentBaselineTextAfterEdge  StyleAlignmentBaseline = "text-after-edge"
-	StyleAlignmentBaselineTextBeforeEdge StyleAlignmentBaseline = "text-before-edge"
-	StyleAlignmentBaselineTextBottom     StyleAlignmentBaseline = "text-bottom"
-	StyleAlignmentBaselineTextTop        StyleAlignmentBaseline = "text-top"
-	StyleAlignmentBaselineTop            StyleAlignmentBaseline = "top"
-)
-
-type StyleClipRule string
-
-const (
-	StyleClipRuleEvenodd StyleClipRule = "evenodd"
-	StyleClipRuleNonzero StyleClipRule = "nonzero"
-)
-
-type StyleColorInterpolation string
-
-const (
-	StyleColorInterpolationAuto      StyleColorInterpolation = "auto"
-	StyleColorInterpolationLinearRGB StyleColorInterpolation = "linearRGB"
-	StyleColorInterpolationSRGB      StyleColorInterpolation = "sRGB"
-)
-
-type StyleColorInterpolationFilters string
-
-const (
-	StyleColorInterpolationFiltersAuto      StyleColorInterpolationFilters = "auto"
-	StyleColorInterpolationFiltersLinearRGB StyleColorInterpolationFilters = "linearRGB"
-	StyleColorInterpolationFiltersSRGB      StyleColorInterpolationFilters = "sRGB"
-)
-
-type StyleDirection string
-
-const (
-	StyleDirectionLtr StyleDirection = "ltr"
-	StyleDirectionRtl StyleDirection = "rtl"
-)
-
-type StyleDominantBaseline string
-
-const (
-	StyleDominantBaselineAlphabetic   StyleDominantBaseline = "alphabetic"
-	StyleDominantBaselineAuto         StyleDominantBaseline = "auto"
-	StyleDominantBaselineCentral      StyleDominantBaseline = "central"
-	StyleDominantBaselineHanging      StyleDominantBaseline = "hanging"
-	StyleDominantBaselineIdeographic  StyleDominantBaseline = "ideographic"
-	StyleDominantBaselineMathematical StyleDominantBaseline = "mathematical"
-	StyleDominantBaselineMiddle       StyleDominantBaseline = "middle"
-	StyleDominantBaselineTextBottom   StyleDominantBaseline = "text-bottom"
-	StyleDominantBaselineTextTop      StyleDominantBaseline = "text-top"
-)
-
-type StyleFillRule string
-
-const (
-	StyleFillRuleEvenodd StyleFillRule = "evenodd"
-	StyleFillRuleNonzero StyleFillRule = "nonzero"
-)
-
-type StyleFontStyle string
-
-const (
-	StyleFontStyleItalic  StyleFontStyle = "italic"
-	StyleFontStyleNormal  StyleFontStyle = "normal"
-	StyleFontStyleOblique StyleFontStyle = "oblique"
-)
-
-type StyleImageRendering string
-
-const (
-	StyleImageRenderingAuto            StyleImageRendering = "auto"
-	StyleImageRenderingCrispEdges      StyleImageRendering = "crisp-edges"
-	StyleImageRenderingHighQuality     StyleImageRendering = "high-quality"
-	StyleImageRenderingOptimizeQuality StyleImageRendering = "optimizeQuality"
-	StyleImageRenderingOptimizeSpeed   StyleImageRendering = "optimizeSpeed"
-	StyleImageRenderingPixelated       StyleImageRendering = "pixelated"
-	StyleImageRenderingSmooth          StyleImageRendering = "smooth"
-)
-
-type StyleOverflow string
-
-const (
-	StyleOverflowAuto    StyleOverflow = "auto"
-	StyleOverflowClip    StyleOverflow = "clip"
-	StyleOverflowHidden  StyleOverflow = "hidden"
-	StyleOverflowScroll  StyleOverflow = "scroll"
-	StyleOverflowVisible StyleOverflow = "visible"
-)
-
-type StylePointerEvents string
-
-const (
-	StylePointerEventsAll            StylePointerEvents = "all"
-	StylePointerEventsAuto           StylePointerEvents = "auto"
-	StylePointerEventsBoundingBox    StylePointerEvents = "bounding-box"
-	StylePointerEventsFill           StylePointerEvents = "fill"
-	StylePointerEventsNone           StylePointerEvents = "none"
-	StylePointerEventsPainted        StylePointerEvents = "painted"
-	StylePointerEventsStroke         StylePointerEvents = "stroke"
-	StylePointerEventsVisible        StylePointerEvents = "visible"
-	StylePointerEventsVisibleFill    StylePointerEvents = "visibleFill"
-	StylePointerEventsVisiblePainted StylePointerEvents = "visiblePainted"
-	StylePointerEventsVisibleStroke  StylePointerEvents = "visibleStroke"
-)
-
-type StyleShapeRendering string
-
-const (
-	StyleShapeRenderingAuto               StyleShapeRendering = "auto"
-	StyleShapeRenderingCrispEdges         StyleShapeRendering = "crispEdges"
-	StyleShapeRenderingGeometricPrecision StyleShapeRendering = "geometricPrecision"
-	StyleShapeRenderingOptimizeSpeed      StyleShapeRendering = "optimizeSpeed"
-)
-
-type StyleStrokeLinecap string
-
-const (
-	StyleStrokeLinecapButt   StyleStrokeLinecap = "butt"
-	StyleStrokeLinecapRound  StyleStrokeLinecap = "round"
-	StyleStrokeLinecapSquare StyleStrokeLinecap = "square"
-)
-
-type StyleStrokeLinejoin string
-
-const (
-	StyleStrokeLinejoinArcs      StyleStrokeLinejoin = "arcs"
-	StyleStrokeLinejoinBevel     StyleStrokeLinejoin = "bevel"
-	StyleStrokeLinejoinMiter     StyleStrokeLinejoin = "miter"
-	StyleStrokeLinejoinMiterClip StyleStrokeLinejoin = "miter-clip"
-	StyleStrokeLinejoinRound     StyleStrokeLinejoin = "round"
-)
-
-type StyleTextAnchor string
-
-const (
-	StyleTextAnchorEnd    StyleTextAnchor = "end"
-	StyleTextAnchorMiddle StyleTextAnchor = "middle"
-	StyleTextAnchorStart  StyleTextAnchor = "start"
-)
-
-type StyleTextRendering string
-
-const (
-	StyleTextRenderingAuto               StyleTextRendering = "auto"
-	StyleTextRenderingGeometricPrecision StyleTextRendering = "geometricPrecision"
-	StyleTextRenderingOptimizeLegibility StyleTextRendering = "optimizeLegibility"
-	StyleTextRenderingOptimizeSpeed      StyleTextRendering = "optimizeSpeed"
-)
-
-type StyleTransformBox string
-
-const (
-	StyleTransformBoxBorderBox  StyleTransformBox = "border-box"
-	StyleTransformBoxContentBox StyleTransformBox = "content-box"
-	StyleTransformBoxFillBox    StyleTransformBox = "fill-box"
-	StyleTransformBoxStrokeBox  StyleTransformBox = "stroke-box"
-	StyleTransformBoxViewBox    StyleTransformBox = "view-box"
-)
-
-type StyleVectorEffect string
-
-const (
-	StyleVectorEffectFixedPosition    StyleVectorEffect = "fixed-position"
-	StyleVectorEffectNonRotation      StyleVectorEffect = "non-rotation"
-	StyleVectorEffectNonScalingSize   StyleVectorEffect = "non-scaling-size"
-	StyleVectorEffectNonScalingStroke StyleVectorEffect = "non-scaling-stroke"
-	StyleVectorEffectNone             StyleVectorEffect = "none"
-)
-
-type StyleVisibility string
-
-const (
-	StyleVisibilityCollapse StyleVisibility = "collapse"
-	StyleVisibilityHidden   StyleVisibility = "hidden"
-	StyleVisibilityVisible  StyleVisibility = "visible"
-)
-
-type StyleWritingMode string
-
-const (
-	StyleWritingModeHorizontalTb StyleWritingMode = "horizontal-tb"
-	StyleWritingModeLr           StyleWritingMode = "lr"
-	StyleWritingModeLrTb         StyleWritingMode = "lr-tb"
-	StyleWritingModeRl           StyleWritingMode = "rl"
-	StyleWritingModeRlTb         StyleWritingMode = "rl-tb"
-	StyleWritingModeSidewaysLr   StyleWritingMode = "sideways-lr"
-	StyleWritingModeSidewaysRl   StyleWritingMode = "sideways-rl"
-	StyleWritingModeTb           StyleWritingMode = "tb"
-	StyleWritingModeTbRl         StyleWritingMode = "tb-rl"
-	StyleWritingModeVerticalLr   StyleWritingMode = "vertical-lr"
-	StyleWritingModeVerticalRl   StyleWritingMode = "vertical-rl"
-)
-
-type StyleXmlSpace string
-
-const (
-	StyleXmlSpaceDefault  StyleXmlSpace = "default"
-	StyleXmlSpacePreserve StyleXmlSpace = "preserve"
-)
+// SVGContent marks <style> as a permitted child (Content).
+func (*StyleElement) SVGContent() {}
 
 func (e *StyleElement) Media(s string) *StyleElement {
 	e.attributes.Set("media", s)
@@ -399,14 +190,10 @@ func (e *StyleElement) Type(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) AlignmentBaseline(a StyleAlignmentBaseline) *StyleElement {
+func (e *StyleElement) AlignmentBaseline(a AlignmentBaseline) *StyleElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func StyleAlignmentBaselineCustom(s string) StyleAlignmentBaseline {
-	return StyleAlignmentBaseline(s)
 }
 
 func (e *StyleElement) AriaUnsafe(name string, s string) *StyleElement {
@@ -460,14 +247,10 @@ func (e *StyleElement) ClipPath(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) ClipRule(a StyleClipRule) *StyleElement {
+func (e *StyleElement) ClipRule(a ClipRule) *StyleElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func StyleClipRuleCustom(s string) StyleClipRule {
-	return StyleClipRule(s)
 }
 
 func (e *StyleElement) Color(s string) *StyleElement {
@@ -476,24 +259,16 @@ func (e *StyleElement) Color(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) ColorInterpolation(a StyleColorInterpolation) *StyleElement {
+func (e *StyleElement) ColorInterpolation(a ColorInterpolation) *StyleElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func StyleColorInterpolationCustom(s string) StyleColorInterpolation {
-	return StyleColorInterpolation(s)
-}
-
-func (e *StyleElement) ColorInterpolationFilters(a StyleColorInterpolationFilters) *StyleElement {
+func (e *StyleElement) ColorInterpolationFilters(a ColorInterpolationFilters) *StyleElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func StyleColorInterpolationFiltersCustom(s string) StyleColorInterpolationFilters {
-	return StyleColorInterpolationFilters(s)
 }
 
 func (e *StyleElement) Cursor(s string) *StyleElement {
@@ -518,14 +293,10 @@ func (e *StyleElement) Data(name string, s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Direction(a StyleDirection) *StyleElement {
+func (e *StyleElement) Direction(a Direction) *StyleElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func StyleDirectionCustom(s string) StyleDirection {
-	return StyleDirection(s)
 }
 
 func (e *StyleElement) Display(s string) *StyleElement {
@@ -534,14 +305,10 @@ func (e *StyleElement) Display(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) DominantBaseline(a StyleDominantBaseline) *StyleElement {
+func (e *StyleElement) DominantBaseline(a DominantBaseline) *StyleElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func StyleDominantBaselineCustom(s string) StyleDominantBaseline {
-	return StyleDominantBaseline(s)
 }
 
 func (e *StyleElement) Fill(s string) *StyleElement {
@@ -556,14 +323,10 @@ func (e *StyleElement) FillOpacity(f float64) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) FillRule(a StyleFillRule) *StyleElement {
+func (e *StyleElement) FillRule(a FillRule) *StyleElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func StyleFillRuleCustom(s string) StyleFillRule {
-	return StyleFillRule(s)
 }
 
 func (e *StyleElement) Filter(s string) *StyleElement {
@@ -608,14 +371,10 @@ func (e *StyleElement) FontStretch(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) FontStyle(a StyleFontStyle) *StyleElement {
+func (e *StyleElement) FontStyle(a FontStyle) *StyleElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func StyleFontStyleCustom(s string) StyleFontStyle {
-	return StyleFontStyle(s)
 }
 
 func (e *StyleElement) FontVariant(s string) *StyleElement {
@@ -654,14 +413,10 @@ func (e *StyleElement) Id(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) ImageRendering(a StyleImageRendering) *StyleElement {
+func (e *StyleElement) ImageRendering(a ImageRendering) *StyleElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func StyleImageRenderingCustom(s string) StyleImageRendering {
-	return StyleImageRendering(s)
 }
 
 func (e *StyleElement) Lang(s string) *StyleElement {
@@ -712,14 +467,10 @@ func (e *StyleElement) Opacity(f float64) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Overflow(a StyleOverflow) *StyleElement {
+func (e *StyleElement) Overflow(a Overflow) *StyleElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func StyleOverflowCustom(s string) StyleOverflow {
-	return StyleOverflow(s)
 }
 
 func (e *StyleElement) PaintOrder(s string) *StyleElement {
@@ -728,14 +479,10 @@ func (e *StyleElement) PaintOrder(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) PointerEvents(a StylePointerEvents) *StyleElement {
+func (e *StyleElement) PointerEvents(a PointerEvents) *StyleElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func StylePointerEventsCustom(s string) StylePointerEvents {
-	return StylePointerEvents(s)
 }
 
 func (e *StyleElement) RequiredExtensions(s string) *StyleElement {
@@ -744,14 +491,10 @@ func (e *StyleElement) RequiredExtensions(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) ShapeRendering(a StyleShapeRendering) *StyleElement {
+func (e *StyleElement) ShapeRendering(a ShapeRendering) *StyleElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func StyleShapeRenderingCustom(s string) StyleShapeRendering {
-	return StyleShapeRendering(s)
 }
 
 func (e *StyleElement) StopColor(s string) *StyleElement {
@@ -784,24 +527,16 @@ func (e *StyleElement) StrokeDashoffset(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) StrokeLinecap(a StyleStrokeLinecap) *StyleElement {
+func (e *StyleElement) StrokeLinecap(a StrokeLinecap) *StyleElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func StyleStrokeLinecapCustom(s string) StyleStrokeLinecap {
-	return StyleStrokeLinecap(s)
-}
-
-func (e *StyleElement) StrokeLinejoin(a StyleStrokeLinejoin) *StyleElement {
+func (e *StyleElement) StrokeLinejoin(a StrokeLinejoin) *StyleElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func StyleStrokeLinejoinCustom(s string) StyleStrokeLinejoin {
-	return StyleStrokeLinejoin(s)
 }
 
 func (e *StyleElement) StrokeMiterlimit(f float64) *StyleElement {
@@ -834,14 +569,10 @@ func (e *StyleElement) Tabindex(i int) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) TextAnchor(a StyleTextAnchor) *StyleElement {
+func (e *StyleElement) TextAnchor(a TextAnchor) *StyleElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func StyleTextAnchorCustom(s string) StyleTextAnchor {
-	return StyleTextAnchor(s)
 }
 
 func (e *StyleElement) TextDecoration(s string) *StyleElement {
@@ -856,14 +587,10 @@ func (e *StyleElement) TextOverflow(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) TextRendering(a StyleTextRendering) *StyleElement {
+func (e *StyleElement) TextRendering(a TextRendering) *StyleElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func StyleTextRenderingCustom(s string) StyleTextRendering {
-	return StyleTextRendering(s)
 }
 
 func (e *StyleElement) Transform(s string) *StyleElement {
@@ -872,14 +599,10 @@ func (e *StyleElement) Transform(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) TransformBox(a StyleTransformBox) *StyleElement {
+func (e *StyleElement) TransformBox(a TransformBox) *StyleElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func StyleTransformBoxCustom(s string) StyleTransformBox {
-	return StyleTransformBox(s)
 }
 
 func (e *StyleElement) TransformOrigin(s string) *StyleElement {
@@ -894,24 +617,16 @@ func (e *StyleElement) UnicodeBidi(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) VectorEffect(a StyleVectorEffect) *StyleElement {
+func (e *StyleElement) VectorEffect(a VectorEffect) *StyleElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func StyleVectorEffectCustom(s string) StyleVectorEffect {
-	return StyleVectorEffect(s)
-}
-
-func (e *StyleElement) Visibility(a StyleVisibility) *StyleElement {
+func (e *StyleElement) Visibility(a Visibility) *StyleElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func StyleVisibilityCustom(s string) StyleVisibility {
-	return StyleVisibility(s)
 }
 
 func (e *StyleElement) WhiteSpace(s string) *StyleElement {
@@ -926,14 +641,10 @@ func (e *StyleElement) WordSpacing(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) WritingMode(a StyleWritingMode) *StyleElement {
+func (e *StyleElement) WritingMode(a WritingMode) *StyleElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func StyleWritingModeCustom(s string) StyleWritingMode {
-	return StyleWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -948,7 +659,7 @@ func (e *StyleElement) XmlLang(s string) *StyleElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *StyleElement) XmlSpace(a StyleXmlSpace) *StyleElement {
+func (e *StyleElement) XmlSpace(a XmlSpace) *StyleElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

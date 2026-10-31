@@ -13,16 +13,20 @@ import (
 )
 
 type SmallElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Small creates a tag <small> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The small element represents side comments such as small print.
-func Small(children ...htemel.Node) *SmallElement {
+func Small(children ...htemel.PhrasingContent) *SmallElement {
 	node := &SmallElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Small(children ...htemel.Node) *SmallElement {
 }
 
 // SmallIf creates a tag <small> instance that is only rendered when condition is true.
-func SmallIf(condition bool, children ...htemel.Node) *SmallElement {
+func SmallIf(condition bool, children ...htemel.PhrasingContent) *SmallElement {
 	if condition {
 		return Small(children...)
 	}
@@ -43,7 +47,7 @@ func SmallIf(condition bool, children ...htemel.Node) *SmallElement {
 }
 
 // SmallTernary creates a tag <small> containing then when condition is true, otherwise containing otherwise.
-func SmallTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SmallElement {
+func SmallTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SmallElement {
 	if condition {
 		return Small(then)
 	}
@@ -51,7 +55,7 @@ func SmallTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Smal
 }
 
 // Children appends children to this element.
-func (e *SmallElement) Children(children ...htemel.Node) *SmallElement {
+func (e *SmallElement) Children(children ...htemel.PhrasingContent) *SmallElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SmallElement) Textf(format string, args ...any) *SmallElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SmallElement) If(cond bool, child htemel.Node) *SmallElement {
+func (e *SmallElement) If(cond bool, child htemel.PhrasingContent) *SmallElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SmallElement) If(cond bool, child htemel.Node) *SmallElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SmallElement) IfElse(cond bool, then, els htemel.Node) *SmallElement {
+func (e *SmallElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SmallElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SmallElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SmallAutocapitalize string
-
-const (
-	SmallAutocapitalizeCharacters SmallAutocapitalize = "characters"
-	SmallAutocapitalizeNone       SmallAutocapitalize = "none"
-	SmallAutocapitalizeOff        SmallAutocapitalize = "off"
-	SmallAutocapitalizeOn         SmallAutocapitalize = "on"
-	SmallAutocapitalizeSentences  SmallAutocapitalize = "sentences"
-	SmallAutocapitalizeWords      SmallAutocapitalize = "words"
-)
-
-type SmallAutocorrect string
-
-const (
-	SmallAutocorrectOff   SmallAutocorrect = "off"
-	SmallAutocorrectOn    SmallAutocorrect = "on"
-	SmallAutocorrectEmpty SmallAutocorrect = ""
-)
-
-type SmallContenteditable string
-
-const (
-	SmallContenteditableFalse         SmallContenteditable = "false"
-	SmallContenteditablePlaintextOnly SmallContenteditable = "plaintext-only"
-	SmallContenteditableTrue          SmallContenteditable = "true"
-	SmallContenteditableEmpty         SmallContenteditable = ""
-)
-
-type SmallDir string
-
-const (
-	SmallDirAuto SmallDir = "auto"
-	SmallDirLtr  SmallDir = "ltr"
-	SmallDirRtl  SmallDir = "rtl"
-)
-
-type SmallDraggable string
-
-const (
-	SmallDraggableFalse SmallDraggable = "false"
-	SmallDraggableTrue  SmallDraggable = "true"
-)
-
-type SmallEnterkeyhint string
-
-const (
-	SmallEnterkeyhintDone     SmallEnterkeyhint = "done"
-	SmallEnterkeyhintEnter    SmallEnterkeyhint = "enter"
-	SmallEnterkeyhintGo       SmallEnterkeyhint = "go"
-	SmallEnterkeyhintNext     SmallEnterkeyhint = "next"
-	SmallEnterkeyhintPrevious SmallEnterkeyhint = "previous"
-	SmallEnterkeyhintSearch   SmallEnterkeyhint = "search"
-	SmallEnterkeyhintSend     SmallEnterkeyhint = "send"
-)
-
-type SmallHidden string
-
-const (
-	SmallHiddenHidden     SmallHidden = "hidden"
-	SmallHiddenUntilFound SmallHidden = "until-found"
-	SmallHiddenEmpty      SmallHidden = ""
-)
-
-type SmallInputmode string
-
-const (
-	SmallInputmodeDecimal SmallInputmode = "decimal"
-	SmallInputmodeEmail   SmallInputmode = "email"
-	SmallInputmodeNone    SmallInputmode = "none"
-	SmallInputmodeNumeric SmallInputmode = "numeric"
-	SmallInputmodeSearch  SmallInputmode = "search"
-	SmallInputmodeTel     SmallInputmode = "tel"
-	SmallInputmodeText    SmallInputmode = "text"
-	SmallInputmodeUrl     SmallInputmode = "url"
-)
-
-type SmallPopover string
-
-const (
-	SmallPopoverAuto   SmallPopover = "auto"
-	SmallPopoverHint   SmallPopover = "hint"
-	SmallPopoverManual SmallPopover = "manual"
-	SmallPopoverEmpty  SmallPopover = ""
-)
-
-type SmallSpellcheck string
-
-const (
-	SmallSpellcheckFalse SmallSpellcheck = "false"
-	SmallSpellcheckTrue  SmallSpellcheck = "true"
-	SmallSpellcheckEmpty SmallSpellcheck = ""
-)
-
-type SmallTranslate string
-
-const (
-	SmallTranslateNo    SmallTranslate = "no"
-	SmallTranslateYes   SmallTranslate = "yes"
-	SmallTranslateEmpty SmallTranslate = ""
-)
-
-type SmallWritingsuggestions string
-
-const (
-	SmallWritingsuggestionsFalse SmallWritingsuggestions = "false"
-	SmallWritingsuggestionsTrue  SmallWritingsuggestions = "true"
-	SmallWritingsuggestionsEmpty SmallWritingsuggestions = ""
-)
-
 func (e *SmallElement) Accesskey(r rune) *SmallElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SmallElement) Aria(name string, s string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Autocapitalize(a SmallAutocapitalize) *SmallElement {
+func (e *SmallElement) Autocapitalize(a Autocapitalize) *SmallElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SmallElement) Autocapitalize(a SmallAutocapitalize) *SmallElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Autocorrect(v ...SmallAutocorrect) *SmallElement {
-	var val SmallAutocorrect
+func (e *SmallElement) Autocorrect(v ...Autocorrect) *SmallElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SmallElement) Class(s ...string) *SmallElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Contenteditable(v ...SmallContenteditable) *SmallElement {
-	var val SmallContenteditable
+func (e *SmallElement) Contenteditable(v ...Contenteditable) *SmallElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SmallElement) Data(name string, s string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Dir(a SmallDir) *SmallElement {
+func (e *SmallElement) Dir(a Dir) *SmallElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SmallElement) Draggable(a SmallDraggable) *SmallElement {
+func (e *SmallElement) Draggable(a Draggable) *SmallElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SmallElement) Enterkeyhint(a SmallEnterkeyhint) *SmallElement {
+func (e *SmallElement) Enterkeyhint(a Enterkeyhint) *SmallElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SmallElement) Headingreset(b bool) *SmallElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Hidden(v ...SmallHidden) *SmallElement {
-	var val SmallHidden
+func (e *SmallElement) Hidden(v ...Hidden) *SmallElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SmallElement) Inert(b bool) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Inputmode(a SmallInputmode) *SmallElement {
+func (e *SmallElement) Inputmode(a Inputmode) *SmallElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SmallElement) Part(s ...string) *SmallElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Popover(v ...SmallPopover) *SmallElement {
-	var val SmallPopover
+func (e *SmallElement) Popover(v ...Popover) *SmallElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SmallElement) Slot(s string) *SmallElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Spellcheck(v ...SmallSpellcheck) *SmallElement {
-	var val SmallSpellcheck
+func (e *SmallElement) Spellcheck(v ...Spellcheck) *SmallElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SmallElement) Title(s string) *SmallElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Translate(v ...SmallTranslate) *SmallElement {
-	var val SmallTranslate
+func (e *SmallElement) Translate(v ...Translate) *SmallElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SmallElement) Translate(v ...SmallTranslate) *SmallElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SmallElement) Writingsuggestions(v ...SmallWritingsuggestions) *SmallElement {
-	var val SmallWritingsuggestions
+func (e *SmallElement) Writingsuggestions(v ...Writingsuggestions) *SmallElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -13,16 +13,21 @@ import (
 )
 
 type AsideElement struct {
+	htemel.FlowMarker
+	htemel.SectioningMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Aside creates a tag <aside> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The aside element represents a section of a page that consists of content that is tangentially related to the content around the aside element, and which could be considered separate from that content. Such sections are often represented as sidebars in printed typography.
-func Aside(children ...htemel.Node) *AsideElement {
+func Aside(children ...htemel.FlowContent) *AsideElement {
 	node := &AsideElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Aside(children ...htemel.Node) *AsideElement {
 }
 
 // AsideIf creates a tag <aside> instance that is only rendered when condition is true.
-func AsideIf(condition bool, children ...htemel.Node) *AsideElement {
+func AsideIf(condition bool, children ...htemel.FlowContent) *AsideElement {
 	if condition {
 		return Aside(children...)
 	}
@@ -43,7 +48,7 @@ func AsideIf(condition bool, children ...htemel.Node) *AsideElement {
 }
 
 // AsideTernary creates a tag <aside> containing then when condition is true, otherwise containing otherwise.
-func AsideTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AsideElement {
+func AsideTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *AsideElement {
 	if condition {
 		return Aside(then)
 	}
@@ -51,7 +56,7 @@ func AsideTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Asid
 }
 
 // Children appends children to this element.
-func (e *AsideElement) Children(children ...htemel.Node) *AsideElement {
+func (e *AsideElement) Children(children ...htemel.FlowContent) *AsideElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *AsideElement) Textf(format string, args ...any) *AsideElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AsideElement) If(cond bool, child htemel.Node) *AsideElement {
+func (e *AsideElement) If(cond bool, child htemel.FlowContent) *AsideElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *AsideElement) If(cond bool, child htemel.Node) *AsideElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AsideElement) IfElse(cond bool, then, els htemel.Node) *AsideElement {
+func (e *AsideElement) IfElse(cond bool, then, els htemel.FlowContent) *AsideElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *AsideElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AsideAutocapitalize string
-
-const (
-	AsideAutocapitalizeCharacters AsideAutocapitalize = "characters"
-	AsideAutocapitalizeNone       AsideAutocapitalize = "none"
-	AsideAutocapitalizeOff        AsideAutocapitalize = "off"
-	AsideAutocapitalizeOn         AsideAutocapitalize = "on"
-	AsideAutocapitalizeSentences  AsideAutocapitalize = "sentences"
-	AsideAutocapitalizeWords      AsideAutocapitalize = "words"
-)
-
-type AsideAutocorrect string
-
-const (
-	AsideAutocorrectOff   AsideAutocorrect = "off"
-	AsideAutocorrectOn    AsideAutocorrect = "on"
-	AsideAutocorrectEmpty AsideAutocorrect = ""
-)
-
-type AsideContenteditable string
-
-const (
-	AsideContenteditableFalse         AsideContenteditable = "false"
-	AsideContenteditablePlaintextOnly AsideContenteditable = "plaintext-only"
-	AsideContenteditableTrue          AsideContenteditable = "true"
-	AsideContenteditableEmpty         AsideContenteditable = ""
-)
-
-type AsideDir string
-
-const (
-	AsideDirAuto AsideDir = "auto"
-	AsideDirLtr  AsideDir = "ltr"
-	AsideDirRtl  AsideDir = "rtl"
-)
-
-type AsideDraggable string
-
-const (
-	AsideDraggableFalse AsideDraggable = "false"
-	AsideDraggableTrue  AsideDraggable = "true"
-)
-
-type AsideEnterkeyhint string
-
-const (
-	AsideEnterkeyhintDone     AsideEnterkeyhint = "done"
-	AsideEnterkeyhintEnter    AsideEnterkeyhint = "enter"
-	AsideEnterkeyhintGo       AsideEnterkeyhint = "go"
-	AsideEnterkeyhintNext     AsideEnterkeyhint = "next"
-	AsideEnterkeyhintPrevious AsideEnterkeyhint = "previous"
-	AsideEnterkeyhintSearch   AsideEnterkeyhint = "search"
-	AsideEnterkeyhintSend     AsideEnterkeyhint = "send"
-)
-
-type AsideHidden string
-
-const (
-	AsideHiddenHidden     AsideHidden = "hidden"
-	AsideHiddenUntilFound AsideHidden = "until-found"
-	AsideHiddenEmpty      AsideHidden = ""
-)
-
-type AsideInputmode string
-
-const (
-	AsideInputmodeDecimal AsideInputmode = "decimal"
-	AsideInputmodeEmail   AsideInputmode = "email"
-	AsideInputmodeNone    AsideInputmode = "none"
-	AsideInputmodeNumeric AsideInputmode = "numeric"
-	AsideInputmodeSearch  AsideInputmode = "search"
-	AsideInputmodeTel     AsideInputmode = "tel"
-	AsideInputmodeText    AsideInputmode = "text"
-	AsideInputmodeUrl     AsideInputmode = "url"
-)
-
-type AsidePopover string
-
-const (
-	AsidePopoverAuto   AsidePopover = "auto"
-	AsidePopoverHint   AsidePopover = "hint"
-	AsidePopoverManual AsidePopover = "manual"
-	AsidePopoverEmpty  AsidePopover = ""
-)
-
-type AsideSpellcheck string
-
-const (
-	AsideSpellcheckFalse AsideSpellcheck = "false"
-	AsideSpellcheckTrue  AsideSpellcheck = "true"
-	AsideSpellcheckEmpty AsideSpellcheck = ""
-)
-
-type AsideTranslate string
-
-const (
-	AsideTranslateNo    AsideTranslate = "no"
-	AsideTranslateYes   AsideTranslate = "yes"
-	AsideTranslateEmpty AsideTranslate = ""
-)
-
-type AsideWritingsuggestions string
-
-const (
-	AsideWritingsuggestionsFalse AsideWritingsuggestions = "false"
-	AsideWritingsuggestionsTrue  AsideWritingsuggestions = "true"
-	AsideWritingsuggestionsEmpty AsideWritingsuggestions = ""
-)
-
 func (e *AsideElement) Accesskey(r rune) *AsideElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +191,7 @@ func (e *AsideElement) Aria(name string, s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Autocapitalize(a AsideAutocapitalize) *AsideElement {
+func (e *AsideElement) Autocapitalize(a Autocapitalize) *AsideElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *AsideElement) Autocapitalize(a AsideAutocapitalize) *AsideElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Autocorrect(v ...AsideAutocorrect) *AsideElement {
-	var val AsideAutocorrect
+func (e *AsideElement) Autocorrect(v ...Autocorrect) *AsideElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *AsideElement) Class(s ...string) *AsideElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Contenteditable(v ...AsideContenteditable) *AsideElement {
-	var val AsideContenteditable
+func (e *AsideElement) Contenteditable(v ...Contenteditable) *AsideElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *AsideElement) Data(name string, s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Dir(a AsideDir) *AsideElement {
+func (e *AsideElement) Dir(a Dir) *AsideElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AsideElement) Draggable(a AsideDraggable) *AsideElement {
+func (e *AsideElement) Draggable(a Draggable) *AsideElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AsideElement) Enterkeyhint(a AsideEnterkeyhint) *AsideElement {
+func (e *AsideElement) Enterkeyhint(a Enterkeyhint) *AsideElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *AsideElement) Headingreset(b bool) *AsideElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Hidden(v ...AsideHidden) *AsideElement {
-	var val AsideHidden
+func (e *AsideElement) Hidden(v ...Hidden) *AsideElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *AsideElement) Inert(b bool) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Inputmode(a AsideInputmode) *AsideElement {
+func (e *AsideElement) Inputmode(a Inputmode) *AsideElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *AsideElement) Part(s ...string) *AsideElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Popover(v ...AsidePopover) *AsideElement {
-	var val AsidePopover
+func (e *AsideElement) Popover(v ...Popover) *AsideElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *AsideElement) Slot(s string) *AsideElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Spellcheck(v ...AsideSpellcheck) *AsideElement {
-	var val AsideSpellcheck
+func (e *AsideElement) Spellcheck(v ...Spellcheck) *AsideElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *AsideElement) Title(s string) *AsideElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Translate(v ...AsideTranslate) *AsideElement {
-	var val AsideTranslate
+func (e *AsideElement) Translate(v ...Translate) *AsideElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *AsideElement) Translate(v ...AsideTranslate) *AsideElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AsideElement) Writingsuggestions(v ...AsideWritingsuggestions) *AsideElement {
-	var val AsideWritingsuggestions
+func (e *AsideElement) Writingsuggestions(v ...Writingsuggestions) *AsideElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

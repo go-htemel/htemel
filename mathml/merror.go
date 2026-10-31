@@ -14,15 +14,17 @@ import (
 
 type MerrorElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Merror creates a tag <merror> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Merror(children ...htemel.Node) *MerrorElement {
+func Merror(children ...Content) *MerrorElement {
 	node := &MerrorElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Merror(children ...htemel.Node) *MerrorElement {
 }
 
 // MerrorIf creates a tag <merror> instance that is only rendered when condition is true.
-func MerrorIf(condition bool, children ...htemel.Node) *MerrorElement {
+func MerrorIf(condition bool, children ...Content) *MerrorElement {
 	if condition {
 		return Merror(children...)
 	}
@@ -43,7 +45,7 @@ func MerrorIf(condition bool, children ...htemel.Node) *MerrorElement {
 }
 
 // MerrorTernary creates a tag <merror> containing then when condition is true, otherwise containing otherwise.
-func MerrorTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MerrorElement {
+func MerrorTernary(condition bool, then Content, otherwise Content) *MerrorElement {
 	if condition {
 		return Merror(then)
 	}
@@ -51,7 +53,7 @@ func MerrorTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mer
 }
 
 // Children appends children to this element.
-func (e *MerrorElement) Children(children ...htemel.Node) *MerrorElement {
+func (e *MerrorElement) Children(children ...Content) *MerrorElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MerrorElement) Textf(format string, args ...any) *MerrorElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MerrorElement) If(cond bool, child htemel.Node) *MerrorElement {
+func (e *MerrorElement) If(cond bool, child Content) *MerrorElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MerrorElement) If(cond bool, child htemel.Node) *MerrorElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MerrorElement) IfElse(cond bool, then, els htemel.Node) *MerrorElement {
+func (e *MerrorElement) IfElse(cond bool, then, els Content) *MerrorElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MerrorElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MerrorDir string
-
-const (
-	MerrorDirLtr MerrorDir = "ltr"
-	MerrorDirRtl MerrorDir = "rtl"
-)
-
-type MerrorDisplaystyle string
-
-const (
-	MerrorDisplaystyleFalse MerrorDisplaystyle = "false"
-	MerrorDisplaystyleTrue  MerrorDisplaystyle = "true"
-)
+// MathMLContent marks <merror> as a permitted child (Content).
+func (*MerrorElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MerrorElement) Data(name string, s string) *MerrorElement {
 	return e
 }
 
-func (e *MerrorElement) Dir(a MerrorDir) *MerrorElement {
+func (e *MerrorElement) Dir(a Dir) *MerrorElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MerrorElement) Displaystyle(a MerrorDisplaystyle) *MerrorElement {
+func (e *MerrorElement) Displaystyle(a Displaystyle) *MerrorElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

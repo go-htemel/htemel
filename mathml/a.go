@@ -14,15 +14,17 @@ import (
 
 type AElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // A creates a tag <a> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func A(children ...htemel.Node) *AElement {
+func A(children ...Content) *AElement {
 	node := &AElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func A(children ...htemel.Node) *AElement {
 }
 
 // AIf creates a tag <a> instance that is only rendered when condition is true.
-func AIf(condition bool, children ...htemel.Node) *AElement {
+func AIf(condition bool, children ...Content) *AElement {
 	if condition {
 		return A(children...)
 	}
@@ -43,7 +45,7 @@ func AIf(condition bool, children ...htemel.Node) *AElement {
 }
 
 // ATernary creates a tag <a> containing then when condition is true, otherwise containing otherwise.
-func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement {
+func ATernary(condition bool, then Content, otherwise Content) *AElement {
 	if condition {
 		return A(then)
 	}
@@ -51,7 +53,7 @@ func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement
 }
 
 // Children appends children to this element.
-func (e *AElement) Children(children ...htemel.Node) *AElement {
+func (e *AElement) Children(children ...Content) *AElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *AElement) Textf(format string, args ...any) *AElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AElement) If(cond bool, child htemel.Node) *AElement {
+func (e *AElement) If(cond bool, child Content) *AElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *AElement) If(cond bool, child htemel.Node) *AElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AElement) IfElse(cond bool, then, els htemel.Node) *AElement {
+func (e *AElement) IfElse(cond bool, then, els Content) *AElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *AElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ADir string
-
-const (
-	ADirLtr ADir = "ltr"
-	ADirRtl ADir = "rtl"
-)
-
-type ADisplaystyle string
-
-const (
-	ADisplaystyleFalse ADisplaystyle = "false"
-	ADisplaystyleTrue  ADisplaystyle = "true"
-)
+// MathMLContent marks <a> as a permitted child (Content).
+func (*AElement) MathMLContent() {}
 
 // Href sets the "href" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
@@ -234,13 +225,13 @@ func (e *AElement) Data(name string, s string) *AElement {
 	return e
 }
 
-func (e *AElement) Dir(a ADir) *AElement {
+func (e *AElement) Dir(a Dir) *AElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AElement) Displaystyle(a ADisplaystyle) *AElement {
+func (e *AElement) Displaystyle(a Displaystyle) *AElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

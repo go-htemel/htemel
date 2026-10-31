@@ -12,6 +12,9 @@ import (
 )
 
 type InputElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +44,14 @@ func InputIf(condition bool) *InputElement {
 // With allows passing a function to modify the element via a closure.
 func (e *InputElement) With(fn func(*InputElement)) *InputElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *InputElement) IfThen(cond bool, fn func(*InputElement)) *InputElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,45 +120,7 @@ func (e *InputElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type InputCapture string
-
-const (
-	InputCaptureEnvironment InputCapture = "environment"
-	InputCaptureUser        InputCapture = "user"
-	InputCaptureEmpty       InputCapture = ""
-)
-
-type InputColorspace string
-
-const (
-	InputColorspaceDisplayP3   InputColorspace = "display-p3"
-	InputColorspaceLimitedSrgb InputColorspace = "limited-srgb"
-)
-
-type InputFormenctype string
-
-const (
-	InputFormenctypeApplicationXWwwFormUrlencoded InputFormenctype = "application/x-www-form-urlencoded"
-	InputFormenctypeMultipartFormData             InputFormenctype = "multipart/form-data"
-	InputFormenctypeTextPlain                     InputFormenctype = "text/plain"
-)
-
-type InputFormmethod string
-
-const (
-	InputFormmethodDialog InputFormmethod = "dialog"
-	InputFormmethodGet    InputFormmethod = "get"
-	InputFormmethodPost   InputFormmethod = "post"
-)
-
-type InputPopovertargetaction string
-
-const (
-	InputPopovertargetactionHide   InputPopovertargetaction = "hide"
-	InputPopovertargetactionShow   InputPopovertargetaction = "show"
-	InputPopovertargetactionToggle InputPopovertargetaction = "toggle"
-)
-
+// InputType is a value of the "type" attribute of <input>.
 type InputType string
 
 const (
@@ -173,115 +146,6 @@ const (
 	InputTypeTime          InputType = "time"
 	InputTypeUrl           InputType = "url"
 	InputTypeWeek          InputType = "week"
-)
-
-type InputAutocapitalize string
-
-const (
-	InputAutocapitalizeCharacters InputAutocapitalize = "characters"
-	InputAutocapitalizeNone       InputAutocapitalize = "none"
-	InputAutocapitalizeOff        InputAutocapitalize = "off"
-	InputAutocapitalizeOn         InputAutocapitalize = "on"
-	InputAutocapitalizeSentences  InputAutocapitalize = "sentences"
-	InputAutocapitalizeWords      InputAutocapitalize = "words"
-)
-
-type InputAutocorrect string
-
-const (
-	InputAutocorrectOff   InputAutocorrect = "off"
-	InputAutocorrectOn    InputAutocorrect = "on"
-	InputAutocorrectEmpty InputAutocorrect = ""
-)
-
-type InputContenteditable string
-
-const (
-	InputContenteditableFalse         InputContenteditable = "false"
-	InputContenteditablePlaintextOnly InputContenteditable = "plaintext-only"
-	InputContenteditableTrue          InputContenteditable = "true"
-	InputContenteditableEmpty         InputContenteditable = ""
-)
-
-type InputDir string
-
-const (
-	InputDirAuto InputDir = "auto"
-	InputDirLtr  InputDir = "ltr"
-	InputDirRtl  InputDir = "rtl"
-)
-
-type InputDraggable string
-
-const (
-	InputDraggableFalse InputDraggable = "false"
-	InputDraggableTrue  InputDraggable = "true"
-)
-
-type InputEnterkeyhint string
-
-const (
-	InputEnterkeyhintDone     InputEnterkeyhint = "done"
-	InputEnterkeyhintEnter    InputEnterkeyhint = "enter"
-	InputEnterkeyhintGo       InputEnterkeyhint = "go"
-	InputEnterkeyhintNext     InputEnterkeyhint = "next"
-	InputEnterkeyhintPrevious InputEnterkeyhint = "previous"
-	InputEnterkeyhintSearch   InputEnterkeyhint = "search"
-	InputEnterkeyhintSend     InputEnterkeyhint = "send"
-)
-
-type InputHidden string
-
-const (
-	InputHiddenHidden     InputHidden = "hidden"
-	InputHiddenUntilFound InputHidden = "until-found"
-	InputHiddenEmpty      InputHidden = ""
-)
-
-type InputInputmode string
-
-const (
-	InputInputmodeDecimal InputInputmode = "decimal"
-	InputInputmodeEmail   InputInputmode = "email"
-	InputInputmodeNone    InputInputmode = "none"
-	InputInputmodeNumeric InputInputmode = "numeric"
-	InputInputmodeSearch  InputInputmode = "search"
-	InputInputmodeTel     InputInputmode = "tel"
-	InputInputmodeText    InputInputmode = "text"
-	InputInputmodeUrl     InputInputmode = "url"
-)
-
-type InputPopover string
-
-const (
-	InputPopoverAuto   InputPopover = "auto"
-	InputPopoverHint   InputPopover = "hint"
-	InputPopoverManual InputPopover = "manual"
-	InputPopoverEmpty  InputPopover = ""
-)
-
-type InputSpellcheck string
-
-const (
-	InputSpellcheckFalse InputSpellcheck = "false"
-	InputSpellcheckTrue  InputSpellcheck = "true"
-	InputSpellcheckEmpty InputSpellcheck = ""
-)
-
-type InputTranslate string
-
-const (
-	InputTranslateNo    InputTranslate = "no"
-	InputTranslateYes   InputTranslate = "yes"
-	InputTranslateEmpty InputTranslate = ""
-)
-
-type InputWritingsuggestions string
-
-const (
-	InputWritingsuggestionsFalse InputWritingsuggestions = "false"
-	InputWritingsuggestionsTrue  InputWritingsuggestions = "true"
-	InputWritingsuggestionsEmpty InputWritingsuggestions = ""
 )
 
 func (e *InputElement) Accept(s string) *InputElement {
@@ -312,8 +176,8 @@ func (e *InputElement) Autocomplete(s ...string) *InputElement {
 
 // Capture sets the "capture" attribute. Called with no argument, Capture() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Capture(v ...InputCapture) *InputElement {
-	var val InputCapture
+func (e *InputElement) Capture(v ...Capture) *InputElement {
+	var val Capture
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -330,7 +194,7 @@ func (e *InputElement) Checked(b bool) *InputElement {
 	return e
 }
 
-func (e *InputElement) Colorspace(a InputColorspace) *InputElement {
+func (e *InputElement) Colorspace(a Colorspace) *InputElement {
 	e.attributes.Set("colorspace", string(a))
 
 	return e
@@ -364,13 +228,13 @@ func (e *InputElement) Formaction(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Formenctype(a InputFormenctype) *InputElement {
+func (e *InputElement) Formenctype(a Formenctype) *InputElement {
 	e.attributes.Set("formenctype", string(a))
 
 	return e
 }
 
-func (e *InputElement) Formmethod(a InputFormmethod) *InputElement {
+func (e *InputElement) Formmethod(a Formmethod) *InputElement {
 	e.attributes.Set("formmethod", string(a))
 
 	return e
@@ -458,7 +322,7 @@ func (e *InputElement) Popovertarget(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Popovertargetaction(a InputPopovertargetaction) *InputElement {
+func (e *InputElement) Popovertargetaction(a Popovertargetaction) *InputElement {
 	e.attributes.Set("popovertargetaction", string(a))
 
 	return e
@@ -548,7 +412,7 @@ func (e *InputElement) Aria(name string, s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Autocapitalize(a InputAutocapitalize) *InputElement {
+func (e *InputElement) Autocapitalize(a Autocapitalize) *InputElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -556,8 +420,8 @@ func (e *InputElement) Autocapitalize(a InputAutocapitalize) *InputElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Autocorrect(v ...InputAutocorrect) *InputElement {
-	var val InputAutocorrect
+func (e *InputElement) Autocorrect(v ...Autocorrect) *InputElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -582,8 +446,8 @@ func (e *InputElement) Class(s ...string) *InputElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Contenteditable(v ...InputContenteditable) *InputElement {
-	var val InputContenteditable
+func (e *InputElement) Contenteditable(v ...Contenteditable) *InputElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -608,19 +472,19 @@ func (e *InputElement) Data(name string, s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Dir(a InputDir) *InputElement {
+func (e *InputElement) Dir(a Dir) *InputElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *InputElement) Draggable(a InputDraggable) *InputElement {
+func (e *InputElement) Draggable(a Draggable) *InputElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *InputElement) Enterkeyhint(a InputEnterkeyhint) *InputElement {
+func (e *InputElement) Enterkeyhint(a Enterkeyhint) *InputElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -648,8 +512,8 @@ func (e *InputElement) Headingreset(b bool) *InputElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Hidden(v ...InputHidden) *InputElement {
-	var val InputHidden
+func (e *InputElement) Hidden(v ...Hidden) *InputElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -672,7 +536,7 @@ func (e *InputElement) Inert(b bool) *InputElement {
 	return e
 }
 
-func (e *InputElement) Inputmode(a InputInputmode) *InputElement {
+func (e *InputElement) Inputmode(a Inputmode) *InputElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -738,8 +602,8 @@ func (e *InputElement) Part(s ...string) *InputElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Popover(v ...InputPopover) *InputElement {
-	var val InputPopover
+func (e *InputElement) Popover(v ...Popover) *InputElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -762,8 +626,8 @@ func (e *InputElement) Slot(s string) *InputElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Spellcheck(v ...InputSpellcheck) *InputElement {
-	var val InputSpellcheck
+func (e *InputElement) Spellcheck(v ...Spellcheck) *InputElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -792,8 +656,8 @@ func (e *InputElement) Title(s string) *InputElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Translate(v ...InputTranslate) *InputElement {
-	var val InputTranslate
+func (e *InputElement) Translate(v ...Translate) *InputElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -804,8 +668,8 @@ func (e *InputElement) Translate(v ...InputTranslate) *InputElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *InputElement) Writingsuggestions(v ...InputWritingsuggestions) *InputElement {
-	var val InputWritingsuggestions
+func (e *InputElement) Writingsuggestions(v ...Writingsuggestions) *InputElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

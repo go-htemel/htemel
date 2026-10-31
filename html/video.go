@@ -12,17 +12,43 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// VideoChild is a permitted child of <video>: <source>, <track>, flow content.
+//
+// It is implemented by <a>, <abbr>, <address>, <area>, <article>, <aside>, <audio>, <b>, <bdi>,
+// <bdo>, <blockquote>, <br>, <button>, <canvas>, <cite>, <code>, <data>, <datalist>, <del>,
+// <details>, <dfn>, <dialog>, <div>, <dl>, <em>, <embed>, <fieldset>, <figure>, <footer>, <form>,
+// <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <header>, <hgroup>, <hr>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <link>, <main>, <map>, <mark>, <menu>, <meta>, <meter>, <nav>,
+// <noscript>, <object>, <ol>, <output>, <p>, <picture>, <pre>, <progress>, <q>, <ruby>, <s>,
+// <samp>, <script>, <search>, <section>, <select>, <slot>, <small>, <source>, <span>, <strong>,
+// <style>, <sub>, <sup>, <table>, <template>, <textarea>, <time>, <track>, <u>, <ul>, <var>,
+// <video>, <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type embedding
+// htemel.FlowMarker and by the unchecked nodes of package htemel (Group, Each, If, Unchecked,
+// ...).
+type VideoChild interface {
+	htemel.Node
+	HTMLVideoChild()
+}
+
 type VideoElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []VideoChild
 	skipRender bool
 }
 
 // Video creates a tag <video> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <video> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content plus <source>, <track> (VideoChild); make sure its
+// content is also valid in the parent.
+//
 // Spec Description: A video element is used for playing videos or movies, and audio files with captions.
-func Video(children ...htemel.Node) *VideoElement {
+func Video(children ...VideoChild) *VideoElement {
 	node := &VideoElement{
 		children: children,
 	}
@@ -31,7 +57,7 @@ func Video(children ...htemel.Node) *VideoElement {
 }
 
 // VideoIf creates a tag <video> instance that is only rendered when condition is true.
-func VideoIf(condition bool, children ...htemel.Node) *VideoElement {
+func VideoIf(condition bool, children ...VideoChild) *VideoElement {
 	if condition {
 		return Video(children...)
 	}
@@ -43,7 +69,7 @@ func VideoIf(condition bool, children ...htemel.Node) *VideoElement {
 }
 
 // VideoTernary creates a tag <video> containing then when condition is true, otherwise containing otherwise.
-func VideoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *VideoElement {
+func VideoTernary(condition bool, then VideoChild, otherwise VideoChild) *VideoElement {
 	if condition {
 		return Video(then)
 	}
@@ -51,7 +77,7 @@ func VideoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Vide
 }
 
 // Children appends children to this element.
-func (e *VideoElement) Children(children ...htemel.Node) *VideoElement {
+func (e *VideoElement) Children(children ...VideoChild) *VideoElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +100,7 @@ func (e *VideoElement) Textf(format string, args ...any) *VideoElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *VideoElement) If(cond bool, child htemel.Node) *VideoElement {
+func (e *VideoElement) If(cond bool, child VideoChild) *VideoElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +108,7 @@ func (e *VideoElement) If(cond bool, child htemel.Node) *VideoElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *VideoElement) IfElse(cond bool, then, els htemel.Node) *VideoElement {
+func (e *VideoElement) IfElse(cond bool, then, els VideoChild) *VideoElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,139 +190,6 @@ func (e *VideoElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type VideoCrossorigin string
-
-const (
-	VideoCrossoriginAnonymous      VideoCrossorigin = "anonymous"
-	VideoCrossoriginUseCredentials VideoCrossorigin = "use-credentials"
-	VideoCrossoriginEmpty          VideoCrossorigin = ""
-)
-
-type VideoLoading string
-
-const (
-	VideoLoadingEager VideoLoading = "eager"
-	VideoLoadingLazy  VideoLoading = "lazy"
-)
-
-type VideoPreload string
-
-const (
-	VideoPreloadAuto     VideoPreload = "auto"
-	VideoPreloadMetadata VideoPreload = "metadata"
-	VideoPreloadNone     VideoPreload = "none"
-	VideoPreloadEmpty    VideoPreload = ""
-)
-
-type VideoAutocapitalize string
-
-const (
-	VideoAutocapitalizeCharacters VideoAutocapitalize = "characters"
-	VideoAutocapitalizeNone       VideoAutocapitalize = "none"
-	VideoAutocapitalizeOff        VideoAutocapitalize = "off"
-	VideoAutocapitalizeOn         VideoAutocapitalize = "on"
-	VideoAutocapitalizeSentences  VideoAutocapitalize = "sentences"
-	VideoAutocapitalizeWords      VideoAutocapitalize = "words"
-)
-
-type VideoAutocorrect string
-
-const (
-	VideoAutocorrectOff   VideoAutocorrect = "off"
-	VideoAutocorrectOn    VideoAutocorrect = "on"
-	VideoAutocorrectEmpty VideoAutocorrect = ""
-)
-
-type VideoContenteditable string
-
-const (
-	VideoContenteditableFalse         VideoContenteditable = "false"
-	VideoContenteditablePlaintextOnly VideoContenteditable = "plaintext-only"
-	VideoContenteditableTrue          VideoContenteditable = "true"
-	VideoContenteditableEmpty         VideoContenteditable = ""
-)
-
-type VideoDir string
-
-const (
-	VideoDirAuto VideoDir = "auto"
-	VideoDirLtr  VideoDir = "ltr"
-	VideoDirRtl  VideoDir = "rtl"
-)
-
-type VideoDraggable string
-
-const (
-	VideoDraggableFalse VideoDraggable = "false"
-	VideoDraggableTrue  VideoDraggable = "true"
-)
-
-type VideoEnterkeyhint string
-
-const (
-	VideoEnterkeyhintDone     VideoEnterkeyhint = "done"
-	VideoEnterkeyhintEnter    VideoEnterkeyhint = "enter"
-	VideoEnterkeyhintGo       VideoEnterkeyhint = "go"
-	VideoEnterkeyhintNext     VideoEnterkeyhint = "next"
-	VideoEnterkeyhintPrevious VideoEnterkeyhint = "previous"
-	VideoEnterkeyhintSearch   VideoEnterkeyhint = "search"
-	VideoEnterkeyhintSend     VideoEnterkeyhint = "send"
-)
-
-type VideoHidden string
-
-const (
-	VideoHiddenHidden     VideoHidden = "hidden"
-	VideoHiddenUntilFound VideoHidden = "until-found"
-	VideoHiddenEmpty      VideoHidden = ""
-)
-
-type VideoInputmode string
-
-const (
-	VideoInputmodeDecimal VideoInputmode = "decimal"
-	VideoInputmodeEmail   VideoInputmode = "email"
-	VideoInputmodeNone    VideoInputmode = "none"
-	VideoInputmodeNumeric VideoInputmode = "numeric"
-	VideoInputmodeSearch  VideoInputmode = "search"
-	VideoInputmodeTel     VideoInputmode = "tel"
-	VideoInputmodeText    VideoInputmode = "text"
-	VideoInputmodeUrl     VideoInputmode = "url"
-)
-
-type VideoPopover string
-
-const (
-	VideoPopoverAuto   VideoPopover = "auto"
-	VideoPopoverHint   VideoPopover = "hint"
-	VideoPopoverManual VideoPopover = "manual"
-	VideoPopoverEmpty  VideoPopover = ""
-)
-
-type VideoSpellcheck string
-
-const (
-	VideoSpellcheckFalse VideoSpellcheck = "false"
-	VideoSpellcheckTrue  VideoSpellcheck = "true"
-	VideoSpellcheckEmpty VideoSpellcheck = ""
-)
-
-type VideoTranslate string
-
-const (
-	VideoTranslateNo    VideoTranslate = "no"
-	VideoTranslateYes   VideoTranslate = "yes"
-	VideoTranslateEmpty VideoTranslate = ""
-)
-
-type VideoWritingsuggestions string
-
-const (
-	VideoWritingsuggestionsFalse VideoWritingsuggestions = "false"
-	VideoWritingsuggestionsTrue  VideoWritingsuggestions = "true"
-	VideoWritingsuggestionsEmpty VideoWritingsuggestions = ""
-)
-
 // Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *VideoElement) Autoplay(b bool) *VideoElement {
@@ -321,8 +214,8 @@ func (e *VideoElement) Controlslist(s ...string) *VideoElement {
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Crossorigin(v ...VideoCrossorigin) *VideoElement {
-	var val VideoCrossorigin
+func (e *VideoElement) Crossorigin(v ...Crossorigin) *VideoElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -353,7 +246,7 @@ func (e *VideoElement) Height(i int) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Loading(a VideoLoading) *VideoElement {
+func (e *VideoElement) Loading(a Loading) *VideoElement {
 	e.attributes.Set("loading", string(a))
 
 	return e
@@ -393,8 +286,8 @@ func (e *VideoElement) Poster(s string) *VideoElement {
 
 // Preload sets the "preload" attribute. Called with no argument, Preload() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Preload(v ...VideoPreload) *VideoElement {
-	var val VideoPreload
+func (e *VideoElement) Preload(v ...Preload) *VideoElement {
+	var val Preload
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -439,7 +332,7 @@ func (e *VideoElement) Aria(name string, s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Autocapitalize(a VideoAutocapitalize) *VideoElement {
+func (e *VideoElement) Autocapitalize(a Autocapitalize) *VideoElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -447,8 +340,8 @@ func (e *VideoElement) Autocapitalize(a VideoAutocapitalize) *VideoElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Autocorrect(v ...VideoAutocorrect) *VideoElement {
-	var val VideoAutocorrect
+func (e *VideoElement) Autocorrect(v ...Autocorrect) *VideoElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -473,8 +366,8 @@ func (e *VideoElement) Class(s ...string) *VideoElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Contenteditable(v ...VideoContenteditable) *VideoElement {
-	var val VideoContenteditable
+func (e *VideoElement) Contenteditable(v ...Contenteditable) *VideoElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -499,19 +392,19 @@ func (e *VideoElement) Data(name string, s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Dir(a VideoDir) *VideoElement {
+func (e *VideoElement) Dir(a Dir) *VideoElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *VideoElement) Draggable(a VideoDraggable) *VideoElement {
+func (e *VideoElement) Draggable(a Draggable) *VideoElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *VideoElement) Enterkeyhint(a VideoEnterkeyhint) *VideoElement {
+func (e *VideoElement) Enterkeyhint(a Enterkeyhint) *VideoElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -539,8 +432,8 @@ func (e *VideoElement) Headingreset(b bool) *VideoElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Hidden(v ...VideoHidden) *VideoElement {
-	var val VideoHidden
+func (e *VideoElement) Hidden(v ...Hidden) *VideoElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -563,7 +456,7 @@ func (e *VideoElement) Inert(b bool) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Inputmode(a VideoInputmode) *VideoElement {
+func (e *VideoElement) Inputmode(a Inputmode) *VideoElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -629,8 +522,8 @@ func (e *VideoElement) Part(s ...string) *VideoElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Popover(v ...VideoPopover) *VideoElement {
-	var val VideoPopover
+func (e *VideoElement) Popover(v ...Popover) *VideoElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -653,8 +546,8 @@ func (e *VideoElement) Slot(s string) *VideoElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Spellcheck(v ...VideoSpellcheck) *VideoElement {
-	var val VideoSpellcheck
+func (e *VideoElement) Spellcheck(v ...Spellcheck) *VideoElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -683,8 +576,8 @@ func (e *VideoElement) Title(s string) *VideoElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Translate(v ...VideoTranslate) *VideoElement {
-	var val VideoTranslate
+func (e *VideoElement) Translate(v ...Translate) *VideoElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -695,8 +588,8 @@ func (e *VideoElement) Translate(v ...VideoTranslate) *VideoElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VideoElement) Writingsuggestions(v ...VideoWritingsuggestions) *VideoElement {
-	var val VideoWritingsuggestions
+func (e *VideoElement) Writingsuggestions(v ...Writingsuggestions) *VideoElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

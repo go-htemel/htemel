@@ -14,15 +14,17 @@ import (
 
 type RectElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Rect creates a tag <rect> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The rect element draws a rectangle, optionally with rounded corners.
-func Rect(children ...htemel.Node) *RectElement {
+func Rect(children ...Content) *RectElement {
 	node := &RectElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Rect(children ...htemel.Node) *RectElement {
 }
 
 // RectIf creates a tag <rect> instance that is only rendered when condition is true.
-func RectIf(condition bool, children ...htemel.Node) *RectElement {
+func RectIf(condition bool, children ...Content) *RectElement {
 	if condition {
 		return Rect(children...)
 	}
@@ -43,7 +45,7 @@ func RectIf(condition bool, children ...htemel.Node) *RectElement {
 }
 
 // RectTernary creates a tag <rect> containing then when condition is true, otherwise containing otherwise.
-func RectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RectElement {
+func RectTernary(condition bool, then Content, otherwise Content) *RectElement {
 	if condition {
 		return Rect(then)
 	}
@@ -51,7 +53,7 @@ func RectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RectE
 }
 
 // Children appends children to this element.
-func (e *RectElement) Children(children ...htemel.Node) *RectElement {
+func (e *RectElement) Children(children ...Content) *RectElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *RectElement) Textf(format string, args ...any) *RectElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *RectElement) If(cond bool, child htemel.Node) *RectElement {
+func (e *RectElement) If(cond bool, child Content) *RectElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *RectElement) If(cond bool, child htemel.Node) *RectElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *RectElement) IfElse(cond bool, then, els htemel.Node) *RectElement {
+func (e *RectElement) IfElse(cond bool, then, els Content) *RectElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *RectElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type RectAlignmentBaseline string
-
-const (
-	RectAlignmentBaselineAfterEdge      RectAlignmentBaseline = "after-edge"
-	RectAlignmentBaselineAlphabetic     RectAlignmentBaseline = "alphabetic"
-	RectAlignmentBaselineAuto           RectAlignmentBaseline = "auto"
-	RectAlignmentBaselineBaseline       RectAlignmentBaseline = "baseline"
-	RectAlignmentBaselineBeforeEdge     RectAlignmentBaseline = "before-edge"
-	RectAlignmentBaselineBottom         RectAlignmentBaseline = "bottom"
-	RectAlignmentBaselineCenter         RectAlignmentBaseline = "center"
-	RectAlignmentBaselineCentral        RectAlignmentBaseline = "central"
-	RectAlignmentBaselineHanging        RectAlignmentBaseline = "hanging"
-	RectAlignmentBaselineIdeographic    RectAlignmentBaseline = "ideographic"
-	RectAlignmentBaselineMathematical   RectAlignmentBaseline = "mathematical"
-	RectAlignmentBaselineMiddle         RectAlignmentBaseline = "middle"
-	RectAlignmentBaselineTextAfterEdge  RectAlignmentBaseline = "text-after-edge"
-	RectAlignmentBaselineTextBeforeEdge RectAlignmentBaseline = "text-before-edge"
-	RectAlignmentBaselineTextBottom     RectAlignmentBaseline = "text-bottom"
-	RectAlignmentBaselineTextTop        RectAlignmentBaseline = "text-top"
-	RectAlignmentBaselineTop            RectAlignmentBaseline = "top"
-)
-
-type RectClipRule string
-
-const (
-	RectClipRuleEvenodd RectClipRule = "evenodd"
-	RectClipRuleNonzero RectClipRule = "nonzero"
-)
-
-type RectColorInterpolation string
-
-const (
-	RectColorInterpolationAuto      RectColorInterpolation = "auto"
-	RectColorInterpolationLinearRGB RectColorInterpolation = "linearRGB"
-	RectColorInterpolationSRGB      RectColorInterpolation = "sRGB"
-)
-
-type RectColorInterpolationFilters string
-
-const (
-	RectColorInterpolationFiltersAuto      RectColorInterpolationFilters = "auto"
-	RectColorInterpolationFiltersLinearRGB RectColorInterpolationFilters = "linearRGB"
-	RectColorInterpolationFiltersSRGB      RectColorInterpolationFilters = "sRGB"
-)
-
-type RectDirection string
-
-const (
-	RectDirectionLtr RectDirection = "ltr"
-	RectDirectionRtl RectDirection = "rtl"
-)
-
-type RectDominantBaseline string
-
-const (
-	RectDominantBaselineAlphabetic   RectDominantBaseline = "alphabetic"
-	RectDominantBaselineAuto         RectDominantBaseline = "auto"
-	RectDominantBaselineCentral      RectDominantBaseline = "central"
-	RectDominantBaselineHanging      RectDominantBaseline = "hanging"
-	RectDominantBaselineIdeographic  RectDominantBaseline = "ideographic"
-	RectDominantBaselineMathematical RectDominantBaseline = "mathematical"
-	RectDominantBaselineMiddle       RectDominantBaseline = "middle"
-	RectDominantBaselineTextBottom   RectDominantBaseline = "text-bottom"
-	RectDominantBaselineTextTop      RectDominantBaseline = "text-top"
-)
-
-type RectFillRule string
-
-const (
-	RectFillRuleEvenodd RectFillRule = "evenodd"
-	RectFillRuleNonzero RectFillRule = "nonzero"
-)
-
-type RectFontStyle string
-
-const (
-	RectFontStyleItalic  RectFontStyle = "italic"
-	RectFontStyleNormal  RectFontStyle = "normal"
-	RectFontStyleOblique RectFontStyle = "oblique"
-)
-
-type RectImageRendering string
-
-const (
-	RectImageRenderingAuto            RectImageRendering = "auto"
-	RectImageRenderingCrispEdges      RectImageRendering = "crisp-edges"
-	RectImageRenderingHighQuality     RectImageRendering = "high-quality"
-	RectImageRenderingOptimizeQuality RectImageRendering = "optimizeQuality"
-	RectImageRenderingOptimizeSpeed   RectImageRendering = "optimizeSpeed"
-	RectImageRenderingPixelated       RectImageRendering = "pixelated"
-	RectImageRenderingSmooth          RectImageRendering = "smooth"
-)
-
-type RectOverflow string
-
-const (
-	RectOverflowAuto    RectOverflow = "auto"
-	RectOverflowClip    RectOverflow = "clip"
-	RectOverflowHidden  RectOverflow = "hidden"
-	RectOverflowScroll  RectOverflow = "scroll"
-	RectOverflowVisible RectOverflow = "visible"
-)
-
-type RectPointerEvents string
-
-const (
-	RectPointerEventsAll            RectPointerEvents = "all"
-	RectPointerEventsAuto           RectPointerEvents = "auto"
-	RectPointerEventsBoundingBox    RectPointerEvents = "bounding-box"
-	RectPointerEventsFill           RectPointerEvents = "fill"
-	RectPointerEventsNone           RectPointerEvents = "none"
-	RectPointerEventsPainted        RectPointerEvents = "painted"
-	RectPointerEventsStroke         RectPointerEvents = "stroke"
-	RectPointerEventsVisible        RectPointerEvents = "visible"
-	RectPointerEventsVisibleFill    RectPointerEvents = "visibleFill"
-	RectPointerEventsVisiblePainted RectPointerEvents = "visiblePainted"
-	RectPointerEventsVisibleStroke  RectPointerEvents = "visibleStroke"
-)
-
-type RectShapeRendering string
-
-const (
-	RectShapeRenderingAuto               RectShapeRendering = "auto"
-	RectShapeRenderingCrispEdges         RectShapeRendering = "crispEdges"
-	RectShapeRenderingGeometricPrecision RectShapeRendering = "geometricPrecision"
-	RectShapeRenderingOptimizeSpeed      RectShapeRendering = "optimizeSpeed"
-)
-
-type RectStrokeLinecap string
-
-const (
-	RectStrokeLinecapButt   RectStrokeLinecap = "butt"
-	RectStrokeLinecapRound  RectStrokeLinecap = "round"
-	RectStrokeLinecapSquare RectStrokeLinecap = "square"
-)
-
-type RectStrokeLinejoin string
-
-const (
-	RectStrokeLinejoinArcs      RectStrokeLinejoin = "arcs"
-	RectStrokeLinejoinBevel     RectStrokeLinejoin = "bevel"
-	RectStrokeLinejoinMiter     RectStrokeLinejoin = "miter"
-	RectStrokeLinejoinMiterClip RectStrokeLinejoin = "miter-clip"
-	RectStrokeLinejoinRound     RectStrokeLinejoin = "round"
-)
-
-type RectTextAnchor string
-
-const (
-	RectTextAnchorEnd    RectTextAnchor = "end"
-	RectTextAnchorMiddle RectTextAnchor = "middle"
-	RectTextAnchorStart  RectTextAnchor = "start"
-)
-
-type RectTextRendering string
-
-const (
-	RectTextRenderingAuto               RectTextRendering = "auto"
-	RectTextRenderingGeometricPrecision RectTextRendering = "geometricPrecision"
-	RectTextRenderingOptimizeLegibility RectTextRendering = "optimizeLegibility"
-	RectTextRenderingOptimizeSpeed      RectTextRendering = "optimizeSpeed"
-)
-
-type RectTransformBox string
-
-const (
-	RectTransformBoxBorderBox  RectTransformBox = "border-box"
-	RectTransformBoxContentBox RectTransformBox = "content-box"
-	RectTransformBoxFillBox    RectTransformBox = "fill-box"
-	RectTransformBoxStrokeBox  RectTransformBox = "stroke-box"
-	RectTransformBoxViewBox    RectTransformBox = "view-box"
-)
-
-type RectVectorEffect string
-
-const (
-	RectVectorEffectFixedPosition    RectVectorEffect = "fixed-position"
-	RectVectorEffectNonRotation      RectVectorEffect = "non-rotation"
-	RectVectorEffectNonScalingSize   RectVectorEffect = "non-scaling-size"
-	RectVectorEffectNonScalingStroke RectVectorEffect = "non-scaling-stroke"
-	RectVectorEffectNone             RectVectorEffect = "none"
-)
-
-type RectVisibility string
-
-const (
-	RectVisibilityCollapse RectVisibility = "collapse"
-	RectVisibilityHidden   RectVisibility = "hidden"
-	RectVisibilityVisible  RectVisibility = "visible"
-)
-
-type RectWritingMode string
-
-const (
-	RectWritingModeHorizontalTb RectWritingMode = "horizontal-tb"
-	RectWritingModeLr           RectWritingMode = "lr"
-	RectWritingModeLrTb         RectWritingMode = "lr-tb"
-	RectWritingModeRl           RectWritingMode = "rl"
-	RectWritingModeRlTb         RectWritingMode = "rl-tb"
-	RectWritingModeSidewaysLr   RectWritingMode = "sideways-lr"
-	RectWritingModeSidewaysRl   RectWritingMode = "sideways-rl"
-	RectWritingModeTb           RectWritingMode = "tb"
-	RectWritingModeTbRl         RectWritingMode = "tb-rl"
-	RectWritingModeVerticalLr   RectWritingMode = "vertical-lr"
-	RectWritingModeVerticalRl   RectWritingMode = "vertical-rl"
-)
-
-type RectXmlSpace string
-
-const (
-	RectXmlSpaceDefault  RectXmlSpace = "default"
-	RectXmlSpacePreserve RectXmlSpace = "preserve"
-)
+// SVGContent marks <rect> as a permitted child (Content).
+func (*RectElement) SVGContent() {}
 
 func (e *RectElement) Height(s string) *RectElement {
 	e.attributes.Set("height", s)
@@ -426,14 +217,10 @@ func (e *RectElement) Y(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) AlignmentBaseline(a RectAlignmentBaseline) *RectElement {
+func (e *RectElement) AlignmentBaseline(a AlignmentBaseline) *RectElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func RectAlignmentBaselineCustom(s string) RectAlignmentBaseline {
-	return RectAlignmentBaseline(s)
 }
 
 func (e *RectElement) AriaUnsafe(name string, s string) *RectElement {
@@ -487,14 +274,10 @@ func (e *RectElement) ClipPath(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) ClipRule(a RectClipRule) *RectElement {
+func (e *RectElement) ClipRule(a ClipRule) *RectElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func RectClipRuleCustom(s string) RectClipRule {
-	return RectClipRule(s)
 }
 
 func (e *RectElement) Color(s string) *RectElement {
@@ -503,24 +286,16 @@ func (e *RectElement) Color(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) ColorInterpolation(a RectColorInterpolation) *RectElement {
+func (e *RectElement) ColorInterpolation(a ColorInterpolation) *RectElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func RectColorInterpolationCustom(s string) RectColorInterpolation {
-	return RectColorInterpolation(s)
-}
-
-func (e *RectElement) ColorInterpolationFilters(a RectColorInterpolationFilters) *RectElement {
+func (e *RectElement) ColorInterpolationFilters(a ColorInterpolationFilters) *RectElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func RectColorInterpolationFiltersCustom(s string) RectColorInterpolationFilters {
-	return RectColorInterpolationFilters(s)
 }
 
 func (e *RectElement) Cursor(s string) *RectElement {
@@ -545,14 +320,10 @@ func (e *RectElement) Data(name string, s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) Direction(a RectDirection) *RectElement {
+func (e *RectElement) Direction(a Direction) *RectElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func RectDirectionCustom(s string) RectDirection {
-	return RectDirection(s)
 }
 
 func (e *RectElement) Display(s string) *RectElement {
@@ -561,14 +332,10 @@ func (e *RectElement) Display(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) DominantBaseline(a RectDominantBaseline) *RectElement {
+func (e *RectElement) DominantBaseline(a DominantBaseline) *RectElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func RectDominantBaselineCustom(s string) RectDominantBaseline {
-	return RectDominantBaseline(s)
 }
 
 func (e *RectElement) Fill(s string) *RectElement {
@@ -583,14 +350,10 @@ func (e *RectElement) FillOpacity(f float64) *RectElement {
 	return e
 }
 
-func (e *RectElement) FillRule(a RectFillRule) *RectElement {
+func (e *RectElement) FillRule(a FillRule) *RectElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func RectFillRuleCustom(s string) RectFillRule {
-	return RectFillRule(s)
 }
 
 func (e *RectElement) Filter(s string) *RectElement {
@@ -635,14 +398,10 @@ func (e *RectElement) FontStretch(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) FontStyle(a RectFontStyle) *RectElement {
+func (e *RectElement) FontStyle(a FontStyle) *RectElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func RectFontStyleCustom(s string) RectFontStyle {
-	return RectFontStyle(s)
 }
 
 func (e *RectElement) FontVariant(s string) *RectElement {
@@ -681,14 +440,10 @@ func (e *RectElement) Id(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) ImageRendering(a RectImageRendering) *RectElement {
+func (e *RectElement) ImageRendering(a ImageRendering) *RectElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func RectImageRenderingCustom(s string) RectImageRendering {
-	return RectImageRendering(s)
 }
 
 func (e *RectElement) Lang(s string) *RectElement {
@@ -739,14 +494,10 @@ func (e *RectElement) Opacity(f float64) *RectElement {
 	return e
 }
 
-func (e *RectElement) Overflow(a RectOverflow) *RectElement {
+func (e *RectElement) Overflow(a Overflow) *RectElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func RectOverflowCustom(s string) RectOverflow {
-	return RectOverflow(s)
 }
 
 func (e *RectElement) PaintOrder(s string) *RectElement {
@@ -755,14 +506,10 @@ func (e *RectElement) PaintOrder(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) PointerEvents(a RectPointerEvents) *RectElement {
+func (e *RectElement) PointerEvents(a PointerEvents) *RectElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func RectPointerEventsCustom(s string) RectPointerEvents {
-	return RectPointerEvents(s)
 }
 
 func (e *RectElement) RequiredExtensions(s string) *RectElement {
@@ -771,14 +518,10 @@ func (e *RectElement) RequiredExtensions(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) ShapeRendering(a RectShapeRendering) *RectElement {
+func (e *RectElement) ShapeRendering(a ShapeRendering) *RectElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func RectShapeRenderingCustom(s string) RectShapeRendering {
-	return RectShapeRendering(s)
 }
 
 func (e *RectElement) StopColor(s string) *RectElement {
@@ -811,24 +554,16 @@ func (e *RectElement) StrokeDashoffset(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) StrokeLinecap(a RectStrokeLinecap) *RectElement {
+func (e *RectElement) StrokeLinecap(a StrokeLinecap) *RectElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func RectStrokeLinecapCustom(s string) RectStrokeLinecap {
-	return RectStrokeLinecap(s)
-}
-
-func (e *RectElement) StrokeLinejoin(a RectStrokeLinejoin) *RectElement {
+func (e *RectElement) StrokeLinejoin(a StrokeLinejoin) *RectElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func RectStrokeLinejoinCustom(s string) RectStrokeLinejoin {
-	return RectStrokeLinejoin(s)
 }
 
 func (e *RectElement) StrokeMiterlimit(f float64) *RectElement {
@@ -861,14 +596,10 @@ func (e *RectElement) Tabindex(i int) *RectElement {
 	return e
 }
 
-func (e *RectElement) TextAnchor(a RectTextAnchor) *RectElement {
+func (e *RectElement) TextAnchor(a TextAnchor) *RectElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func RectTextAnchorCustom(s string) RectTextAnchor {
-	return RectTextAnchor(s)
 }
 
 func (e *RectElement) TextDecoration(s string) *RectElement {
@@ -883,14 +614,10 @@ func (e *RectElement) TextOverflow(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) TextRendering(a RectTextRendering) *RectElement {
+func (e *RectElement) TextRendering(a TextRendering) *RectElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func RectTextRenderingCustom(s string) RectTextRendering {
-	return RectTextRendering(s)
 }
 
 func (e *RectElement) Transform(s string) *RectElement {
@@ -899,14 +626,10 @@ func (e *RectElement) Transform(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) TransformBox(a RectTransformBox) *RectElement {
+func (e *RectElement) TransformBox(a TransformBox) *RectElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func RectTransformBoxCustom(s string) RectTransformBox {
-	return RectTransformBox(s)
 }
 
 func (e *RectElement) TransformOrigin(s string) *RectElement {
@@ -921,24 +644,16 @@ func (e *RectElement) UnicodeBidi(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) VectorEffect(a RectVectorEffect) *RectElement {
+func (e *RectElement) VectorEffect(a VectorEffect) *RectElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func RectVectorEffectCustom(s string) RectVectorEffect {
-	return RectVectorEffect(s)
-}
-
-func (e *RectElement) Visibility(a RectVisibility) *RectElement {
+func (e *RectElement) Visibility(a Visibility) *RectElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func RectVisibilityCustom(s string) RectVisibility {
-	return RectVisibility(s)
 }
 
 func (e *RectElement) WhiteSpace(s string) *RectElement {
@@ -953,14 +668,10 @@ func (e *RectElement) WordSpacing(s string) *RectElement {
 	return e
 }
 
-func (e *RectElement) WritingMode(a RectWritingMode) *RectElement {
+func (e *RectElement) WritingMode(a WritingMode) *RectElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func RectWritingModeCustom(s string) RectWritingMode {
-	return RectWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -975,7 +686,7 @@ func (e *RectElement) XmlLang(s string) *RectElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *RectElement) XmlSpace(a RectXmlSpace) *RectElement {
+func (e *RectElement) XmlSpace(a XmlSpace) *RectElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

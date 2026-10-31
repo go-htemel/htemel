@@ -14,15 +14,17 @@ import (
 
 type TdElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Td creates a tag <td> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The td element represents a data cell in a table.
-func Td(children ...htemel.Node) *TdElement {
+func Td(children ...htemel.FlowContent) *TdElement {
 	node := &TdElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Td(children ...htemel.Node) *TdElement {
 }
 
 // TdIf creates a tag <td> instance that is only rendered when condition is true.
-func TdIf(condition bool, children ...htemel.Node) *TdElement {
+func TdIf(condition bool, children ...htemel.FlowContent) *TdElement {
 	if condition {
 		return Td(children...)
 	}
@@ -43,7 +45,7 @@ func TdIf(condition bool, children ...htemel.Node) *TdElement {
 }
 
 // TdTernary creates a tag <td> containing then when condition is true, otherwise containing otherwise.
-func TdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TdElement {
+func TdTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *TdElement {
 	if condition {
 		return Td(then)
 	}
@@ -51,7 +53,7 @@ func TdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TdEleme
 }
 
 // Children appends children to this element.
-func (e *TdElement) Children(children ...htemel.Node) *TdElement {
+func (e *TdElement) Children(children ...htemel.FlowContent) *TdElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *TdElement) Textf(format string, args ...any) *TdElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TdElement) If(cond bool, child htemel.Node) *TdElement {
+func (e *TdElement) If(cond bool, child htemel.FlowContent) *TdElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *TdElement) If(cond bool, child htemel.Node) *TdElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TdElement) IfElse(cond bool, then, els htemel.Node) *TdElement {
+func (e *TdElement) IfElse(cond bool, then, els htemel.FlowContent) *TdElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *TdElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TdAutocapitalize string
-
-const (
-	TdAutocapitalizeCharacters TdAutocapitalize = "characters"
-	TdAutocapitalizeNone       TdAutocapitalize = "none"
-	TdAutocapitalizeOff        TdAutocapitalize = "off"
-	TdAutocapitalizeOn         TdAutocapitalize = "on"
-	TdAutocapitalizeSentences  TdAutocapitalize = "sentences"
-	TdAutocapitalizeWords      TdAutocapitalize = "words"
-)
-
-type TdAutocorrect string
-
-const (
-	TdAutocorrectOff   TdAutocorrect = "off"
-	TdAutocorrectOn    TdAutocorrect = "on"
-	TdAutocorrectEmpty TdAutocorrect = ""
-)
-
-type TdContenteditable string
-
-const (
-	TdContenteditableFalse         TdContenteditable = "false"
-	TdContenteditablePlaintextOnly TdContenteditable = "plaintext-only"
-	TdContenteditableTrue          TdContenteditable = "true"
-	TdContenteditableEmpty         TdContenteditable = ""
-)
-
-type TdDir string
-
-const (
-	TdDirAuto TdDir = "auto"
-	TdDirLtr  TdDir = "ltr"
-	TdDirRtl  TdDir = "rtl"
-)
-
-type TdDraggable string
-
-const (
-	TdDraggableFalse TdDraggable = "false"
-	TdDraggableTrue  TdDraggable = "true"
-)
-
-type TdEnterkeyhint string
-
-const (
-	TdEnterkeyhintDone     TdEnterkeyhint = "done"
-	TdEnterkeyhintEnter    TdEnterkeyhint = "enter"
-	TdEnterkeyhintGo       TdEnterkeyhint = "go"
-	TdEnterkeyhintNext     TdEnterkeyhint = "next"
-	TdEnterkeyhintPrevious TdEnterkeyhint = "previous"
-	TdEnterkeyhintSearch   TdEnterkeyhint = "search"
-	TdEnterkeyhintSend     TdEnterkeyhint = "send"
-)
-
-type TdHidden string
-
-const (
-	TdHiddenHidden     TdHidden = "hidden"
-	TdHiddenUntilFound TdHidden = "until-found"
-	TdHiddenEmpty      TdHidden = ""
-)
-
-type TdInputmode string
-
-const (
-	TdInputmodeDecimal TdInputmode = "decimal"
-	TdInputmodeEmail   TdInputmode = "email"
-	TdInputmodeNone    TdInputmode = "none"
-	TdInputmodeNumeric TdInputmode = "numeric"
-	TdInputmodeSearch  TdInputmode = "search"
-	TdInputmodeTel     TdInputmode = "tel"
-	TdInputmodeText    TdInputmode = "text"
-	TdInputmodeUrl     TdInputmode = "url"
-)
-
-type TdPopover string
-
-const (
-	TdPopoverAuto   TdPopover = "auto"
-	TdPopoverHint   TdPopover = "hint"
-	TdPopoverManual TdPopover = "manual"
-	TdPopoverEmpty  TdPopover = ""
-)
-
-type TdSpellcheck string
-
-const (
-	TdSpellcheckFalse TdSpellcheck = "false"
-	TdSpellcheckTrue  TdSpellcheck = "true"
-	TdSpellcheckEmpty TdSpellcheck = ""
-)
-
-type TdTranslate string
-
-const (
-	TdTranslateNo    TdTranslate = "no"
-	TdTranslateYes   TdTranslate = "yes"
-	TdTranslateEmpty TdTranslate = ""
-)
-
-type TdWritingsuggestions string
-
-const (
-	TdWritingsuggestionsFalse TdWritingsuggestions = "false"
-	TdWritingsuggestionsTrue  TdWritingsuggestions = "true"
-	TdWritingsuggestionsEmpty TdWritingsuggestions = ""
-)
+// HTMLTrChild marks <td> as a permitted child of <tr> (TrChild).
+func (*TdElement) HTMLTrChild() {}
 
 func (e *TdElement) Colspan(i int) *TdElement {
 	e.attributes.Set("colspan", strconv.Itoa(i))
@@ -313,7 +209,7 @@ func (e *TdElement) Aria(name string, s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Autocapitalize(a TdAutocapitalize) *TdElement {
+func (e *TdElement) Autocapitalize(a Autocapitalize) *TdElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -321,8 +217,8 @@ func (e *TdElement) Autocapitalize(a TdAutocapitalize) *TdElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Autocorrect(v ...TdAutocorrect) *TdElement {
-	var val TdAutocorrect
+func (e *TdElement) Autocorrect(v ...Autocorrect) *TdElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -347,8 +243,8 @@ func (e *TdElement) Class(s ...string) *TdElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Contenteditable(v ...TdContenteditable) *TdElement {
-	var val TdContenteditable
+func (e *TdElement) Contenteditable(v ...Contenteditable) *TdElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -373,19 +269,19 @@ func (e *TdElement) Data(name string, s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Dir(a TdDir) *TdElement {
+func (e *TdElement) Dir(a Dir) *TdElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TdElement) Draggable(a TdDraggable) *TdElement {
+func (e *TdElement) Draggable(a Draggable) *TdElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TdElement) Enterkeyhint(a TdEnterkeyhint) *TdElement {
+func (e *TdElement) Enterkeyhint(a Enterkeyhint) *TdElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -413,8 +309,8 @@ func (e *TdElement) Headingreset(b bool) *TdElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Hidden(v ...TdHidden) *TdElement {
-	var val TdHidden
+func (e *TdElement) Hidden(v ...Hidden) *TdElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -437,7 +333,7 @@ func (e *TdElement) Inert(b bool) *TdElement {
 	return e
 }
 
-func (e *TdElement) Inputmode(a TdInputmode) *TdElement {
+func (e *TdElement) Inputmode(a Inputmode) *TdElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -503,8 +399,8 @@ func (e *TdElement) Part(s ...string) *TdElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Popover(v ...TdPopover) *TdElement {
-	var val TdPopover
+func (e *TdElement) Popover(v ...Popover) *TdElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -527,8 +423,8 @@ func (e *TdElement) Slot(s string) *TdElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Spellcheck(v ...TdSpellcheck) *TdElement {
-	var val TdSpellcheck
+func (e *TdElement) Spellcheck(v ...Spellcheck) *TdElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +453,8 @@ func (e *TdElement) Title(s string) *TdElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Translate(v ...TdTranslate) *TdElement {
-	var val TdTranslate
+func (e *TdElement) Translate(v ...Translate) *TdElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -569,8 +465,8 @@ func (e *TdElement) Translate(v ...TdTranslate) *TdElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TdElement) Writingsuggestions(v ...TdWritingsuggestions) *TdElement {
-	var val TdWritingsuggestions
+func (e *TdElement) Writingsuggestions(v ...Writingsuggestions) *TdElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

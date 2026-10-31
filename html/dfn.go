@@ -13,16 +13,20 @@ import (
 )
 
 type DfnElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Dfn creates a tag <dfn> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The dfn element represents the defining instance of a term. The paragraph, description list group, or section that is the nearest ancestor of the dfn element must also contain the definition(s) for the term given by the dfn element.
-func Dfn(children ...htemel.Node) *DfnElement {
+func Dfn(children ...htemel.PhrasingContent) *DfnElement {
 	node := &DfnElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Dfn(children ...htemel.Node) *DfnElement {
 }
 
 // DfnIf creates a tag <dfn> instance that is only rendered when condition is true.
-func DfnIf(condition bool, children ...htemel.Node) *DfnElement {
+func DfnIf(condition bool, children ...htemel.PhrasingContent) *DfnElement {
 	if condition {
 		return Dfn(children...)
 	}
@@ -43,7 +47,7 @@ func DfnIf(condition bool, children ...htemel.Node) *DfnElement {
 }
 
 // DfnTernary creates a tag <dfn> containing then when condition is true, otherwise containing otherwise.
-func DfnTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DfnElement {
+func DfnTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *DfnElement {
 	if condition {
 		return Dfn(then)
 	}
@@ -51,7 +55,7 @@ func DfnTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DfnEle
 }
 
 // Children appends children to this element.
-func (e *DfnElement) Children(children ...htemel.Node) *DfnElement {
+func (e *DfnElement) Children(children ...htemel.PhrasingContent) *DfnElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *DfnElement) Textf(format string, args ...any) *DfnElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DfnElement) If(cond bool, child htemel.Node) *DfnElement {
+func (e *DfnElement) If(cond bool, child htemel.PhrasingContent) *DfnElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *DfnElement) If(cond bool, child htemel.Node) *DfnElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DfnElement) IfElse(cond bool, then, els htemel.Node) *DfnElement {
+func (e *DfnElement) IfElse(cond bool, then, els htemel.PhrasingContent) *DfnElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *DfnElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DfnAutocapitalize string
-
-const (
-	DfnAutocapitalizeCharacters DfnAutocapitalize = "characters"
-	DfnAutocapitalizeNone       DfnAutocapitalize = "none"
-	DfnAutocapitalizeOff        DfnAutocapitalize = "off"
-	DfnAutocapitalizeOn         DfnAutocapitalize = "on"
-	DfnAutocapitalizeSentences  DfnAutocapitalize = "sentences"
-	DfnAutocapitalizeWords      DfnAutocapitalize = "words"
-)
-
-type DfnAutocorrect string
-
-const (
-	DfnAutocorrectOff   DfnAutocorrect = "off"
-	DfnAutocorrectOn    DfnAutocorrect = "on"
-	DfnAutocorrectEmpty DfnAutocorrect = ""
-)
-
-type DfnContenteditable string
-
-const (
-	DfnContenteditableFalse         DfnContenteditable = "false"
-	DfnContenteditablePlaintextOnly DfnContenteditable = "plaintext-only"
-	DfnContenteditableTrue          DfnContenteditable = "true"
-	DfnContenteditableEmpty         DfnContenteditable = ""
-)
-
-type DfnDir string
-
-const (
-	DfnDirAuto DfnDir = "auto"
-	DfnDirLtr  DfnDir = "ltr"
-	DfnDirRtl  DfnDir = "rtl"
-)
-
-type DfnDraggable string
-
-const (
-	DfnDraggableFalse DfnDraggable = "false"
-	DfnDraggableTrue  DfnDraggable = "true"
-)
-
-type DfnEnterkeyhint string
-
-const (
-	DfnEnterkeyhintDone     DfnEnterkeyhint = "done"
-	DfnEnterkeyhintEnter    DfnEnterkeyhint = "enter"
-	DfnEnterkeyhintGo       DfnEnterkeyhint = "go"
-	DfnEnterkeyhintNext     DfnEnterkeyhint = "next"
-	DfnEnterkeyhintPrevious DfnEnterkeyhint = "previous"
-	DfnEnterkeyhintSearch   DfnEnterkeyhint = "search"
-	DfnEnterkeyhintSend     DfnEnterkeyhint = "send"
-)
-
-type DfnHidden string
-
-const (
-	DfnHiddenHidden     DfnHidden = "hidden"
-	DfnHiddenUntilFound DfnHidden = "until-found"
-	DfnHiddenEmpty      DfnHidden = ""
-)
-
-type DfnInputmode string
-
-const (
-	DfnInputmodeDecimal DfnInputmode = "decimal"
-	DfnInputmodeEmail   DfnInputmode = "email"
-	DfnInputmodeNone    DfnInputmode = "none"
-	DfnInputmodeNumeric DfnInputmode = "numeric"
-	DfnInputmodeSearch  DfnInputmode = "search"
-	DfnInputmodeTel     DfnInputmode = "tel"
-	DfnInputmodeText    DfnInputmode = "text"
-	DfnInputmodeUrl     DfnInputmode = "url"
-)
-
-type DfnPopover string
-
-const (
-	DfnPopoverAuto   DfnPopover = "auto"
-	DfnPopoverHint   DfnPopover = "hint"
-	DfnPopoverManual DfnPopover = "manual"
-	DfnPopoverEmpty  DfnPopover = ""
-)
-
-type DfnSpellcheck string
-
-const (
-	DfnSpellcheckFalse DfnSpellcheck = "false"
-	DfnSpellcheckTrue  DfnSpellcheck = "true"
-	DfnSpellcheckEmpty DfnSpellcheck = ""
-)
-
-type DfnTranslate string
-
-const (
-	DfnTranslateNo    DfnTranslate = "no"
-	DfnTranslateYes   DfnTranslate = "yes"
-	DfnTranslateEmpty DfnTranslate = ""
-)
-
-type DfnWritingsuggestions string
-
-const (
-	DfnWritingsuggestionsFalse DfnWritingsuggestions = "false"
-	DfnWritingsuggestionsTrue  DfnWritingsuggestions = "true"
-	DfnWritingsuggestionsEmpty DfnWritingsuggestions = ""
-)
-
 func (e *DfnElement) Accesskey(r rune) *DfnElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *DfnElement) Aria(name string, s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Autocapitalize(a DfnAutocapitalize) *DfnElement {
+func (e *DfnElement) Autocapitalize(a Autocapitalize) *DfnElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *DfnElement) Autocapitalize(a DfnAutocapitalize) *DfnElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Autocorrect(v ...DfnAutocorrect) *DfnElement {
-	var val DfnAutocorrect
+func (e *DfnElement) Autocorrect(v ...Autocorrect) *DfnElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *DfnElement) Class(s ...string) *DfnElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Contenteditable(v ...DfnContenteditable) *DfnElement {
-	var val DfnContenteditable
+func (e *DfnElement) Contenteditable(v ...Contenteditable) *DfnElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *DfnElement) Data(name string, s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Dir(a DfnDir) *DfnElement {
+func (e *DfnElement) Dir(a Dir) *DfnElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DfnElement) Draggable(a DfnDraggable) *DfnElement {
+func (e *DfnElement) Draggable(a Draggable) *DfnElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DfnElement) Enterkeyhint(a DfnEnterkeyhint) *DfnElement {
+func (e *DfnElement) Enterkeyhint(a Enterkeyhint) *DfnElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *DfnElement) Headingreset(b bool) *DfnElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Hidden(v ...DfnHidden) *DfnElement {
-	var val DfnHidden
+func (e *DfnElement) Hidden(v ...Hidden) *DfnElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *DfnElement) Inert(b bool) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Inputmode(a DfnInputmode) *DfnElement {
+func (e *DfnElement) Inputmode(a Inputmode) *DfnElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *DfnElement) Part(s ...string) *DfnElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Popover(v ...DfnPopover) *DfnElement {
-	var val DfnPopover
+func (e *DfnElement) Popover(v ...Popover) *DfnElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *DfnElement) Slot(s string) *DfnElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Spellcheck(v ...DfnSpellcheck) *DfnElement {
-	var val DfnSpellcheck
+func (e *DfnElement) Spellcheck(v ...Spellcheck) *DfnElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *DfnElement) Title(s string) *DfnElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Translate(v ...DfnTranslate) *DfnElement {
-	var val DfnTranslate
+func (e *DfnElement) Translate(v ...Translate) *DfnElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *DfnElement) Translate(v ...DfnTranslate) *DfnElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DfnElement) Writingsuggestions(v ...DfnWritingsuggestions) *DfnElement {
-	var val DfnWritingsuggestions
+func (e *DfnElement) Writingsuggestions(v ...Writingsuggestions) *DfnElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

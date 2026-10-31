@@ -14,15 +14,17 @@ import (
 
 type TitleElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Title creates a tag <title> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The title element provides a human-readable title or tooltip for its parent element.
-func Title(children ...htemel.Node) *TitleElement {
+func Title(children ...Content) *TitleElement {
 	node := &TitleElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Title(children ...htemel.Node) *TitleElement {
 }
 
 // TitleIf creates a tag <title> instance that is only rendered when condition is true.
-func TitleIf(condition bool, children ...htemel.Node) *TitleElement {
+func TitleIf(condition bool, children ...Content) *TitleElement {
 	if condition {
 		return Title(children...)
 	}
@@ -43,7 +45,7 @@ func TitleIf(condition bool, children ...htemel.Node) *TitleElement {
 }
 
 // TitleTernary creates a tag <title> containing then when condition is true, otherwise containing otherwise.
-func TitleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TitleElement {
+func TitleTernary(condition bool, then Content, otherwise Content) *TitleElement {
 	if condition {
 		return Title(then)
 	}
@@ -51,7 +53,7 @@ func TitleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Titl
 }
 
 // Children appends children to this element.
-func (e *TitleElement) Children(children ...htemel.Node) *TitleElement {
+func (e *TitleElement) Children(children ...Content) *TitleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *TitleElement) Textf(format string, args ...any) *TitleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TitleElement) If(cond bool, child htemel.Node) *TitleElement {
+func (e *TitleElement) If(cond bool, child Content) *TitleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *TitleElement) If(cond bool, child htemel.Node) *TitleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TitleElement) IfElse(cond bool, then, els htemel.Node) *TitleElement {
+func (e *TitleElement) IfElse(cond bool, then, els Content) *TitleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,228 +166,13 @@ func (e *TitleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TitleAlignmentBaseline string
+// SVGContent marks <title> as a permitted child (Content).
+func (*TitleElement) SVGContent() {}
 
-const (
-	TitleAlignmentBaselineAfterEdge      TitleAlignmentBaseline = "after-edge"
-	TitleAlignmentBaselineAlphabetic     TitleAlignmentBaseline = "alphabetic"
-	TitleAlignmentBaselineAuto           TitleAlignmentBaseline = "auto"
-	TitleAlignmentBaselineBaseline       TitleAlignmentBaseline = "baseline"
-	TitleAlignmentBaselineBeforeEdge     TitleAlignmentBaseline = "before-edge"
-	TitleAlignmentBaselineBottom         TitleAlignmentBaseline = "bottom"
-	TitleAlignmentBaselineCenter         TitleAlignmentBaseline = "center"
-	TitleAlignmentBaselineCentral        TitleAlignmentBaseline = "central"
-	TitleAlignmentBaselineHanging        TitleAlignmentBaseline = "hanging"
-	TitleAlignmentBaselineIdeographic    TitleAlignmentBaseline = "ideographic"
-	TitleAlignmentBaselineMathematical   TitleAlignmentBaseline = "mathematical"
-	TitleAlignmentBaselineMiddle         TitleAlignmentBaseline = "middle"
-	TitleAlignmentBaselineTextAfterEdge  TitleAlignmentBaseline = "text-after-edge"
-	TitleAlignmentBaselineTextBeforeEdge TitleAlignmentBaseline = "text-before-edge"
-	TitleAlignmentBaselineTextBottom     TitleAlignmentBaseline = "text-bottom"
-	TitleAlignmentBaselineTextTop        TitleAlignmentBaseline = "text-top"
-	TitleAlignmentBaselineTop            TitleAlignmentBaseline = "top"
-)
-
-type TitleClipRule string
-
-const (
-	TitleClipRuleEvenodd TitleClipRule = "evenodd"
-	TitleClipRuleNonzero TitleClipRule = "nonzero"
-)
-
-type TitleColorInterpolation string
-
-const (
-	TitleColorInterpolationAuto      TitleColorInterpolation = "auto"
-	TitleColorInterpolationLinearRGB TitleColorInterpolation = "linearRGB"
-	TitleColorInterpolationSRGB      TitleColorInterpolation = "sRGB"
-)
-
-type TitleColorInterpolationFilters string
-
-const (
-	TitleColorInterpolationFiltersAuto      TitleColorInterpolationFilters = "auto"
-	TitleColorInterpolationFiltersLinearRGB TitleColorInterpolationFilters = "linearRGB"
-	TitleColorInterpolationFiltersSRGB      TitleColorInterpolationFilters = "sRGB"
-)
-
-type TitleDirection string
-
-const (
-	TitleDirectionLtr TitleDirection = "ltr"
-	TitleDirectionRtl TitleDirection = "rtl"
-)
-
-type TitleDominantBaseline string
-
-const (
-	TitleDominantBaselineAlphabetic   TitleDominantBaseline = "alphabetic"
-	TitleDominantBaselineAuto         TitleDominantBaseline = "auto"
-	TitleDominantBaselineCentral      TitleDominantBaseline = "central"
-	TitleDominantBaselineHanging      TitleDominantBaseline = "hanging"
-	TitleDominantBaselineIdeographic  TitleDominantBaseline = "ideographic"
-	TitleDominantBaselineMathematical TitleDominantBaseline = "mathematical"
-	TitleDominantBaselineMiddle       TitleDominantBaseline = "middle"
-	TitleDominantBaselineTextBottom   TitleDominantBaseline = "text-bottom"
-	TitleDominantBaselineTextTop      TitleDominantBaseline = "text-top"
-)
-
-type TitleFillRule string
-
-const (
-	TitleFillRuleEvenodd TitleFillRule = "evenodd"
-	TitleFillRuleNonzero TitleFillRule = "nonzero"
-)
-
-type TitleFontStyle string
-
-const (
-	TitleFontStyleItalic  TitleFontStyle = "italic"
-	TitleFontStyleNormal  TitleFontStyle = "normal"
-	TitleFontStyleOblique TitleFontStyle = "oblique"
-)
-
-type TitleImageRendering string
-
-const (
-	TitleImageRenderingAuto            TitleImageRendering = "auto"
-	TitleImageRenderingCrispEdges      TitleImageRendering = "crisp-edges"
-	TitleImageRenderingHighQuality     TitleImageRendering = "high-quality"
-	TitleImageRenderingOptimizeQuality TitleImageRendering = "optimizeQuality"
-	TitleImageRenderingOptimizeSpeed   TitleImageRendering = "optimizeSpeed"
-	TitleImageRenderingPixelated       TitleImageRendering = "pixelated"
-	TitleImageRenderingSmooth          TitleImageRendering = "smooth"
-)
-
-type TitleOverflow string
-
-const (
-	TitleOverflowAuto    TitleOverflow = "auto"
-	TitleOverflowClip    TitleOverflow = "clip"
-	TitleOverflowHidden  TitleOverflow = "hidden"
-	TitleOverflowScroll  TitleOverflow = "scroll"
-	TitleOverflowVisible TitleOverflow = "visible"
-)
-
-type TitlePointerEvents string
-
-const (
-	TitlePointerEventsAll            TitlePointerEvents = "all"
-	TitlePointerEventsAuto           TitlePointerEvents = "auto"
-	TitlePointerEventsBoundingBox    TitlePointerEvents = "bounding-box"
-	TitlePointerEventsFill           TitlePointerEvents = "fill"
-	TitlePointerEventsNone           TitlePointerEvents = "none"
-	TitlePointerEventsPainted        TitlePointerEvents = "painted"
-	TitlePointerEventsStroke         TitlePointerEvents = "stroke"
-	TitlePointerEventsVisible        TitlePointerEvents = "visible"
-	TitlePointerEventsVisibleFill    TitlePointerEvents = "visibleFill"
-	TitlePointerEventsVisiblePainted TitlePointerEvents = "visiblePainted"
-	TitlePointerEventsVisibleStroke  TitlePointerEvents = "visibleStroke"
-)
-
-type TitleShapeRendering string
-
-const (
-	TitleShapeRenderingAuto               TitleShapeRendering = "auto"
-	TitleShapeRenderingCrispEdges         TitleShapeRendering = "crispEdges"
-	TitleShapeRenderingGeometricPrecision TitleShapeRendering = "geometricPrecision"
-	TitleShapeRenderingOptimizeSpeed      TitleShapeRendering = "optimizeSpeed"
-)
-
-type TitleStrokeLinecap string
-
-const (
-	TitleStrokeLinecapButt   TitleStrokeLinecap = "butt"
-	TitleStrokeLinecapRound  TitleStrokeLinecap = "round"
-	TitleStrokeLinecapSquare TitleStrokeLinecap = "square"
-)
-
-type TitleStrokeLinejoin string
-
-const (
-	TitleStrokeLinejoinArcs      TitleStrokeLinejoin = "arcs"
-	TitleStrokeLinejoinBevel     TitleStrokeLinejoin = "bevel"
-	TitleStrokeLinejoinMiter     TitleStrokeLinejoin = "miter"
-	TitleStrokeLinejoinMiterClip TitleStrokeLinejoin = "miter-clip"
-	TitleStrokeLinejoinRound     TitleStrokeLinejoin = "round"
-)
-
-type TitleTextAnchor string
-
-const (
-	TitleTextAnchorEnd    TitleTextAnchor = "end"
-	TitleTextAnchorMiddle TitleTextAnchor = "middle"
-	TitleTextAnchorStart  TitleTextAnchor = "start"
-)
-
-type TitleTextRendering string
-
-const (
-	TitleTextRenderingAuto               TitleTextRendering = "auto"
-	TitleTextRenderingGeometricPrecision TitleTextRendering = "geometricPrecision"
-	TitleTextRenderingOptimizeLegibility TitleTextRendering = "optimizeLegibility"
-	TitleTextRenderingOptimizeSpeed      TitleTextRendering = "optimizeSpeed"
-)
-
-type TitleTransformBox string
-
-const (
-	TitleTransformBoxBorderBox  TitleTransformBox = "border-box"
-	TitleTransformBoxContentBox TitleTransformBox = "content-box"
-	TitleTransformBoxFillBox    TitleTransformBox = "fill-box"
-	TitleTransformBoxStrokeBox  TitleTransformBox = "stroke-box"
-	TitleTransformBoxViewBox    TitleTransformBox = "view-box"
-)
-
-type TitleVectorEffect string
-
-const (
-	TitleVectorEffectFixedPosition    TitleVectorEffect = "fixed-position"
-	TitleVectorEffectNonRotation      TitleVectorEffect = "non-rotation"
-	TitleVectorEffectNonScalingSize   TitleVectorEffect = "non-scaling-size"
-	TitleVectorEffectNonScalingStroke TitleVectorEffect = "non-scaling-stroke"
-	TitleVectorEffectNone             TitleVectorEffect = "none"
-)
-
-type TitleVisibility string
-
-const (
-	TitleVisibilityCollapse TitleVisibility = "collapse"
-	TitleVisibilityHidden   TitleVisibility = "hidden"
-	TitleVisibilityVisible  TitleVisibility = "visible"
-)
-
-type TitleWritingMode string
-
-const (
-	TitleWritingModeHorizontalTb TitleWritingMode = "horizontal-tb"
-	TitleWritingModeLr           TitleWritingMode = "lr"
-	TitleWritingModeLrTb         TitleWritingMode = "lr-tb"
-	TitleWritingModeRl           TitleWritingMode = "rl"
-	TitleWritingModeRlTb         TitleWritingMode = "rl-tb"
-	TitleWritingModeSidewaysLr   TitleWritingMode = "sideways-lr"
-	TitleWritingModeSidewaysRl   TitleWritingMode = "sideways-rl"
-	TitleWritingModeTb           TitleWritingMode = "tb"
-	TitleWritingModeTbRl         TitleWritingMode = "tb-rl"
-	TitleWritingModeVerticalLr   TitleWritingMode = "vertical-lr"
-	TitleWritingModeVerticalRl   TitleWritingMode = "vertical-rl"
-)
-
-type TitleXmlSpace string
-
-const (
-	TitleXmlSpaceDefault  TitleXmlSpace = "default"
-	TitleXmlSpacePreserve TitleXmlSpace = "preserve"
-)
-
-func (e *TitleElement) AlignmentBaseline(a TitleAlignmentBaseline) *TitleElement {
+func (e *TitleElement) AlignmentBaseline(a AlignmentBaseline) *TitleElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func TitleAlignmentBaselineCustom(s string) TitleAlignmentBaseline {
-	return TitleAlignmentBaseline(s)
 }
 
 func (e *TitleElement) AriaUnsafe(name string, s string) *TitleElement {
@@ -439,14 +226,10 @@ func (e *TitleElement) ClipPath(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) ClipRule(a TitleClipRule) *TitleElement {
+func (e *TitleElement) ClipRule(a ClipRule) *TitleElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func TitleClipRuleCustom(s string) TitleClipRule {
-	return TitleClipRule(s)
 }
 
 func (e *TitleElement) Color(s string) *TitleElement {
@@ -455,24 +238,16 @@ func (e *TitleElement) Color(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) ColorInterpolation(a TitleColorInterpolation) *TitleElement {
+func (e *TitleElement) ColorInterpolation(a ColorInterpolation) *TitleElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func TitleColorInterpolationCustom(s string) TitleColorInterpolation {
-	return TitleColorInterpolation(s)
-}
-
-func (e *TitleElement) ColorInterpolationFilters(a TitleColorInterpolationFilters) *TitleElement {
+func (e *TitleElement) ColorInterpolationFilters(a ColorInterpolationFilters) *TitleElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func TitleColorInterpolationFiltersCustom(s string) TitleColorInterpolationFilters {
-	return TitleColorInterpolationFilters(s)
 }
 
 func (e *TitleElement) Cursor(s string) *TitleElement {
@@ -497,14 +272,10 @@ func (e *TitleElement) Data(name string, s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Direction(a TitleDirection) *TitleElement {
+func (e *TitleElement) Direction(a Direction) *TitleElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func TitleDirectionCustom(s string) TitleDirection {
-	return TitleDirection(s)
 }
 
 func (e *TitleElement) Display(s string) *TitleElement {
@@ -513,14 +284,10 @@ func (e *TitleElement) Display(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) DominantBaseline(a TitleDominantBaseline) *TitleElement {
+func (e *TitleElement) DominantBaseline(a DominantBaseline) *TitleElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func TitleDominantBaselineCustom(s string) TitleDominantBaseline {
-	return TitleDominantBaseline(s)
 }
 
 func (e *TitleElement) Fill(s string) *TitleElement {
@@ -535,14 +302,10 @@ func (e *TitleElement) FillOpacity(f float64) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) FillRule(a TitleFillRule) *TitleElement {
+func (e *TitleElement) FillRule(a FillRule) *TitleElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func TitleFillRuleCustom(s string) TitleFillRule {
-	return TitleFillRule(s)
 }
 
 func (e *TitleElement) Filter(s string) *TitleElement {
@@ -587,14 +350,10 @@ func (e *TitleElement) FontStretch(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) FontStyle(a TitleFontStyle) *TitleElement {
+func (e *TitleElement) FontStyle(a FontStyle) *TitleElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func TitleFontStyleCustom(s string) TitleFontStyle {
-	return TitleFontStyle(s)
 }
 
 func (e *TitleElement) FontVariant(s string) *TitleElement {
@@ -633,14 +392,10 @@ func (e *TitleElement) Id(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) ImageRendering(a TitleImageRendering) *TitleElement {
+func (e *TitleElement) ImageRendering(a ImageRendering) *TitleElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func TitleImageRenderingCustom(s string) TitleImageRendering {
-	return TitleImageRendering(s)
 }
 
 func (e *TitleElement) Lang(s string) *TitleElement {
@@ -691,14 +446,10 @@ func (e *TitleElement) Opacity(f float64) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Overflow(a TitleOverflow) *TitleElement {
+func (e *TitleElement) Overflow(a Overflow) *TitleElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func TitleOverflowCustom(s string) TitleOverflow {
-	return TitleOverflow(s)
 }
 
 func (e *TitleElement) PaintOrder(s string) *TitleElement {
@@ -707,14 +458,10 @@ func (e *TitleElement) PaintOrder(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) PointerEvents(a TitlePointerEvents) *TitleElement {
+func (e *TitleElement) PointerEvents(a PointerEvents) *TitleElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func TitlePointerEventsCustom(s string) TitlePointerEvents {
-	return TitlePointerEvents(s)
 }
 
 func (e *TitleElement) RequiredExtensions(s string) *TitleElement {
@@ -723,14 +470,10 @@ func (e *TitleElement) RequiredExtensions(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) ShapeRendering(a TitleShapeRendering) *TitleElement {
+func (e *TitleElement) ShapeRendering(a ShapeRendering) *TitleElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func TitleShapeRenderingCustom(s string) TitleShapeRendering {
-	return TitleShapeRendering(s)
 }
 
 func (e *TitleElement) StopColor(s string) *TitleElement {
@@ -763,24 +506,16 @@ func (e *TitleElement) StrokeDashoffset(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) StrokeLinecap(a TitleStrokeLinecap) *TitleElement {
+func (e *TitleElement) StrokeLinecap(a StrokeLinecap) *TitleElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func TitleStrokeLinecapCustom(s string) TitleStrokeLinecap {
-	return TitleStrokeLinecap(s)
-}
-
-func (e *TitleElement) StrokeLinejoin(a TitleStrokeLinejoin) *TitleElement {
+func (e *TitleElement) StrokeLinejoin(a StrokeLinejoin) *TitleElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func TitleStrokeLinejoinCustom(s string) TitleStrokeLinejoin {
-	return TitleStrokeLinejoin(s)
 }
 
 func (e *TitleElement) StrokeMiterlimit(f float64) *TitleElement {
@@ -813,14 +548,10 @@ func (e *TitleElement) Tabindex(i int) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) TextAnchor(a TitleTextAnchor) *TitleElement {
+func (e *TitleElement) TextAnchor(a TextAnchor) *TitleElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func TitleTextAnchorCustom(s string) TitleTextAnchor {
-	return TitleTextAnchor(s)
 }
 
 func (e *TitleElement) TextDecoration(s string) *TitleElement {
@@ -835,14 +566,10 @@ func (e *TitleElement) TextOverflow(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) TextRendering(a TitleTextRendering) *TitleElement {
+func (e *TitleElement) TextRendering(a TextRendering) *TitleElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func TitleTextRenderingCustom(s string) TitleTextRendering {
-	return TitleTextRendering(s)
 }
 
 func (e *TitleElement) Transform(s string) *TitleElement {
@@ -851,14 +578,10 @@ func (e *TitleElement) Transform(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) TransformBox(a TitleTransformBox) *TitleElement {
+func (e *TitleElement) TransformBox(a TransformBox) *TitleElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func TitleTransformBoxCustom(s string) TitleTransformBox {
-	return TitleTransformBox(s)
 }
 
 func (e *TitleElement) TransformOrigin(s string) *TitleElement {
@@ -873,24 +596,16 @@ func (e *TitleElement) UnicodeBidi(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) VectorEffect(a TitleVectorEffect) *TitleElement {
+func (e *TitleElement) VectorEffect(a VectorEffect) *TitleElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func TitleVectorEffectCustom(s string) TitleVectorEffect {
-	return TitleVectorEffect(s)
-}
-
-func (e *TitleElement) Visibility(a TitleVisibility) *TitleElement {
+func (e *TitleElement) Visibility(a Visibility) *TitleElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func TitleVisibilityCustom(s string) TitleVisibility {
-	return TitleVisibility(s)
 }
 
 func (e *TitleElement) WhiteSpace(s string) *TitleElement {
@@ -905,14 +620,10 @@ func (e *TitleElement) WordSpacing(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) WritingMode(a TitleWritingMode) *TitleElement {
+func (e *TitleElement) WritingMode(a WritingMode) *TitleElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func TitleWritingModeCustom(s string) TitleWritingMode {
-	return TitleWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -927,7 +638,7 @@ func (e *TitleElement) XmlLang(s string) *TitleElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *TitleElement) XmlSpace(a TitleXmlSpace) *TitleElement {
+func (e *TitleElement) XmlSpace(a XmlSpace) *TitleElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

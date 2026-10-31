@@ -1,5 +1,84 @@
 # Changelog
 
+## v0.3.0 — 2026-10-31
+
+Breaking release. Highlights: the HTML content model is checked at compile time (`P(Div())`,
+`Ul(Div())` and `Img().Children(...)` no longer compile), and enum attribute types are shared per
+attribute (`html.Popover` instead of 112 `<El>Popover` types; the html package goes from 1331
+enum types to 40, svg from 1385 to 61, mathml from 73 to 11).
+
+Generated from go-htemel/spec with content models (the `categories` and `content_model` element
+fields, from the WHATWG element index).
+
+### Content models
+
+- New in package `htemel`: the category interfaces `FlowContent`, `PhrasingContent` (which is
+  also a `FlowContent`), `MetadataContent`, `SectioningContent`, `HeadingContent`,
+  `EmbeddedContent`, `InteractiveContent`, `PalpableContent`, `ScriptSupportingContent` and
+  `TextContent`; the marker structs `FlowMarker`, `PhrasingMarker`, ... `TextMarker` that types
+  embed to join a category; `Wildcard`, which satisfies every content interface; `NodeFunc`, a
+  function that renders a node (also a wildcard); and `Unchecked(n Node) NodeFunc`.
+- Every generated element embeds the markers of its categories, so `html.Span()` is a
+  `htemel.PhrasingContent` and `html.Div()` a `htemel.FlowContent`.
+- Elements whose model lists tags get a child interface in their package, implemented by the
+  permitted elements: `html.UlChild`, `OlChild`, `MenuChild`, `DlChild`, `HtmlChild`,
+  `TableChild`, `TbodyChild`, `TheadChild`, `TfootChild`, `TrChild`, `ColgroupChild`,
+  `SelectChild`, `OptgroupChild`, `OptionChild`, `DatalistChild`, `PictureChild`, `HgroupChild`,
+  `FigureChild`, `FieldsetChild`, `DetailsChild`, `LegendChild`, `SummaryChild`, `RubyChild`,
+  `AudioChild`, `VideoChild`. Their marker methods (`HTMLUlChild()`, ...) are exported and have
+  no behaviour.
+- `svg` and `mathml` get a closed, loose model: every element accepts `...svg.Content` /
+  `...mathml.Content`, implemented by every element of the package and by text. `svg.Svg()` and
+  `mathml.Math()` are embedded, phrasing, flow and palpable content, so they still nest in HTML;
+  other SVG/MathML elements cannot be placed in HTML directly. `svg.ForeignObject` and
+  `mathml.AnnotationXml` accept any `htemel.Node`.
+- Not checked: transparent elements (`a`, `ins`, `del`, `map`, `object`, `canvas`, `slot`,
+  `noscript`, `audio`, `video`) accept any flow content; descendant, ordering and cardinality
+  rules; `template`, which accepts any node; and dynamic content (see below).
+- New files generated into package `htemel`: `slots_html.go`, `slots_svg.go` and
+  `slots_mathml.go`, which add the child-interface marker methods to `Wildcard`, `NodeFunc`,
+  text and the category markers. `cmd/genelements` has a new `-slots` flag that writes them.
+
+### Migration
+
+- **Children parameters are typed.** `Div(children ...htemel.Node)` is now
+  `Div(children ...htemel.FlowContent)`; likewise `DivIf`, `DivTernary(cond, then, otherwise)`,
+  `.Children(...)`, `.If(cond, child)` and `.IfElse(cond, a, b)` on every element, each with that
+  element's child type (`htemel.PhrasingContent` for `P`, `html.UlChild` for `Ul`,
+  `htemel.TextContent` for `Title`, `htemel.MetadataContent` for `Head`, ...). `.With`, `.Attrs`,
+  `.IfThen` and the attribute setters are unchanged.
+  - Code that puts block content in phrasing content (a `Div` in a `P`, `Span`, `Button`, `A`'s
+    phrasing parent, `H1`...) no longer compiles. That markup was invalid HTML (browsers silently
+    restructure a `<div>` inside a `<p>`); use a flow container instead.
+  - Components that return or accept `htemel.Node` must use the content type instead
+    (`func Card(children ...htemel.FlowContent) htemel.FlowContent`), or wrap the value with
+    `htemel.Unchecked(n)`.
+  - A custom `Node` type passed as a child needs a marker: embed `htemel.FlowMarker`,
+    `htemel.PhrasingMarker`, ... (or `htemel.Wildcard` to accept it anywhere).
+- **Dynamic helpers return `htemel.NodeFunc`.** `Each`, `EachIndex`, `ForEach`, `ForEach2`, `If`
+  and `IfElse` returned `htemel.Node`; they now return `htemel.NodeFunc`, which is accepted as a
+  child of any element. `Group`, `Generic`, `GenericVoid` and `Doctype` keep their result types,
+  which now embed `htemel.Wildcard`. A variable declared `var n htemel.Node = htemel.Each(...)`
+  loses that ability; keep the `NodeFunc` or wrap with `Unchecked`.
+- **Text only where text is permitted.** `Text` and `Textf` are removed from elements whose
+  content model has no text: `Colgroup`, `Dl`, `Head`, `Hgroup`, `Html`, `Menu`, `Ol`,
+  `Optgroup`, `Picture`, `Select`, `Table`, `Tbody`, `Tfoot`, `Thead`, `Tr`, `Ul`.
+- **No children on elements with an empty content model.** `Iframe` and `Selectedcontent` take an
+  end tag but no content: their children parameter and the `Children`, `If`, `IfElse`, `Text`,
+  `Textf` and `<Tag>Ternary` functions are gone (void elements never had them).
+- **Shared enum types.** Each enumerated attribute now has one type named after the attribute,
+  shared by every element: `html.DivPopover` / `html.SpanPopover` / ... become `html.Popover`,
+  constants `html.DivPopoverManual` become `html.PopoverManual`, `html.DivHiddenUntilFound`
+  becomes `html.HiddenUntilFound`, `html.ADownloadCustom(s)` becomes `html.DownloadCustom(s)`,
+  `svg.PathStrokeLinecapRound` becomes `svg.StrokeLinecapRound`, and so on: drop the element
+  prefix. This also applies to attributes that exist on a single element (`html.TrackKind` →
+  `html.Kind`, `html.ThScope` → `html.Scope`, `html.MetaCharset` → `html.Charset`).
+  Attributes whose allowed values differ between elements keep per-element types:
+  `html.ButtonType`, `html.InputType`, `html.ScriptType`; `svg.AnimateTransformType`,
+  `svg.FeColorMatrixType`, `svg.FeFuncAType`/`B`/`G`/`R`, `svg.FeTurbulenceType`,
+  `svg.FeCompositeOperator`, `svg.FeMorphologyOperator`. The list is at the top of each
+  package's generated `enums.go`. AllowEmpty setters stay variadic (`Span().Popover()`).
+
 ## v0.2.0 — 2026-10-31
 
 Highlights: every attribute value is now escaped and attribute order is deterministic; boolean attributes render correctly; rendering is ~4x faster with `htemel.Render`; new `svg`, `mathml` and `datastar` packages; `Each`/`ForEach`/`If`, `URL`, `Attribute`/`Attrs` helpers; variadic `Hidden()`-style setters; CI, lint, fuzz and golden tests.

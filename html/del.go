@@ -13,16 +13,22 @@ import (
 )
 
 type DelElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Del creates a tag <del> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <del> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The del element represents a removal from the document.
-func Del(children ...htemel.Node) *DelElement {
+func Del(children ...htemel.FlowContent) *DelElement {
 	node := &DelElement{
 		children: children,
 	}
@@ -31,7 +37,7 @@ func Del(children ...htemel.Node) *DelElement {
 }
 
 // DelIf creates a tag <del> instance that is only rendered when condition is true.
-func DelIf(condition bool, children ...htemel.Node) *DelElement {
+func DelIf(condition bool, children ...htemel.FlowContent) *DelElement {
 	if condition {
 		return Del(children...)
 	}
@@ -43,7 +49,7 @@ func DelIf(condition bool, children ...htemel.Node) *DelElement {
 }
 
 // DelTernary creates a tag <del> containing then when condition is true, otherwise containing otherwise.
-func DelTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DelElement {
+func DelTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *DelElement {
 	if condition {
 		return Del(then)
 	}
@@ -51,7 +57,7 @@ func DelTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DelEle
 }
 
 // Children appends children to this element.
-func (e *DelElement) Children(children ...htemel.Node) *DelElement {
+func (e *DelElement) Children(children ...htemel.FlowContent) *DelElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +80,7 @@ func (e *DelElement) Textf(format string, args ...any) *DelElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DelElement) If(cond bool, child htemel.Node) *DelElement {
+func (e *DelElement) If(cond bool, child htemel.FlowContent) *DelElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +88,7 @@ func (e *DelElement) If(cond bool, child htemel.Node) *DelElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DelElement) IfElse(cond bool, then, els htemel.Node) *DelElement {
+func (e *DelElement) IfElse(cond bool, then, els htemel.FlowContent) *DelElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +170,6 @@ func (e *DelElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DelAutocapitalize string
-
-const (
-	DelAutocapitalizeCharacters DelAutocapitalize = "characters"
-	DelAutocapitalizeNone       DelAutocapitalize = "none"
-	DelAutocapitalizeOff        DelAutocapitalize = "off"
-	DelAutocapitalizeOn         DelAutocapitalize = "on"
-	DelAutocapitalizeSentences  DelAutocapitalize = "sentences"
-	DelAutocapitalizeWords      DelAutocapitalize = "words"
-)
-
-type DelAutocorrect string
-
-const (
-	DelAutocorrectOff   DelAutocorrect = "off"
-	DelAutocorrectOn    DelAutocorrect = "on"
-	DelAutocorrectEmpty DelAutocorrect = ""
-)
-
-type DelContenteditable string
-
-const (
-	DelContenteditableFalse         DelContenteditable = "false"
-	DelContenteditablePlaintextOnly DelContenteditable = "plaintext-only"
-	DelContenteditableTrue          DelContenteditable = "true"
-	DelContenteditableEmpty         DelContenteditable = ""
-)
-
-type DelDir string
-
-const (
-	DelDirAuto DelDir = "auto"
-	DelDirLtr  DelDir = "ltr"
-	DelDirRtl  DelDir = "rtl"
-)
-
-type DelDraggable string
-
-const (
-	DelDraggableFalse DelDraggable = "false"
-	DelDraggableTrue  DelDraggable = "true"
-)
-
-type DelEnterkeyhint string
-
-const (
-	DelEnterkeyhintDone     DelEnterkeyhint = "done"
-	DelEnterkeyhintEnter    DelEnterkeyhint = "enter"
-	DelEnterkeyhintGo       DelEnterkeyhint = "go"
-	DelEnterkeyhintNext     DelEnterkeyhint = "next"
-	DelEnterkeyhintPrevious DelEnterkeyhint = "previous"
-	DelEnterkeyhintSearch   DelEnterkeyhint = "search"
-	DelEnterkeyhintSend     DelEnterkeyhint = "send"
-)
-
-type DelHidden string
-
-const (
-	DelHiddenHidden     DelHidden = "hidden"
-	DelHiddenUntilFound DelHidden = "until-found"
-	DelHiddenEmpty      DelHidden = ""
-)
-
-type DelInputmode string
-
-const (
-	DelInputmodeDecimal DelInputmode = "decimal"
-	DelInputmodeEmail   DelInputmode = "email"
-	DelInputmodeNone    DelInputmode = "none"
-	DelInputmodeNumeric DelInputmode = "numeric"
-	DelInputmodeSearch  DelInputmode = "search"
-	DelInputmodeTel     DelInputmode = "tel"
-	DelInputmodeText    DelInputmode = "text"
-	DelInputmodeUrl     DelInputmode = "url"
-)
-
-type DelPopover string
-
-const (
-	DelPopoverAuto   DelPopover = "auto"
-	DelPopoverHint   DelPopover = "hint"
-	DelPopoverManual DelPopover = "manual"
-	DelPopoverEmpty  DelPopover = ""
-)
-
-type DelSpellcheck string
-
-const (
-	DelSpellcheckFalse DelSpellcheck = "false"
-	DelSpellcheckTrue  DelSpellcheck = "true"
-	DelSpellcheckEmpty DelSpellcheck = ""
-)
-
-type DelTranslate string
-
-const (
-	DelTranslateNo    DelTranslate = "no"
-	DelTranslateYes   DelTranslate = "yes"
-	DelTranslateEmpty DelTranslate = ""
-)
-
-type DelWritingsuggestions string
-
-const (
-	DelWritingsuggestionsFalse DelWritingsuggestions = "false"
-	DelWritingsuggestionsTrue  DelWritingsuggestions = "true"
-	DelWritingsuggestionsEmpty DelWritingsuggestions = ""
-)
-
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *DelElement) Cite(s string) *DelElement {
@@ -309,7 +206,7 @@ func (e *DelElement) Aria(name string, s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Autocapitalize(a DelAutocapitalize) *DelElement {
+func (e *DelElement) Autocapitalize(a Autocapitalize) *DelElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -317,8 +214,8 @@ func (e *DelElement) Autocapitalize(a DelAutocapitalize) *DelElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Autocorrect(v ...DelAutocorrect) *DelElement {
-	var val DelAutocorrect
+func (e *DelElement) Autocorrect(v ...Autocorrect) *DelElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -343,8 +240,8 @@ func (e *DelElement) Class(s ...string) *DelElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Contenteditable(v ...DelContenteditable) *DelElement {
-	var val DelContenteditable
+func (e *DelElement) Contenteditable(v ...Contenteditable) *DelElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -369,19 +266,19 @@ func (e *DelElement) Data(name string, s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Dir(a DelDir) *DelElement {
+func (e *DelElement) Dir(a Dir) *DelElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DelElement) Draggable(a DelDraggable) *DelElement {
+func (e *DelElement) Draggable(a Draggable) *DelElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DelElement) Enterkeyhint(a DelEnterkeyhint) *DelElement {
+func (e *DelElement) Enterkeyhint(a Enterkeyhint) *DelElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -409,8 +306,8 @@ func (e *DelElement) Headingreset(b bool) *DelElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Hidden(v ...DelHidden) *DelElement {
-	var val DelHidden
+func (e *DelElement) Hidden(v ...Hidden) *DelElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -433,7 +330,7 @@ func (e *DelElement) Inert(b bool) *DelElement {
 	return e
 }
 
-func (e *DelElement) Inputmode(a DelInputmode) *DelElement {
+func (e *DelElement) Inputmode(a Inputmode) *DelElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -499,8 +396,8 @@ func (e *DelElement) Part(s ...string) *DelElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Popover(v ...DelPopover) *DelElement {
-	var val DelPopover
+func (e *DelElement) Popover(v ...Popover) *DelElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -523,8 +420,8 @@ func (e *DelElement) Slot(s string) *DelElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Spellcheck(v ...DelSpellcheck) *DelElement {
-	var val DelSpellcheck
+func (e *DelElement) Spellcheck(v ...Spellcheck) *DelElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -553,8 +450,8 @@ func (e *DelElement) Title(s string) *DelElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Translate(v ...DelTranslate) *DelElement {
-	var val DelTranslate
+func (e *DelElement) Translate(v ...Translate) *DelElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -565,8 +462,8 @@ func (e *DelElement) Translate(v ...DelTranslate) *DelElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DelElement) Writingsuggestions(v ...DelWritingsuggestions) *DelElement {
-	var val DelWritingsuggestions
+func (e *DelElement) Writingsuggestions(v ...Writingsuggestions) *DelElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -13,16 +13,20 @@ import (
 )
 
 type VarElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Var creates a tag <var> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The var element represents a variable. This could be an actual variable in a mathematical expression or programming context, an identifier representing a constant, a symbol identifying a physical quantity, a function parameter, or just be a term used as a placeholder in prose.
-func Var(children ...htemel.Node) *VarElement {
+func Var(children ...htemel.PhrasingContent) *VarElement {
 	node := &VarElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Var(children ...htemel.Node) *VarElement {
 }
 
 // VarIf creates a tag <var> instance that is only rendered when condition is true.
-func VarIf(condition bool, children ...htemel.Node) *VarElement {
+func VarIf(condition bool, children ...htemel.PhrasingContent) *VarElement {
 	if condition {
 		return Var(children...)
 	}
@@ -43,7 +47,7 @@ func VarIf(condition bool, children ...htemel.Node) *VarElement {
 }
 
 // VarTernary creates a tag <var> containing then when condition is true, otherwise containing otherwise.
-func VarTernary(condition bool, then htemel.Node, otherwise htemel.Node) *VarElement {
+func VarTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *VarElement {
 	if condition {
 		return Var(then)
 	}
@@ -51,7 +55,7 @@ func VarTernary(condition bool, then htemel.Node, otherwise htemel.Node) *VarEle
 }
 
 // Children appends children to this element.
-func (e *VarElement) Children(children ...htemel.Node) *VarElement {
+func (e *VarElement) Children(children ...htemel.PhrasingContent) *VarElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *VarElement) Textf(format string, args ...any) *VarElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *VarElement) If(cond bool, child htemel.Node) *VarElement {
+func (e *VarElement) If(cond bool, child htemel.PhrasingContent) *VarElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *VarElement) If(cond bool, child htemel.Node) *VarElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *VarElement) IfElse(cond bool, then, els htemel.Node) *VarElement {
+func (e *VarElement) IfElse(cond bool, then, els htemel.PhrasingContent) *VarElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *VarElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type VarAutocapitalize string
-
-const (
-	VarAutocapitalizeCharacters VarAutocapitalize = "characters"
-	VarAutocapitalizeNone       VarAutocapitalize = "none"
-	VarAutocapitalizeOff        VarAutocapitalize = "off"
-	VarAutocapitalizeOn         VarAutocapitalize = "on"
-	VarAutocapitalizeSentences  VarAutocapitalize = "sentences"
-	VarAutocapitalizeWords      VarAutocapitalize = "words"
-)
-
-type VarAutocorrect string
-
-const (
-	VarAutocorrectOff   VarAutocorrect = "off"
-	VarAutocorrectOn    VarAutocorrect = "on"
-	VarAutocorrectEmpty VarAutocorrect = ""
-)
-
-type VarContenteditable string
-
-const (
-	VarContenteditableFalse         VarContenteditable = "false"
-	VarContenteditablePlaintextOnly VarContenteditable = "plaintext-only"
-	VarContenteditableTrue          VarContenteditable = "true"
-	VarContenteditableEmpty         VarContenteditable = ""
-)
-
-type VarDir string
-
-const (
-	VarDirAuto VarDir = "auto"
-	VarDirLtr  VarDir = "ltr"
-	VarDirRtl  VarDir = "rtl"
-)
-
-type VarDraggable string
-
-const (
-	VarDraggableFalse VarDraggable = "false"
-	VarDraggableTrue  VarDraggable = "true"
-)
-
-type VarEnterkeyhint string
-
-const (
-	VarEnterkeyhintDone     VarEnterkeyhint = "done"
-	VarEnterkeyhintEnter    VarEnterkeyhint = "enter"
-	VarEnterkeyhintGo       VarEnterkeyhint = "go"
-	VarEnterkeyhintNext     VarEnterkeyhint = "next"
-	VarEnterkeyhintPrevious VarEnterkeyhint = "previous"
-	VarEnterkeyhintSearch   VarEnterkeyhint = "search"
-	VarEnterkeyhintSend     VarEnterkeyhint = "send"
-)
-
-type VarHidden string
-
-const (
-	VarHiddenHidden     VarHidden = "hidden"
-	VarHiddenUntilFound VarHidden = "until-found"
-	VarHiddenEmpty      VarHidden = ""
-)
-
-type VarInputmode string
-
-const (
-	VarInputmodeDecimal VarInputmode = "decimal"
-	VarInputmodeEmail   VarInputmode = "email"
-	VarInputmodeNone    VarInputmode = "none"
-	VarInputmodeNumeric VarInputmode = "numeric"
-	VarInputmodeSearch  VarInputmode = "search"
-	VarInputmodeTel     VarInputmode = "tel"
-	VarInputmodeText    VarInputmode = "text"
-	VarInputmodeUrl     VarInputmode = "url"
-)
-
-type VarPopover string
-
-const (
-	VarPopoverAuto   VarPopover = "auto"
-	VarPopoverHint   VarPopover = "hint"
-	VarPopoverManual VarPopover = "manual"
-	VarPopoverEmpty  VarPopover = ""
-)
-
-type VarSpellcheck string
-
-const (
-	VarSpellcheckFalse VarSpellcheck = "false"
-	VarSpellcheckTrue  VarSpellcheck = "true"
-	VarSpellcheckEmpty VarSpellcheck = ""
-)
-
-type VarTranslate string
-
-const (
-	VarTranslateNo    VarTranslate = "no"
-	VarTranslateYes   VarTranslate = "yes"
-	VarTranslateEmpty VarTranslate = ""
-)
-
-type VarWritingsuggestions string
-
-const (
-	VarWritingsuggestionsFalse VarWritingsuggestions = "false"
-	VarWritingsuggestionsTrue  VarWritingsuggestions = "true"
-	VarWritingsuggestionsEmpty VarWritingsuggestions = ""
-)
-
 func (e *VarElement) Accesskey(r rune) *VarElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *VarElement) Aria(name string, s string) *VarElement {
 	return e
 }
 
-func (e *VarElement) Autocapitalize(a VarAutocapitalize) *VarElement {
+func (e *VarElement) Autocapitalize(a Autocapitalize) *VarElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *VarElement) Autocapitalize(a VarAutocapitalize) *VarElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Autocorrect(v ...VarAutocorrect) *VarElement {
-	var val VarAutocorrect
+func (e *VarElement) Autocorrect(v ...Autocorrect) *VarElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *VarElement) Class(s ...string) *VarElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Contenteditable(v ...VarContenteditable) *VarElement {
-	var val VarContenteditable
+func (e *VarElement) Contenteditable(v ...Contenteditable) *VarElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *VarElement) Data(name string, s string) *VarElement {
 	return e
 }
 
-func (e *VarElement) Dir(a VarDir) *VarElement {
+func (e *VarElement) Dir(a Dir) *VarElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *VarElement) Draggable(a VarDraggable) *VarElement {
+func (e *VarElement) Draggable(a Draggable) *VarElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *VarElement) Enterkeyhint(a VarEnterkeyhint) *VarElement {
+func (e *VarElement) Enterkeyhint(a Enterkeyhint) *VarElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *VarElement) Headingreset(b bool) *VarElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Hidden(v ...VarHidden) *VarElement {
-	var val VarHidden
+func (e *VarElement) Hidden(v ...Hidden) *VarElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *VarElement) Inert(b bool) *VarElement {
 	return e
 }
 
-func (e *VarElement) Inputmode(a VarInputmode) *VarElement {
+func (e *VarElement) Inputmode(a Inputmode) *VarElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *VarElement) Part(s ...string) *VarElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Popover(v ...VarPopover) *VarElement {
-	var val VarPopover
+func (e *VarElement) Popover(v ...Popover) *VarElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *VarElement) Slot(s string) *VarElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Spellcheck(v ...VarSpellcheck) *VarElement {
-	var val VarSpellcheck
+func (e *VarElement) Spellcheck(v ...Spellcheck) *VarElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *VarElement) Title(s string) *VarElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Translate(v ...VarTranslate) *VarElement {
-	var val VarTranslate
+func (e *VarElement) Translate(v ...Translate) *VarElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *VarElement) Translate(v ...VarTranslate) *VarElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *VarElement) Writingsuggestions(v ...VarWritingsuggestions) *VarElement {
-	var val VarWritingsuggestions
+func (e *VarElement) Writingsuggestions(v ...Writingsuggestions) *VarElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

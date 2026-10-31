@@ -164,19 +164,8 @@ func (e *AnnotationXmlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AnnotationXmlDir string
-
-const (
-	AnnotationXmlDirLtr AnnotationXmlDir = "ltr"
-	AnnotationXmlDirRtl AnnotationXmlDir = "rtl"
-)
-
-type AnnotationXmlDisplaystyle string
-
-const (
-	AnnotationXmlDisplaystyleFalse AnnotationXmlDisplaystyle = "false"
-	AnnotationXmlDisplaystyleTrue  AnnotationXmlDisplaystyle = "true"
-)
+// MathMLContent marks <annotation-xml> as a permitted child (Content).
+func (*AnnotationXmlElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +197,13 @@ func (e *AnnotationXmlElement) Data(name string, s string) *AnnotationXmlElement
 	return e
 }
 
-func (e *AnnotationXmlElement) Dir(a AnnotationXmlDir) *AnnotationXmlElement {
+func (e *AnnotationXmlElement) Dir(a Dir) *AnnotationXmlElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AnnotationXmlElement) Displaystyle(a AnnotationXmlDisplaystyle) *AnnotationXmlElement {
+func (e *AnnotationXmlElement) Displaystyle(a Displaystyle) *AnnotationXmlElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

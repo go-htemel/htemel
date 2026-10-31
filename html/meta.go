@@ -12,6 +12,8 @@ import (
 )
 
 type MetaElement struct {
+	htemel.PhrasingMarker
+	htemel.MetadataMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +43,14 @@ func MetaIf(condition bool) *MetaElement {
 // With allows passing a function to modify the element via a closure.
 func (e *MetaElement) With(fn func(*MetaElement)) *MetaElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *MetaElement) IfThen(cond bool, fn func(*MetaElement)) *MetaElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,132 +119,7 @@ func (e *MetaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MetaCharset string
-
-const (
-	MetaCharsetUtf8 MetaCharset = "utf-8"
-)
-
-type MetaHttpEquiv string
-
-const (
-	MetaHttpEquivContentSecurityPolicy MetaHttpEquiv = "content-security-policy"
-	MetaHttpEquivContentType           MetaHttpEquiv = "content-type"
-	MetaHttpEquivDefaultStyle          MetaHttpEquiv = "default-style"
-	MetaHttpEquivRefresh               MetaHttpEquiv = "refresh"
-	MetaHttpEquivXUaCompatible         MetaHttpEquiv = "x-ua-compatible"
-)
-
-type MetaAutocapitalize string
-
-const (
-	MetaAutocapitalizeCharacters MetaAutocapitalize = "characters"
-	MetaAutocapitalizeNone       MetaAutocapitalize = "none"
-	MetaAutocapitalizeOff        MetaAutocapitalize = "off"
-	MetaAutocapitalizeOn         MetaAutocapitalize = "on"
-	MetaAutocapitalizeSentences  MetaAutocapitalize = "sentences"
-	MetaAutocapitalizeWords      MetaAutocapitalize = "words"
-)
-
-type MetaAutocorrect string
-
-const (
-	MetaAutocorrectOff   MetaAutocorrect = "off"
-	MetaAutocorrectOn    MetaAutocorrect = "on"
-	MetaAutocorrectEmpty MetaAutocorrect = ""
-)
-
-type MetaContenteditable string
-
-const (
-	MetaContenteditableFalse         MetaContenteditable = "false"
-	MetaContenteditablePlaintextOnly MetaContenteditable = "plaintext-only"
-	MetaContenteditableTrue          MetaContenteditable = "true"
-	MetaContenteditableEmpty         MetaContenteditable = ""
-)
-
-type MetaDir string
-
-const (
-	MetaDirAuto MetaDir = "auto"
-	MetaDirLtr  MetaDir = "ltr"
-	MetaDirRtl  MetaDir = "rtl"
-)
-
-type MetaDraggable string
-
-const (
-	MetaDraggableFalse MetaDraggable = "false"
-	MetaDraggableTrue  MetaDraggable = "true"
-)
-
-type MetaEnterkeyhint string
-
-const (
-	MetaEnterkeyhintDone     MetaEnterkeyhint = "done"
-	MetaEnterkeyhintEnter    MetaEnterkeyhint = "enter"
-	MetaEnterkeyhintGo       MetaEnterkeyhint = "go"
-	MetaEnterkeyhintNext     MetaEnterkeyhint = "next"
-	MetaEnterkeyhintPrevious MetaEnterkeyhint = "previous"
-	MetaEnterkeyhintSearch   MetaEnterkeyhint = "search"
-	MetaEnterkeyhintSend     MetaEnterkeyhint = "send"
-)
-
-type MetaHidden string
-
-const (
-	MetaHiddenHidden     MetaHidden = "hidden"
-	MetaHiddenUntilFound MetaHidden = "until-found"
-	MetaHiddenEmpty      MetaHidden = ""
-)
-
-type MetaInputmode string
-
-const (
-	MetaInputmodeDecimal MetaInputmode = "decimal"
-	MetaInputmodeEmail   MetaInputmode = "email"
-	MetaInputmodeNone    MetaInputmode = "none"
-	MetaInputmodeNumeric MetaInputmode = "numeric"
-	MetaInputmodeSearch  MetaInputmode = "search"
-	MetaInputmodeTel     MetaInputmode = "tel"
-	MetaInputmodeText    MetaInputmode = "text"
-	MetaInputmodeUrl     MetaInputmode = "url"
-)
-
-type MetaPopover string
-
-const (
-	MetaPopoverAuto   MetaPopover = "auto"
-	MetaPopoverHint   MetaPopover = "hint"
-	MetaPopoverManual MetaPopover = "manual"
-	MetaPopoverEmpty  MetaPopover = ""
-)
-
-type MetaSpellcheck string
-
-const (
-	MetaSpellcheckFalse MetaSpellcheck = "false"
-	MetaSpellcheckTrue  MetaSpellcheck = "true"
-	MetaSpellcheckEmpty MetaSpellcheck = ""
-)
-
-type MetaTranslate string
-
-const (
-	MetaTranslateNo    MetaTranslate = "no"
-	MetaTranslateYes   MetaTranslate = "yes"
-	MetaTranslateEmpty MetaTranslate = ""
-)
-
-type MetaWritingsuggestions string
-
-const (
-	MetaWritingsuggestionsFalse MetaWritingsuggestions = "false"
-	MetaWritingsuggestionsTrue  MetaWritingsuggestions = "true"
-	MetaWritingsuggestionsEmpty MetaWritingsuggestions = ""
-)
-
-func (e *MetaElement) Charset(a MetaCharset) *MetaElement {
+func (e *MetaElement) Charset(a Charset) *MetaElement {
 	e.attributes.Set("charset", string(a))
 
 	return e
@@ -246,7 +131,7 @@ func (e *MetaElement) Content(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) HttpEquiv(a MetaHttpEquiv) *MetaElement {
+func (e *MetaElement) HttpEquiv(a HttpEquiv) *MetaElement {
 	e.attributes.Set("http-equiv", string(a))
 
 	return e
@@ -286,7 +171,7 @@ func (e *MetaElement) Aria(name string, s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Autocapitalize(a MetaAutocapitalize) *MetaElement {
+func (e *MetaElement) Autocapitalize(a Autocapitalize) *MetaElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -294,8 +179,8 @@ func (e *MetaElement) Autocapitalize(a MetaAutocapitalize) *MetaElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Autocorrect(v ...MetaAutocorrect) *MetaElement {
-	var val MetaAutocorrect
+func (e *MetaElement) Autocorrect(v ...Autocorrect) *MetaElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -320,8 +205,8 @@ func (e *MetaElement) Class(s ...string) *MetaElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Contenteditable(v ...MetaContenteditable) *MetaElement {
-	var val MetaContenteditable
+func (e *MetaElement) Contenteditable(v ...Contenteditable) *MetaElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -346,19 +231,19 @@ func (e *MetaElement) Data(name string, s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Dir(a MetaDir) *MetaElement {
+func (e *MetaElement) Dir(a Dir) *MetaElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MetaElement) Draggable(a MetaDraggable) *MetaElement {
+func (e *MetaElement) Draggable(a Draggable) *MetaElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MetaElement) Enterkeyhint(a MetaEnterkeyhint) *MetaElement {
+func (e *MetaElement) Enterkeyhint(a Enterkeyhint) *MetaElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -386,8 +271,8 @@ func (e *MetaElement) Headingreset(b bool) *MetaElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Hidden(v ...MetaHidden) *MetaElement {
-	var val MetaHidden
+func (e *MetaElement) Hidden(v ...Hidden) *MetaElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -410,7 +295,7 @@ func (e *MetaElement) Inert(b bool) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Inputmode(a MetaInputmode) *MetaElement {
+func (e *MetaElement) Inputmode(a Inputmode) *MetaElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -476,8 +361,8 @@ func (e *MetaElement) Part(s ...string) *MetaElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Popover(v ...MetaPopover) *MetaElement {
-	var val MetaPopover
+func (e *MetaElement) Popover(v ...Popover) *MetaElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -500,8 +385,8 @@ func (e *MetaElement) Slot(s string) *MetaElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Spellcheck(v ...MetaSpellcheck) *MetaElement {
-	var val MetaSpellcheck
+func (e *MetaElement) Spellcheck(v ...Spellcheck) *MetaElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -530,8 +415,8 @@ func (e *MetaElement) Title(s string) *MetaElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Translate(v ...MetaTranslate) *MetaElement {
-	var val MetaTranslate
+func (e *MetaElement) Translate(v ...Translate) *MetaElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -542,8 +427,8 @@ func (e *MetaElement) Translate(v ...MetaTranslate) *MetaElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MetaElement) Writingsuggestions(v ...MetaWritingsuggestions) *MetaElement {
-	var val MetaWritingsuggestions
+func (e *MetaElement) Writingsuggestions(v ...Writingsuggestions) *MetaElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

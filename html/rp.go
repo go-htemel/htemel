@@ -14,15 +14,17 @@ import (
 
 type RpElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.TextContent
 	skipRender bool
 }
 
 // Rp creates a tag <rp> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: text only (htemel.TextContent).
+//
 // Spec Description: The rp element can be used to provide parentheses or other content around a ruby text component of a ruby annotation, to be shown by user agents that don't support ruby annotations.
-func Rp(children ...htemel.Node) *RpElement {
+func Rp(children ...htemel.TextContent) *RpElement {
 	node := &RpElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Rp(children ...htemel.Node) *RpElement {
 }
 
 // RpIf creates a tag <rp> instance that is only rendered when condition is true.
-func RpIf(condition bool, children ...htemel.Node) *RpElement {
+func RpIf(condition bool, children ...htemel.TextContent) *RpElement {
 	if condition {
 		return Rp(children...)
 	}
@@ -43,7 +45,7 @@ func RpIf(condition bool, children ...htemel.Node) *RpElement {
 }
 
 // RpTernary creates a tag <rp> containing then when condition is true, otherwise containing otherwise.
-func RpTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RpElement {
+func RpTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *RpElement {
 	if condition {
 		return Rp(then)
 	}
@@ -51,7 +53,7 @@ func RpTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RpEleme
 }
 
 // Children appends children to this element.
-func (e *RpElement) Children(children ...htemel.Node) *RpElement {
+func (e *RpElement) Children(children ...htemel.TextContent) *RpElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *RpElement) Textf(format string, args ...any) *RpElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *RpElement) If(cond bool, child htemel.Node) *RpElement {
+func (e *RpElement) If(cond bool, child htemel.TextContent) *RpElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *RpElement) If(cond bool, child htemel.Node) *RpElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *RpElement) IfElse(cond bool, then, els htemel.Node) *RpElement {
+func (e *RpElement) IfElse(cond bool, then, els htemel.TextContent) *RpElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *RpElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type RpAutocapitalize string
-
-const (
-	RpAutocapitalizeCharacters RpAutocapitalize = "characters"
-	RpAutocapitalizeNone       RpAutocapitalize = "none"
-	RpAutocapitalizeOff        RpAutocapitalize = "off"
-	RpAutocapitalizeOn         RpAutocapitalize = "on"
-	RpAutocapitalizeSentences  RpAutocapitalize = "sentences"
-	RpAutocapitalizeWords      RpAutocapitalize = "words"
-)
-
-type RpAutocorrect string
-
-const (
-	RpAutocorrectOff   RpAutocorrect = "off"
-	RpAutocorrectOn    RpAutocorrect = "on"
-	RpAutocorrectEmpty RpAutocorrect = ""
-)
-
-type RpContenteditable string
-
-const (
-	RpContenteditableFalse         RpContenteditable = "false"
-	RpContenteditablePlaintextOnly RpContenteditable = "plaintext-only"
-	RpContenteditableTrue          RpContenteditable = "true"
-	RpContenteditableEmpty         RpContenteditable = ""
-)
-
-type RpDir string
-
-const (
-	RpDirAuto RpDir = "auto"
-	RpDirLtr  RpDir = "ltr"
-	RpDirRtl  RpDir = "rtl"
-)
-
-type RpDraggable string
-
-const (
-	RpDraggableFalse RpDraggable = "false"
-	RpDraggableTrue  RpDraggable = "true"
-)
-
-type RpEnterkeyhint string
-
-const (
-	RpEnterkeyhintDone     RpEnterkeyhint = "done"
-	RpEnterkeyhintEnter    RpEnterkeyhint = "enter"
-	RpEnterkeyhintGo       RpEnterkeyhint = "go"
-	RpEnterkeyhintNext     RpEnterkeyhint = "next"
-	RpEnterkeyhintPrevious RpEnterkeyhint = "previous"
-	RpEnterkeyhintSearch   RpEnterkeyhint = "search"
-	RpEnterkeyhintSend     RpEnterkeyhint = "send"
-)
-
-type RpHidden string
-
-const (
-	RpHiddenHidden     RpHidden = "hidden"
-	RpHiddenUntilFound RpHidden = "until-found"
-	RpHiddenEmpty      RpHidden = ""
-)
-
-type RpInputmode string
-
-const (
-	RpInputmodeDecimal RpInputmode = "decimal"
-	RpInputmodeEmail   RpInputmode = "email"
-	RpInputmodeNone    RpInputmode = "none"
-	RpInputmodeNumeric RpInputmode = "numeric"
-	RpInputmodeSearch  RpInputmode = "search"
-	RpInputmodeTel     RpInputmode = "tel"
-	RpInputmodeText    RpInputmode = "text"
-	RpInputmodeUrl     RpInputmode = "url"
-)
-
-type RpPopover string
-
-const (
-	RpPopoverAuto   RpPopover = "auto"
-	RpPopoverHint   RpPopover = "hint"
-	RpPopoverManual RpPopover = "manual"
-	RpPopoverEmpty  RpPopover = ""
-)
-
-type RpSpellcheck string
-
-const (
-	RpSpellcheckFalse RpSpellcheck = "false"
-	RpSpellcheckTrue  RpSpellcheck = "true"
-	RpSpellcheckEmpty RpSpellcheck = ""
-)
-
-type RpTranslate string
-
-const (
-	RpTranslateNo    RpTranslate = "no"
-	RpTranslateYes   RpTranslate = "yes"
-	RpTranslateEmpty RpTranslate = ""
-)
-
-type RpWritingsuggestions string
-
-const (
-	RpWritingsuggestionsFalse RpWritingsuggestions = "false"
-	RpWritingsuggestionsTrue  RpWritingsuggestions = "true"
-	RpWritingsuggestionsEmpty RpWritingsuggestions = ""
-)
+// HTMLRubyChild marks <rp> as a permitted child of <ruby> (RubyChild).
+func (*RpElement) HTMLRubyChild() {}
 
 func (e *RpElement) Accesskey(r rune) *RpElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +191,7 @@ func (e *RpElement) Aria(name string, s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Autocapitalize(a RpAutocapitalize) *RpElement {
+func (e *RpElement) Autocapitalize(a Autocapitalize) *RpElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *RpElement) Autocapitalize(a RpAutocapitalize) *RpElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Autocorrect(v ...RpAutocorrect) *RpElement {
-	var val RpAutocorrect
+func (e *RpElement) Autocorrect(v ...Autocorrect) *RpElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *RpElement) Class(s ...string) *RpElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Contenteditable(v ...RpContenteditable) *RpElement {
-	var val RpContenteditable
+func (e *RpElement) Contenteditable(v ...Contenteditable) *RpElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *RpElement) Data(name string, s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Dir(a RpDir) *RpElement {
+func (e *RpElement) Dir(a Dir) *RpElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *RpElement) Draggable(a RpDraggable) *RpElement {
+func (e *RpElement) Draggable(a Draggable) *RpElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *RpElement) Enterkeyhint(a RpEnterkeyhint) *RpElement {
+func (e *RpElement) Enterkeyhint(a Enterkeyhint) *RpElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *RpElement) Headingreset(b bool) *RpElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Hidden(v ...RpHidden) *RpElement {
-	var val RpHidden
+func (e *RpElement) Hidden(v ...Hidden) *RpElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *RpElement) Inert(b bool) *RpElement {
 	return e
 }
 
-func (e *RpElement) Inputmode(a RpInputmode) *RpElement {
+func (e *RpElement) Inputmode(a Inputmode) *RpElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *RpElement) Part(s ...string) *RpElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Popover(v ...RpPopover) *RpElement {
-	var val RpPopover
+func (e *RpElement) Popover(v ...Popover) *RpElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *RpElement) Slot(s string) *RpElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Spellcheck(v ...RpSpellcheck) *RpElement {
-	var val RpSpellcheck
+func (e *RpElement) Spellcheck(v ...Spellcheck) *RpElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *RpElement) Title(s string) *RpElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Translate(v ...RpTranslate) *RpElement {
-	var val RpTranslate
+func (e *RpElement) Translate(v ...Translate) *RpElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *RpElement) Translate(v ...RpTranslate) *RpElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RpElement) Writingsuggestions(v ...RpWritingsuggestions) *RpElement {
-	var val RpWritingsuggestions
+func (e *RpElement) Writingsuggestions(v ...Writingsuggestions) *RpElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

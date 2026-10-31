@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,30 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// OptgroupChild is a permitted child of <optgroup>: <div>, <legend>, <noscript>, <option>,
+// script-supporting elements.
+//
+// It is implemented by <div>, <legend>, <noscript>, <option>, <script>, <template>, by any type
+// embedding htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group,
+// Each, If, Unchecked, ...).
+type OptgroupChild interface {
+	htemel.Node
+	HTMLOptgroupChild()
+}
+
 type OptgroupElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []OptgroupChild
 	skipRender bool
 }
 
 // Optgroup creates a tag <optgroup> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <div>, <legend>, <noscript>, <option>, script-supporting elements (OptgroupChild).
+//
 // Spec Description: The optgroup element represents a group of option elements with a common label.
-func Optgroup(children ...htemel.Node) *OptgroupElement {
+func Optgroup(children ...OptgroupChild) *OptgroupElement {
 	node := &OptgroupElement{
 		children: children,
 	}
@@ -31,7 +43,7 @@ func Optgroup(children ...htemel.Node) *OptgroupElement {
 }
 
 // OptgroupIf creates a tag <optgroup> instance that is only rendered when condition is true.
-func OptgroupIf(condition bool, children ...htemel.Node) *OptgroupElement {
+func OptgroupIf(condition bool, children ...OptgroupChild) *OptgroupElement {
 	if condition {
 		return Optgroup(children...)
 	}
@@ -43,7 +55,7 @@ func OptgroupIf(condition bool, children ...htemel.Node) *OptgroupElement {
 }
 
 // OptgroupTernary creates a tag <optgroup> containing then when condition is true, otherwise containing otherwise.
-func OptgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OptgroupElement {
+func OptgroupTernary(condition bool, then OptgroupChild, otherwise OptgroupChild) *OptgroupElement {
 	if condition {
 		return Optgroup(then)
 	}
@@ -51,7 +63,7 @@ func OptgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *O
 }
 
 // Children appends children to this element.
-func (e *OptgroupElement) Children(children ...htemel.Node) *OptgroupElement {
+func (e *OptgroupElement) Children(children ...OptgroupChild) *OptgroupElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +74,8 @@ func (e *OptgroupElement) With(fn func(*OptgroupElement)) *OptgroupElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *OptgroupElement) Text(text string) *OptgroupElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *OptgroupElement) Textf(format string, args ...any) *OptgroupElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OptgroupElement) If(cond bool, child htemel.Node) *OptgroupElement {
+func (e *OptgroupElement) If(cond bool, child OptgroupChild) *OptgroupElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +83,7 @@ func (e *OptgroupElement) If(cond bool, child htemel.Node) *OptgroupElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OptgroupElement) IfElse(cond bool, then, els htemel.Node) *OptgroupElement {
+func (e *OptgroupElement) IfElse(cond bool, then, els OptgroupChild) *OptgroupElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +165,8 @@ func (e *OptgroupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type OptgroupAutocapitalize string
-
-const (
-	OptgroupAutocapitalizeCharacters OptgroupAutocapitalize = "characters"
-	OptgroupAutocapitalizeNone       OptgroupAutocapitalize = "none"
-	OptgroupAutocapitalizeOff        OptgroupAutocapitalize = "off"
-	OptgroupAutocapitalizeOn         OptgroupAutocapitalize = "on"
-	OptgroupAutocapitalizeSentences  OptgroupAutocapitalize = "sentences"
-	OptgroupAutocapitalizeWords      OptgroupAutocapitalize = "words"
-)
-
-type OptgroupAutocorrect string
-
-const (
-	OptgroupAutocorrectOff   OptgroupAutocorrect = "off"
-	OptgroupAutocorrectOn    OptgroupAutocorrect = "on"
-	OptgroupAutocorrectEmpty OptgroupAutocorrect = ""
-)
-
-type OptgroupContenteditable string
-
-const (
-	OptgroupContenteditableFalse         OptgroupContenteditable = "false"
-	OptgroupContenteditablePlaintextOnly OptgroupContenteditable = "plaintext-only"
-	OptgroupContenteditableTrue          OptgroupContenteditable = "true"
-	OptgroupContenteditableEmpty         OptgroupContenteditable = ""
-)
-
-type OptgroupDir string
-
-const (
-	OptgroupDirAuto OptgroupDir = "auto"
-	OptgroupDirLtr  OptgroupDir = "ltr"
-	OptgroupDirRtl  OptgroupDir = "rtl"
-)
-
-type OptgroupDraggable string
-
-const (
-	OptgroupDraggableFalse OptgroupDraggable = "false"
-	OptgroupDraggableTrue  OptgroupDraggable = "true"
-)
-
-type OptgroupEnterkeyhint string
-
-const (
-	OptgroupEnterkeyhintDone     OptgroupEnterkeyhint = "done"
-	OptgroupEnterkeyhintEnter    OptgroupEnterkeyhint = "enter"
-	OptgroupEnterkeyhintGo       OptgroupEnterkeyhint = "go"
-	OptgroupEnterkeyhintNext     OptgroupEnterkeyhint = "next"
-	OptgroupEnterkeyhintPrevious OptgroupEnterkeyhint = "previous"
-	OptgroupEnterkeyhintSearch   OptgroupEnterkeyhint = "search"
-	OptgroupEnterkeyhintSend     OptgroupEnterkeyhint = "send"
-)
-
-type OptgroupHidden string
-
-const (
-	OptgroupHiddenHidden     OptgroupHidden = "hidden"
-	OptgroupHiddenUntilFound OptgroupHidden = "until-found"
-	OptgroupHiddenEmpty      OptgroupHidden = ""
-)
-
-type OptgroupInputmode string
-
-const (
-	OptgroupInputmodeDecimal OptgroupInputmode = "decimal"
-	OptgroupInputmodeEmail   OptgroupInputmode = "email"
-	OptgroupInputmodeNone    OptgroupInputmode = "none"
-	OptgroupInputmodeNumeric OptgroupInputmode = "numeric"
-	OptgroupInputmodeSearch  OptgroupInputmode = "search"
-	OptgroupInputmodeTel     OptgroupInputmode = "tel"
-	OptgroupInputmodeText    OptgroupInputmode = "text"
-	OptgroupInputmodeUrl     OptgroupInputmode = "url"
-)
-
-type OptgroupPopover string
-
-const (
-	OptgroupPopoverAuto   OptgroupPopover = "auto"
-	OptgroupPopoverHint   OptgroupPopover = "hint"
-	OptgroupPopoverManual OptgroupPopover = "manual"
-	OptgroupPopoverEmpty  OptgroupPopover = ""
-)
-
-type OptgroupSpellcheck string
-
-const (
-	OptgroupSpellcheckFalse OptgroupSpellcheck = "false"
-	OptgroupSpellcheckTrue  OptgroupSpellcheck = "true"
-	OptgroupSpellcheckEmpty OptgroupSpellcheck = ""
-)
-
-type OptgroupTranslate string
-
-const (
-	OptgroupTranslateNo    OptgroupTranslate = "no"
-	OptgroupTranslateYes   OptgroupTranslate = "yes"
-	OptgroupTranslateEmpty OptgroupTranslate = ""
-)
-
-type OptgroupWritingsuggestions string
-
-const (
-	OptgroupWritingsuggestionsFalse OptgroupWritingsuggestions = "false"
-	OptgroupWritingsuggestionsTrue  OptgroupWritingsuggestions = "true"
-	OptgroupWritingsuggestionsEmpty OptgroupWritingsuggestions = ""
-)
+// HTMLSelectChild marks <optgroup> as a permitted child of <select> (SelectChild).
+func (*OptgroupElement) HTMLSelectChild() {}
 
 // Disabled sets the boolean attribute "disabled". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -309,7 +204,7 @@ func (e *OptgroupElement) Aria(name string, s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Autocapitalize(a OptgroupAutocapitalize) *OptgroupElement {
+func (e *OptgroupElement) Autocapitalize(a Autocapitalize) *OptgroupElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -317,8 +212,8 @@ func (e *OptgroupElement) Autocapitalize(a OptgroupAutocapitalize) *OptgroupElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Autocorrect(v ...OptgroupAutocorrect) *OptgroupElement {
-	var val OptgroupAutocorrect
+func (e *OptgroupElement) Autocorrect(v ...Autocorrect) *OptgroupElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -343,8 +238,8 @@ func (e *OptgroupElement) Class(s ...string) *OptgroupElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Contenteditable(v ...OptgroupContenteditable) *OptgroupElement {
-	var val OptgroupContenteditable
+func (e *OptgroupElement) Contenteditable(v ...Contenteditable) *OptgroupElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -369,19 +264,19 @@ func (e *OptgroupElement) Data(name string, s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Dir(a OptgroupDir) *OptgroupElement {
+func (e *OptgroupElement) Dir(a Dir) *OptgroupElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *OptgroupElement) Draggable(a OptgroupDraggable) *OptgroupElement {
+func (e *OptgroupElement) Draggable(a Draggable) *OptgroupElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *OptgroupElement) Enterkeyhint(a OptgroupEnterkeyhint) *OptgroupElement {
+func (e *OptgroupElement) Enterkeyhint(a Enterkeyhint) *OptgroupElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -409,8 +304,8 @@ func (e *OptgroupElement) Headingreset(b bool) *OptgroupElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Hidden(v ...OptgroupHidden) *OptgroupElement {
-	var val OptgroupHidden
+func (e *OptgroupElement) Hidden(v ...Hidden) *OptgroupElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -433,7 +328,7 @@ func (e *OptgroupElement) Inert(b bool) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Inputmode(a OptgroupInputmode) *OptgroupElement {
+func (e *OptgroupElement) Inputmode(a Inputmode) *OptgroupElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -499,8 +394,8 @@ func (e *OptgroupElement) Part(s ...string) *OptgroupElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Popover(v ...OptgroupPopover) *OptgroupElement {
-	var val OptgroupPopover
+func (e *OptgroupElement) Popover(v ...Popover) *OptgroupElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -523,8 +418,8 @@ func (e *OptgroupElement) Slot(s string) *OptgroupElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Spellcheck(v ...OptgroupSpellcheck) *OptgroupElement {
-	var val OptgroupSpellcheck
+func (e *OptgroupElement) Spellcheck(v ...Spellcheck) *OptgroupElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -553,8 +448,8 @@ func (e *OptgroupElement) Title(s string) *OptgroupElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Translate(v ...OptgroupTranslate) *OptgroupElement {
-	var val OptgroupTranslate
+func (e *OptgroupElement) Translate(v ...Translate) *OptgroupElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -565,8 +460,8 @@ func (e *OptgroupElement) Translate(v ...OptgroupTranslate) *OptgroupElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptgroupElement) Writingsuggestions(v ...OptgroupWritingsuggestions) *OptgroupElement {
-	var val OptgroupWritingsuggestions
+func (e *OptgroupElement) Writingsuggestions(v ...Writingsuggestions) *OptgroupElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

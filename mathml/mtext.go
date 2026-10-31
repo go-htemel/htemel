@@ -14,15 +14,17 @@ import (
 
 type MtextElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mtext creates a tag <mtext> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mtext(children ...htemel.Node) *MtextElement {
+func Mtext(children ...Content) *MtextElement {
 	node := &MtextElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mtext(children ...htemel.Node) *MtextElement {
 }
 
 // MtextIf creates a tag <mtext> instance that is only rendered when condition is true.
-func MtextIf(condition bool, children ...htemel.Node) *MtextElement {
+func MtextIf(condition bool, children ...Content) *MtextElement {
 	if condition {
 		return Mtext(children...)
 	}
@@ -43,7 +45,7 @@ func MtextIf(condition bool, children ...htemel.Node) *MtextElement {
 }
 
 // MtextTernary creates a tag <mtext> containing then when condition is true, otherwise containing otherwise.
-func MtextTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MtextElement {
+func MtextTernary(condition bool, then Content, otherwise Content) *MtextElement {
 	if condition {
 		return Mtext(then)
 	}
@@ -51,7 +53,7 @@ func MtextTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mtex
 }
 
 // Children appends children to this element.
-func (e *MtextElement) Children(children ...htemel.Node) *MtextElement {
+func (e *MtextElement) Children(children ...Content) *MtextElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MtextElement) Textf(format string, args ...any) *MtextElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MtextElement) If(cond bool, child htemel.Node) *MtextElement {
+func (e *MtextElement) If(cond bool, child Content) *MtextElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MtextElement) If(cond bool, child htemel.Node) *MtextElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MtextElement) IfElse(cond bool, then, els htemel.Node) *MtextElement {
+func (e *MtextElement) IfElse(cond bool, then, els Content) *MtextElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MtextElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MtextDir string
-
-const (
-	MtextDirLtr MtextDir = "ltr"
-	MtextDirRtl MtextDir = "rtl"
-)
-
-type MtextDisplaystyle string
-
-const (
-	MtextDisplaystyleFalse MtextDisplaystyle = "false"
-	MtextDisplaystyleTrue  MtextDisplaystyle = "true"
-)
+// MathMLContent marks <mtext> as a permitted child (Content).
+func (*MtextElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MtextElement) Data(name string, s string) *MtextElement {
 	return e
 }
 
-func (e *MtextElement) Dir(a MtextDir) *MtextElement {
+func (e *MtextElement) Dir(a Dir) *MtextElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MtextElement) Displaystyle(a MtextDisplaystyle) *MtextElement {
+func (e *MtextElement) Displaystyle(a Displaystyle) *MtextElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

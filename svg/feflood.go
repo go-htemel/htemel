@@ -14,15 +14,17 @@ import (
 
 type FeFloodElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeFlood creates a tag <feFlood> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feFlood filter primitive fills the filter region with a color and opacity.
-func FeFlood(children ...htemel.Node) *FeFloodElement {
+func FeFlood(children ...Content) *FeFloodElement {
 	node := &FeFloodElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeFlood(children ...htemel.Node) *FeFloodElement {
 }
 
 // FeFloodIf creates a tag <feFlood> instance that is only rendered when condition is true.
-func FeFloodIf(condition bool, children ...htemel.Node) *FeFloodElement {
+func FeFloodIf(condition bool, children ...Content) *FeFloodElement {
 	if condition {
 		return FeFlood(children...)
 	}
@@ -43,7 +45,7 @@ func FeFloodIf(condition bool, children ...htemel.Node) *FeFloodElement {
 }
 
 // FeFloodTernary creates a tag <feFlood> containing then when condition is true, otherwise containing otherwise.
-func FeFloodTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeFloodElement {
+func FeFloodTernary(condition bool, then Content, otherwise Content) *FeFloodElement {
 	if condition {
 		return FeFlood(then)
 	}
@@ -51,7 +53,7 @@ func FeFloodTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Fe
 }
 
 // Children appends children to this element.
-func (e *FeFloodElement) Children(children ...htemel.Node) *FeFloodElement {
+func (e *FeFloodElement) Children(children ...Content) *FeFloodElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeFloodElement) Textf(format string, args ...any) *FeFloodElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeFloodElement) If(cond bool, child htemel.Node) *FeFloodElement {
+func (e *FeFloodElement) If(cond bool, child Content) *FeFloodElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeFloodElement) If(cond bool, child htemel.Node) *FeFloodElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeFloodElement) IfElse(cond bool, then, els htemel.Node) *FeFloodElement {
+func (e *FeFloodElement) IfElse(cond bool, then, els Content) *FeFloodElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeFloodElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeFloodAlignmentBaseline string
-
-const (
-	FeFloodAlignmentBaselineAfterEdge      FeFloodAlignmentBaseline = "after-edge"
-	FeFloodAlignmentBaselineAlphabetic     FeFloodAlignmentBaseline = "alphabetic"
-	FeFloodAlignmentBaselineAuto           FeFloodAlignmentBaseline = "auto"
-	FeFloodAlignmentBaselineBaseline       FeFloodAlignmentBaseline = "baseline"
-	FeFloodAlignmentBaselineBeforeEdge     FeFloodAlignmentBaseline = "before-edge"
-	FeFloodAlignmentBaselineBottom         FeFloodAlignmentBaseline = "bottom"
-	FeFloodAlignmentBaselineCenter         FeFloodAlignmentBaseline = "center"
-	FeFloodAlignmentBaselineCentral        FeFloodAlignmentBaseline = "central"
-	FeFloodAlignmentBaselineHanging        FeFloodAlignmentBaseline = "hanging"
-	FeFloodAlignmentBaselineIdeographic    FeFloodAlignmentBaseline = "ideographic"
-	FeFloodAlignmentBaselineMathematical   FeFloodAlignmentBaseline = "mathematical"
-	FeFloodAlignmentBaselineMiddle         FeFloodAlignmentBaseline = "middle"
-	FeFloodAlignmentBaselineTextAfterEdge  FeFloodAlignmentBaseline = "text-after-edge"
-	FeFloodAlignmentBaselineTextBeforeEdge FeFloodAlignmentBaseline = "text-before-edge"
-	FeFloodAlignmentBaselineTextBottom     FeFloodAlignmentBaseline = "text-bottom"
-	FeFloodAlignmentBaselineTextTop        FeFloodAlignmentBaseline = "text-top"
-	FeFloodAlignmentBaselineTop            FeFloodAlignmentBaseline = "top"
-)
-
-type FeFloodClipRule string
-
-const (
-	FeFloodClipRuleEvenodd FeFloodClipRule = "evenodd"
-	FeFloodClipRuleNonzero FeFloodClipRule = "nonzero"
-)
-
-type FeFloodColorInterpolation string
-
-const (
-	FeFloodColorInterpolationAuto      FeFloodColorInterpolation = "auto"
-	FeFloodColorInterpolationLinearRGB FeFloodColorInterpolation = "linearRGB"
-	FeFloodColorInterpolationSRGB      FeFloodColorInterpolation = "sRGB"
-)
-
-type FeFloodColorInterpolationFilters string
-
-const (
-	FeFloodColorInterpolationFiltersAuto      FeFloodColorInterpolationFilters = "auto"
-	FeFloodColorInterpolationFiltersLinearRGB FeFloodColorInterpolationFilters = "linearRGB"
-	FeFloodColorInterpolationFiltersSRGB      FeFloodColorInterpolationFilters = "sRGB"
-)
-
-type FeFloodDirection string
-
-const (
-	FeFloodDirectionLtr FeFloodDirection = "ltr"
-	FeFloodDirectionRtl FeFloodDirection = "rtl"
-)
-
-type FeFloodDominantBaseline string
-
-const (
-	FeFloodDominantBaselineAlphabetic   FeFloodDominantBaseline = "alphabetic"
-	FeFloodDominantBaselineAuto         FeFloodDominantBaseline = "auto"
-	FeFloodDominantBaselineCentral      FeFloodDominantBaseline = "central"
-	FeFloodDominantBaselineHanging      FeFloodDominantBaseline = "hanging"
-	FeFloodDominantBaselineIdeographic  FeFloodDominantBaseline = "ideographic"
-	FeFloodDominantBaselineMathematical FeFloodDominantBaseline = "mathematical"
-	FeFloodDominantBaselineMiddle       FeFloodDominantBaseline = "middle"
-	FeFloodDominantBaselineTextBottom   FeFloodDominantBaseline = "text-bottom"
-	FeFloodDominantBaselineTextTop      FeFloodDominantBaseline = "text-top"
-)
-
-type FeFloodFillRule string
-
-const (
-	FeFloodFillRuleEvenodd FeFloodFillRule = "evenodd"
-	FeFloodFillRuleNonzero FeFloodFillRule = "nonzero"
-)
-
-type FeFloodFontStyle string
-
-const (
-	FeFloodFontStyleItalic  FeFloodFontStyle = "italic"
-	FeFloodFontStyleNormal  FeFloodFontStyle = "normal"
-	FeFloodFontStyleOblique FeFloodFontStyle = "oblique"
-)
-
-type FeFloodImageRendering string
-
-const (
-	FeFloodImageRenderingAuto            FeFloodImageRendering = "auto"
-	FeFloodImageRenderingCrispEdges      FeFloodImageRendering = "crisp-edges"
-	FeFloodImageRenderingHighQuality     FeFloodImageRendering = "high-quality"
-	FeFloodImageRenderingOptimizeQuality FeFloodImageRendering = "optimizeQuality"
-	FeFloodImageRenderingOptimizeSpeed   FeFloodImageRendering = "optimizeSpeed"
-	FeFloodImageRenderingPixelated       FeFloodImageRendering = "pixelated"
-	FeFloodImageRenderingSmooth          FeFloodImageRendering = "smooth"
-)
-
-type FeFloodOverflow string
-
-const (
-	FeFloodOverflowAuto    FeFloodOverflow = "auto"
-	FeFloodOverflowClip    FeFloodOverflow = "clip"
-	FeFloodOverflowHidden  FeFloodOverflow = "hidden"
-	FeFloodOverflowScroll  FeFloodOverflow = "scroll"
-	FeFloodOverflowVisible FeFloodOverflow = "visible"
-)
-
-type FeFloodPointerEvents string
-
-const (
-	FeFloodPointerEventsAll            FeFloodPointerEvents = "all"
-	FeFloodPointerEventsAuto           FeFloodPointerEvents = "auto"
-	FeFloodPointerEventsBoundingBox    FeFloodPointerEvents = "bounding-box"
-	FeFloodPointerEventsFill           FeFloodPointerEvents = "fill"
-	FeFloodPointerEventsNone           FeFloodPointerEvents = "none"
-	FeFloodPointerEventsPainted        FeFloodPointerEvents = "painted"
-	FeFloodPointerEventsStroke         FeFloodPointerEvents = "stroke"
-	FeFloodPointerEventsVisible        FeFloodPointerEvents = "visible"
-	FeFloodPointerEventsVisibleFill    FeFloodPointerEvents = "visibleFill"
-	FeFloodPointerEventsVisiblePainted FeFloodPointerEvents = "visiblePainted"
-	FeFloodPointerEventsVisibleStroke  FeFloodPointerEvents = "visibleStroke"
-)
-
-type FeFloodShapeRendering string
-
-const (
-	FeFloodShapeRenderingAuto               FeFloodShapeRendering = "auto"
-	FeFloodShapeRenderingCrispEdges         FeFloodShapeRendering = "crispEdges"
-	FeFloodShapeRenderingGeometricPrecision FeFloodShapeRendering = "geometricPrecision"
-	FeFloodShapeRenderingOptimizeSpeed      FeFloodShapeRendering = "optimizeSpeed"
-)
-
-type FeFloodStrokeLinecap string
-
-const (
-	FeFloodStrokeLinecapButt   FeFloodStrokeLinecap = "butt"
-	FeFloodStrokeLinecapRound  FeFloodStrokeLinecap = "round"
-	FeFloodStrokeLinecapSquare FeFloodStrokeLinecap = "square"
-)
-
-type FeFloodStrokeLinejoin string
-
-const (
-	FeFloodStrokeLinejoinArcs      FeFloodStrokeLinejoin = "arcs"
-	FeFloodStrokeLinejoinBevel     FeFloodStrokeLinejoin = "bevel"
-	FeFloodStrokeLinejoinMiter     FeFloodStrokeLinejoin = "miter"
-	FeFloodStrokeLinejoinMiterClip FeFloodStrokeLinejoin = "miter-clip"
-	FeFloodStrokeLinejoinRound     FeFloodStrokeLinejoin = "round"
-)
-
-type FeFloodTextAnchor string
-
-const (
-	FeFloodTextAnchorEnd    FeFloodTextAnchor = "end"
-	FeFloodTextAnchorMiddle FeFloodTextAnchor = "middle"
-	FeFloodTextAnchorStart  FeFloodTextAnchor = "start"
-)
-
-type FeFloodTextRendering string
-
-const (
-	FeFloodTextRenderingAuto               FeFloodTextRendering = "auto"
-	FeFloodTextRenderingGeometricPrecision FeFloodTextRendering = "geometricPrecision"
-	FeFloodTextRenderingOptimizeLegibility FeFloodTextRendering = "optimizeLegibility"
-	FeFloodTextRenderingOptimizeSpeed      FeFloodTextRendering = "optimizeSpeed"
-)
-
-type FeFloodTransformBox string
-
-const (
-	FeFloodTransformBoxBorderBox  FeFloodTransformBox = "border-box"
-	FeFloodTransformBoxContentBox FeFloodTransformBox = "content-box"
-	FeFloodTransformBoxFillBox    FeFloodTransformBox = "fill-box"
-	FeFloodTransformBoxStrokeBox  FeFloodTransformBox = "stroke-box"
-	FeFloodTransformBoxViewBox    FeFloodTransformBox = "view-box"
-)
-
-type FeFloodVectorEffect string
-
-const (
-	FeFloodVectorEffectFixedPosition    FeFloodVectorEffect = "fixed-position"
-	FeFloodVectorEffectNonRotation      FeFloodVectorEffect = "non-rotation"
-	FeFloodVectorEffectNonScalingSize   FeFloodVectorEffect = "non-scaling-size"
-	FeFloodVectorEffectNonScalingStroke FeFloodVectorEffect = "non-scaling-stroke"
-	FeFloodVectorEffectNone             FeFloodVectorEffect = "none"
-)
-
-type FeFloodVisibility string
-
-const (
-	FeFloodVisibilityCollapse FeFloodVisibility = "collapse"
-	FeFloodVisibilityHidden   FeFloodVisibility = "hidden"
-	FeFloodVisibilityVisible  FeFloodVisibility = "visible"
-)
-
-type FeFloodWritingMode string
-
-const (
-	FeFloodWritingModeHorizontalTb FeFloodWritingMode = "horizontal-tb"
-	FeFloodWritingModeLr           FeFloodWritingMode = "lr"
-	FeFloodWritingModeLrTb         FeFloodWritingMode = "lr-tb"
-	FeFloodWritingModeRl           FeFloodWritingMode = "rl"
-	FeFloodWritingModeRlTb         FeFloodWritingMode = "rl-tb"
-	FeFloodWritingModeSidewaysLr   FeFloodWritingMode = "sideways-lr"
-	FeFloodWritingModeSidewaysRl   FeFloodWritingMode = "sideways-rl"
-	FeFloodWritingModeTb           FeFloodWritingMode = "tb"
-	FeFloodWritingModeTbRl         FeFloodWritingMode = "tb-rl"
-	FeFloodWritingModeVerticalLr   FeFloodWritingMode = "vertical-lr"
-	FeFloodWritingModeVerticalRl   FeFloodWritingMode = "vertical-rl"
-)
-
-type FeFloodXmlSpace string
-
-const (
-	FeFloodXmlSpaceDefault  FeFloodXmlSpace = "default"
-	FeFloodXmlSpacePreserve FeFloodXmlSpace = "preserve"
-)
+// SVGContent marks <feFlood> as a permitted child (Content).
+func (*FeFloodElement) SVGContent() {}
 
 func (e *FeFloodElement) Height(s string) *FeFloodElement {
 	e.attributes.Set("height", s)
@@ -408,14 +199,10 @@ func (e *FeFloodElement) Y(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) AlignmentBaseline(a FeFloodAlignmentBaseline) *FeFloodElement {
+func (e *FeFloodElement) AlignmentBaseline(a AlignmentBaseline) *FeFloodElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeFloodAlignmentBaselineCustom(s string) FeFloodAlignmentBaseline {
-	return FeFloodAlignmentBaseline(s)
 }
 
 func (e *FeFloodElement) AriaUnsafe(name string, s string) *FeFloodElement {
@@ -469,14 +256,10 @@ func (e *FeFloodElement) ClipPath(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) ClipRule(a FeFloodClipRule) *FeFloodElement {
+func (e *FeFloodElement) ClipRule(a ClipRule) *FeFloodElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeFloodClipRuleCustom(s string) FeFloodClipRule {
-	return FeFloodClipRule(s)
 }
 
 func (e *FeFloodElement) Color(s string) *FeFloodElement {
@@ -485,24 +268,16 @@ func (e *FeFloodElement) Color(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) ColorInterpolation(a FeFloodColorInterpolation) *FeFloodElement {
+func (e *FeFloodElement) ColorInterpolation(a ColorInterpolation) *FeFloodElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeFloodColorInterpolationCustom(s string) FeFloodColorInterpolation {
-	return FeFloodColorInterpolation(s)
-}
-
-func (e *FeFloodElement) ColorInterpolationFilters(a FeFloodColorInterpolationFilters) *FeFloodElement {
+func (e *FeFloodElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeFloodElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeFloodColorInterpolationFiltersCustom(s string) FeFloodColorInterpolationFilters {
-	return FeFloodColorInterpolationFilters(s)
 }
 
 func (e *FeFloodElement) Cursor(s string) *FeFloodElement {
@@ -527,14 +302,10 @@ func (e *FeFloodElement) Data(name string, s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) Direction(a FeFloodDirection) *FeFloodElement {
+func (e *FeFloodElement) Direction(a Direction) *FeFloodElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeFloodDirectionCustom(s string) FeFloodDirection {
-	return FeFloodDirection(s)
 }
 
 func (e *FeFloodElement) Display(s string) *FeFloodElement {
@@ -543,14 +314,10 @@ func (e *FeFloodElement) Display(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) DominantBaseline(a FeFloodDominantBaseline) *FeFloodElement {
+func (e *FeFloodElement) DominantBaseline(a DominantBaseline) *FeFloodElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeFloodDominantBaselineCustom(s string) FeFloodDominantBaseline {
-	return FeFloodDominantBaseline(s)
 }
 
 func (e *FeFloodElement) Fill(s string) *FeFloodElement {
@@ -565,14 +332,10 @@ func (e *FeFloodElement) FillOpacity(f float64) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) FillRule(a FeFloodFillRule) *FeFloodElement {
+func (e *FeFloodElement) FillRule(a FillRule) *FeFloodElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeFloodFillRuleCustom(s string) FeFloodFillRule {
-	return FeFloodFillRule(s)
 }
 
 func (e *FeFloodElement) Filter(s string) *FeFloodElement {
@@ -617,14 +380,10 @@ func (e *FeFloodElement) FontStretch(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) FontStyle(a FeFloodFontStyle) *FeFloodElement {
+func (e *FeFloodElement) FontStyle(a FontStyle) *FeFloodElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeFloodFontStyleCustom(s string) FeFloodFontStyle {
-	return FeFloodFontStyle(s)
 }
 
 func (e *FeFloodElement) FontVariant(s string) *FeFloodElement {
@@ -663,14 +422,10 @@ func (e *FeFloodElement) Id(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) ImageRendering(a FeFloodImageRendering) *FeFloodElement {
+func (e *FeFloodElement) ImageRendering(a ImageRendering) *FeFloodElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeFloodImageRenderingCustom(s string) FeFloodImageRendering {
-	return FeFloodImageRendering(s)
 }
 
 func (e *FeFloodElement) Lang(s string) *FeFloodElement {
@@ -721,14 +476,10 @@ func (e *FeFloodElement) Opacity(f float64) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) Overflow(a FeFloodOverflow) *FeFloodElement {
+func (e *FeFloodElement) Overflow(a Overflow) *FeFloodElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeFloodOverflowCustom(s string) FeFloodOverflow {
-	return FeFloodOverflow(s)
 }
 
 func (e *FeFloodElement) PaintOrder(s string) *FeFloodElement {
@@ -737,14 +488,10 @@ func (e *FeFloodElement) PaintOrder(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) PointerEvents(a FeFloodPointerEvents) *FeFloodElement {
+func (e *FeFloodElement) PointerEvents(a PointerEvents) *FeFloodElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeFloodPointerEventsCustom(s string) FeFloodPointerEvents {
-	return FeFloodPointerEvents(s)
 }
 
 func (e *FeFloodElement) RequiredExtensions(s string) *FeFloodElement {
@@ -753,14 +500,10 @@ func (e *FeFloodElement) RequiredExtensions(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) ShapeRendering(a FeFloodShapeRendering) *FeFloodElement {
+func (e *FeFloodElement) ShapeRendering(a ShapeRendering) *FeFloodElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeFloodShapeRenderingCustom(s string) FeFloodShapeRendering {
-	return FeFloodShapeRendering(s)
 }
 
 func (e *FeFloodElement) StopColor(s string) *FeFloodElement {
@@ -793,24 +536,16 @@ func (e *FeFloodElement) StrokeDashoffset(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) StrokeLinecap(a FeFloodStrokeLinecap) *FeFloodElement {
+func (e *FeFloodElement) StrokeLinecap(a StrokeLinecap) *FeFloodElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeFloodStrokeLinecapCustom(s string) FeFloodStrokeLinecap {
-	return FeFloodStrokeLinecap(s)
-}
-
-func (e *FeFloodElement) StrokeLinejoin(a FeFloodStrokeLinejoin) *FeFloodElement {
+func (e *FeFloodElement) StrokeLinejoin(a StrokeLinejoin) *FeFloodElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeFloodStrokeLinejoinCustom(s string) FeFloodStrokeLinejoin {
-	return FeFloodStrokeLinejoin(s)
 }
 
 func (e *FeFloodElement) StrokeMiterlimit(f float64) *FeFloodElement {
@@ -843,14 +578,10 @@ func (e *FeFloodElement) Tabindex(i int) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) TextAnchor(a FeFloodTextAnchor) *FeFloodElement {
+func (e *FeFloodElement) TextAnchor(a TextAnchor) *FeFloodElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeFloodTextAnchorCustom(s string) FeFloodTextAnchor {
-	return FeFloodTextAnchor(s)
 }
 
 func (e *FeFloodElement) TextDecoration(s string) *FeFloodElement {
@@ -865,14 +596,10 @@ func (e *FeFloodElement) TextOverflow(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) TextRendering(a FeFloodTextRendering) *FeFloodElement {
+func (e *FeFloodElement) TextRendering(a TextRendering) *FeFloodElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeFloodTextRenderingCustom(s string) FeFloodTextRendering {
-	return FeFloodTextRendering(s)
 }
 
 func (e *FeFloodElement) Transform(s string) *FeFloodElement {
@@ -881,14 +608,10 @@ func (e *FeFloodElement) Transform(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) TransformBox(a FeFloodTransformBox) *FeFloodElement {
+func (e *FeFloodElement) TransformBox(a TransformBox) *FeFloodElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeFloodTransformBoxCustom(s string) FeFloodTransformBox {
-	return FeFloodTransformBox(s)
 }
 
 func (e *FeFloodElement) TransformOrigin(s string) *FeFloodElement {
@@ -903,24 +626,16 @@ func (e *FeFloodElement) UnicodeBidi(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) VectorEffect(a FeFloodVectorEffect) *FeFloodElement {
+func (e *FeFloodElement) VectorEffect(a VectorEffect) *FeFloodElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeFloodVectorEffectCustom(s string) FeFloodVectorEffect {
-	return FeFloodVectorEffect(s)
-}
-
-func (e *FeFloodElement) Visibility(a FeFloodVisibility) *FeFloodElement {
+func (e *FeFloodElement) Visibility(a Visibility) *FeFloodElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeFloodVisibilityCustom(s string) FeFloodVisibility {
-	return FeFloodVisibility(s)
 }
 
 func (e *FeFloodElement) WhiteSpace(s string) *FeFloodElement {
@@ -935,14 +650,10 @@ func (e *FeFloodElement) WordSpacing(s string) *FeFloodElement {
 	return e
 }
 
-func (e *FeFloodElement) WritingMode(a FeFloodWritingMode) *FeFloodElement {
+func (e *FeFloodElement) WritingMode(a WritingMode) *FeFloodElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeFloodWritingModeCustom(s string) FeFloodWritingMode {
-	return FeFloodWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -957,7 +668,7 @@ func (e *FeFloodElement) XmlLang(s string) *FeFloodElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeFloodElement) XmlSpace(a FeFloodXmlSpace) *FeFloodElement {
+func (e *FeFloodElement) XmlSpace(a XmlSpace) *FeFloodElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

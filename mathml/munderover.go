@@ -14,15 +14,17 @@ import (
 
 type MunderoverElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Munderover creates a tag <munderover> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Munderover(children ...htemel.Node) *MunderoverElement {
+func Munderover(children ...Content) *MunderoverElement {
 	node := &MunderoverElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Munderover(children ...htemel.Node) *MunderoverElement {
 }
 
 // MunderoverIf creates a tag <munderover> instance that is only rendered when condition is true.
-func MunderoverIf(condition bool, children ...htemel.Node) *MunderoverElement {
+func MunderoverIf(condition bool, children ...Content) *MunderoverElement {
 	if condition {
 		return Munderover(children...)
 	}
@@ -43,7 +45,7 @@ func MunderoverIf(condition bool, children ...htemel.Node) *MunderoverElement {
 }
 
 // MunderoverTernary creates a tag <munderover> containing then when condition is true, otherwise containing otherwise.
-func MunderoverTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MunderoverElement {
+func MunderoverTernary(condition bool, then Content, otherwise Content) *MunderoverElement {
 	if condition {
 		return Munderover(then)
 	}
@@ -51,7 +53,7 @@ func MunderoverTernary(condition bool, then htemel.Node, otherwise htemel.Node) 
 }
 
 // Children appends children to this element.
-func (e *MunderoverElement) Children(children ...htemel.Node) *MunderoverElement {
+func (e *MunderoverElement) Children(children ...Content) *MunderoverElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MunderoverElement) Textf(format string, args ...any) *MunderoverElement
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MunderoverElement) If(cond bool, child htemel.Node) *MunderoverElement {
+func (e *MunderoverElement) If(cond bool, child Content) *MunderoverElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MunderoverElement) If(cond bool, child htemel.Node) *MunderoverElement 
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MunderoverElement) IfElse(cond bool, then, els htemel.Node) *MunderoverElement {
+func (e *MunderoverElement) IfElse(cond bool, then, els Content) *MunderoverElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,41 +166,16 @@ func (e *MunderoverElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MunderoverAccent string
+// MathMLContent marks <munderover> as a permitted child (Content).
+func (*MunderoverElement) MathMLContent() {}
 
-const (
-	MunderoverAccentFalse MunderoverAccent = "false"
-	MunderoverAccentTrue  MunderoverAccent = "true"
-)
-
-type MunderoverAccentunder string
-
-const (
-	MunderoverAccentunderFalse MunderoverAccentunder = "false"
-	MunderoverAccentunderTrue  MunderoverAccentunder = "true"
-)
-
-type MunderoverDir string
-
-const (
-	MunderoverDirLtr MunderoverDir = "ltr"
-	MunderoverDirRtl MunderoverDir = "rtl"
-)
-
-type MunderoverDisplaystyle string
-
-const (
-	MunderoverDisplaystyleFalse MunderoverDisplaystyle = "false"
-	MunderoverDisplaystyleTrue  MunderoverDisplaystyle = "true"
-)
-
-func (e *MunderoverElement) Accent(a MunderoverAccent) *MunderoverElement {
+func (e *MunderoverElement) Accent(a Accent) *MunderoverElement {
 	e.attributes.Set("accent", string(a))
 
 	return e
 }
 
-func (e *MunderoverElement) Accentunder(a MunderoverAccentunder) *MunderoverElement {
+func (e *MunderoverElement) Accentunder(a Accentunder) *MunderoverElement {
 	e.attributes.Set("accentunder", string(a))
 
 	return e
@@ -234,13 +211,13 @@ func (e *MunderoverElement) Data(name string, s string) *MunderoverElement {
 	return e
 }
 
-func (e *MunderoverElement) Dir(a MunderoverDir) *MunderoverElement {
+func (e *MunderoverElement) Dir(a Dir) *MunderoverElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MunderoverElement) Displaystyle(a MunderoverDisplaystyle) *MunderoverElement {
+func (e *MunderoverElement) Displaystyle(a Displaystyle) *MunderoverElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

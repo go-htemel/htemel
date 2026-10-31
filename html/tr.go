@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,29 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// TrChild is a permitted child of <tr>: <td>, <th>, script-supporting elements.
+//
+// It is implemented by <script>, <td>, <template>, <th>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type TrChild interface {
+	htemel.Node
+	HTMLTrChild()
+}
+
 type TrElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []TrChild
 	skipRender bool
 }
 
 // Tr creates a tag <tr> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <td>, <th>, script-supporting elements (TrChild).
+//
 // Spec Description: The tr element represents a row of cells in a table.
-func Tr(children ...htemel.Node) *TrElement {
+func Tr(children ...TrChild) *TrElement {
 	node := &TrElement{
 		children: children,
 	}
@@ -31,7 +42,7 @@ func Tr(children ...htemel.Node) *TrElement {
 }
 
 // TrIf creates a tag <tr> instance that is only rendered when condition is true.
-func TrIf(condition bool, children ...htemel.Node) *TrElement {
+func TrIf(condition bool, children ...TrChild) *TrElement {
 	if condition {
 		return Tr(children...)
 	}
@@ -43,7 +54,7 @@ func TrIf(condition bool, children ...htemel.Node) *TrElement {
 }
 
 // TrTernary creates a tag <tr> containing then when condition is true, otherwise containing otherwise.
-func TrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TrElement {
+func TrTernary(condition bool, then TrChild, otherwise TrChild) *TrElement {
 	if condition {
 		return Tr(then)
 	}
@@ -51,7 +62,7 @@ func TrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TrEleme
 }
 
 // Children appends children to this element.
-func (e *TrElement) Children(children ...htemel.Node) *TrElement {
+func (e *TrElement) Children(children ...TrChild) *TrElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +73,8 @@ func (e *TrElement) With(fn func(*TrElement)) *TrElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *TrElement) Text(text string) *TrElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *TrElement) Textf(format string, args ...any) *TrElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TrElement) If(cond bool, child htemel.Node) *TrElement {
+func (e *TrElement) If(cond bool, child TrChild) *TrElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +82,7 @@ func (e *TrElement) If(cond bool, child htemel.Node) *TrElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TrElement) IfElse(cond bool, then, els htemel.Node) *TrElement {
+func (e *TrElement) IfElse(cond bool, then, els TrChild) *TrElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +164,17 @@ func (e *TrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TrAutocapitalize string
+// HTMLTableChild marks <tr> as a permitted child of <table> (TableChild).
+func (*TrElement) HTMLTableChild() {}
 
-const (
-	TrAutocapitalizeCharacters TrAutocapitalize = "characters"
-	TrAutocapitalizeNone       TrAutocapitalize = "none"
-	TrAutocapitalizeOff        TrAutocapitalize = "off"
-	TrAutocapitalizeOn         TrAutocapitalize = "on"
-	TrAutocapitalizeSentences  TrAutocapitalize = "sentences"
-	TrAutocapitalizeWords      TrAutocapitalize = "words"
-)
+// HTMLTbodyChild marks <tr> as a permitted child of <tbody> (TbodyChild).
+func (*TrElement) HTMLTbodyChild() {}
 
-type TrAutocorrect string
+// HTMLTfootChild marks <tr> as a permitted child of <tfoot> (TfootChild).
+func (*TrElement) HTMLTfootChild() {}
 
-const (
-	TrAutocorrectOff   TrAutocorrect = "off"
-	TrAutocorrectOn    TrAutocorrect = "on"
-	TrAutocorrectEmpty TrAutocorrect = ""
-)
-
-type TrContenteditable string
-
-const (
-	TrContenteditableFalse         TrContenteditable = "false"
-	TrContenteditablePlaintextOnly TrContenteditable = "plaintext-only"
-	TrContenteditableTrue          TrContenteditable = "true"
-	TrContenteditableEmpty         TrContenteditable = ""
-)
-
-type TrDir string
-
-const (
-	TrDirAuto TrDir = "auto"
-	TrDirLtr  TrDir = "ltr"
-	TrDirRtl  TrDir = "rtl"
-)
-
-type TrDraggable string
-
-const (
-	TrDraggableFalse TrDraggable = "false"
-	TrDraggableTrue  TrDraggable = "true"
-)
-
-type TrEnterkeyhint string
-
-const (
-	TrEnterkeyhintDone     TrEnterkeyhint = "done"
-	TrEnterkeyhintEnter    TrEnterkeyhint = "enter"
-	TrEnterkeyhintGo       TrEnterkeyhint = "go"
-	TrEnterkeyhintNext     TrEnterkeyhint = "next"
-	TrEnterkeyhintPrevious TrEnterkeyhint = "previous"
-	TrEnterkeyhintSearch   TrEnterkeyhint = "search"
-	TrEnterkeyhintSend     TrEnterkeyhint = "send"
-)
-
-type TrHidden string
-
-const (
-	TrHiddenHidden     TrHidden = "hidden"
-	TrHiddenUntilFound TrHidden = "until-found"
-	TrHiddenEmpty      TrHidden = ""
-)
-
-type TrInputmode string
-
-const (
-	TrInputmodeDecimal TrInputmode = "decimal"
-	TrInputmodeEmail   TrInputmode = "email"
-	TrInputmodeNone    TrInputmode = "none"
-	TrInputmodeNumeric TrInputmode = "numeric"
-	TrInputmodeSearch  TrInputmode = "search"
-	TrInputmodeTel     TrInputmode = "tel"
-	TrInputmodeText    TrInputmode = "text"
-	TrInputmodeUrl     TrInputmode = "url"
-)
-
-type TrPopover string
-
-const (
-	TrPopoverAuto   TrPopover = "auto"
-	TrPopoverHint   TrPopover = "hint"
-	TrPopoverManual TrPopover = "manual"
-	TrPopoverEmpty  TrPopover = ""
-)
-
-type TrSpellcheck string
-
-const (
-	TrSpellcheckFalse TrSpellcheck = "false"
-	TrSpellcheckTrue  TrSpellcheck = "true"
-	TrSpellcheckEmpty TrSpellcheck = ""
-)
-
-type TrTranslate string
-
-const (
-	TrTranslateNo    TrTranslate = "no"
-	TrTranslateYes   TrTranslate = "yes"
-	TrTranslateEmpty TrTranslate = ""
-)
-
-type TrWritingsuggestions string
-
-const (
-	TrWritingsuggestionsFalse TrWritingsuggestions = "false"
-	TrWritingsuggestionsTrue  TrWritingsuggestions = "true"
-	TrWritingsuggestionsEmpty TrWritingsuggestions = ""
-)
+// HTMLTheadChild marks <tr> as a permitted child of <thead> (TheadChild).
+func (*TrElement) HTMLTheadChild() {}
 
 func (e *TrElement) Accesskey(r rune) *TrElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +198,7 @@ func (e *TrElement) Aria(name string, s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Autocapitalize(a TrAutocapitalize) *TrElement {
+func (e *TrElement) Autocapitalize(a Autocapitalize) *TrElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +206,8 @@ func (e *TrElement) Autocapitalize(a TrAutocapitalize) *TrElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Autocorrect(v ...TrAutocorrect) *TrElement {
-	var val TrAutocorrect
+func (e *TrElement) Autocorrect(v ...Autocorrect) *TrElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +232,8 @@ func (e *TrElement) Class(s ...string) *TrElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Contenteditable(v ...TrContenteditable) *TrElement {
-	var val TrContenteditable
+func (e *TrElement) Contenteditable(v ...Contenteditable) *TrElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +258,19 @@ func (e *TrElement) Data(name string, s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Dir(a TrDir) *TrElement {
+func (e *TrElement) Dir(a Dir) *TrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TrElement) Draggable(a TrDraggable) *TrElement {
+func (e *TrElement) Draggable(a Draggable) *TrElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TrElement) Enterkeyhint(a TrEnterkeyhint) *TrElement {
+func (e *TrElement) Enterkeyhint(a Enterkeyhint) *TrElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +298,8 @@ func (e *TrElement) Headingreset(b bool) *TrElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Hidden(v ...TrHidden) *TrElement {
-	var val TrHidden
+func (e *TrElement) Hidden(v ...Hidden) *TrElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +322,7 @@ func (e *TrElement) Inert(b bool) *TrElement {
 	return e
 }
 
-func (e *TrElement) Inputmode(a TrInputmode) *TrElement {
+func (e *TrElement) Inputmode(a Inputmode) *TrElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +388,8 @@ func (e *TrElement) Part(s ...string) *TrElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Popover(v ...TrPopover) *TrElement {
-	var val TrPopover
+func (e *TrElement) Popover(v ...Popover) *TrElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +412,8 @@ func (e *TrElement) Slot(s string) *TrElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Spellcheck(v ...TrSpellcheck) *TrElement {
-	var val TrSpellcheck
+func (e *TrElement) Spellcheck(v ...Spellcheck) *TrElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +442,8 @@ func (e *TrElement) Title(s string) *TrElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Translate(v ...TrTranslate) *TrElement {
-	var val TrTranslate
+func (e *TrElement) Translate(v ...Translate) *TrElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +454,8 @@ func (e *TrElement) Translate(v ...TrTranslate) *TrElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrElement) Writingsuggestions(v ...TrWritingsuggestions) *TrElement {
-	var val TrWritingsuggestions
+func (e *TrElement) Writingsuggestions(v ...Writingsuggestions) *TrElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -13,16 +13,20 @@ import (
 )
 
 type AbbrElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Abbr creates a tag <abbr> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The abbr element represents an abbreviation or acronym, optionally with its expansion. The title attribute may be used to provide an expansion of the abbreviation. The attribute, if specified, must contain an expansion of the abbreviation, and nothing else.
-func Abbr(children ...htemel.Node) *AbbrElement {
+func Abbr(children ...htemel.PhrasingContent) *AbbrElement {
 	node := &AbbrElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Abbr(children ...htemel.Node) *AbbrElement {
 }
 
 // AbbrIf creates a tag <abbr> instance that is only rendered when condition is true.
-func AbbrIf(condition bool, children ...htemel.Node) *AbbrElement {
+func AbbrIf(condition bool, children ...htemel.PhrasingContent) *AbbrElement {
 	if condition {
 		return Abbr(children...)
 	}
@@ -43,7 +47,7 @@ func AbbrIf(condition bool, children ...htemel.Node) *AbbrElement {
 }
 
 // AbbrTernary creates a tag <abbr> containing then when condition is true, otherwise containing otherwise.
-func AbbrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AbbrElement {
+func AbbrTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *AbbrElement {
 	if condition {
 		return Abbr(then)
 	}
@@ -51,7 +55,7 @@ func AbbrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AbbrE
 }
 
 // Children appends children to this element.
-func (e *AbbrElement) Children(children ...htemel.Node) *AbbrElement {
+func (e *AbbrElement) Children(children ...htemel.PhrasingContent) *AbbrElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *AbbrElement) Textf(format string, args ...any) *AbbrElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AbbrElement) If(cond bool, child htemel.Node) *AbbrElement {
+func (e *AbbrElement) If(cond bool, child htemel.PhrasingContent) *AbbrElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *AbbrElement) If(cond bool, child htemel.Node) *AbbrElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AbbrElement) IfElse(cond bool, then, els htemel.Node) *AbbrElement {
+func (e *AbbrElement) IfElse(cond bool, then, els htemel.PhrasingContent) *AbbrElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *AbbrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AbbrAutocapitalize string
-
-const (
-	AbbrAutocapitalizeCharacters AbbrAutocapitalize = "characters"
-	AbbrAutocapitalizeNone       AbbrAutocapitalize = "none"
-	AbbrAutocapitalizeOff        AbbrAutocapitalize = "off"
-	AbbrAutocapitalizeOn         AbbrAutocapitalize = "on"
-	AbbrAutocapitalizeSentences  AbbrAutocapitalize = "sentences"
-	AbbrAutocapitalizeWords      AbbrAutocapitalize = "words"
-)
-
-type AbbrAutocorrect string
-
-const (
-	AbbrAutocorrectOff   AbbrAutocorrect = "off"
-	AbbrAutocorrectOn    AbbrAutocorrect = "on"
-	AbbrAutocorrectEmpty AbbrAutocorrect = ""
-)
-
-type AbbrContenteditable string
-
-const (
-	AbbrContenteditableFalse         AbbrContenteditable = "false"
-	AbbrContenteditablePlaintextOnly AbbrContenteditable = "plaintext-only"
-	AbbrContenteditableTrue          AbbrContenteditable = "true"
-	AbbrContenteditableEmpty         AbbrContenteditable = ""
-)
-
-type AbbrDir string
-
-const (
-	AbbrDirAuto AbbrDir = "auto"
-	AbbrDirLtr  AbbrDir = "ltr"
-	AbbrDirRtl  AbbrDir = "rtl"
-)
-
-type AbbrDraggable string
-
-const (
-	AbbrDraggableFalse AbbrDraggable = "false"
-	AbbrDraggableTrue  AbbrDraggable = "true"
-)
-
-type AbbrEnterkeyhint string
-
-const (
-	AbbrEnterkeyhintDone     AbbrEnterkeyhint = "done"
-	AbbrEnterkeyhintEnter    AbbrEnterkeyhint = "enter"
-	AbbrEnterkeyhintGo       AbbrEnterkeyhint = "go"
-	AbbrEnterkeyhintNext     AbbrEnterkeyhint = "next"
-	AbbrEnterkeyhintPrevious AbbrEnterkeyhint = "previous"
-	AbbrEnterkeyhintSearch   AbbrEnterkeyhint = "search"
-	AbbrEnterkeyhintSend     AbbrEnterkeyhint = "send"
-)
-
-type AbbrHidden string
-
-const (
-	AbbrHiddenHidden     AbbrHidden = "hidden"
-	AbbrHiddenUntilFound AbbrHidden = "until-found"
-	AbbrHiddenEmpty      AbbrHidden = ""
-)
-
-type AbbrInputmode string
-
-const (
-	AbbrInputmodeDecimal AbbrInputmode = "decimal"
-	AbbrInputmodeEmail   AbbrInputmode = "email"
-	AbbrInputmodeNone    AbbrInputmode = "none"
-	AbbrInputmodeNumeric AbbrInputmode = "numeric"
-	AbbrInputmodeSearch  AbbrInputmode = "search"
-	AbbrInputmodeTel     AbbrInputmode = "tel"
-	AbbrInputmodeText    AbbrInputmode = "text"
-	AbbrInputmodeUrl     AbbrInputmode = "url"
-)
-
-type AbbrPopover string
-
-const (
-	AbbrPopoverAuto   AbbrPopover = "auto"
-	AbbrPopoverHint   AbbrPopover = "hint"
-	AbbrPopoverManual AbbrPopover = "manual"
-	AbbrPopoverEmpty  AbbrPopover = ""
-)
-
-type AbbrSpellcheck string
-
-const (
-	AbbrSpellcheckFalse AbbrSpellcheck = "false"
-	AbbrSpellcheckTrue  AbbrSpellcheck = "true"
-	AbbrSpellcheckEmpty AbbrSpellcheck = ""
-)
-
-type AbbrTranslate string
-
-const (
-	AbbrTranslateNo    AbbrTranslate = "no"
-	AbbrTranslateYes   AbbrTranslate = "yes"
-	AbbrTranslateEmpty AbbrTranslate = ""
-)
-
-type AbbrWritingsuggestions string
-
-const (
-	AbbrWritingsuggestionsFalse AbbrWritingsuggestions = "false"
-	AbbrWritingsuggestionsTrue  AbbrWritingsuggestions = "true"
-	AbbrWritingsuggestionsEmpty AbbrWritingsuggestions = ""
-)
-
 func (e *AbbrElement) Accesskey(r rune) *AbbrElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *AbbrElement) Aria(name string, s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Autocapitalize(a AbbrAutocapitalize) *AbbrElement {
+func (e *AbbrElement) Autocapitalize(a Autocapitalize) *AbbrElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *AbbrElement) Autocapitalize(a AbbrAutocapitalize) *AbbrElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Autocorrect(v ...AbbrAutocorrect) *AbbrElement {
-	var val AbbrAutocorrect
+func (e *AbbrElement) Autocorrect(v ...Autocorrect) *AbbrElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *AbbrElement) Class(s ...string) *AbbrElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Contenteditable(v ...AbbrContenteditable) *AbbrElement {
-	var val AbbrContenteditable
+func (e *AbbrElement) Contenteditable(v ...Contenteditable) *AbbrElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *AbbrElement) Data(name string, s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Dir(a AbbrDir) *AbbrElement {
+func (e *AbbrElement) Dir(a Dir) *AbbrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AbbrElement) Draggable(a AbbrDraggable) *AbbrElement {
+func (e *AbbrElement) Draggable(a Draggable) *AbbrElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AbbrElement) Enterkeyhint(a AbbrEnterkeyhint) *AbbrElement {
+func (e *AbbrElement) Enterkeyhint(a Enterkeyhint) *AbbrElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *AbbrElement) Headingreset(b bool) *AbbrElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Hidden(v ...AbbrHidden) *AbbrElement {
-	var val AbbrHidden
+func (e *AbbrElement) Hidden(v ...Hidden) *AbbrElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *AbbrElement) Inert(b bool) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Inputmode(a AbbrInputmode) *AbbrElement {
+func (e *AbbrElement) Inputmode(a Inputmode) *AbbrElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *AbbrElement) Part(s ...string) *AbbrElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Popover(v ...AbbrPopover) *AbbrElement {
-	var val AbbrPopover
+func (e *AbbrElement) Popover(v ...Popover) *AbbrElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *AbbrElement) Slot(s string) *AbbrElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Spellcheck(v ...AbbrSpellcheck) *AbbrElement {
-	var val AbbrSpellcheck
+func (e *AbbrElement) Spellcheck(v ...Spellcheck) *AbbrElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *AbbrElement) Title(s string) *AbbrElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Translate(v ...AbbrTranslate) *AbbrElement {
-	var val AbbrTranslate
+func (e *AbbrElement) Translate(v ...Translate) *AbbrElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *AbbrElement) Translate(v ...AbbrTranslate) *AbbrElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AbbrElement) Writingsuggestions(v ...AbbrWritingsuggestions) *AbbrElement {
-	var val AbbrWritingsuggestions
+func (e *AbbrElement) Writingsuggestions(v ...Writingsuggestions) *AbbrElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type FeBlendElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeBlend creates a tag <feBlend> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feBlend filter primitive composites two inputs using a blend mode.
-func FeBlend(children ...htemel.Node) *FeBlendElement {
+func FeBlend(children ...Content) *FeBlendElement {
 	node := &FeBlendElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeBlend(children ...htemel.Node) *FeBlendElement {
 }
 
 // FeBlendIf creates a tag <feBlend> instance that is only rendered when condition is true.
-func FeBlendIf(condition bool, children ...htemel.Node) *FeBlendElement {
+func FeBlendIf(condition bool, children ...Content) *FeBlendElement {
 	if condition {
 		return FeBlend(children...)
 	}
@@ -43,7 +45,7 @@ func FeBlendIf(condition bool, children ...htemel.Node) *FeBlendElement {
 }
 
 // FeBlendTernary creates a tag <feBlend> containing then when condition is true, otherwise containing otherwise.
-func FeBlendTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeBlendElement {
+func FeBlendTernary(condition bool, then Content, otherwise Content) *FeBlendElement {
 	if condition {
 		return FeBlend(then)
 	}
@@ -51,7 +53,7 @@ func FeBlendTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Fe
 }
 
 // Children appends children to this element.
-func (e *FeBlendElement) Children(children ...htemel.Node) *FeBlendElement {
+func (e *FeBlendElement) Children(children ...Content) *FeBlendElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeBlendElement) Textf(format string, args ...any) *FeBlendElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeBlendElement) If(cond bool, child htemel.Node) *FeBlendElement {
+func (e *FeBlendElement) If(cond bool, child Content) *FeBlendElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeBlendElement) If(cond bool, child htemel.Node) *FeBlendElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeBlendElement) IfElse(cond bool, then, els htemel.Node) *FeBlendElement {
+func (e *FeBlendElement) IfElse(cond bool, then, els Content) *FeBlendElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,240 +166,8 @@ func (e *FeBlendElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeBlendMode string
-
-const (
-	FeBlendModeColor      FeBlendMode = "color"
-	FeBlendModeColorBurn  FeBlendMode = "color-burn"
-	FeBlendModeColorDodge FeBlendMode = "color-dodge"
-	FeBlendModeDarken     FeBlendMode = "darken"
-	FeBlendModeDifference FeBlendMode = "difference"
-	FeBlendModeExclusion  FeBlendMode = "exclusion"
-	FeBlendModeHardLight  FeBlendMode = "hard-light"
-	FeBlendModeHue        FeBlendMode = "hue"
-	FeBlendModeLighten    FeBlendMode = "lighten"
-	FeBlendModeLuminosity FeBlendMode = "luminosity"
-	FeBlendModeMultiply   FeBlendMode = "multiply"
-	FeBlendModeNormal     FeBlendMode = "normal"
-	FeBlendModeOverlay    FeBlendMode = "overlay"
-	FeBlendModeSaturation FeBlendMode = "saturation"
-	FeBlendModeScreen     FeBlendMode = "screen"
-	FeBlendModeSoftLight  FeBlendMode = "soft-light"
-)
-
-type FeBlendAlignmentBaseline string
-
-const (
-	FeBlendAlignmentBaselineAfterEdge      FeBlendAlignmentBaseline = "after-edge"
-	FeBlendAlignmentBaselineAlphabetic     FeBlendAlignmentBaseline = "alphabetic"
-	FeBlendAlignmentBaselineAuto           FeBlendAlignmentBaseline = "auto"
-	FeBlendAlignmentBaselineBaseline       FeBlendAlignmentBaseline = "baseline"
-	FeBlendAlignmentBaselineBeforeEdge     FeBlendAlignmentBaseline = "before-edge"
-	FeBlendAlignmentBaselineBottom         FeBlendAlignmentBaseline = "bottom"
-	FeBlendAlignmentBaselineCenter         FeBlendAlignmentBaseline = "center"
-	FeBlendAlignmentBaselineCentral        FeBlendAlignmentBaseline = "central"
-	FeBlendAlignmentBaselineHanging        FeBlendAlignmentBaseline = "hanging"
-	FeBlendAlignmentBaselineIdeographic    FeBlendAlignmentBaseline = "ideographic"
-	FeBlendAlignmentBaselineMathematical   FeBlendAlignmentBaseline = "mathematical"
-	FeBlendAlignmentBaselineMiddle         FeBlendAlignmentBaseline = "middle"
-	FeBlendAlignmentBaselineTextAfterEdge  FeBlendAlignmentBaseline = "text-after-edge"
-	FeBlendAlignmentBaselineTextBeforeEdge FeBlendAlignmentBaseline = "text-before-edge"
-	FeBlendAlignmentBaselineTextBottom     FeBlendAlignmentBaseline = "text-bottom"
-	FeBlendAlignmentBaselineTextTop        FeBlendAlignmentBaseline = "text-top"
-	FeBlendAlignmentBaselineTop            FeBlendAlignmentBaseline = "top"
-)
-
-type FeBlendClipRule string
-
-const (
-	FeBlendClipRuleEvenodd FeBlendClipRule = "evenodd"
-	FeBlendClipRuleNonzero FeBlendClipRule = "nonzero"
-)
-
-type FeBlendColorInterpolation string
-
-const (
-	FeBlendColorInterpolationAuto      FeBlendColorInterpolation = "auto"
-	FeBlendColorInterpolationLinearRGB FeBlendColorInterpolation = "linearRGB"
-	FeBlendColorInterpolationSRGB      FeBlendColorInterpolation = "sRGB"
-)
-
-type FeBlendColorInterpolationFilters string
-
-const (
-	FeBlendColorInterpolationFiltersAuto      FeBlendColorInterpolationFilters = "auto"
-	FeBlendColorInterpolationFiltersLinearRGB FeBlendColorInterpolationFilters = "linearRGB"
-	FeBlendColorInterpolationFiltersSRGB      FeBlendColorInterpolationFilters = "sRGB"
-)
-
-type FeBlendDirection string
-
-const (
-	FeBlendDirectionLtr FeBlendDirection = "ltr"
-	FeBlendDirectionRtl FeBlendDirection = "rtl"
-)
-
-type FeBlendDominantBaseline string
-
-const (
-	FeBlendDominantBaselineAlphabetic   FeBlendDominantBaseline = "alphabetic"
-	FeBlendDominantBaselineAuto         FeBlendDominantBaseline = "auto"
-	FeBlendDominantBaselineCentral      FeBlendDominantBaseline = "central"
-	FeBlendDominantBaselineHanging      FeBlendDominantBaseline = "hanging"
-	FeBlendDominantBaselineIdeographic  FeBlendDominantBaseline = "ideographic"
-	FeBlendDominantBaselineMathematical FeBlendDominantBaseline = "mathematical"
-	FeBlendDominantBaselineMiddle       FeBlendDominantBaseline = "middle"
-	FeBlendDominantBaselineTextBottom   FeBlendDominantBaseline = "text-bottom"
-	FeBlendDominantBaselineTextTop      FeBlendDominantBaseline = "text-top"
-)
-
-type FeBlendFillRule string
-
-const (
-	FeBlendFillRuleEvenodd FeBlendFillRule = "evenodd"
-	FeBlendFillRuleNonzero FeBlendFillRule = "nonzero"
-)
-
-type FeBlendFontStyle string
-
-const (
-	FeBlendFontStyleItalic  FeBlendFontStyle = "italic"
-	FeBlendFontStyleNormal  FeBlendFontStyle = "normal"
-	FeBlendFontStyleOblique FeBlendFontStyle = "oblique"
-)
-
-type FeBlendImageRendering string
-
-const (
-	FeBlendImageRenderingAuto            FeBlendImageRendering = "auto"
-	FeBlendImageRenderingCrispEdges      FeBlendImageRendering = "crisp-edges"
-	FeBlendImageRenderingHighQuality     FeBlendImageRendering = "high-quality"
-	FeBlendImageRenderingOptimizeQuality FeBlendImageRendering = "optimizeQuality"
-	FeBlendImageRenderingOptimizeSpeed   FeBlendImageRendering = "optimizeSpeed"
-	FeBlendImageRenderingPixelated       FeBlendImageRendering = "pixelated"
-	FeBlendImageRenderingSmooth          FeBlendImageRendering = "smooth"
-)
-
-type FeBlendOverflow string
-
-const (
-	FeBlendOverflowAuto    FeBlendOverflow = "auto"
-	FeBlendOverflowClip    FeBlendOverflow = "clip"
-	FeBlendOverflowHidden  FeBlendOverflow = "hidden"
-	FeBlendOverflowScroll  FeBlendOverflow = "scroll"
-	FeBlendOverflowVisible FeBlendOverflow = "visible"
-)
-
-type FeBlendPointerEvents string
-
-const (
-	FeBlendPointerEventsAll            FeBlendPointerEvents = "all"
-	FeBlendPointerEventsAuto           FeBlendPointerEvents = "auto"
-	FeBlendPointerEventsBoundingBox    FeBlendPointerEvents = "bounding-box"
-	FeBlendPointerEventsFill           FeBlendPointerEvents = "fill"
-	FeBlendPointerEventsNone           FeBlendPointerEvents = "none"
-	FeBlendPointerEventsPainted        FeBlendPointerEvents = "painted"
-	FeBlendPointerEventsStroke         FeBlendPointerEvents = "stroke"
-	FeBlendPointerEventsVisible        FeBlendPointerEvents = "visible"
-	FeBlendPointerEventsVisibleFill    FeBlendPointerEvents = "visibleFill"
-	FeBlendPointerEventsVisiblePainted FeBlendPointerEvents = "visiblePainted"
-	FeBlendPointerEventsVisibleStroke  FeBlendPointerEvents = "visibleStroke"
-)
-
-type FeBlendShapeRendering string
-
-const (
-	FeBlendShapeRenderingAuto               FeBlendShapeRendering = "auto"
-	FeBlendShapeRenderingCrispEdges         FeBlendShapeRendering = "crispEdges"
-	FeBlendShapeRenderingGeometricPrecision FeBlendShapeRendering = "geometricPrecision"
-	FeBlendShapeRenderingOptimizeSpeed      FeBlendShapeRendering = "optimizeSpeed"
-)
-
-type FeBlendStrokeLinecap string
-
-const (
-	FeBlendStrokeLinecapButt   FeBlendStrokeLinecap = "butt"
-	FeBlendStrokeLinecapRound  FeBlendStrokeLinecap = "round"
-	FeBlendStrokeLinecapSquare FeBlendStrokeLinecap = "square"
-)
-
-type FeBlendStrokeLinejoin string
-
-const (
-	FeBlendStrokeLinejoinArcs      FeBlendStrokeLinejoin = "arcs"
-	FeBlendStrokeLinejoinBevel     FeBlendStrokeLinejoin = "bevel"
-	FeBlendStrokeLinejoinMiter     FeBlendStrokeLinejoin = "miter"
-	FeBlendStrokeLinejoinMiterClip FeBlendStrokeLinejoin = "miter-clip"
-	FeBlendStrokeLinejoinRound     FeBlendStrokeLinejoin = "round"
-)
-
-type FeBlendTextAnchor string
-
-const (
-	FeBlendTextAnchorEnd    FeBlendTextAnchor = "end"
-	FeBlendTextAnchorMiddle FeBlendTextAnchor = "middle"
-	FeBlendTextAnchorStart  FeBlendTextAnchor = "start"
-)
-
-type FeBlendTextRendering string
-
-const (
-	FeBlendTextRenderingAuto               FeBlendTextRendering = "auto"
-	FeBlendTextRenderingGeometricPrecision FeBlendTextRendering = "geometricPrecision"
-	FeBlendTextRenderingOptimizeLegibility FeBlendTextRendering = "optimizeLegibility"
-	FeBlendTextRenderingOptimizeSpeed      FeBlendTextRendering = "optimizeSpeed"
-)
-
-type FeBlendTransformBox string
-
-const (
-	FeBlendTransformBoxBorderBox  FeBlendTransformBox = "border-box"
-	FeBlendTransformBoxContentBox FeBlendTransformBox = "content-box"
-	FeBlendTransformBoxFillBox    FeBlendTransformBox = "fill-box"
-	FeBlendTransformBoxStrokeBox  FeBlendTransformBox = "stroke-box"
-	FeBlendTransformBoxViewBox    FeBlendTransformBox = "view-box"
-)
-
-type FeBlendVectorEffect string
-
-const (
-	FeBlendVectorEffectFixedPosition    FeBlendVectorEffect = "fixed-position"
-	FeBlendVectorEffectNonRotation      FeBlendVectorEffect = "non-rotation"
-	FeBlendVectorEffectNonScalingSize   FeBlendVectorEffect = "non-scaling-size"
-	FeBlendVectorEffectNonScalingStroke FeBlendVectorEffect = "non-scaling-stroke"
-	FeBlendVectorEffectNone             FeBlendVectorEffect = "none"
-)
-
-type FeBlendVisibility string
-
-const (
-	FeBlendVisibilityCollapse FeBlendVisibility = "collapse"
-	FeBlendVisibilityHidden   FeBlendVisibility = "hidden"
-	FeBlendVisibilityVisible  FeBlendVisibility = "visible"
-)
-
-type FeBlendWritingMode string
-
-const (
-	FeBlendWritingModeHorizontalTb FeBlendWritingMode = "horizontal-tb"
-	FeBlendWritingModeLr           FeBlendWritingMode = "lr"
-	FeBlendWritingModeLrTb         FeBlendWritingMode = "lr-tb"
-	FeBlendWritingModeRl           FeBlendWritingMode = "rl"
-	FeBlendWritingModeRlTb         FeBlendWritingMode = "rl-tb"
-	FeBlendWritingModeSidewaysLr   FeBlendWritingMode = "sideways-lr"
-	FeBlendWritingModeSidewaysRl   FeBlendWritingMode = "sideways-rl"
-	FeBlendWritingModeTb           FeBlendWritingMode = "tb"
-	FeBlendWritingModeTbRl         FeBlendWritingMode = "tb-rl"
-	FeBlendWritingModeVerticalLr   FeBlendWritingMode = "vertical-lr"
-	FeBlendWritingModeVerticalRl   FeBlendWritingMode = "vertical-rl"
-)
-
-type FeBlendXmlSpace string
-
-const (
-	FeBlendXmlSpaceDefault  FeBlendXmlSpace = "default"
-	FeBlendXmlSpacePreserve FeBlendXmlSpace = "preserve"
-)
+// SVGContent marks <feBlend> as a permitted child (Content).
+func (*FeBlendElement) SVGContent() {}
 
 func (e *FeBlendElement) Height(s string) *FeBlendElement {
 	e.attributes.Set("height", s)
@@ -417,7 +187,7 @@ func (e *FeBlendElement) In2(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) Mode(a FeBlendMode) *FeBlendElement {
+func (e *FeBlendElement) Mode(a Mode) *FeBlendElement {
 	e.attributes.Set("mode", string(a))
 
 	return e
@@ -447,14 +217,10 @@ func (e *FeBlendElement) Y(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) AlignmentBaseline(a FeBlendAlignmentBaseline) *FeBlendElement {
+func (e *FeBlendElement) AlignmentBaseline(a AlignmentBaseline) *FeBlendElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeBlendAlignmentBaselineCustom(s string) FeBlendAlignmentBaseline {
-	return FeBlendAlignmentBaseline(s)
 }
 
 func (e *FeBlendElement) AriaUnsafe(name string, s string) *FeBlendElement {
@@ -508,14 +274,10 @@ func (e *FeBlendElement) ClipPath(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) ClipRule(a FeBlendClipRule) *FeBlendElement {
+func (e *FeBlendElement) ClipRule(a ClipRule) *FeBlendElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeBlendClipRuleCustom(s string) FeBlendClipRule {
-	return FeBlendClipRule(s)
 }
 
 func (e *FeBlendElement) Color(s string) *FeBlendElement {
@@ -524,24 +286,16 @@ func (e *FeBlendElement) Color(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) ColorInterpolation(a FeBlendColorInterpolation) *FeBlendElement {
+func (e *FeBlendElement) ColorInterpolation(a ColorInterpolation) *FeBlendElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeBlendColorInterpolationCustom(s string) FeBlendColorInterpolation {
-	return FeBlendColorInterpolation(s)
-}
-
-func (e *FeBlendElement) ColorInterpolationFilters(a FeBlendColorInterpolationFilters) *FeBlendElement {
+func (e *FeBlendElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeBlendElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeBlendColorInterpolationFiltersCustom(s string) FeBlendColorInterpolationFilters {
-	return FeBlendColorInterpolationFilters(s)
 }
 
 func (e *FeBlendElement) Cursor(s string) *FeBlendElement {
@@ -566,14 +320,10 @@ func (e *FeBlendElement) Data(name string, s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) Direction(a FeBlendDirection) *FeBlendElement {
+func (e *FeBlendElement) Direction(a Direction) *FeBlendElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeBlendDirectionCustom(s string) FeBlendDirection {
-	return FeBlendDirection(s)
 }
 
 func (e *FeBlendElement) Display(s string) *FeBlendElement {
@@ -582,14 +332,10 @@ func (e *FeBlendElement) Display(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) DominantBaseline(a FeBlendDominantBaseline) *FeBlendElement {
+func (e *FeBlendElement) DominantBaseline(a DominantBaseline) *FeBlendElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeBlendDominantBaselineCustom(s string) FeBlendDominantBaseline {
-	return FeBlendDominantBaseline(s)
 }
 
 func (e *FeBlendElement) Fill(s string) *FeBlendElement {
@@ -604,14 +350,10 @@ func (e *FeBlendElement) FillOpacity(f float64) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) FillRule(a FeBlendFillRule) *FeBlendElement {
+func (e *FeBlendElement) FillRule(a FillRule) *FeBlendElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeBlendFillRuleCustom(s string) FeBlendFillRule {
-	return FeBlendFillRule(s)
 }
 
 func (e *FeBlendElement) Filter(s string) *FeBlendElement {
@@ -656,14 +398,10 @@ func (e *FeBlendElement) FontStretch(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) FontStyle(a FeBlendFontStyle) *FeBlendElement {
+func (e *FeBlendElement) FontStyle(a FontStyle) *FeBlendElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeBlendFontStyleCustom(s string) FeBlendFontStyle {
-	return FeBlendFontStyle(s)
 }
 
 func (e *FeBlendElement) FontVariant(s string) *FeBlendElement {
@@ -702,14 +440,10 @@ func (e *FeBlendElement) Id(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) ImageRendering(a FeBlendImageRendering) *FeBlendElement {
+func (e *FeBlendElement) ImageRendering(a ImageRendering) *FeBlendElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeBlendImageRenderingCustom(s string) FeBlendImageRendering {
-	return FeBlendImageRendering(s)
 }
 
 func (e *FeBlendElement) Lang(s string) *FeBlendElement {
@@ -760,14 +494,10 @@ func (e *FeBlendElement) Opacity(f float64) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) Overflow(a FeBlendOverflow) *FeBlendElement {
+func (e *FeBlendElement) Overflow(a Overflow) *FeBlendElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeBlendOverflowCustom(s string) FeBlendOverflow {
-	return FeBlendOverflow(s)
 }
 
 func (e *FeBlendElement) PaintOrder(s string) *FeBlendElement {
@@ -776,14 +506,10 @@ func (e *FeBlendElement) PaintOrder(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) PointerEvents(a FeBlendPointerEvents) *FeBlendElement {
+func (e *FeBlendElement) PointerEvents(a PointerEvents) *FeBlendElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeBlendPointerEventsCustom(s string) FeBlendPointerEvents {
-	return FeBlendPointerEvents(s)
 }
 
 func (e *FeBlendElement) RequiredExtensions(s string) *FeBlendElement {
@@ -792,14 +518,10 @@ func (e *FeBlendElement) RequiredExtensions(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) ShapeRendering(a FeBlendShapeRendering) *FeBlendElement {
+func (e *FeBlendElement) ShapeRendering(a ShapeRendering) *FeBlendElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeBlendShapeRenderingCustom(s string) FeBlendShapeRendering {
-	return FeBlendShapeRendering(s)
 }
 
 func (e *FeBlendElement) StopColor(s string) *FeBlendElement {
@@ -832,24 +554,16 @@ func (e *FeBlendElement) StrokeDashoffset(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) StrokeLinecap(a FeBlendStrokeLinecap) *FeBlendElement {
+func (e *FeBlendElement) StrokeLinecap(a StrokeLinecap) *FeBlendElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeBlendStrokeLinecapCustom(s string) FeBlendStrokeLinecap {
-	return FeBlendStrokeLinecap(s)
-}
-
-func (e *FeBlendElement) StrokeLinejoin(a FeBlendStrokeLinejoin) *FeBlendElement {
+func (e *FeBlendElement) StrokeLinejoin(a StrokeLinejoin) *FeBlendElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeBlendStrokeLinejoinCustom(s string) FeBlendStrokeLinejoin {
-	return FeBlendStrokeLinejoin(s)
 }
 
 func (e *FeBlendElement) StrokeMiterlimit(f float64) *FeBlendElement {
@@ -882,14 +596,10 @@ func (e *FeBlendElement) Tabindex(i int) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) TextAnchor(a FeBlendTextAnchor) *FeBlendElement {
+func (e *FeBlendElement) TextAnchor(a TextAnchor) *FeBlendElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeBlendTextAnchorCustom(s string) FeBlendTextAnchor {
-	return FeBlendTextAnchor(s)
 }
 
 func (e *FeBlendElement) TextDecoration(s string) *FeBlendElement {
@@ -904,14 +614,10 @@ func (e *FeBlendElement) TextOverflow(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) TextRendering(a FeBlendTextRendering) *FeBlendElement {
+func (e *FeBlendElement) TextRendering(a TextRendering) *FeBlendElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeBlendTextRenderingCustom(s string) FeBlendTextRendering {
-	return FeBlendTextRendering(s)
 }
 
 func (e *FeBlendElement) Transform(s string) *FeBlendElement {
@@ -920,14 +626,10 @@ func (e *FeBlendElement) Transform(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) TransformBox(a FeBlendTransformBox) *FeBlendElement {
+func (e *FeBlendElement) TransformBox(a TransformBox) *FeBlendElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeBlendTransformBoxCustom(s string) FeBlendTransformBox {
-	return FeBlendTransformBox(s)
 }
 
 func (e *FeBlendElement) TransformOrigin(s string) *FeBlendElement {
@@ -942,24 +644,16 @@ func (e *FeBlendElement) UnicodeBidi(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) VectorEffect(a FeBlendVectorEffect) *FeBlendElement {
+func (e *FeBlendElement) VectorEffect(a VectorEffect) *FeBlendElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeBlendVectorEffectCustom(s string) FeBlendVectorEffect {
-	return FeBlendVectorEffect(s)
-}
-
-func (e *FeBlendElement) Visibility(a FeBlendVisibility) *FeBlendElement {
+func (e *FeBlendElement) Visibility(a Visibility) *FeBlendElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeBlendVisibilityCustom(s string) FeBlendVisibility {
-	return FeBlendVisibility(s)
 }
 
 func (e *FeBlendElement) WhiteSpace(s string) *FeBlendElement {
@@ -974,14 +668,10 @@ func (e *FeBlendElement) WordSpacing(s string) *FeBlendElement {
 	return e
 }
 
-func (e *FeBlendElement) WritingMode(a FeBlendWritingMode) *FeBlendElement {
+func (e *FeBlendElement) WritingMode(a WritingMode) *FeBlendElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeBlendWritingModeCustom(s string) FeBlendWritingMode {
-	return FeBlendWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -996,7 +686,7 @@ func (e *FeBlendElement) XmlLang(s string) *FeBlendElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeBlendElement) XmlSpace(a FeBlendXmlSpace) *FeBlendElement {
+func (e *FeBlendElement) XmlSpace(a XmlSpace) *FeBlendElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

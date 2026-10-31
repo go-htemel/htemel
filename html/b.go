@@ -13,16 +13,20 @@ import (
 )
 
 type BElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // B creates a tag <b> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The b element represents a span of text to which attention is being drawn for utilitarian purposes without conveying any extra importance and with no implication of an alternate voice or mood, such as key words in a document abstract, product names in a review, actionable words in interactive text-driven software, or an article lede.
-func B(children ...htemel.Node) *BElement {
+func B(children ...htemel.PhrasingContent) *BElement {
 	node := &BElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func B(children ...htemel.Node) *BElement {
 }
 
 // BIf creates a tag <b> instance that is only rendered when condition is true.
-func BIf(condition bool, children ...htemel.Node) *BElement {
+func BIf(condition bool, children ...htemel.PhrasingContent) *BElement {
 	if condition {
 		return B(children...)
 	}
@@ -43,7 +47,7 @@ func BIf(condition bool, children ...htemel.Node) *BElement {
 }
 
 // BTernary creates a tag <b> containing then when condition is true, otherwise containing otherwise.
-func BTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BElement {
+func BTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *BElement {
 	if condition {
 		return B(then)
 	}
@@ -51,7 +55,7 @@ func BTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BElement
 }
 
 // Children appends children to this element.
-func (e *BElement) Children(children ...htemel.Node) *BElement {
+func (e *BElement) Children(children ...htemel.PhrasingContent) *BElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *BElement) Textf(format string, args ...any) *BElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BElement) If(cond bool, child htemel.Node) *BElement {
+func (e *BElement) If(cond bool, child htemel.PhrasingContent) *BElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *BElement) If(cond bool, child htemel.Node) *BElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BElement) IfElse(cond bool, then, els htemel.Node) *BElement {
+func (e *BElement) IfElse(cond bool, then, els htemel.PhrasingContent) *BElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *BElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BAutocapitalize string
-
-const (
-	BAutocapitalizeCharacters BAutocapitalize = "characters"
-	BAutocapitalizeNone       BAutocapitalize = "none"
-	BAutocapitalizeOff        BAutocapitalize = "off"
-	BAutocapitalizeOn         BAutocapitalize = "on"
-	BAutocapitalizeSentences  BAutocapitalize = "sentences"
-	BAutocapitalizeWords      BAutocapitalize = "words"
-)
-
-type BAutocorrect string
-
-const (
-	BAutocorrectOff   BAutocorrect = "off"
-	BAutocorrectOn    BAutocorrect = "on"
-	BAutocorrectEmpty BAutocorrect = ""
-)
-
-type BContenteditable string
-
-const (
-	BContenteditableFalse         BContenteditable = "false"
-	BContenteditablePlaintextOnly BContenteditable = "plaintext-only"
-	BContenteditableTrue          BContenteditable = "true"
-	BContenteditableEmpty         BContenteditable = ""
-)
-
-type BDir string
-
-const (
-	BDirAuto BDir = "auto"
-	BDirLtr  BDir = "ltr"
-	BDirRtl  BDir = "rtl"
-)
-
-type BDraggable string
-
-const (
-	BDraggableFalse BDraggable = "false"
-	BDraggableTrue  BDraggable = "true"
-)
-
-type BEnterkeyhint string
-
-const (
-	BEnterkeyhintDone     BEnterkeyhint = "done"
-	BEnterkeyhintEnter    BEnterkeyhint = "enter"
-	BEnterkeyhintGo       BEnterkeyhint = "go"
-	BEnterkeyhintNext     BEnterkeyhint = "next"
-	BEnterkeyhintPrevious BEnterkeyhint = "previous"
-	BEnterkeyhintSearch   BEnterkeyhint = "search"
-	BEnterkeyhintSend     BEnterkeyhint = "send"
-)
-
-type BHidden string
-
-const (
-	BHiddenHidden     BHidden = "hidden"
-	BHiddenUntilFound BHidden = "until-found"
-	BHiddenEmpty      BHidden = ""
-)
-
-type BInputmode string
-
-const (
-	BInputmodeDecimal BInputmode = "decimal"
-	BInputmodeEmail   BInputmode = "email"
-	BInputmodeNone    BInputmode = "none"
-	BInputmodeNumeric BInputmode = "numeric"
-	BInputmodeSearch  BInputmode = "search"
-	BInputmodeTel     BInputmode = "tel"
-	BInputmodeText    BInputmode = "text"
-	BInputmodeUrl     BInputmode = "url"
-)
-
-type BPopover string
-
-const (
-	BPopoverAuto   BPopover = "auto"
-	BPopoverHint   BPopover = "hint"
-	BPopoverManual BPopover = "manual"
-	BPopoverEmpty  BPopover = ""
-)
-
-type BSpellcheck string
-
-const (
-	BSpellcheckFalse BSpellcheck = "false"
-	BSpellcheckTrue  BSpellcheck = "true"
-	BSpellcheckEmpty BSpellcheck = ""
-)
-
-type BTranslate string
-
-const (
-	BTranslateNo    BTranslate = "no"
-	BTranslateYes   BTranslate = "yes"
-	BTranslateEmpty BTranslate = ""
-)
-
-type BWritingsuggestions string
-
-const (
-	BWritingsuggestionsFalse BWritingsuggestions = "false"
-	BWritingsuggestionsTrue  BWritingsuggestions = "true"
-	BWritingsuggestionsEmpty BWritingsuggestions = ""
-)
-
 func (e *BElement) Accesskey(r rune) *BElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *BElement) Aria(name string, s string) *BElement {
 	return e
 }
 
-func (e *BElement) Autocapitalize(a BAutocapitalize) *BElement {
+func (e *BElement) Autocapitalize(a Autocapitalize) *BElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *BElement) Autocapitalize(a BAutocapitalize) *BElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Autocorrect(v ...BAutocorrect) *BElement {
-	var val BAutocorrect
+func (e *BElement) Autocorrect(v ...Autocorrect) *BElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *BElement) Class(s ...string) *BElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Contenteditable(v ...BContenteditable) *BElement {
-	var val BContenteditable
+func (e *BElement) Contenteditable(v ...Contenteditable) *BElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *BElement) Data(name string, s string) *BElement {
 	return e
 }
 
-func (e *BElement) Dir(a BDir) *BElement {
+func (e *BElement) Dir(a Dir) *BElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BElement) Draggable(a BDraggable) *BElement {
+func (e *BElement) Draggable(a Draggable) *BElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BElement) Enterkeyhint(a BEnterkeyhint) *BElement {
+func (e *BElement) Enterkeyhint(a Enterkeyhint) *BElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *BElement) Headingreset(b bool) *BElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Hidden(v ...BHidden) *BElement {
-	var val BHidden
+func (e *BElement) Hidden(v ...Hidden) *BElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *BElement) Inert(b bool) *BElement {
 	return e
 }
 
-func (e *BElement) Inputmode(a BInputmode) *BElement {
+func (e *BElement) Inputmode(a Inputmode) *BElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *BElement) Part(s ...string) *BElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Popover(v ...BPopover) *BElement {
-	var val BPopover
+func (e *BElement) Popover(v ...Popover) *BElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *BElement) Slot(s string) *BElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Spellcheck(v ...BSpellcheck) *BElement {
-	var val BSpellcheck
+func (e *BElement) Spellcheck(v ...Spellcheck) *BElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *BElement) Title(s string) *BElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Translate(v ...BTranslate) *BElement {
-	var val BTranslate
+func (e *BElement) Translate(v ...Translate) *BElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *BElement) Translate(v ...BTranslate) *BElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BElement) Writingsuggestions(v ...BWritingsuggestions) *BElement {
-	var val BWritingsuggestions
+func (e *BElement) Writingsuggestions(v ...Writingsuggestions) *BElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

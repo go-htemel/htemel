@@ -13,16 +13,21 @@ import (
 )
 
 type SlotElement struct {
+	htemel.PhrasingMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Slot creates a tag <slot> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <slot> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The slot element defines a slot. It is typically used in a shadow tree. A slot element represents its assigned nodes, if any, and its contents otherwise.
-func Slot(children ...htemel.Node) *SlotElement {
+func Slot(children ...htemel.FlowContent) *SlotElement {
 	node := &SlotElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Slot(children ...htemel.Node) *SlotElement {
 }
 
 // SlotIf creates a tag <slot> instance that is only rendered when condition is true.
-func SlotIf(condition bool, children ...htemel.Node) *SlotElement {
+func SlotIf(condition bool, children ...htemel.FlowContent) *SlotElement {
 	if condition {
 		return Slot(children...)
 	}
@@ -43,7 +48,7 @@ func SlotIf(condition bool, children ...htemel.Node) *SlotElement {
 }
 
 // SlotTernary creates a tag <slot> containing then when condition is true, otherwise containing otherwise.
-func SlotTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SlotElement {
+func SlotTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *SlotElement {
 	if condition {
 		return Slot(then)
 	}
@@ -51,7 +56,7 @@ func SlotTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SlotE
 }
 
 // Children appends children to this element.
-func (e *SlotElement) Children(children ...htemel.Node) *SlotElement {
+func (e *SlotElement) Children(children ...htemel.FlowContent) *SlotElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *SlotElement) Textf(format string, args ...any) *SlotElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SlotElement) If(cond bool, child htemel.Node) *SlotElement {
+func (e *SlotElement) If(cond bool, child htemel.FlowContent) *SlotElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *SlotElement) If(cond bool, child htemel.Node) *SlotElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SlotElement) IfElse(cond bool, then, els htemel.Node) *SlotElement {
+func (e *SlotElement) IfElse(cond bool, then, els htemel.FlowContent) *SlotElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *SlotElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SlotAutocapitalize string
-
-const (
-	SlotAutocapitalizeCharacters SlotAutocapitalize = "characters"
-	SlotAutocapitalizeNone       SlotAutocapitalize = "none"
-	SlotAutocapitalizeOff        SlotAutocapitalize = "off"
-	SlotAutocapitalizeOn         SlotAutocapitalize = "on"
-	SlotAutocapitalizeSentences  SlotAutocapitalize = "sentences"
-	SlotAutocapitalizeWords      SlotAutocapitalize = "words"
-)
-
-type SlotAutocorrect string
-
-const (
-	SlotAutocorrectOff   SlotAutocorrect = "off"
-	SlotAutocorrectOn    SlotAutocorrect = "on"
-	SlotAutocorrectEmpty SlotAutocorrect = ""
-)
-
-type SlotContenteditable string
-
-const (
-	SlotContenteditableFalse         SlotContenteditable = "false"
-	SlotContenteditablePlaintextOnly SlotContenteditable = "plaintext-only"
-	SlotContenteditableTrue          SlotContenteditable = "true"
-	SlotContenteditableEmpty         SlotContenteditable = ""
-)
-
-type SlotDir string
-
-const (
-	SlotDirAuto SlotDir = "auto"
-	SlotDirLtr  SlotDir = "ltr"
-	SlotDirRtl  SlotDir = "rtl"
-)
-
-type SlotDraggable string
-
-const (
-	SlotDraggableFalse SlotDraggable = "false"
-	SlotDraggableTrue  SlotDraggable = "true"
-)
-
-type SlotEnterkeyhint string
-
-const (
-	SlotEnterkeyhintDone     SlotEnterkeyhint = "done"
-	SlotEnterkeyhintEnter    SlotEnterkeyhint = "enter"
-	SlotEnterkeyhintGo       SlotEnterkeyhint = "go"
-	SlotEnterkeyhintNext     SlotEnterkeyhint = "next"
-	SlotEnterkeyhintPrevious SlotEnterkeyhint = "previous"
-	SlotEnterkeyhintSearch   SlotEnterkeyhint = "search"
-	SlotEnterkeyhintSend     SlotEnterkeyhint = "send"
-)
-
-type SlotHidden string
-
-const (
-	SlotHiddenHidden     SlotHidden = "hidden"
-	SlotHiddenUntilFound SlotHidden = "until-found"
-	SlotHiddenEmpty      SlotHidden = ""
-)
-
-type SlotInputmode string
-
-const (
-	SlotInputmodeDecimal SlotInputmode = "decimal"
-	SlotInputmodeEmail   SlotInputmode = "email"
-	SlotInputmodeNone    SlotInputmode = "none"
-	SlotInputmodeNumeric SlotInputmode = "numeric"
-	SlotInputmodeSearch  SlotInputmode = "search"
-	SlotInputmodeTel     SlotInputmode = "tel"
-	SlotInputmodeText    SlotInputmode = "text"
-	SlotInputmodeUrl     SlotInputmode = "url"
-)
-
-type SlotPopover string
-
-const (
-	SlotPopoverAuto   SlotPopover = "auto"
-	SlotPopoverHint   SlotPopover = "hint"
-	SlotPopoverManual SlotPopover = "manual"
-	SlotPopoverEmpty  SlotPopover = ""
-)
-
-type SlotSpellcheck string
-
-const (
-	SlotSpellcheckFalse SlotSpellcheck = "false"
-	SlotSpellcheckTrue  SlotSpellcheck = "true"
-	SlotSpellcheckEmpty SlotSpellcheck = ""
-)
-
-type SlotTranslate string
-
-const (
-	SlotTranslateNo    SlotTranslate = "no"
-	SlotTranslateYes   SlotTranslate = "yes"
-	SlotTranslateEmpty SlotTranslate = ""
-)
-
-type SlotWritingsuggestions string
-
-const (
-	SlotWritingsuggestionsFalse SlotWritingsuggestions = "false"
-	SlotWritingsuggestionsTrue  SlotWritingsuggestions = "true"
-	SlotWritingsuggestionsEmpty SlotWritingsuggestions = ""
-)
-
 func (e *SlotElement) Name(s string) *SlotElement {
 	e.attributes.Set("name", s)
 
@@ -301,7 +197,7 @@ func (e *SlotElement) Aria(name string, s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Autocapitalize(a SlotAutocapitalize) *SlotElement {
+func (e *SlotElement) Autocapitalize(a Autocapitalize) *SlotElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +205,8 @@ func (e *SlotElement) Autocapitalize(a SlotAutocapitalize) *SlotElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Autocorrect(v ...SlotAutocorrect) *SlotElement {
-	var val SlotAutocorrect
+func (e *SlotElement) Autocorrect(v ...Autocorrect) *SlotElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +231,8 @@ func (e *SlotElement) Class(s ...string) *SlotElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Contenteditable(v ...SlotContenteditable) *SlotElement {
-	var val SlotContenteditable
+func (e *SlotElement) Contenteditable(v ...Contenteditable) *SlotElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +257,19 @@ func (e *SlotElement) Data(name string, s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Dir(a SlotDir) *SlotElement {
+func (e *SlotElement) Dir(a Dir) *SlotElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SlotElement) Draggable(a SlotDraggable) *SlotElement {
+func (e *SlotElement) Draggable(a Draggable) *SlotElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SlotElement) Enterkeyhint(a SlotEnterkeyhint) *SlotElement {
+func (e *SlotElement) Enterkeyhint(a Enterkeyhint) *SlotElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +297,8 @@ func (e *SlotElement) Headingreset(b bool) *SlotElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Hidden(v ...SlotHidden) *SlotElement {
-	var val SlotHidden
+func (e *SlotElement) Hidden(v ...Hidden) *SlotElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +321,7 @@ func (e *SlotElement) Inert(b bool) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Inputmode(a SlotInputmode) *SlotElement {
+func (e *SlotElement) Inputmode(a Inputmode) *SlotElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +387,8 @@ func (e *SlotElement) Part(s ...string) *SlotElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Popover(v ...SlotPopover) *SlotElement {
-	var val SlotPopover
+func (e *SlotElement) Popover(v ...Popover) *SlotElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +411,8 @@ func (e *SlotElement) Slot(s string) *SlotElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Spellcheck(v ...SlotSpellcheck) *SlotElement {
-	var val SlotSpellcheck
+func (e *SlotElement) Spellcheck(v ...Spellcheck) *SlotElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +441,8 @@ func (e *SlotElement) Title(s string) *SlotElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Translate(v ...SlotTranslate) *SlotElement {
-	var val SlotTranslate
+func (e *SlotElement) Translate(v ...Translate) *SlotElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +453,8 @@ func (e *SlotElement) Translate(v ...SlotTranslate) *SlotElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SlotElement) Writingsuggestions(v ...SlotWritingsuggestions) *SlotElement {
-	var val SlotWritingsuggestions
+func (e *SlotElement) Writingsuggestions(v ...Writingsuggestions) *SlotElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

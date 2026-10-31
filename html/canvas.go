@@ -13,16 +13,23 @@ import (
 )
 
 type CanvasElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Canvas creates a tag <canvas> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <canvas> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The canvas element provides scripts with a resolution-dependent bitmap canvas, which can be used for rendering graphs, game graphics, art, or other visual images on the fly.
-func Canvas(children ...htemel.Node) *CanvasElement {
+func Canvas(children ...htemel.FlowContent) *CanvasElement {
 	node := &CanvasElement{
 		children: children,
 	}
@@ -31,7 +38,7 @@ func Canvas(children ...htemel.Node) *CanvasElement {
 }
 
 // CanvasIf creates a tag <canvas> instance that is only rendered when condition is true.
-func CanvasIf(condition bool, children ...htemel.Node) *CanvasElement {
+func CanvasIf(condition bool, children ...htemel.FlowContent) *CanvasElement {
 	if condition {
 		return Canvas(children...)
 	}
@@ -43,7 +50,7 @@ func CanvasIf(condition bool, children ...htemel.Node) *CanvasElement {
 }
 
 // CanvasTernary creates a tag <canvas> containing then when condition is true, otherwise containing otherwise.
-func CanvasTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CanvasElement {
+func CanvasTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *CanvasElement {
 	if condition {
 		return Canvas(then)
 	}
@@ -51,7 +58,7 @@ func CanvasTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Can
 }
 
 // Children appends children to this element.
-func (e *CanvasElement) Children(children ...htemel.Node) *CanvasElement {
+func (e *CanvasElement) Children(children ...htemel.FlowContent) *CanvasElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +81,7 @@ func (e *CanvasElement) Textf(format string, args ...any) *CanvasElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *CanvasElement) If(cond bool, child htemel.Node) *CanvasElement {
+func (e *CanvasElement) If(cond bool, child htemel.FlowContent) *CanvasElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +89,7 @@ func (e *CanvasElement) If(cond bool, child htemel.Node) *CanvasElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *CanvasElement) IfElse(cond bool, then, els htemel.Node) *CanvasElement {
+func (e *CanvasElement) IfElse(cond bool, then, els htemel.FlowContent) *CanvasElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +171,6 @@ func (e *CanvasElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type CanvasAutocapitalize string
-
-const (
-	CanvasAutocapitalizeCharacters CanvasAutocapitalize = "characters"
-	CanvasAutocapitalizeNone       CanvasAutocapitalize = "none"
-	CanvasAutocapitalizeOff        CanvasAutocapitalize = "off"
-	CanvasAutocapitalizeOn         CanvasAutocapitalize = "on"
-	CanvasAutocapitalizeSentences  CanvasAutocapitalize = "sentences"
-	CanvasAutocapitalizeWords      CanvasAutocapitalize = "words"
-)
-
-type CanvasAutocorrect string
-
-const (
-	CanvasAutocorrectOff   CanvasAutocorrect = "off"
-	CanvasAutocorrectOn    CanvasAutocorrect = "on"
-	CanvasAutocorrectEmpty CanvasAutocorrect = ""
-)
-
-type CanvasContenteditable string
-
-const (
-	CanvasContenteditableFalse         CanvasContenteditable = "false"
-	CanvasContenteditablePlaintextOnly CanvasContenteditable = "plaintext-only"
-	CanvasContenteditableTrue          CanvasContenteditable = "true"
-	CanvasContenteditableEmpty         CanvasContenteditable = ""
-)
-
-type CanvasDir string
-
-const (
-	CanvasDirAuto CanvasDir = "auto"
-	CanvasDirLtr  CanvasDir = "ltr"
-	CanvasDirRtl  CanvasDir = "rtl"
-)
-
-type CanvasDraggable string
-
-const (
-	CanvasDraggableFalse CanvasDraggable = "false"
-	CanvasDraggableTrue  CanvasDraggable = "true"
-)
-
-type CanvasEnterkeyhint string
-
-const (
-	CanvasEnterkeyhintDone     CanvasEnterkeyhint = "done"
-	CanvasEnterkeyhintEnter    CanvasEnterkeyhint = "enter"
-	CanvasEnterkeyhintGo       CanvasEnterkeyhint = "go"
-	CanvasEnterkeyhintNext     CanvasEnterkeyhint = "next"
-	CanvasEnterkeyhintPrevious CanvasEnterkeyhint = "previous"
-	CanvasEnterkeyhintSearch   CanvasEnterkeyhint = "search"
-	CanvasEnterkeyhintSend     CanvasEnterkeyhint = "send"
-)
-
-type CanvasHidden string
-
-const (
-	CanvasHiddenHidden     CanvasHidden = "hidden"
-	CanvasHiddenUntilFound CanvasHidden = "until-found"
-	CanvasHiddenEmpty      CanvasHidden = ""
-)
-
-type CanvasInputmode string
-
-const (
-	CanvasInputmodeDecimal CanvasInputmode = "decimal"
-	CanvasInputmodeEmail   CanvasInputmode = "email"
-	CanvasInputmodeNone    CanvasInputmode = "none"
-	CanvasInputmodeNumeric CanvasInputmode = "numeric"
-	CanvasInputmodeSearch  CanvasInputmode = "search"
-	CanvasInputmodeTel     CanvasInputmode = "tel"
-	CanvasInputmodeText    CanvasInputmode = "text"
-	CanvasInputmodeUrl     CanvasInputmode = "url"
-)
-
-type CanvasPopover string
-
-const (
-	CanvasPopoverAuto   CanvasPopover = "auto"
-	CanvasPopoverHint   CanvasPopover = "hint"
-	CanvasPopoverManual CanvasPopover = "manual"
-	CanvasPopoverEmpty  CanvasPopover = ""
-)
-
-type CanvasSpellcheck string
-
-const (
-	CanvasSpellcheckFalse CanvasSpellcheck = "false"
-	CanvasSpellcheckTrue  CanvasSpellcheck = "true"
-	CanvasSpellcheckEmpty CanvasSpellcheck = ""
-)
-
-type CanvasTranslate string
-
-const (
-	CanvasTranslateNo    CanvasTranslate = "no"
-	CanvasTranslateYes   CanvasTranslate = "yes"
-	CanvasTranslateEmpty CanvasTranslate = ""
-)
-
-type CanvasWritingsuggestions string
-
-const (
-	CanvasWritingsuggestionsFalse CanvasWritingsuggestions = "false"
-	CanvasWritingsuggestionsTrue  CanvasWritingsuggestions = "true"
-	CanvasWritingsuggestionsEmpty CanvasWritingsuggestions = ""
-)
-
 func (e *CanvasElement) Height(i int) *CanvasElement {
 	e.attributes.Set("height", strconv.Itoa(i))
 
@@ -307,7 +205,7 @@ func (e *CanvasElement) Aria(name string, s string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Autocapitalize(a CanvasAutocapitalize) *CanvasElement {
+func (e *CanvasElement) Autocapitalize(a Autocapitalize) *CanvasElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -315,8 +213,8 @@ func (e *CanvasElement) Autocapitalize(a CanvasAutocapitalize) *CanvasElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Autocorrect(v ...CanvasAutocorrect) *CanvasElement {
-	var val CanvasAutocorrect
+func (e *CanvasElement) Autocorrect(v ...Autocorrect) *CanvasElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -341,8 +239,8 @@ func (e *CanvasElement) Class(s ...string) *CanvasElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Contenteditable(v ...CanvasContenteditable) *CanvasElement {
-	var val CanvasContenteditable
+func (e *CanvasElement) Contenteditable(v ...Contenteditable) *CanvasElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -367,19 +265,19 @@ func (e *CanvasElement) Data(name string, s string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Dir(a CanvasDir) *CanvasElement {
+func (e *CanvasElement) Dir(a Dir) *CanvasElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *CanvasElement) Draggable(a CanvasDraggable) *CanvasElement {
+func (e *CanvasElement) Draggable(a Draggable) *CanvasElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *CanvasElement) Enterkeyhint(a CanvasEnterkeyhint) *CanvasElement {
+func (e *CanvasElement) Enterkeyhint(a Enterkeyhint) *CanvasElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -407,8 +305,8 @@ func (e *CanvasElement) Headingreset(b bool) *CanvasElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Hidden(v ...CanvasHidden) *CanvasElement {
-	var val CanvasHidden
+func (e *CanvasElement) Hidden(v ...Hidden) *CanvasElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -431,7 +329,7 @@ func (e *CanvasElement) Inert(b bool) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Inputmode(a CanvasInputmode) *CanvasElement {
+func (e *CanvasElement) Inputmode(a Inputmode) *CanvasElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -497,8 +395,8 @@ func (e *CanvasElement) Part(s ...string) *CanvasElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Popover(v ...CanvasPopover) *CanvasElement {
-	var val CanvasPopover
+func (e *CanvasElement) Popover(v ...Popover) *CanvasElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -521,8 +419,8 @@ func (e *CanvasElement) Slot(s string) *CanvasElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Spellcheck(v ...CanvasSpellcheck) *CanvasElement {
-	var val CanvasSpellcheck
+func (e *CanvasElement) Spellcheck(v ...Spellcheck) *CanvasElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +449,8 @@ func (e *CanvasElement) Title(s string) *CanvasElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Translate(v ...CanvasTranslate) *CanvasElement {
-	var val CanvasTranslate
+func (e *CanvasElement) Translate(v ...Translate) *CanvasElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -563,8 +461,8 @@ func (e *CanvasElement) Translate(v ...CanvasTranslate) *CanvasElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CanvasElement) Writingsuggestions(v ...CanvasWritingsuggestions) *CanvasElement {
-	var val CanvasWritingsuggestions
+func (e *CanvasElement) Writingsuggestions(v ...Writingsuggestions) *CanvasElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type FigcaptionElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Figcaption creates a tag <figcaption> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The figcaption element represents a caption or legend for the rest of the contents of the figcaption element's parent figure element, if any.
-func Figcaption(children ...htemel.Node) *FigcaptionElement {
+func Figcaption(children ...htemel.FlowContent) *FigcaptionElement {
 	node := &FigcaptionElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Figcaption(children ...htemel.Node) *FigcaptionElement {
 }
 
 // FigcaptionIf creates a tag <figcaption> instance that is only rendered when condition is true.
-func FigcaptionIf(condition bool, children ...htemel.Node) *FigcaptionElement {
+func FigcaptionIf(condition bool, children ...htemel.FlowContent) *FigcaptionElement {
 	if condition {
 		return Figcaption(children...)
 	}
@@ -43,7 +45,7 @@ func FigcaptionIf(condition bool, children ...htemel.Node) *FigcaptionElement {
 }
 
 // FigcaptionTernary creates a tag <figcaption> containing then when condition is true, otherwise containing otherwise.
-func FigcaptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FigcaptionElement {
+func FigcaptionTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *FigcaptionElement {
 	if condition {
 		return Figcaption(then)
 	}
@@ -51,7 +53,7 @@ func FigcaptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) 
 }
 
 // Children appends children to this element.
-func (e *FigcaptionElement) Children(children ...htemel.Node) *FigcaptionElement {
+func (e *FigcaptionElement) Children(children ...htemel.FlowContent) *FigcaptionElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FigcaptionElement) Textf(format string, args ...any) *FigcaptionElement
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FigcaptionElement) If(cond bool, child htemel.Node) *FigcaptionElement {
+func (e *FigcaptionElement) If(cond bool, child htemel.FlowContent) *FigcaptionElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FigcaptionElement) If(cond bool, child htemel.Node) *FigcaptionElement 
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FigcaptionElement) IfElse(cond bool, then, els htemel.Node) *FigcaptionElement {
+func (e *FigcaptionElement) IfElse(cond bool, then, els htemel.FlowContent) *FigcaptionElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *FigcaptionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FigcaptionAutocapitalize string
-
-const (
-	FigcaptionAutocapitalizeCharacters FigcaptionAutocapitalize = "characters"
-	FigcaptionAutocapitalizeNone       FigcaptionAutocapitalize = "none"
-	FigcaptionAutocapitalizeOff        FigcaptionAutocapitalize = "off"
-	FigcaptionAutocapitalizeOn         FigcaptionAutocapitalize = "on"
-	FigcaptionAutocapitalizeSentences  FigcaptionAutocapitalize = "sentences"
-	FigcaptionAutocapitalizeWords      FigcaptionAutocapitalize = "words"
-)
-
-type FigcaptionAutocorrect string
-
-const (
-	FigcaptionAutocorrectOff   FigcaptionAutocorrect = "off"
-	FigcaptionAutocorrectOn    FigcaptionAutocorrect = "on"
-	FigcaptionAutocorrectEmpty FigcaptionAutocorrect = ""
-)
-
-type FigcaptionContenteditable string
-
-const (
-	FigcaptionContenteditableFalse         FigcaptionContenteditable = "false"
-	FigcaptionContenteditablePlaintextOnly FigcaptionContenteditable = "plaintext-only"
-	FigcaptionContenteditableTrue          FigcaptionContenteditable = "true"
-	FigcaptionContenteditableEmpty         FigcaptionContenteditable = ""
-)
-
-type FigcaptionDir string
-
-const (
-	FigcaptionDirAuto FigcaptionDir = "auto"
-	FigcaptionDirLtr  FigcaptionDir = "ltr"
-	FigcaptionDirRtl  FigcaptionDir = "rtl"
-)
-
-type FigcaptionDraggable string
-
-const (
-	FigcaptionDraggableFalse FigcaptionDraggable = "false"
-	FigcaptionDraggableTrue  FigcaptionDraggable = "true"
-)
-
-type FigcaptionEnterkeyhint string
-
-const (
-	FigcaptionEnterkeyhintDone     FigcaptionEnterkeyhint = "done"
-	FigcaptionEnterkeyhintEnter    FigcaptionEnterkeyhint = "enter"
-	FigcaptionEnterkeyhintGo       FigcaptionEnterkeyhint = "go"
-	FigcaptionEnterkeyhintNext     FigcaptionEnterkeyhint = "next"
-	FigcaptionEnterkeyhintPrevious FigcaptionEnterkeyhint = "previous"
-	FigcaptionEnterkeyhintSearch   FigcaptionEnterkeyhint = "search"
-	FigcaptionEnterkeyhintSend     FigcaptionEnterkeyhint = "send"
-)
-
-type FigcaptionHidden string
-
-const (
-	FigcaptionHiddenHidden     FigcaptionHidden = "hidden"
-	FigcaptionHiddenUntilFound FigcaptionHidden = "until-found"
-	FigcaptionHiddenEmpty      FigcaptionHidden = ""
-)
-
-type FigcaptionInputmode string
-
-const (
-	FigcaptionInputmodeDecimal FigcaptionInputmode = "decimal"
-	FigcaptionInputmodeEmail   FigcaptionInputmode = "email"
-	FigcaptionInputmodeNone    FigcaptionInputmode = "none"
-	FigcaptionInputmodeNumeric FigcaptionInputmode = "numeric"
-	FigcaptionInputmodeSearch  FigcaptionInputmode = "search"
-	FigcaptionInputmodeTel     FigcaptionInputmode = "tel"
-	FigcaptionInputmodeText    FigcaptionInputmode = "text"
-	FigcaptionInputmodeUrl     FigcaptionInputmode = "url"
-)
-
-type FigcaptionPopover string
-
-const (
-	FigcaptionPopoverAuto   FigcaptionPopover = "auto"
-	FigcaptionPopoverHint   FigcaptionPopover = "hint"
-	FigcaptionPopoverManual FigcaptionPopover = "manual"
-	FigcaptionPopoverEmpty  FigcaptionPopover = ""
-)
-
-type FigcaptionSpellcheck string
-
-const (
-	FigcaptionSpellcheckFalse FigcaptionSpellcheck = "false"
-	FigcaptionSpellcheckTrue  FigcaptionSpellcheck = "true"
-	FigcaptionSpellcheckEmpty FigcaptionSpellcheck = ""
-)
-
-type FigcaptionTranslate string
-
-const (
-	FigcaptionTranslateNo    FigcaptionTranslate = "no"
-	FigcaptionTranslateYes   FigcaptionTranslate = "yes"
-	FigcaptionTranslateEmpty FigcaptionTranslate = ""
-)
-
-type FigcaptionWritingsuggestions string
-
-const (
-	FigcaptionWritingsuggestionsFalse FigcaptionWritingsuggestions = "false"
-	FigcaptionWritingsuggestionsTrue  FigcaptionWritingsuggestions = "true"
-	FigcaptionWritingsuggestionsEmpty FigcaptionWritingsuggestions = ""
-)
+// HTMLFigureChild marks <figcaption> as a permitted child of <figure> (FigureChild).
+func (*FigcaptionElement) HTMLFigureChild() {}
 
 func (e *FigcaptionElement) Accesskey(r rune) *FigcaptionElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +191,7 @@ func (e *FigcaptionElement) Aria(name string, s string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Autocapitalize(a FigcaptionAutocapitalize) *FigcaptionElement {
+func (e *FigcaptionElement) Autocapitalize(a Autocapitalize) *FigcaptionElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *FigcaptionElement) Autocapitalize(a FigcaptionAutocapitalize) *Figcapti
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Autocorrect(v ...FigcaptionAutocorrect) *FigcaptionElement {
-	var val FigcaptionAutocorrect
+func (e *FigcaptionElement) Autocorrect(v ...Autocorrect) *FigcaptionElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *FigcaptionElement) Class(s ...string) *FigcaptionElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Contenteditable(v ...FigcaptionContenteditable) *FigcaptionElement {
-	var val FigcaptionContenteditable
+func (e *FigcaptionElement) Contenteditable(v ...Contenteditable) *FigcaptionElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *FigcaptionElement) Data(name string, s string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Dir(a FigcaptionDir) *FigcaptionElement {
+func (e *FigcaptionElement) Dir(a Dir) *FigcaptionElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *FigcaptionElement) Draggable(a FigcaptionDraggable) *FigcaptionElement {
+func (e *FigcaptionElement) Draggable(a Draggable) *FigcaptionElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *FigcaptionElement) Enterkeyhint(a FigcaptionEnterkeyhint) *FigcaptionElement {
+func (e *FigcaptionElement) Enterkeyhint(a Enterkeyhint) *FigcaptionElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *FigcaptionElement) Headingreset(b bool) *FigcaptionElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Hidden(v ...FigcaptionHidden) *FigcaptionElement {
-	var val FigcaptionHidden
+func (e *FigcaptionElement) Hidden(v ...Hidden) *FigcaptionElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *FigcaptionElement) Inert(b bool) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Inputmode(a FigcaptionInputmode) *FigcaptionElement {
+func (e *FigcaptionElement) Inputmode(a Inputmode) *FigcaptionElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *FigcaptionElement) Part(s ...string) *FigcaptionElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Popover(v ...FigcaptionPopover) *FigcaptionElement {
-	var val FigcaptionPopover
+func (e *FigcaptionElement) Popover(v ...Popover) *FigcaptionElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *FigcaptionElement) Slot(s string) *FigcaptionElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Spellcheck(v ...FigcaptionSpellcheck) *FigcaptionElement {
-	var val FigcaptionSpellcheck
+func (e *FigcaptionElement) Spellcheck(v ...Spellcheck) *FigcaptionElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *FigcaptionElement) Title(s string) *FigcaptionElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Translate(v ...FigcaptionTranslate) *FigcaptionElement {
-	var val FigcaptionTranslate
+func (e *FigcaptionElement) Translate(v ...Translate) *FigcaptionElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *FigcaptionElement) Translate(v ...FigcaptionTranslate) *FigcaptionEleme
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FigcaptionElement) Writingsuggestions(v ...FigcaptionWritingsuggestions) *FigcaptionElement {
-	var val FigcaptionWritingsuggestions
+func (e *FigcaptionElement) Writingsuggestions(v ...Writingsuggestions) *FigcaptionElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

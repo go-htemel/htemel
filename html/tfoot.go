@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,29 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// TfootChild is a permitted child of <tfoot>: <tr>, script-supporting elements.
+//
+// It is implemented by <script>, <template>, <tr>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type TfootChild interface {
+	htemel.Node
+	HTMLTfootChild()
+}
+
 type TfootElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []TfootChild
 	skipRender bool
 }
 
 // Tfoot creates a tag <tfoot> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <tr>, script-supporting elements (TfootChild).
+//
 // Spec Description: The tfoot element represents the block of rows that consist of the column summaries (footers) for the parent table element, if the tfoot element has a parent and it is a table.
-func Tfoot(children ...htemel.Node) *TfootElement {
+func Tfoot(children ...TfootChild) *TfootElement {
 	node := &TfootElement{
 		children: children,
 	}
@@ -31,7 +42,7 @@ func Tfoot(children ...htemel.Node) *TfootElement {
 }
 
 // TfootIf creates a tag <tfoot> instance that is only rendered when condition is true.
-func TfootIf(condition bool, children ...htemel.Node) *TfootElement {
+func TfootIf(condition bool, children ...TfootChild) *TfootElement {
 	if condition {
 		return Tfoot(children...)
 	}
@@ -43,7 +54,7 @@ func TfootIf(condition bool, children ...htemel.Node) *TfootElement {
 }
 
 // TfootTernary creates a tag <tfoot> containing then when condition is true, otherwise containing otherwise.
-func TfootTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TfootElement {
+func TfootTernary(condition bool, then TfootChild, otherwise TfootChild) *TfootElement {
 	if condition {
 		return Tfoot(then)
 	}
@@ -51,7 +62,7 @@ func TfootTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Tfoo
 }
 
 // Children appends children to this element.
-func (e *TfootElement) Children(children ...htemel.Node) *TfootElement {
+func (e *TfootElement) Children(children ...TfootChild) *TfootElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +73,8 @@ func (e *TfootElement) With(fn func(*TfootElement)) *TfootElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *TfootElement) Text(text string) *TfootElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *TfootElement) Textf(format string, args ...any) *TfootElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TfootElement) If(cond bool, child htemel.Node) *TfootElement {
+func (e *TfootElement) If(cond bool, child TfootChild) *TfootElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +82,7 @@ func (e *TfootElement) If(cond bool, child htemel.Node) *TfootElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TfootElement) IfElse(cond bool, then, els htemel.Node) *TfootElement {
+func (e *TfootElement) IfElse(cond bool, then, els TfootChild) *TfootElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +164,8 @@ func (e *TfootElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TfootAutocapitalize string
-
-const (
-	TfootAutocapitalizeCharacters TfootAutocapitalize = "characters"
-	TfootAutocapitalizeNone       TfootAutocapitalize = "none"
-	TfootAutocapitalizeOff        TfootAutocapitalize = "off"
-	TfootAutocapitalizeOn         TfootAutocapitalize = "on"
-	TfootAutocapitalizeSentences  TfootAutocapitalize = "sentences"
-	TfootAutocapitalizeWords      TfootAutocapitalize = "words"
-)
-
-type TfootAutocorrect string
-
-const (
-	TfootAutocorrectOff   TfootAutocorrect = "off"
-	TfootAutocorrectOn    TfootAutocorrect = "on"
-	TfootAutocorrectEmpty TfootAutocorrect = ""
-)
-
-type TfootContenteditable string
-
-const (
-	TfootContenteditableFalse         TfootContenteditable = "false"
-	TfootContenteditablePlaintextOnly TfootContenteditable = "plaintext-only"
-	TfootContenteditableTrue          TfootContenteditable = "true"
-	TfootContenteditableEmpty         TfootContenteditable = ""
-)
-
-type TfootDir string
-
-const (
-	TfootDirAuto TfootDir = "auto"
-	TfootDirLtr  TfootDir = "ltr"
-	TfootDirRtl  TfootDir = "rtl"
-)
-
-type TfootDraggable string
-
-const (
-	TfootDraggableFalse TfootDraggable = "false"
-	TfootDraggableTrue  TfootDraggable = "true"
-)
-
-type TfootEnterkeyhint string
-
-const (
-	TfootEnterkeyhintDone     TfootEnterkeyhint = "done"
-	TfootEnterkeyhintEnter    TfootEnterkeyhint = "enter"
-	TfootEnterkeyhintGo       TfootEnterkeyhint = "go"
-	TfootEnterkeyhintNext     TfootEnterkeyhint = "next"
-	TfootEnterkeyhintPrevious TfootEnterkeyhint = "previous"
-	TfootEnterkeyhintSearch   TfootEnterkeyhint = "search"
-	TfootEnterkeyhintSend     TfootEnterkeyhint = "send"
-)
-
-type TfootHidden string
-
-const (
-	TfootHiddenHidden     TfootHidden = "hidden"
-	TfootHiddenUntilFound TfootHidden = "until-found"
-	TfootHiddenEmpty      TfootHidden = ""
-)
-
-type TfootInputmode string
-
-const (
-	TfootInputmodeDecimal TfootInputmode = "decimal"
-	TfootInputmodeEmail   TfootInputmode = "email"
-	TfootInputmodeNone    TfootInputmode = "none"
-	TfootInputmodeNumeric TfootInputmode = "numeric"
-	TfootInputmodeSearch  TfootInputmode = "search"
-	TfootInputmodeTel     TfootInputmode = "tel"
-	TfootInputmodeText    TfootInputmode = "text"
-	TfootInputmodeUrl     TfootInputmode = "url"
-)
-
-type TfootPopover string
-
-const (
-	TfootPopoverAuto   TfootPopover = "auto"
-	TfootPopoverHint   TfootPopover = "hint"
-	TfootPopoverManual TfootPopover = "manual"
-	TfootPopoverEmpty  TfootPopover = ""
-)
-
-type TfootSpellcheck string
-
-const (
-	TfootSpellcheckFalse TfootSpellcheck = "false"
-	TfootSpellcheckTrue  TfootSpellcheck = "true"
-	TfootSpellcheckEmpty TfootSpellcheck = ""
-)
-
-type TfootTranslate string
-
-const (
-	TfootTranslateNo    TfootTranslate = "no"
-	TfootTranslateYes   TfootTranslate = "yes"
-	TfootTranslateEmpty TfootTranslate = ""
-)
-
-type TfootWritingsuggestions string
-
-const (
-	TfootWritingsuggestionsFalse TfootWritingsuggestions = "false"
-	TfootWritingsuggestionsTrue  TfootWritingsuggestions = "true"
-	TfootWritingsuggestionsEmpty TfootWritingsuggestions = ""
-)
+// HTMLTableChild marks <tfoot> as a permitted child of <table> (TableChild).
+func (*TfootElement) HTMLTableChild() {}
 
 func (e *TfootElement) Accesskey(r rune) *TfootElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +189,7 @@ func (e *TfootElement) Aria(name string, s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Autocapitalize(a TfootAutocapitalize) *TfootElement {
+func (e *TfootElement) Autocapitalize(a Autocapitalize) *TfootElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *TfootElement) Autocapitalize(a TfootAutocapitalize) *TfootElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Autocorrect(v ...TfootAutocorrect) *TfootElement {
-	var val TfootAutocorrect
+func (e *TfootElement) Autocorrect(v ...Autocorrect) *TfootElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *TfootElement) Class(s ...string) *TfootElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Contenteditable(v ...TfootContenteditable) *TfootElement {
-	var val TfootContenteditable
+func (e *TfootElement) Contenteditable(v ...Contenteditable) *TfootElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *TfootElement) Data(name string, s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Dir(a TfootDir) *TfootElement {
+func (e *TfootElement) Dir(a Dir) *TfootElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TfootElement) Draggable(a TfootDraggable) *TfootElement {
+func (e *TfootElement) Draggable(a Draggable) *TfootElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TfootElement) Enterkeyhint(a TfootEnterkeyhint) *TfootElement {
+func (e *TfootElement) Enterkeyhint(a Enterkeyhint) *TfootElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *TfootElement) Headingreset(b bool) *TfootElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Hidden(v ...TfootHidden) *TfootElement {
-	var val TfootHidden
+func (e *TfootElement) Hidden(v ...Hidden) *TfootElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *TfootElement) Inert(b bool) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Inputmode(a TfootInputmode) *TfootElement {
+func (e *TfootElement) Inputmode(a Inputmode) *TfootElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *TfootElement) Part(s ...string) *TfootElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Popover(v ...TfootPopover) *TfootElement {
-	var val TfootPopover
+func (e *TfootElement) Popover(v ...Popover) *TfootElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *TfootElement) Slot(s string) *TfootElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Spellcheck(v ...TfootSpellcheck) *TfootElement {
-	var val TfootSpellcheck
+func (e *TfootElement) Spellcheck(v ...Spellcheck) *TfootElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *TfootElement) Title(s string) *TfootElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Translate(v ...TfootTranslate) *TfootElement {
-	var val TfootTranslate
+func (e *TfootElement) Translate(v ...Translate) *TfootElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *TfootElement) Translate(v ...TfootTranslate) *TfootElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TfootElement) Writingsuggestions(v ...TfootWritingsuggestions) *TfootElement {
-	var val TfootWritingsuggestions
+func (e *TfootElement) Writingsuggestions(v ...Writingsuggestions) *TfootElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

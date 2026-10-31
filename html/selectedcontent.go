@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -14,80 +13,37 @@ import (
 
 type SelectedcontentElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+
 	skipRender bool
 }
 
 // Selectedcontent creates a tag <selectedcontent> instance and returns it for further modification.
-// Any children passed will be nested within the tag.
+//
+// <selectedcontent> takes no children (its content model is nothing), but it is not a void
+// element: it renders an end tag.
 //
 // Spec Description: The selectedcontent element reflects the contents of a select element's currently selected option element. selectedcontent elements can be used to declaratively show the selected option element's contents within the select element's first child button element.
-func Selectedcontent(children ...htemel.Node) *SelectedcontentElement {
-	node := &SelectedcontentElement{
-		children: children,
-	}
+func Selectedcontent() *SelectedcontentElement {
+	node := &SelectedcontentElement{}
 
 	return node
 }
 
 // SelectedcontentIf creates a tag <selectedcontent> instance that is only rendered when condition is true.
-func SelectedcontentIf(condition bool, children ...htemel.Node) *SelectedcontentElement {
+func SelectedcontentIf(condition bool) *SelectedcontentElement {
 	if condition {
-		return Selectedcontent(children...)
+		return Selectedcontent()
 	}
 
 	return &SelectedcontentElement{
-		children:   children,
+
 		skipRender: true,
 	}
-}
-
-// SelectedcontentTernary creates a tag <selectedcontent> containing then when condition is true, otherwise containing otherwise.
-func SelectedcontentTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SelectedcontentElement {
-	if condition {
-		return Selectedcontent(then)
-	}
-	return Selectedcontent(otherwise)
-}
-
-// Children appends children to this element.
-func (e *SelectedcontentElement) Children(children ...htemel.Node) *SelectedcontentElement {
-	e.children = append(e.children, children...)
-	return e
 }
 
 // With allows passing a function to modify the element via a closure.
 func (e *SelectedcontentElement) With(fn func(*SelectedcontentElement)) *SelectedcontentElement {
 	fn(e)
-	return e
-}
-
-// Text adds an HTML-escaped text node to the element.
-func (e *SelectedcontentElement) Text(text string) *SelectedcontentElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *SelectedcontentElement) Textf(format string, args ...any) *SelectedcontentElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SelectedcontentElement) If(cond bool, child htemel.Node) *SelectedcontentElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SelectedcontentElement) IfElse(cond bool, then, els htemel.Node) *SelectedcontentElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
 	return e
 }
 
@@ -164,115 +120,6 @@ func (e *SelectedcontentElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SelectedcontentAutocapitalize string
-
-const (
-	SelectedcontentAutocapitalizeCharacters SelectedcontentAutocapitalize = "characters"
-	SelectedcontentAutocapitalizeNone       SelectedcontentAutocapitalize = "none"
-	SelectedcontentAutocapitalizeOff        SelectedcontentAutocapitalize = "off"
-	SelectedcontentAutocapitalizeOn         SelectedcontentAutocapitalize = "on"
-	SelectedcontentAutocapitalizeSentences  SelectedcontentAutocapitalize = "sentences"
-	SelectedcontentAutocapitalizeWords      SelectedcontentAutocapitalize = "words"
-)
-
-type SelectedcontentAutocorrect string
-
-const (
-	SelectedcontentAutocorrectOff   SelectedcontentAutocorrect = "off"
-	SelectedcontentAutocorrectOn    SelectedcontentAutocorrect = "on"
-	SelectedcontentAutocorrectEmpty SelectedcontentAutocorrect = ""
-)
-
-type SelectedcontentContenteditable string
-
-const (
-	SelectedcontentContenteditableFalse         SelectedcontentContenteditable = "false"
-	SelectedcontentContenteditablePlaintextOnly SelectedcontentContenteditable = "plaintext-only"
-	SelectedcontentContenteditableTrue          SelectedcontentContenteditable = "true"
-	SelectedcontentContenteditableEmpty         SelectedcontentContenteditable = ""
-)
-
-type SelectedcontentDir string
-
-const (
-	SelectedcontentDirAuto SelectedcontentDir = "auto"
-	SelectedcontentDirLtr  SelectedcontentDir = "ltr"
-	SelectedcontentDirRtl  SelectedcontentDir = "rtl"
-)
-
-type SelectedcontentDraggable string
-
-const (
-	SelectedcontentDraggableFalse SelectedcontentDraggable = "false"
-	SelectedcontentDraggableTrue  SelectedcontentDraggable = "true"
-)
-
-type SelectedcontentEnterkeyhint string
-
-const (
-	SelectedcontentEnterkeyhintDone     SelectedcontentEnterkeyhint = "done"
-	SelectedcontentEnterkeyhintEnter    SelectedcontentEnterkeyhint = "enter"
-	SelectedcontentEnterkeyhintGo       SelectedcontentEnterkeyhint = "go"
-	SelectedcontentEnterkeyhintNext     SelectedcontentEnterkeyhint = "next"
-	SelectedcontentEnterkeyhintPrevious SelectedcontentEnterkeyhint = "previous"
-	SelectedcontentEnterkeyhintSearch   SelectedcontentEnterkeyhint = "search"
-	SelectedcontentEnterkeyhintSend     SelectedcontentEnterkeyhint = "send"
-)
-
-type SelectedcontentHidden string
-
-const (
-	SelectedcontentHiddenHidden     SelectedcontentHidden = "hidden"
-	SelectedcontentHiddenUntilFound SelectedcontentHidden = "until-found"
-	SelectedcontentHiddenEmpty      SelectedcontentHidden = ""
-)
-
-type SelectedcontentInputmode string
-
-const (
-	SelectedcontentInputmodeDecimal SelectedcontentInputmode = "decimal"
-	SelectedcontentInputmodeEmail   SelectedcontentInputmode = "email"
-	SelectedcontentInputmodeNone    SelectedcontentInputmode = "none"
-	SelectedcontentInputmodeNumeric SelectedcontentInputmode = "numeric"
-	SelectedcontentInputmodeSearch  SelectedcontentInputmode = "search"
-	SelectedcontentInputmodeTel     SelectedcontentInputmode = "tel"
-	SelectedcontentInputmodeText    SelectedcontentInputmode = "text"
-	SelectedcontentInputmodeUrl     SelectedcontentInputmode = "url"
-)
-
-type SelectedcontentPopover string
-
-const (
-	SelectedcontentPopoverAuto   SelectedcontentPopover = "auto"
-	SelectedcontentPopoverHint   SelectedcontentPopover = "hint"
-	SelectedcontentPopoverManual SelectedcontentPopover = "manual"
-	SelectedcontentPopoverEmpty  SelectedcontentPopover = ""
-)
-
-type SelectedcontentSpellcheck string
-
-const (
-	SelectedcontentSpellcheckFalse SelectedcontentSpellcheck = "false"
-	SelectedcontentSpellcheckTrue  SelectedcontentSpellcheck = "true"
-	SelectedcontentSpellcheckEmpty SelectedcontentSpellcheck = ""
-)
-
-type SelectedcontentTranslate string
-
-const (
-	SelectedcontentTranslateNo    SelectedcontentTranslate = "no"
-	SelectedcontentTranslateYes   SelectedcontentTranslate = "yes"
-	SelectedcontentTranslateEmpty SelectedcontentTranslate = ""
-)
-
-type SelectedcontentWritingsuggestions string
-
-const (
-	SelectedcontentWritingsuggestionsFalse SelectedcontentWritingsuggestions = "false"
-	SelectedcontentWritingsuggestionsTrue  SelectedcontentWritingsuggestions = "true"
-	SelectedcontentWritingsuggestionsEmpty SelectedcontentWritingsuggestions = ""
-)
-
 func (e *SelectedcontentElement) Accesskey(r rune) *SelectedcontentElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +142,7 @@ func (e *SelectedcontentElement) Aria(name string, s string) *SelectedcontentEle
 	return e
 }
 
-func (e *SelectedcontentElement) Autocapitalize(a SelectedcontentAutocapitalize) *SelectedcontentElement {
+func (e *SelectedcontentElement) Autocapitalize(a Autocapitalize) *SelectedcontentElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +150,8 @@ func (e *SelectedcontentElement) Autocapitalize(a SelectedcontentAutocapitalize)
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Autocorrect(v ...SelectedcontentAutocorrect) *SelectedcontentElement {
-	var val SelectedcontentAutocorrect
+func (e *SelectedcontentElement) Autocorrect(v ...Autocorrect) *SelectedcontentElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +176,8 @@ func (e *SelectedcontentElement) Class(s ...string) *SelectedcontentElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Contenteditable(v ...SelectedcontentContenteditable) *SelectedcontentElement {
-	var val SelectedcontentContenteditable
+func (e *SelectedcontentElement) Contenteditable(v ...Contenteditable) *SelectedcontentElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +202,19 @@ func (e *SelectedcontentElement) Data(name string, s string) *SelectedcontentEle
 	return e
 }
 
-func (e *SelectedcontentElement) Dir(a SelectedcontentDir) *SelectedcontentElement {
+func (e *SelectedcontentElement) Dir(a Dir) *SelectedcontentElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SelectedcontentElement) Draggable(a SelectedcontentDraggable) *SelectedcontentElement {
+func (e *SelectedcontentElement) Draggable(a Draggable) *SelectedcontentElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SelectedcontentElement) Enterkeyhint(a SelectedcontentEnterkeyhint) *SelectedcontentElement {
+func (e *SelectedcontentElement) Enterkeyhint(a Enterkeyhint) *SelectedcontentElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +242,8 @@ func (e *SelectedcontentElement) Headingreset(b bool) *SelectedcontentElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Hidden(v ...SelectedcontentHidden) *SelectedcontentElement {
-	var val SelectedcontentHidden
+func (e *SelectedcontentElement) Hidden(v ...Hidden) *SelectedcontentElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +266,7 @@ func (e *SelectedcontentElement) Inert(b bool) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Inputmode(a SelectedcontentInputmode) *SelectedcontentElement {
+func (e *SelectedcontentElement) Inputmode(a Inputmode) *SelectedcontentElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +332,8 @@ func (e *SelectedcontentElement) Part(s ...string) *SelectedcontentElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Popover(v ...SelectedcontentPopover) *SelectedcontentElement {
-	var val SelectedcontentPopover
+func (e *SelectedcontentElement) Popover(v ...Popover) *SelectedcontentElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +356,8 @@ func (e *SelectedcontentElement) Slot(s string) *SelectedcontentElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Spellcheck(v ...SelectedcontentSpellcheck) *SelectedcontentElement {
-	var val SelectedcontentSpellcheck
+func (e *SelectedcontentElement) Spellcheck(v ...Spellcheck) *SelectedcontentElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +386,8 @@ func (e *SelectedcontentElement) Title(s string) *SelectedcontentElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Translate(v ...SelectedcontentTranslate) *SelectedcontentElement {
-	var val SelectedcontentTranslate
+func (e *SelectedcontentElement) Translate(v ...Translate) *SelectedcontentElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +398,8 @@ func (e *SelectedcontentElement) Translate(v ...SelectedcontentTranslate) *Selec
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectedcontentElement) Writingsuggestions(v ...SelectedcontentWritingsuggestions) *SelectedcontentElement {
-	var val SelectedcontentWritingsuggestions
+func (e *SelectedcontentElement) Writingsuggestions(v ...Writingsuggestions) *SelectedcontentElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -561,7 +408,7 @@ func (e *SelectedcontentElement) Writingsuggestions(v ...SelectedcontentWritings
 	return e
 }
 
-// Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
+// Render writes the opening tag and its attributes, then writes the closing tag: <selectedcontent> has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
 // Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
@@ -582,12 +429,6 @@ func (e *SelectedcontentElement) Render(w io.Writer) error {
 			return err
 		}
 		if _, err := io.WriteString(w, ">"); err != nil {
-			return err
-		}
-	}
-
-	for _, child := range e.children {
-		if err := child.Render(w); err != nil {
 			return err
 		}
 	}

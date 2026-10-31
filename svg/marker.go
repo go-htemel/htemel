@@ -14,15 +14,17 @@ import (
 
 type MarkerElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Marker creates a tag <marker> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The marker element defines a graphic drawn at the vertices of a shape.
-func Marker(children ...htemel.Node) *MarkerElement {
+func Marker(children ...Content) *MarkerElement {
 	node := &MarkerElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Marker(children ...htemel.Node) *MarkerElement {
 }
 
 // MarkerIf creates a tag <marker> instance that is only rendered when condition is true.
-func MarkerIf(condition bool, children ...htemel.Node) *MarkerElement {
+func MarkerIf(condition bool, children ...Content) *MarkerElement {
 	if condition {
 		return Marker(children...)
 	}
@@ -43,7 +45,7 @@ func MarkerIf(condition bool, children ...htemel.Node) *MarkerElement {
 }
 
 // MarkerTernary creates a tag <marker> containing then when condition is true, otherwise containing otherwise.
-func MarkerTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MarkerElement {
+func MarkerTernary(condition bool, then Content, otherwise Content) *MarkerElement {
 	if condition {
 		return Marker(then)
 	}
@@ -51,7 +53,7 @@ func MarkerTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mar
 }
 
 // Children appends children to this element.
-func (e *MarkerElement) Children(children ...htemel.Node) *MarkerElement {
+func (e *MarkerElement) Children(children ...Content) *MarkerElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MarkerElement) Textf(format string, args ...any) *MarkerElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MarkerElement) If(cond bool, child htemel.Node) *MarkerElement {
+func (e *MarkerElement) If(cond bool, child Content) *MarkerElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MarkerElement) If(cond bool, child htemel.Node) *MarkerElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MarkerElement) IfElse(cond bool, then, els htemel.Node) *MarkerElement {
+func (e *MarkerElement) IfElse(cond bool, then, els Content) *MarkerElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,226 +166,8 @@ func (e *MarkerElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MarkerMarkerUnits string
-
-const (
-	MarkerMarkerUnitsStrokeWidth    MarkerMarkerUnits = "strokeWidth"
-	MarkerMarkerUnitsUserSpaceOnUse MarkerMarkerUnits = "userSpaceOnUse"
-)
-
-type MarkerAlignmentBaseline string
-
-const (
-	MarkerAlignmentBaselineAfterEdge      MarkerAlignmentBaseline = "after-edge"
-	MarkerAlignmentBaselineAlphabetic     MarkerAlignmentBaseline = "alphabetic"
-	MarkerAlignmentBaselineAuto           MarkerAlignmentBaseline = "auto"
-	MarkerAlignmentBaselineBaseline       MarkerAlignmentBaseline = "baseline"
-	MarkerAlignmentBaselineBeforeEdge     MarkerAlignmentBaseline = "before-edge"
-	MarkerAlignmentBaselineBottom         MarkerAlignmentBaseline = "bottom"
-	MarkerAlignmentBaselineCenter         MarkerAlignmentBaseline = "center"
-	MarkerAlignmentBaselineCentral        MarkerAlignmentBaseline = "central"
-	MarkerAlignmentBaselineHanging        MarkerAlignmentBaseline = "hanging"
-	MarkerAlignmentBaselineIdeographic    MarkerAlignmentBaseline = "ideographic"
-	MarkerAlignmentBaselineMathematical   MarkerAlignmentBaseline = "mathematical"
-	MarkerAlignmentBaselineMiddle         MarkerAlignmentBaseline = "middle"
-	MarkerAlignmentBaselineTextAfterEdge  MarkerAlignmentBaseline = "text-after-edge"
-	MarkerAlignmentBaselineTextBeforeEdge MarkerAlignmentBaseline = "text-before-edge"
-	MarkerAlignmentBaselineTextBottom     MarkerAlignmentBaseline = "text-bottom"
-	MarkerAlignmentBaselineTextTop        MarkerAlignmentBaseline = "text-top"
-	MarkerAlignmentBaselineTop            MarkerAlignmentBaseline = "top"
-)
-
-type MarkerClipRule string
-
-const (
-	MarkerClipRuleEvenodd MarkerClipRule = "evenodd"
-	MarkerClipRuleNonzero MarkerClipRule = "nonzero"
-)
-
-type MarkerColorInterpolation string
-
-const (
-	MarkerColorInterpolationAuto      MarkerColorInterpolation = "auto"
-	MarkerColorInterpolationLinearRGB MarkerColorInterpolation = "linearRGB"
-	MarkerColorInterpolationSRGB      MarkerColorInterpolation = "sRGB"
-)
-
-type MarkerColorInterpolationFilters string
-
-const (
-	MarkerColorInterpolationFiltersAuto      MarkerColorInterpolationFilters = "auto"
-	MarkerColorInterpolationFiltersLinearRGB MarkerColorInterpolationFilters = "linearRGB"
-	MarkerColorInterpolationFiltersSRGB      MarkerColorInterpolationFilters = "sRGB"
-)
-
-type MarkerDirection string
-
-const (
-	MarkerDirectionLtr MarkerDirection = "ltr"
-	MarkerDirectionRtl MarkerDirection = "rtl"
-)
-
-type MarkerDominantBaseline string
-
-const (
-	MarkerDominantBaselineAlphabetic   MarkerDominantBaseline = "alphabetic"
-	MarkerDominantBaselineAuto         MarkerDominantBaseline = "auto"
-	MarkerDominantBaselineCentral      MarkerDominantBaseline = "central"
-	MarkerDominantBaselineHanging      MarkerDominantBaseline = "hanging"
-	MarkerDominantBaselineIdeographic  MarkerDominantBaseline = "ideographic"
-	MarkerDominantBaselineMathematical MarkerDominantBaseline = "mathematical"
-	MarkerDominantBaselineMiddle       MarkerDominantBaseline = "middle"
-	MarkerDominantBaselineTextBottom   MarkerDominantBaseline = "text-bottom"
-	MarkerDominantBaselineTextTop      MarkerDominantBaseline = "text-top"
-)
-
-type MarkerFillRule string
-
-const (
-	MarkerFillRuleEvenodd MarkerFillRule = "evenodd"
-	MarkerFillRuleNonzero MarkerFillRule = "nonzero"
-)
-
-type MarkerFontStyle string
-
-const (
-	MarkerFontStyleItalic  MarkerFontStyle = "italic"
-	MarkerFontStyleNormal  MarkerFontStyle = "normal"
-	MarkerFontStyleOblique MarkerFontStyle = "oblique"
-)
-
-type MarkerImageRendering string
-
-const (
-	MarkerImageRenderingAuto            MarkerImageRendering = "auto"
-	MarkerImageRenderingCrispEdges      MarkerImageRendering = "crisp-edges"
-	MarkerImageRenderingHighQuality     MarkerImageRendering = "high-quality"
-	MarkerImageRenderingOptimizeQuality MarkerImageRendering = "optimizeQuality"
-	MarkerImageRenderingOptimizeSpeed   MarkerImageRendering = "optimizeSpeed"
-	MarkerImageRenderingPixelated       MarkerImageRendering = "pixelated"
-	MarkerImageRenderingSmooth          MarkerImageRendering = "smooth"
-)
-
-type MarkerOverflow string
-
-const (
-	MarkerOverflowAuto    MarkerOverflow = "auto"
-	MarkerOverflowClip    MarkerOverflow = "clip"
-	MarkerOverflowHidden  MarkerOverflow = "hidden"
-	MarkerOverflowScroll  MarkerOverflow = "scroll"
-	MarkerOverflowVisible MarkerOverflow = "visible"
-)
-
-type MarkerPointerEvents string
-
-const (
-	MarkerPointerEventsAll            MarkerPointerEvents = "all"
-	MarkerPointerEventsAuto           MarkerPointerEvents = "auto"
-	MarkerPointerEventsBoundingBox    MarkerPointerEvents = "bounding-box"
-	MarkerPointerEventsFill           MarkerPointerEvents = "fill"
-	MarkerPointerEventsNone           MarkerPointerEvents = "none"
-	MarkerPointerEventsPainted        MarkerPointerEvents = "painted"
-	MarkerPointerEventsStroke         MarkerPointerEvents = "stroke"
-	MarkerPointerEventsVisible        MarkerPointerEvents = "visible"
-	MarkerPointerEventsVisibleFill    MarkerPointerEvents = "visibleFill"
-	MarkerPointerEventsVisiblePainted MarkerPointerEvents = "visiblePainted"
-	MarkerPointerEventsVisibleStroke  MarkerPointerEvents = "visibleStroke"
-)
-
-type MarkerShapeRendering string
-
-const (
-	MarkerShapeRenderingAuto               MarkerShapeRendering = "auto"
-	MarkerShapeRenderingCrispEdges         MarkerShapeRendering = "crispEdges"
-	MarkerShapeRenderingGeometricPrecision MarkerShapeRendering = "geometricPrecision"
-	MarkerShapeRenderingOptimizeSpeed      MarkerShapeRendering = "optimizeSpeed"
-)
-
-type MarkerStrokeLinecap string
-
-const (
-	MarkerStrokeLinecapButt   MarkerStrokeLinecap = "butt"
-	MarkerStrokeLinecapRound  MarkerStrokeLinecap = "round"
-	MarkerStrokeLinecapSquare MarkerStrokeLinecap = "square"
-)
-
-type MarkerStrokeLinejoin string
-
-const (
-	MarkerStrokeLinejoinArcs      MarkerStrokeLinejoin = "arcs"
-	MarkerStrokeLinejoinBevel     MarkerStrokeLinejoin = "bevel"
-	MarkerStrokeLinejoinMiter     MarkerStrokeLinejoin = "miter"
-	MarkerStrokeLinejoinMiterClip MarkerStrokeLinejoin = "miter-clip"
-	MarkerStrokeLinejoinRound     MarkerStrokeLinejoin = "round"
-)
-
-type MarkerTextAnchor string
-
-const (
-	MarkerTextAnchorEnd    MarkerTextAnchor = "end"
-	MarkerTextAnchorMiddle MarkerTextAnchor = "middle"
-	MarkerTextAnchorStart  MarkerTextAnchor = "start"
-)
-
-type MarkerTextRendering string
-
-const (
-	MarkerTextRenderingAuto               MarkerTextRendering = "auto"
-	MarkerTextRenderingGeometricPrecision MarkerTextRendering = "geometricPrecision"
-	MarkerTextRenderingOptimizeLegibility MarkerTextRendering = "optimizeLegibility"
-	MarkerTextRenderingOptimizeSpeed      MarkerTextRendering = "optimizeSpeed"
-)
-
-type MarkerTransformBox string
-
-const (
-	MarkerTransformBoxBorderBox  MarkerTransformBox = "border-box"
-	MarkerTransformBoxContentBox MarkerTransformBox = "content-box"
-	MarkerTransformBoxFillBox    MarkerTransformBox = "fill-box"
-	MarkerTransformBoxStrokeBox  MarkerTransformBox = "stroke-box"
-	MarkerTransformBoxViewBox    MarkerTransformBox = "view-box"
-)
-
-type MarkerVectorEffect string
-
-const (
-	MarkerVectorEffectFixedPosition    MarkerVectorEffect = "fixed-position"
-	MarkerVectorEffectNonRotation      MarkerVectorEffect = "non-rotation"
-	MarkerVectorEffectNonScalingSize   MarkerVectorEffect = "non-scaling-size"
-	MarkerVectorEffectNonScalingStroke MarkerVectorEffect = "non-scaling-stroke"
-	MarkerVectorEffectNone             MarkerVectorEffect = "none"
-)
-
-type MarkerVisibility string
-
-const (
-	MarkerVisibilityCollapse MarkerVisibility = "collapse"
-	MarkerVisibilityHidden   MarkerVisibility = "hidden"
-	MarkerVisibilityVisible  MarkerVisibility = "visible"
-)
-
-type MarkerWritingMode string
-
-const (
-	MarkerWritingModeHorizontalTb MarkerWritingMode = "horizontal-tb"
-	MarkerWritingModeLr           MarkerWritingMode = "lr"
-	MarkerWritingModeLrTb         MarkerWritingMode = "lr-tb"
-	MarkerWritingModeRl           MarkerWritingMode = "rl"
-	MarkerWritingModeRlTb         MarkerWritingMode = "rl-tb"
-	MarkerWritingModeSidewaysLr   MarkerWritingMode = "sideways-lr"
-	MarkerWritingModeSidewaysRl   MarkerWritingMode = "sideways-rl"
-	MarkerWritingModeTb           MarkerWritingMode = "tb"
-	MarkerWritingModeTbRl         MarkerWritingMode = "tb-rl"
-	MarkerWritingModeVerticalLr   MarkerWritingMode = "vertical-lr"
-	MarkerWritingModeVerticalRl   MarkerWritingMode = "vertical-rl"
-)
-
-type MarkerXmlSpace string
-
-const (
-	MarkerXmlSpaceDefault  MarkerXmlSpace = "default"
-	MarkerXmlSpacePreserve MarkerXmlSpace = "preserve"
-)
+// SVGContent marks <marker> as a permitted child (Content).
+func (*MarkerElement) SVGContent() {}
 
 func (e *MarkerElement) MarkerHeight(s string) *MarkerElement {
 	e.attributes.Set("markerHeight", s)
@@ -391,7 +175,7 @@ func (e *MarkerElement) MarkerHeight(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) MarkerUnits(a MarkerMarkerUnits) *MarkerElement {
+func (e *MarkerElement) MarkerUnits(a MarkerUnits) *MarkerElement {
 	e.attributes.Set("markerUnits", string(a))
 
 	return e
@@ -433,14 +217,10 @@ func (e *MarkerElement) ViewBox(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) AlignmentBaseline(a MarkerAlignmentBaseline) *MarkerElement {
+func (e *MarkerElement) AlignmentBaseline(a AlignmentBaseline) *MarkerElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func MarkerAlignmentBaselineCustom(s string) MarkerAlignmentBaseline {
-	return MarkerAlignmentBaseline(s)
 }
 
 func (e *MarkerElement) AriaUnsafe(name string, s string) *MarkerElement {
@@ -494,14 +274,10 @@ func (e *MarkerElement) ClipPath(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) ClipRule(a MarkerClipRule) *MarkerElement {
+func (e *MarkerElement) ClipRule(a ClipRule) *MarkerElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func MarkerClipRuleCustom(s string) MarkerClipRule {
-	return MarkerClipRule(s)
 }
 
 func (e *MarkerElement) Color(s string) *MarkerElement {
@@ -510,24 +286,16 @@ func (e *MarkerElement) Color(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) ColorInterpolation(a MarkerColorInterpolation) *MarkerElement {
+func (e *MarkerElement) ColorInterpolation(a ColorInterpolation) *MarkerElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func MarkerColorInterpolationCustom(s string) MarkerColorInterpolation {
-	return MarkerColorInterpolation(s)
-}
-
-func (e *MarkerElement) ColorInterpolationFilters(a MarkerColorInterpolationFilters) *MarkerElement {
+func (e *MarkerElement) ColorInterpolationFilters(a ColorInterpolationFilters) *MarkerElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func MarkerColorInterpolationFiltersCustom(s string) MarkerColorInterpolationFilters {
-	return MarkerColorInterpolationFilters(s)
 }
 
 func (e *MarkerElement) Cursor(s string) *MarkerElement {
@@ -552,14 +320,10 @@ func (e *MarkerElement) Data(name string, s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) Direction(a MarkerDirection) *MarkerElement {
+func (e *MarkerElement) Direction(a Direction) *MarkerElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func MarkerDirectionCustom(s string) MarkerDirection {
-	return MarkerDirection(s)
 }
 
 func (e *MarkerElement) Display(s string) *MarkerElement {
@@ -568,14 +332,10 @@ func (e *MarkerElement) Display(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) DominantBaseline(a MarkerDominantBaseline) *MarkerElement {
+func (e *MarkerElement) DominantBaseline(a DominantBaseline) *MarkerElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func MarkerDominantBaselineCustom(s string) MarkerDominantBaseline {
-	return MarkerDominantBaseline(s)
 }
 
 func (e *MarkerElement) Fill(s string) *MarkerElement {
@@ -590,14 +350,10 @@ func (e *MarkerElement) FillOpacity(f float64) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) FillRule(a MarkerFillRule) *MarkerElement {
+func (e *MarkerElement) FillRule(a FillRule) *MarkerElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func MarkerFillRuleCustom(s string) MarkerFillRule {
-	return MarkerFillRule(s)
 }
 
 func (e *MarkerElement) Filter(s string) *MarkerElement {
@@ -642,14 +398,10 @@ func (e *MarkerElement) FontStretch(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) FontStyle(a MarkerFontStyle) *MarkerElement {
+func (e *MarkerElement) FontStyle(a FontStyle) *MarkerElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func MarkerFontStyleCustom(s string) MarkerFontStyle {
-	return MarkerFontStyle(s)
 }
 
 func (e *MarkerElement) FontVariant(s string) *MarkerElement {
@@ -688,14 +440,10 @@ func (e *MarkerElement) Id(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) ImageRendering(a MarkerImageRendering) *MarkerElement {
+func (e *MarkerElement) ImageRendering(a ImageRendering) *MarkerElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func MarkerImageRenderingCustom(s string) MarkerImageRendering {
-	return MarkerImageRendering(s)
 }
 
 func (e *MarkerElement) Lang(s string) *MarkerElement {
@@ -746,14 +494,10 @@ func (e *MarkerElement) Opacity(f float64) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) Overflow(a MarkerOverflow) *MarkerElement {
+func (e *MarkerElement) Overflow(a Overflow) *MarkerElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func MarkerOverflowCustom(s string) MarkerOverflow {
-	return MarkerOverflow(s)
 }
 
 func (e *MarkerElement) PaintOrder(s string) *MarkerElement {
@@ -762,14 +506,10 @@ func (e *MarkerElement) PaintOrder(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) PointerEvents(a MarkerPointerEvents) *MarkerElement {
+func (e *MarkerElement) PointerEvents(a PointerEvents) *MarkerElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func MarkerPointerEventsCustom(s string) MarkerPointerEvents {
-	return MarkerPointerEvents(s)
 }
 
 func (e *MarkerElement) RequiredExtensions(s string) *MarkerElement {
@@ -778,14 +518,10 @@ func (e *MarkerElement) RequiredExtensions(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) ShapeRendering(a MarkerShapeRendering) *MarkerElement {
+func (e *MarkerElement) ShapeRendering(a ShapeRendering) *MarkerElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func MarkerShapeRenderingCustom(s string) MarkerShapeRendering {
-	return MarkerShapeRendering(s)
 }
 
 func (e *MarkerElement) StopColor(s string) *MarkerElement {
@@ -818,24 +554,16 @@ func (e *MarkerElement) StrokeDashoffset(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) StrokeLinecap(a MarkerStrokeLinecap) *MarkerElement {
+func (e *MarkerElement) StrokeLinecap(a StrokeLinecap) *MarkerElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func MarkerStrokeLinecapCustom(s string) MarkerStrokeLinecap {
-	return MarkerStrokeLinecap(s)
-}
-
-func (e *MarkerElement) StrokeLinejoin(a MarkerStrokeLinejoin) *MarkerElement {
+func (e *MarkerElement) StrokeLinejoin(a StrokeLinejoin) *MarkerElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func MarkerStrokeLinejoinCustom(s string) MarkerStrokeLinejoin {
-	return MarkerStrokeLinejoin(s)
 }
 
 func (e *MarkerElement) StrokeMiterlimit(f float64) *MarkerElement {
@@ -868,14 +596,10 @@ func (e *MarkerElement) Tabindex(i int) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) TextAnchor(a MarkerTextAnchor) *MarkerElement {
+func (e *MarkerElement) TextAnchor(a TextAnchor) *MarkerElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func MarkerTextAnchorCustom(s string) MarkerTextAnchor {
-	return MarkerTextAnchor(s)
 }
 
 func (e *MarkerElement) TextDecoration(s string) *MarkerElement {
@@ -890,14 +614,10 @@ func (e *MarkerElement) TextOverflow(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) TextRendering(a MarkerTextRendering) *MarkerElement {
+func (e *MarkerElement) TextRendering(a TextRendering) *MarkerElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func MarkerTextRenderingCustom(s string) MarkerTextRendering {
-	return MarkerTextRendering(s)
 }
 
 func (e *MarkerElement) Transform(s string) *MarkerElement {
@@ -906,14 +626,10 @@ func (e *MarkerElement) Transform(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) TransformBox(a MarkerTransformBox) *MarkerElement {
+func (e *MarkerElement) TransformBox(a TransformBox) *MarkerElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func MarkerTransformBoxCustom(s string) MarkerTransformBox {
-	return MarkerTransformBox(s)
 }
 
 func (e *MarkerElement) TransformOrigin(s string) *MarkerElement {
@@ -928,24 +644,16 @@ func (e *MarkerElement) UnicodeBidi(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) VectorEffect(a MarkerVectorEffect) *MarkerElement {
+func (e *MarkerElement) VectorEffect(a VectorEffect) *MarkerElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func MarkerVectorEffectCustom(s string) MarkerVectorEffect {
-	return MarkerVectorEffect(s)
-}
-
-func (e *MarkerElement) Visibility(a MarkerVisibility) *MarkerElement {
+func (e *MarkerElement) Visibility(a Visibility) *MarkerElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func MarkerVisibilityCustom(s string) MarkerVisibility {
-	return MarkerVisibility(s)
 }
 
 func (e *MarkerElement) WhiteSpace(s string) *MarkerElement {
@@ -960,14 +668,10 @@ func (e *MarkerElement) WordSpacing(s string) *MarkerElement {
 	return e
 }
 
-func (e *MarkerElement) WritingMode(a MarkerWritingMode) *MarkerElement {
+func (e *MarkerElement) WritingMode(a WritingMode) *MarkerElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func MarkerWritingModeCustom(s string) MarkerWritingMode {
-	return MarkerWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -982,7 +686,7 @@ func (e *MarkerElement) XmlLang(s string) *MarkerElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *MarkerElement) XmlSpace(a MarkerXmlSpace) *MarkerElement {
+func (e *MarkerElement) XmlSpace(a XmlSpace) *MarkerElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

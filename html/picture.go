@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,32 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// PictureChild is a permitted child of <picture>: <img>, <source>, script-supporting elements.
+//
+// It is implemented by <img>, <script>, <source>, <template>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type PictureChild interface {
+	htemel.Node
+	HTMLPictureChild()
+}
+
 type PictureElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []PictureChild
 	skipRender bool
 }
 
 // Picture creates a tag <picture> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <img>, <source>, script-supporting elements (PictureChild).
+//
 // Spec Description: The picture element is a container which provides multiple sources to its contained img element to allow authors to declaratively control or give hints to the user agent about which image resource to use, based on the screen pixel density, viewport size, image format, and other factors. It represents its children.
-func Picture(children ...htemel.Node) *PictureElement {
+func Picture(children ...PictureChild) *PictureElement {
 	node := &PictureElement{
 		children: children,
 	}
@@ -31,7 +45,7 @@ func Picture(children ...htemel.Node) *PictureElement {
 }
 
 // PictureIf creates a tag <picture> instance that is only rendered when condition is true.
-func PictureIf(condition bool, children ...htemel.Node) *PictureElement {
+func PictureIf(condition bool, children ...PictureChild) *PictureElement {
 	if condition {
 		return Picture(children...)
 	}
@@ -43,7 +57,7 @@ func PictureIf(condition bool, children ...htemel.Node) *PictureElement {
 }
 
 // PictureTernary creates a tag <picture> containing then when condition is true, otherwise containing otherwise.
-func PictureTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PictureElement {
+func PictureTernary(condition bool, then PictureChild, otherwise PictureChild) *PictureElement {
 	if condition {
 		return Picture(then)
 	}
@@ -51,7 +65,7 @@ func PictureTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Pi
 }
 
 // Children appends children to this element.
-func (e *PictureElement) Children(children ...htemel.Node) *PictureElement {
+func (e *PictureElement) Children(children ...PictureChild) *PictureElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +76,8 @@ func (e *PictureElement) With(fn func(*PictureElement)) *PictureElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *PictureElement) Text(text string) *PictureElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *PictureElement) Textf(format string, args ...any) *PictureElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PictureElement) If(cond bool, child htemel.Node) *PictureElement {
+func (e *PictureElement) If(cond bool, child PictureChild) *PictureElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +85,7 @@ func (e *PictureElement) If(cond bool, child htemel.Node) *PictureElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PictureElement) IfElse(cond bool, then, els htemel.Node) *PictureElement {
+func (e *PictureElement) IfElse(cond bool, then, els PictureChild) *PictureElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +167,6 @@ func (e *PictureElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PictureAutocapitalize string
-
-const (
-	PictureAutocapitalizeCharacters PictureAutocapitalize = "characters"
-	PictureAutocapitalizeNone       PictureAutocapitalize = "none"
-	PictureAutocapitalizeOff        PictureAutocapitalize = "off"
-	PictureAutocapitalizeOn         PictureAutocapitalize = "on"
-	PictureAutocapitalizeSentences  PictureAutocapitalize = "sentences"
-	PictureAutocapitalizeWords      PictureAutocapitalize = "words"
-)
-
-type PictureAutocorrect string
-
-const (
-	PictureAutocorrectOff   PictureAutocorrect = "off"
-	PictureAutocorrectOn    PictureAutocorrect = "on"
-	PictureAutocorrectEmpty PictureAutocorrect = ""
-)
-
-type PictureContenteditable string
-
-const (
-	PictureContenteditableFalse         PictureContenteditable = "false"
-	PictureContenteditablePlaintextOnly PictureContenteditable = "plaintext-only"
-	PictureContenteditableTrue          PictureContenteditable = "true"
-	PictureContenteditableEmpty         PictureContenteditable = ""
-)
-
-type PictureDir string
-
-const (
-	PictureDirAuto PictureDir = "auto"
-	PictureDirLtr  PictureDir = "ltr"
-	PictureDirRtl  PictureDir = "rtl"
-)
-
-type PictureDraggable string
-
-const (
-	PictureDraggableFalse PictureDraggable = "false"
-	PictureDraggableTrue  PictureDraggable = "true"
-)
-
-type PictureEnterkeyhint string
-
-const (
-	PictureEnterkeyhintDone     PictureEnterkeyhint = "done"
-	PictureEnterkeyhintEnter    PictureEnterkeyhint = "enter"
-	PictureEnterkeyhintGo       PictureEnterkeyhint = "go"
-	PictureEnterkeyhintNext     PictureEnterkeyhint = "next"
-	PictureEnterkeyhintPrevious PictureEnterkeyhint = "previous"
-	PictureEnterkeyhintSearch   PictureEnterkeyhint = "search"
-	PictureEnterkeyhintSend     PictureEnterkeyhint = "send"
-)
-
-type PictureHidden string
-
-const (
-	PictureHiddenHidden     PictureHidden = "hidden"
-	PictureHiddenUntilFound PictureHidden = "until-found"
-	PictureHiddenEmpty      PictureHidden = ""
-)
-
-type PictureInputmode string
-
-const (
-	PictureInputmodeDecimal PictureInputmode = "decimal"
-	PictureInputmodeEmail   PictureInputmode = "email"
-	PictureInputmodeNone    PictureInputmode = "none"
-	PictureInputmodeNumeric PictureInputmode = "numeric"
-	PictureInputmodeSearch  PictureInputmode = "search"
-	PictureInputmodeTel     PictureInputmode = "tel"
-	PictureInputmodeText    PictureInputmode = "text"
-	PictureInputmodeUrl     PictureInputmode = "url"
-)
-
-type PicturePopover string
-
-const (
-	PicturePopoverAuto   PicturePopover = "auto"
-	PicturePopoverHint   PicturePopover = "hint"
-	PicturePopoverManual PicturePopover = "manual"
-	PicturePopoverEmpty  PicturePopover = ""
-)
-
-type PictureSpellcheck string
-
-const (
-	PictureSpellcheckFalse PictureSpellcheck = "false"
-	PictureSpellcheckTrue  PictureSpellcheck = "true"
-	PictureSpellcheckEmpty PictureSpellcheck = ""
-)
-
-type PictureTranslate string
-
-const (
-	PictureTranslateNo    PictureTranslate = "no"
-	PictureTranslateYes   PictureTranslate = "yes"
-	PictureTranslateEmpty PictureTranslate = ""
-)
-
-type PictureWritingsuggestions string
-
-const (
-	PictureWritingsuggestionsFalse PictureWritingsuggestions = "false"
-	PictureWritingsuggestionsTrue  PictureWritingsuggestions = "true"
-	PictureWritingsuggestionsEmpty PictureWritingsuggestions = ""
-)
-
 func (e *PictureElement) Accesskey(r rune) *PictureElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +189,7 @@ func (e *PictureElement) Aria(name string, s string) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Autocapitalize(a PictureAutocapitalize) *PictureElement {
+func (e *PictureElement) Autocapitalize(a Autocapitalize) *PictureElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *PictureElement) Autocapitalize(a PictureAutocapitalize) *PictureElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Autocorrect(v ...PictureAutocorrect) *PictureElement {
-	var val PictureAutocorrect
+func (e *PictureElement) Autocorrect(v ...Autocorrect) *PictureElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *PictureElement) Class(s ...string) *PictureElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Contenteditable(v ...PictureContenteditable) *PictureElement {
-	var val PictureContenteditable
+func (e *PictureElement) Contenteditable(v ...Contenteditable) *PictureElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *PictureElement) Data(name string, s string) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Dir(a PictureDir) *PictureElement {
+func (e *PictureElement) Dir(a Dir) *PictureElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *PictureElement) Draggable(a PictureDraggable) *PictureElement {
+func (e *PictureElement) Draggable(a Draggable) *PictureElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *PictureElement) Enterkeyhint(a PictureEnterkeyhint) *PictureElement {
+func (e *PictureElement) Enterkeyhint(a Enterkeyhint) *PictureElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *PictureElement) Headingreset(b bool) *PictureElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Hidden(v ...PictureHidden) *PictureElement {
-	var val PictureHidden
+func (e *PictureElement) Hidden(v ...Hidden) *PictureElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *PictureElement) Inert(b bool) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Inputmode(a PictureInputmode) *PictureElement {
+func (e *PictureElement) Inputmode(a Inputmode) *PictureElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *PictureElement) Part(s ...string) *PictureElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Popover(v ...PicturePopover) *PictureElement {
-	var val PicturePopover
+func (e *PictureElement) Popover(v ...Popover) *PictureElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *PictureElement) Slot(s string) *PictureElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Spellcheck(v ...PictureSpellcheck) *PictureElement {
-	var val PictureSpellcheck
+func (e *PictureElement) Spellcheck(v ...Spellcheck) *PictureElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *PictureElement) Title(s string) *PictureElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Translate(v ...PictureTranslate) *PictureElement {
-	var val PictureTranslate
+func (e *PictureElement) Translate(v ...Translate) *PictureElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *PictureElement) Translate(v ...PictureTranslate) *PictureElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PictureElement) Writingsuggestions(v ...PictureWritingsuggestions) *PictureElement {
-	var val PictureWritingsuggestions
+func (e *PictureElement) Writingsuggestions(v ...Writingsuggestions) *PictureElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -12,6 +12,10 @@ import (
 )
 
 type ImgElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +45,14 @@ func ImgIf(condition bool) *ImgElement {
 // With allows passing a function to modify the element via a closure.
 func (e *ImgElement) With(fn func(*ImgElement)) *ImgElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *ImgElement) IfThen(cond bool, fn func(*ImgElement)) *ImgElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,159 +121,8 @@ func (e *ImgElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ImgCrossorigin string
-
-const (
-	ImgCrossoriginAnonymous      ImgCrossorigin = "anonymous"
-	ImgCrossoriginUseCredentials ImgCrossorigin = "use-credentials"
-	ImgCrossoriginEmpty          ImgCrossorigin = ""
-)
-
-type ImgDecoding string
-
-const (
-	ImgDecodingAsync ImgDecoding = "async"
-	ImgDecodingAuto  ImgDecoding = "auto"
-	ImgDecodingSync  ImgDecoding = "sync"
-)
-
-type ImgFetchpriority string
-
-const (
-	ImgFetchpriorityAuto ImgFetchpriority = "auto"
-	ImgFetchpriorityHigh ImgFetchpriority = "high"
-	ImgFetchpriorityLow  ImgFetchpriority = "low"
-)
-
-type ImgLoading string
-
-const (
-	ImgLoadingEager ImgLoading = "eager"
-	ImgLoadingLazy  ImgLoading = "lazy"
-)
-
-type ImgReferrerpolicy string
-
-const (
-	ImgReferrerpolicyNoReferrer                  ImgReferrerpolicy = "no-referrer"
-	ImgReferrerpolicyNoReferrerWhenDowngrade     ImgReferrerpolicy = "no-referrer-when-downgrade"
-	ImgReferrerpolicyOrigin                      ImgReferrerpolicy = "origin"
-	ImgReferrerpolicyOriginWhenCrossOrigin       ImgReferrerpolicy = "origin-when-cross-origin"
-	ImgReferrerpolicySameOrigin                  ImgReferrerpolicy = "same-origin"
-	ImgReferrerpolicyStrictOrigin                ImgReferrerpolicy = "strict-origin"
-	ImgReferrerpolicyStrictOriginWhenCrossOrigin ImgReferrerpolicy = "strict-origin-when-cross-origin"
-	ImgReferrerpolicyUnsafeUrl                   ImgReferrerpolicy = "unsafe-url"
-	ImgReferrerpolicyEmpty                       ImgReferrerpolicy = ""
-)
-
-type ImgAutocapitalize string
-
-const (
-	ImgAutocapitalizeCharacters ImgAutocapitalize = "characters"
-	ImgAutocapitalizeNone       ImgAutocapitalize = "none"
-	ImgAutocapitalizeOff        ImgAutocapitalize = "off"
-	ImgAutocapitalizeOn         ImgAutocapitalize = "on"
-	ImgAutocapitalizeSentences  ImgAutocapitalize = "sentences"
-	ImgAutocapitalizeWords      ImgAutocapitalize = "words"
-)
-
-type ImgAutocorrect string
-
-const (
-	ImgAutocorrectOff   ImgAutocorrect = "off"
-	ImgAutocorrectOn    ImgAutocorrect = "on"
-	ImgAutocorrectEmpty ImgAutocorrect = ""
-)
-
-type ImgContenteditable string
-
-const (
-	ImgContenteditableFalse         ImgContenteditable = "false"
-	ImgContenteditablePlaintextOnly ImgContenteditable = "plaintext-only"
-	ImgContenteditableTrue          ImgContenteditable = "true"
-	ImgContenteditableEmpty         ImgContenteditable = ""
-)
-
-type ImgDir string
-
-const (
-	ImgDirAuto ImgDir = "auto"
-	ImgDirLtr  ImgDir = "ltr"
-	ImgDirRtl  ImgDir = "rtl"
-)
-
-type ImgDraggable string
-
-const (
-	ImgDraggableFalse ImgDraggable = "false"
-	ImgDraggableTrue  ImgDraggable = "true"
-)
-
-type ImgEnterkeyhint string
-
-const (
-	ImgEnterkeyhintDone     ImgEnterkeyhint = "done"
-	ImgEnterkeyhintEnter    ImgEnterkeyhint = "enter"
-	ImgEnterkeyhintGo       ImgEnterkeyhint = "go"
-	ImgEnterkeyhintNext     ImgEnterkeyhint = "next"
-	ImgEnterkeyhintPrevious ImgEnterkeyhint = "previous"
-	ImgEnterkeyhintSearch   ImgEnterkeyhint = "search"
-	ImgEnterkeyhintSend     ImgEnterkeyhint = "send"
-)
-
-type ImgHidden string
-
-const (
-	ImgHiddenHidden     ImgHidden = "hidden"
-	ImgHiddenUntilFound ImgHidden = "until-found"
-	ImgHiddenEmpty      ImgHidden = ""
-)
-
-type ImgInputmode string
-
-const (
-	ImgInputmodeDecimal ImgInputmode = "decimal"
-	ImgInputmodeEmail   ImgInputmode = "email"
-	ImgInputmodeNone    ImgInputmode = "none"
-	ImgInputmodeNumeric ImgInputmode = "numeric"
-	ImgInputmodeSearch  ImgInputmode = "search"
-	ImgInputmodeTel     ImgInputmode = "tel"
-	ImgInputmodeText    ImgInputmode = "text"
-	ImgInputmodeUrl     ImgInputmode = "url"
-)
-
-type ImgPopover string
-
-const (
-	ImgPopoverAuto   ImgPopover = "auto"
-	ImgPopoverHint   ImgPopover = "hint"
-	ImgPopoverManual ImgPopover = "manual"
-	ImgPopoverEmpty  ImgPopover = ""
-)
-
-type ImgSpellcheck string
-
-const (
-	ImgSpellcheckFalse ImgSpellcheck = "false"
-	ImgSpellcheckTrue  ImgSpellcheck = "true"
-	ImgSpellcheckEmpty ImgSpellcheck = ""
-)
-
-type ImgTranslate string
-
-const (
-	ImgTranslateNo    ImgTranslate = "no"
-	ImgTranslateYes   ImgTranslate = "yes"
-	ImgTranslateEmpty ImgTranslate = ""
-)
-
-type ImgWritingsuggestions string
-
-const (
-	ImgWritingsuggestionsFalse ImgWritingsuggestions = "false"
-	ImgWritingsuggestionsTrue  ImgWritingsuggestions = "true"
-	ImgWritingsuggestionsEmpty ImgWritingsuggestions = ""
-)
+// HTMLPictureChild marks <img> as a permitted child of <picture> (PictureChild).
+func (*ImgElement) HTMLPictureChild() {}
 
 func (e *ImgElement) Alt(s string) *ImgElement {
 	e.attributes.Set("alt", s)
@@ -279,8 +140,8 @@ func (e *ImgElement) Controls(b bool) *ImgElement {
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Crossorigin(v ...ImgCrossorigin) *ImgElement {
-	var val ImgCrossorigin
+func (e *ImgElement) Crossorigin(v ...Crossorigin) *ImgElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -289,13 +150,13 @@ func (e *ImgElement) Crossorigin(v ...ImgCrossorigin) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Decoding(a ImgDecoding) *ImgElement {
+func (e *ImgElement) Decoding(a Decoding) *ImgElement {
 	e.attributes.Set("decoding", string(a))
 
 	return e
 }
 
-func (e *ImgElement) Fetchpriority(a ImgFetchpriority) *ImgElement {
+func (e *ImgElement) Fetchpriority(a Fetchpriority) *ImgElement {
 	e.attributes.Set("fetchpriority", string(a))
 
 	return e
@@ -315,7 +176,7 @@ func (e *ImgElement) Ismap(b bool) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Loading(a ImgLoading) *ImgElement {
+func (e *ImgElement) Loading(a Loading) *ImgElement {
 	e.attributes.Set("loading", string(a))
 
 	return e
@@ -323,8 +184,8 @@ func (e *ImgElement) Loading(a ImgLoading) *ImgElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Referrerpolicy(v ...ImgReferrerpolicy) *ImgElement {
-	var val ImgReferrerpolicy
+func (e *ImgElement) Referrerpolicy(v ...Referrerpolicy) *ImgElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -387,7 +248,7 @@ func (e *ImgElement) Aria(name string, s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Autocapitalize(a ImgAutocapitalize) *ImgElement {
+func (e *ImgElement) Autocapitalize(a Autocapitalize) *ImgElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -395,8 +256,8 @@ func (e *ImgElement) Autocapitalize(a ImgAutocapitalize) *ImgElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Autocorrect(v ...ImgAutocorrect) *ImgElement {
-	var val ImgAutocorrect
+func (e *ImgElement) Autocorrect(v ...Autocorrect) *ImgElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -421,8 +282,8 @@ func (e *ImgElement) Class(s ...string) *ImgElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Contenteditable(v ...ImgContenteditable) *ImgElement {
-	var val ImgContenteditable
+func (e *ImgElement) Contenteditable(v ...Contenteditable) *ImgElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -447,19 +308,19 @@ func (e *ImgElement) Data(name string, s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Dir(a ImgDir) *ImgElement {
+func (e *ImgElement) Dir(a Dir) *ImgElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ImgElement) Draggable(a ImgDraggable) *ImgElement {
+func (e *ImgElement) Draggable(a Draggable) *ImgElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ImgElement) Enterkeyhint(a ImgEnterkeyhint) *ImgElement {
+func (e *ImgElement) Enterkeyhint(a Enterkeyhint) *ImgElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -487,8 +348,8 @@ func (e *ImgElement) Headingreset(b bool) *ImgElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Hidden(v ...ImgHidden) *ImgElement {
-	var val ImgHidden
+func (e *ImgElement) Hidden(v ...Hidden) *ImgElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -511,7 +372,7 @@ func (e *ImgElement) Inert(b bool) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Inputmode(a ImgInputmode) *ImgElement {
+func (e *ImgElement) Inputmode(a Inputmode) *ImgElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -577,8 +438,8 @@ func (e *ImgElement) Part(s ...string) *ImgElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Popover(v ...ImgPopover) *ImgElement {
-	var val ImgPopover
+func (e *ImgElement) Popover(v ...Popover) *ImgElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -601,8 +462,8 @@ func (e *ImgElement) Slot(s string) *ImgElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Spellcheck(v ...ImgSpellcheck) *ImgElement {
-	var val ImgSpellcheck
+func (e *ImgElement) Spellcheck(v ...Spellcheck) *ImgElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -631,8 +492,8 @@ func (e *ImgElement) Title(s string) *ImgElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Translate(v ...ImgTranslate) *ImgElement {
-	var val ImgTranslate
+func (e *ImgElement) Translate(v ...Translate) *ImgElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -643,8 +504,8 @@ func (e *ImgElement) Translate(v ...ImgTranslate) *ImgElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImgElement) Writingsuggestions(v ...ImgWritingsuggestions) *ImgElement {
-	var val ImgWritingsuggestions
+func (e *ImgElement) Writingsuggestions(v ...Writingsuggestions) *ImgElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

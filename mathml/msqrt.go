@@ -14,15 +14,17 @@ import (
 
 type MsqrtElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Msqrt creates a tag <msqrt> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Msqrt(children ...htemel.Node) *MsqrtElement {
+func Msqrt(children ...Content) *MsqrtElement {
 	node := &MsqrtElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Msqrt(children ...htemel.Node) *MsqrtElement {
 }
 
 // MsqrtIf creates a tag <msqrt> instance that is only rendered when condition is true.
-func MsqrtIf(condition bool, children ...htemel.Node) *MsqrtElement {
+func MsqrtIf(condition bool, children ...Content) *MsqrtElement {
 	if condition {
 		return Msqrt(children...)
 	}
@@ -43,7 +45,7 @@ func MsqrtIf(condition bool, children ...htemel.Node) *MsqrtElement {
 }
 
 // MsqrtTernary creates a tag <msqrt> containing then when condition is true, otherwise containing otherwise.
-func MsqrtTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MsqrtElement {
+func MsqrtTernary(condition bool, then Content, otherwise Content) *MsqrtElement {
 	if condition {
 		return Msqrt(then)
 	}
@@ -51,7 +53,7 @@ func MsqrtTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Msqr
 }
 
 // Children appends children to this element.
-func (e *MsqrtElement) Children(children ...htemel.Node) *MsqrtElement {
+func (e *MsqrtElement) Children(children ...Content) *MsqrtElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MsqrtElement) Textf(format string, args ...any) *MsqrtElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MsqrtElement) If(cond bool, child htemel.Node) *MsqrtElement {
+func (e *MsqrtElement) If(cond bool, child Content) *MsqrtElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MsqrtElement) If(cond bool, child htemel.Node) *MsqrtElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MsqrtElement) IfElse(cond bool, then, els htemel.Node) *MsqrtElement {
+func (e *MsqrtElement) IfElse(cond bool, then, els Content) *MsqrtElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MsqrtElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MsqrtDir string
-
-const (
-	MsqrtDirLtr MsqrtDir = "ltr"
-	MsqrtDirRtl MsqrtDir = "rtl"
-)
-
-type MsqrtDisplaystyle string
-
-const (
-	MsqrtDisplaystyleFalse MsqrtDisplaystyle = "false"
-	MsqrtDisplaystyleTrue  MsqrtDisplaystyle = "true"
-)
+// MathMLContent marks <msqrt> as a permitted child (Content).
+func (*MsqrtElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MsqrtElement) Data(name string, s string) *MsqrtElement {
 	return e
 }
 
-func (e *MsqrtElement) Dir(a MsqrtDir) *MsqrtElement {
+func (e *MsqrtElement) Dir(a Dir) *MsqrtElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MsqrtElement) Displaystyle(a MsqrtDisplaystyle) *MsqrtElement {
+func (e *MsqrtElement) Displaystyle(a Displaystyle) *MsqrtElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

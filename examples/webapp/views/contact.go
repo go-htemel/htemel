@@ -5,7 +5,7 @@ import (
 	. "github.com/go-htemel/htemel/html"
 )
 
-func Contact() Node {
+func Contact() FlowContent {
 	return PageContent("Contact",
 		P().Text("This is the contact page."),
 	)

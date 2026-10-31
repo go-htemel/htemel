@@ -13,16 +13,20 @@ import (
 )
 
 type PElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // P creates a tag <p> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The p element represents a paragraph.
-func P(children ...htemel.Node) *PElement {
+func P(children ...htemel.PhrasingContent) *PElement {
 	node := &PElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func P(children ...htemel.Node) *PElement {
 }
 
 // PIf creates a tag <p> instance that is only rendered when condition is true.
-func PIf(condition bool, children ...htemel.Node) *PElement {
+func PIf(condition bool, children ...htemel.PhrasingContent) *PElement {
 	if condition {
 		return P(children...)
 	}
@@ -43,7 +47,7 @@ func PIf(condition bool, children ...htemel.Node) *PElement {
 }
 
 // PTernary creates a tag <p> containing then when condition is true, otherwise containing otherwise.
-func PTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PElement {
+func PTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *PElement {
 	if condition {
 		return P(then)
 	}
@@ -51,7 +55,7 @@ func PTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PElement
 }
 
 // Children appends children to this element.
-func (e *PElement) Children(children ...htemel.Node) *PElement {
+func (e *PElement) Children(children ...htemel.PhrasingContent) *PElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *PElement) Textf(format string, args ...any) *PElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PElement) If(cond bool, child htemel.Node) *PElement {
+func (e *PElement) If(cond bool, child htemel.PhrasingContent) *PElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *PElement) If(cond bool, child htemel.Node) *PElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PElement) IfElse(cond bool, then, els htemel.Node) *PElement {
+func (e *PElement) IfElse(cond bool, then, els htemel.PhrasingContent) *PElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +168,8 @@ func (e *PElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PAutocapitalize string
-
-const (
-	PAutocapitalizeCharacters PAutocapitalize = "characters"
-	PAutocapitalizeNone       PAutocapitalize = "none"
-	PAutocapitalizeOff        PAutocapitalize = "off"
-	PAutocapitalizeOn         PAutocapitalize = "on"
-	PAutocapitalizeSentences  PAutocapitalize = "sentences"
-	PAutocapitalizeWords      PAutocapitalize = "words"
-)
-
-type PAutocorrect string
-
-const (
-	PAutocorrectOff   PAutocorrect = "off"
-	PAutocorrectOn    PAutocorrect = "on"
-	PAutocorrectEmpty PAutocorrect = ""
-)
-
-type PContenteditable string
-
-const (
-	PContenteditableFalse         PContenteditable = "false"
-	PContenteditablePlaintextOnly PContenteditable = "plaintext-only"
-	PContenteditableTrue          PContenteditable = "true"
-	PContenteditableEmpty         PContenteditable = ""
-)
-
-type PDir string
-
-const (
-	PDirAuto PDir = "auto"
-	PDirLtr  PDir = "ltr"
-	PDirRtl  PDir = "rtl"
-)
-
-type PDraggable string
-
-const (
-	PDraggableFalse PDraggable = "false"
-	PDraggableTrue  PDraggable = "true"
-)
-
-type PEnterkeyhint string
-
-const (
-	PEnterkeyhintDone     PEnterkeyhint = "done"
-	PEnterkeyhintEnter    PEnterkeyhint = "enter"
-	PEnterkeyhintGo       PEnterkeyhint = "go"
-	PEnterkeyhintNext     PEnterkeyhint = "next"
-	PEnterkeyhintPrevious PEnterkeyhint = "previous"
-	PEnterkeyhintSearch   PEnterkeyhint = "search"
-	PEnterkeyhintSend     PEnterkeyhint = "send"
-)
-
-type PHidden string
-
-const (
-	PHiddenHidden     PHidden = "hidden"
-	PHiddenUntilFound PHidden = "until-found"
-	PHiddenEmpty      PHidden = ""
-)
-
-type PInputmode string
-
-const (
-	PInputmodeDecimal PInputmode = "decimal"
-	PInputmodeEmail   PInputmode = "email"
-	PInputmodeNone    PInputmode = "none"
-	PInputmodeNumeric PInputmode = "numeric"
-	PInputmodeSearch  PInputmode = "search"
-	PInputmodeTel     PInputmode = "tel"
-	PInputmodeText    PInputmode = "text"
-	PInputmodeUrl     PInputmode = "url"
-)
-
-type PPopover string
-
-const (
-	PPopoverAuto   PPopover = "auto"
-	PPopoverHint   PPopover = "hint"
-	PPopoverManual PPopover = "manual"
-	PPopoverEmpty  PPopover = ""
-)
-
-type PSpellcheck string
-
-const (
-	PSpellcheckFalse PSpellcheck = "false"
-	PSpellcheckTrue  PSpellcheck = "true"
-	PSpellcheckEmpty PSpellcheck = ""
-)
-
-type PTranslate string
-
-const (
-	PTranslateNo    PTranslate = "no"
-	PTranslateYes   PTranslate = "yes"
-	PTranslateEmpty PTranslate = ""
-)
-
-type PWritingsuggestions string
-
-const (
-	PWritingsuggestionsFalse PWritingsuggestions = "false"
-	PWritingsuggestionsTrue  PWritingsuggestions = "true"
-	PWritingsuggestionsEmpty PWritingsuggestions = ""
-)
+// HTMLHgroupChild marks <p> as a permitted child of <hgroup> (HgroupChild).
+func (*PElement) HTMLHgroupChild() {}
 
 func (e *PElement) Accesskey(r rune) *PElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +193,7 @@ func (e *PElement) Aria(name string, s string) *PElement {
 	return e
 }
 
-func (e *PElement) Autocapitalize(a PAutocapitalize) *PElement {
+func (e *PElement) Autocapitalize(a Autocapitalize) *PElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +201,8 @@ func (e *PElement) Autocapitalize(a PAutocapitalize) *PElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Autocorrect(v ...PAutocorrect) *PElement {
-	var val PAutocorrect
+func (e *PElement) Autocorrect(v ...Autocorrect) *PElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +227,8 @@ func (e *PElement) Class(s ...string) *PElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Contenteditable(v ...PContenteditable) *PElement {
-	var val PContenteditable
+func (e *PElement) Contenteditable(v ...Contenteditable) *PElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +253,19 @@ func (e *PElement) Data(name string, s string) *PElement {
 	return e
 }
 
-func (e *PElement) Dir(a PDir) *PElement {
+func (e *PElement) Dir(a Dir) *PElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *PElement) Draggable(a PDraggable) *PElement {
+func (e *PElement) Draggable(a Draggable) *PElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *PElement) Enterkeyhint(a PEnterkeyhint) *PElement {
+func (e *PElement) Enterkeyhint(a Enterkeyhint) *PElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +293,8 @@ func (e *PElement) Headingreset(b bool) *PElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Hidden(v ...PHidden) *PElement {
-	var val PHidden
+func (e *PElement) Hidden(v ...Hidden) *PElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +317,7 @@ func (e *PElement) Inert(b bool) *PElement {
 	return e
 }
 
-func (e *PElement) Inputmode(a PInputmode) *PElement {
+func (e *PElement) Inputmode(a Inputmode) *PElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +383,8 @@ func (e *PElement) Part(s ...string) *PElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Popover(v ...PPopover) *PElement {
-	var val PPopover
+func (e *PElement) Popover(v ...Popover) *PElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +407,8 @@ func (e *PElement) Slot(s string) *PElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Spellcheck(v ...PSpellcheck) *PElement {
-	var val PSpellcheck
+func (e *PElement) Spellcheck(v ...Spellcheck) *PElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +437,8 @@ func (e *PElement) Title(s string) *PElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Translate(v ...PTranslate) *PElement {
-	var val PTranslate
+func (e *PElement) Translate(v ...Translate) *PElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +449,8 @@ func (e *PElement) Translate(v ...PTranslate) *PElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PElement) Writingsuggestions(v ...PWritingsuggestions) *PElement {
-	var val PWritingsuggestions
+func (e *PElement) Writingsuggestions(v ...Writingsuggestions) *PElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

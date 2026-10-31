@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,31 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// OlChild is a permitted child of <ol>: <li>, script-supporting elements.
+//
+// It is implemented by <li>, <script>, <template>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type OlChild interface {
+	htemel.Node
+	HTMLOlChild()
+}
+
 type OlElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []OlChild
 	skipRender bool
 }
 
 // Ol creates a tag <ol> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <li>, script-supporting elements (OlChild).
+//
 // Spec Description: The ol element represents a list of items, where the items have been intentionally ordered, such that changing the order would change the meaning of the document.
-func Ol(children ...htemel.Node) *OlElement {
+func Ol(children ...OlChild) *OlElement {
 	node := &OlElement{
 		children: children,
 	}
@@ -31,7 +44,7 @@ func Ol(children ...htemel.Node) *OlElement {
 }
 
 // OlIf creates a tag <ol> instance that is only rendered when condition is true.
-func OlIf(condition bool, children ...htemel.Node) *OlElement {
+func OlIf(condition bool, children ...OlChild) *OlElement {
 	if condition {
 		return Ol(children...)
 	}
@@ -43,7 +56,7 @@ func OlIf(condition bool, children ...htemel.Node) *OlElement {
 }
 
 // OlTernary creates a tag <ol> containing then when condition is true, otherwise containing otherwise.
-func OlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OlElement {
+func OlTernary(condition bool, then OlChild, otherwise OlChild) *OlElement {
 	if condition {
 		return Ol(then)
 	}
@@ -51,7 +64,7 @@ func OlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OlEleme
 }
 
 // Children appends children to this element.
-func (e *OlElement) Children(children ...htemel.Node) *OlElement {
+func (e *OlElement) Children(children ...OlChild) *OlElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +75,8 @@ func (e *OlElement) With(fn func(*OlElement)) *OlElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *OlElement) Text(text string) *OlElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *OlElement) Textf(format string, args ...any) *OlElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OlElement) If(cond bool, child htemel.Node) *OlElement {
+func (e *OlElement) If(cond bool, child OlChild) *OlElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *OlElement) If(cond bool, child htemel.Node) *OlElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OlElement) IfElse(cond bool, then, els htemel.Node) *OlElement {
+func (e *OlElement) IfElse(cond bool, then, els OlChild) *OlElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +166,6 @@ func (e *OlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type OlAutocapitalize string
-
-const (
-	OlAutocapitalizeCharacters OlAutocapitalize = "characters"
-	OlAutocapitalizeNone       OlAutocapitalize = "none"
-	OlAutocapitalizeOff        OlAutocapitalize = "off"
-	OlAutocapitalizeOn         OlAutocapitalize = "on"
-	OlAutocapitalizeSentences  OlAutocapitalize = "sentences"
-	OlAutocapitalizeWords      OlAutocapitalize = "words"
-)
-
-type OlAutocorrect string
-
-const (
-	OlAutocorrectOff   OlAutocorrect = "off"
-	OlAutocorrectOn    OlAutocorrect = "on"
-	OlAutocorrectEmpty OlAutocorrect = ""
-)
-
-type OlContenteditable string
-
-const (
-	OlContenteditableFalse         OlContenteditable = "false"
-	OlContenteditablePlaintextOnly OlContenteditable = "plaintext-only"
-	OlContenteditableTrue          OlContenteditable = "true"
-	OlContenteditableEmpty         OlContenteditable = ""
-)
-
-type OlDir string
-
-const (
-	OlDirAuto OlDir = "auto"
-	OlDirLtr  OlDir = "ltr"
-	OlDirRtl  OlDir = "rtl"
-)
-
-type OlDraggable string
-
-const (
-	OlDraggableFalse OlDraggable = "false"
-	OlDraggableTrue  OlDraggable = "true"
-)
-
-type OlEnterkeyhint string
-
-const (
-	OlEnterkeyhintDone     OlEnterkeyhint = "done"
-	OlEnterkeyhintEnter    OlEnterkeyhint = "enter"
-	OlEnterkeyhintGo       OlEnterkeyhint = "go"
-	OlEnterkeyhintNext     OlEnterkeyhint = "next"
-	OlEnterkeyhintPrevious OlEnterkeyhint = "previous"
-	OlEnterkeyhintSearch   OlEnterkeyhint = "search"
-	OlEnterkeyhintSend     OlEnterkeyhint = "send"
-)
-
-type OlHidden string
-
-const (
-	OlHiddenHidden     OlHidden = "hidden"
-	OlHiddenUntilFound OlHidden = "until-found"
-	OlHiddenEmpty      OlHidden = ""
-)
-
-type OlInputmode string
-
-const (
-	OlInputmodeDecimal OlInputmode = "decimal"
-	OlInputmodeEmail   OlInputmode = "email"
-	OlInputmodeNone    OlInputmode = "none"
-	OlInputmodeNumeric OlInputmode = "numeric"
-	OlInputmodeSearch  OlInputmode = "search"
-	OlInputmodeTel     OlInputmode = "tel"
-	OlInputmodeText    OlInputmode = "text"
-	OlInputmodeUrl     OlInputmode = "url"
-)
-
-type OlPopover string
-
-const (
-	OlPopoverAuto   OlPopover = "auto"
-	OlPopoverHint   OlPopover = "hint"
-	OlPopoverManual OlPopover = "manual"
-	OlPopoverEmpty  OlPopover = ""
-)
-
-type OlSpellcheck string
-
-const (
-	OlSpellcheckFalse OlSpellcheck = "false"
-	OlSpellcheckTrue  OlSpellcheck = "true"
-	OlSpellcheckEmpty OlSpellcheck = ""
-)
-
-type OlTranslate string
-
-const (
-	OlTranslateNo    OlTranslate = "no"
-	OlTranslateYes   OlTranslate = "yes"
-	OlTranslateEmpty OlTranslate = ""
-)
-
-type OlWritingsuggestions string
-
-const (
-	OlWritingsuggestionsFalse OlWritingsuggestions = "false"
-	OlWritingsuggestionsTrue  OlWritingsuggestions = "true"
-	OlWritingsuggestionsEmpty OlWritingsuggestions = ""
-)
-
 // Reversed sets the boolean attribute "reversed". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *OlElement) Reversed(b bool) *OlElement {
@@ -315,7 +208,7 @@ func (e *OlElement) Aria(name string, s string) *OlElement {
 	return e
 }
 
-func (e *OlElement) Autocapitalize(a OlAutocapitalize) *OlElement {
+func (e *OlElement) Autocapitalize(a Autocapitalize) *OlElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -323,8 +216,8 @@ func (e *OlElement) Autocapitalize(a OlAutocapitalize) *OlElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Autocorrect(v ...OlAutocorrect) *OlElement {
-	var val OlAutocorrect
+func (e *OlElement) Autocorrect(v ...Autocorrect) *OlElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -349,8 +242,8 @@ func (e *OlElement) Class(s ...string) *OlElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Contenteditable(v ...OlContenteditable) *OlElement {
-	var val OlContenteditable
+func (e *OlElement) Contenteditable(v ...Contenteditable) *OlElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -375,19 +268,19 @@ func (e *OlElement) Data(name string, s string) *OlElement {
 	return e
 }
 
-func (e *OlElement) Dir(a OlDir) *OlElement {
+func (e *OlElement) Dir(a Dir) *OlElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *OlElement) Draggable(a OlDraggable) *OlElement {
+func (e *OlElement) Draggable(a Draggable) *OlElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *OlElement) Enterkeyhint(a OlEnterkeyhint) *OlElement {
+func (e *OlElement) Enterkeyhint(a Enterkeyhint) *OlElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -415,8 +308,8 @@ func (e *OlElement) Headingreset(b bool) *OlElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Hidden(v ...OlHidden) *OlElement {
-	var val OlHidden
+func (e *OlElement) Hidden(v ...Hidden) *OlElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -439,7 +332,7 @@ func (e *OlElement) Inert(b bool) *OlElement {
 	return e
 }
 
-func (e *OlElement) Inputmode(a OlInputmode) *OlElement {
+func (e *OlElement) Inputmode(a Inputmode) *OlElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -505,8 +398,8 @@ func (e *OlElement) Part(s ...string) *OlElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Popover(v ...OlPopover) *OlElement {
-	var val OlPopover
+func (e *OlElement) Popover(v ...Popover) *OlElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -529,8 +422,8 @@ func (e *OlElement) Slot(s string) *OlElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Spellcheck(v ...OlSpellcheck) *OlElement {
-	var val OlSpellcheck
+func (e *OlElement) Spellcheck(v ...Spellcheck) *OlElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -559,8 +452,8 @@ func (e *OlElement) Title(s string) *OlElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Translate(v ...OlTranslate) *OlElement {
-	var val OlTranslate
+func (e *OlElement) Translate(v ...Translate) *OlElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -571,8 +464,8 @@ func (e *OlElement) Translate(v ...OlTranslate) *OlElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OlElement) Writingsuggestions(v ...OlWritingsuggestions) *OlElement {
-	var val OlWritingsuggestions
+func (e *OlElement) Writingsuggestions(v ...Writingsuggestions) *OlElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

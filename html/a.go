@@ -13,16 +13,23 @@ import (
 )
 
 type AElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // A creates a tag <a> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <a> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: If the a element has an href attribute, then it represents a hyperlink (a hypertext anchor) labeled by its contents.
-func A(children ...htemel.Node) *AElement {
+func A(children ...htemel.FlowContent) *AElement {
 	node := &AElement{
 		children: children,
 	}
@@ -31,7 +38,7 @@ func A(children ...htemel.Node) *AElement {
 }
 
 // AIf creates a tag <a> instance that is only rendered when condition is true.
-func AIf(condition bool, children ...htemel.Node) *AElement {
+func AIf(condition bool, children ...htemel.FlowContent) *AElement {
 	if condition {
 		return A(children...)
 	}
@@ -43,7 +50,7 @@ func AIf(condition bool, children ...htemel.Node) *AElement {
 }
 
 // ATernary creates a tag <a> containing then when condition is true, otherwise containing otherwise.
-func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement {
+func ATernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *AElement {
 	if condition {
 		return A(then)
 	}
@@ -51,7 +58,7 @@ func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement
 }
 
 // Children appends children to this element.
-func (e *AElement) Children(children ...htemel.Node) *AElement {
+func (e *AElement) Children(children ...htemel.FlowContent) *AElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +81,7 @@ func (e *AElement) Textf(format string, args ...any) *AElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AElement) If(cond bool, child htemel.Node) *AElement {
+func (e *AElement) If(cond bool, child htemel.FlowContent) *AElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +89,7 @@ func (e *AElement) If(cond bool, child htemel.Node) *AElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AElement) IfElse(cond bool, then, els htemel.Node) *AElement {
+func (e *AElement) IfElse(cond bool, then, els htemel.FlowContent) *AElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,149 +171,16 @@ func (e *AElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ADownload string
-
-const (
-	ADownloadEmpty ADownload = ""
-)
-
-type AReferrerpolicy string
-
-const (
-	AReferrerpolicyNoReferrer                  AReferrerpolicy = "no-referrer"
-	AReferrerpolicyNoReferrerWhenDowngrade     AReferrerpolicy = "no-referrer-when-downgrade"
-	AReferrerpolicyOrigin                      AReferrerpolicy = "origin"
-	AReferrerpolicyOriginWhenCrossOrigin       AReferrerpolicy = "origin-when-cross-origin"
-	AReferrerpolicySameOrigin                  AReferrerpolicy = "same-origin"
-	AReferrerpolicyStrictOrigin                AReferrerpolicy = "strict-origin"
-	AReferrerpolicyStrictOriginWhenCrossOrigin AReferrerpolicy = "strict-origin-when-cross-origin"
-	AReferrerpolicyUnsafeUrl                   AReferrerpolicy = "unsafe-url"
-	AReferrerpolicyEmpty                       AReferrerpolicy = ""
-)
-
-type AAutocapitalize string
-
-const (
-	AAutocapitalizeCharacters AAutocapitalize = "characters"
-	AAutocapitalizeNone       AAutocapitalize = "none"
-	AAutocapitalizeOff        AAutocapitalize = "off"
-	AAutocapitalizeOn         AAutocapitalize = "on"
-	AAutocapitalizeSentences  AAutocapitalize = "sentences"
-	AAutocapitalizeWords      AAutocapitalize = "words"
-)
-
-type AAutocorrect string
-
-const (
-	AAutocorrectOff   AAutocorrect = "off"
-	AAutocorrectOn    AAutocorrect = "on"
-	AAutocorrectEmpty AAutocorrect = ""
-)
-
-type AContenteditable string
-
-const (
-	AContenteditableFalse         AContenteditable = "false"
-	AContenteditablePlaintextOnly AContenteditable = "plaintext-only"
-	AContenteditableTrue          AContenteditable = "true"
-	AContenteditableEmpty         AContenteditable = ""
-)
-
-type ADir string
-
-const (
-	ADirAuto ADir = "auto"
-	ADirLtr  ADir = "ltr"
-	ADirRtl  ADir = "rtl"
-)
-
-type ADraggable string
-
-const (
-	ADraggableFalse ADraggable = "false"
-	ADraggableTrue  ADraggable = "true"
-)
-
-type AEnterkeyhint string
-
-const (
-	AEnterkeyhintDone     AEnterkeyhint = "done"
-	AEnterkeyhintEnter    AEnterkeyhint = "enter"
-	AEnterkeyhintGo       AEnterkeyhint = "go"
-	AEnterkeyhintNext     AEnterkeyhint = "next"
-	AEnterkeyhintPrevious AEnterkeyhint = "previous"
-	AEnterkeyhintSearch   AEnterkeyhint = "search"
-	AEnterkeyhintSend     AEnterkeyhint = "send"
-)
-
-type AHidden string
-
-const (
-	AHiddenHidden     AHidden = "hidden"
-	AHiddenUntilFound AHidden = "until-found"
-	AHiddenEmpty      AHidden = ""
-)
-
-type AInputmode string
-
-const (
-	AInputmodeDecimal AInputmode = "decimal"
-	AInputmodeEmail   AInputmode = "email"
-	AInputmodeNone    AInputmode = "none"
-	AInputmodeNumeric AInputmode = "numeric"
-	AInputmodeSearch  AInputmode = "search"
-	AInputmodeTel     AInputmode = "tel"
-	AInputmodeText    AInputmode = "text"
-	AInputmodeUrl     AInputmode = "url"
-)
-
-type APopover string
-
-const (
-	APopoverAuto   APopover = "auto"
-	APopoverHint   APopover = "hint"
-	APopoverManual APopover = "manual"
-	APopoverEmpty  APopover = ""
-)
-
-type ASpellcheck string
-
-const (
-	ASpellcheckFalse ASpellcheck = "false"
-	ASpellcheckTrue  ASpellcheck = "true"
-	ASpellcheckEmpty ASpellcheck = ""
-)
-
-type ATranslate string
-
-const (
-	ATranslateNo    ATranslate = "no"
-	ATranslateYes   ATranslate = "yes"
-	ATranslateEmpty ATranslate = ""
-)
-
-type AWritingsuggestions string
-
-const (
-	AWritingsuggestionsFalse AWritingsuggestions = "false"
-	AWritingsuggestionsTrue  AWritingsuggestions = "true"
-	AWritingsuggestionsEmpty AWritingsuggestions = ""
-)
-
 // Download sets the "download" attribute. Called with no argument, Download() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Download(v ...ADownload) *AElement {
-	var val ADownload
+func (e *AElement) Download(v ...Download) *AElement {
+	var val Download
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
 	e.attributes.Set("download", string(val))
 
 	return e
-}
-
-func ADownloadCustom(s string) ADownload {
-	return ADownload(s)
 }
 
 // Href sets the "href" attribute.
@@ -331,8 +205,8 @@ func (e *AElement) Ping(s ...string) *AElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Referrerpolicy(v ...AReferrerpolicy) *AElement {
-	var val AReferrerpolicy
+func (e *AElement) Referrerpolicy(v ...Referrerpolicy) *AElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -381,7 +255,7 @@ func (e *AElement) Aria(name string, s string) *AElement {
 	return e
 }
 
-func (e *AElement) Autocapitalize(a AAutocapitalize) *AElement {
+func (e *AElement) Autocapitalize(a Autocapitalize) *AElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -389,8 +263,8 @@ func (e *AElement) Autocapitalize(a AAutocapitalize) *AElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Autocorrect(v ...AAutocorrect) *AElement {
-	var val AAutocorrect
+func (e *AElement) Autocorrect(v ...Autocorrect) *AElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -415,8 +289,8 @@ func (e *AElement) Class(s ...string) *AElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Contenteditable(v ...AContenteditable) *AElement {
-	var val AContenteditable
+func (e *AElement) Contenteditable(v ...Contenteditable) *AElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -441,19 +315,19 @@ func (e *AElement) Data(name string, s string) *AElement {
 	return e
 }
 
-func (e *AElement) Dir(a ADir) *AElement {
+func (e *AElement) Dir(a Dir) *AElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AElement) Draggable(a ADraggable) *AElement {
+func (e *AElement) Draggable(a Draggable) *AElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AElement) Enterkeyhint(a AEnterkeyhint) *AElement {
+func (e *AElement) Enterkeyhint(a Enterkeyhint) *AElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -481,8 +355,8 @@ func (e *AElement) Headingreset(b bool) *AElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Hidden(v ...AHidden) *AElement {
-	var val AHidden
+func (e *AElement) Hidden(v ...Hidden) *AElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -505,7 +379,7 @@ func (e *AElement) Inert(b bool) *AElement {
 	return e
 }
 
-func (e *AElement) Inputmode(a AInputmode) *AElement {
+func (e *AElement) Inputmode(a Inputmode) *AElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -571,8 +445,8 @@ func (e *AElement) Part(s ...string) *AElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Popover(v ...APopover) *AElement {
-	var val APopover
+func (e *AElement) Popover(v ...Popover) *AElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -595,8 +469,8 @@ func (e *AElement) Slot(s string) *AElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Spellcheck(v ...ASpellcheck) *AElement {
-	var val ASpellcheck
+func (e *AElement) Spellcheck(v ...Spellcheck) *AElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -625,8 +499,8 @@ func (e *AElement) Title(s string) *AElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Translate(v ...ATranslate) *AElement {
-	var val ATranslate
+func (e *AElement) Translate(v ...Translate) *AElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -637,8 +511,8 @@ func (e *AElement) Translate(v ...ATranslate) *AElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Writingsuggestions(v ...AWritingsuggestions) *AElement {
-	var val AWritingsuggestions
+func (e *AElement) Writingsuggestions(v ...Writingsuggestions) *AElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

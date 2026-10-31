@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,33 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// TableChild is a permitted child of <table>: <caption>, <colgroup>, <tbody>, <tfoot>, <thead>,
+// <tr>, script-supporting elements.
+//
+// It is implemented by <caption>, <colgroup>, <script>, <tbody>, <template>, <tfoot>, <thead>,
+// <tr>, by any type embedding htemel.ScriptSupportingMarker and by the unchecked nodes of package
+// htemel (Group, Each, If, Unchecked, ...).
+type TableChild interface {
+	htemel.Node
+	HTMLTableChild()
+}
+
 type TableElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []TableChild
 	skipRender bool
 }
 
 // Table creates a tag <table> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <caption>, <colgroup>, <tbody>, <tfoot>, <thead>, <tr>, script-supporting elements
+// (TableChild).
+//
 // Spec Description: The table element represents data with more than one dimension, in the form of a table.
-func Table(children ...htemel.Node) *TableElement {
+func Table(children ...TableChild) *TableElement {
 	node := &TableElement{
 		children: children,
 	}
@@ -31,7 +46,7 @@ func Table(children ...htemel.Node) *TableElement {
 }
 
 // TableIf creates a tag <table> instance that is only rendered when condition is true.
-func TableIf(condition bool, children ...htemel.Node) *TableElement {
+func TableIf(condition bool, children ...TableChild) *TableElement {
 	if condition {
 		return Table(children...)
 	}
@@ -43,7 +58,7 @@ func TableIf(condition bool, children ...htemel.Node) *TableElement {
 }
 
 // TableTernary creates a tag <table> containing then when condition is true, otherwise containing otherwise.
-func TableTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TableElement {
+func TableTernary(condition bool, then TableChild, otherwise TableChild) *TableElement {
 	if condition {
 		return Table(then)
 	}
@@ -51,7 +66,7 @@ func TableTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Tabl
 }
 
 // Children appends children to this element.
-func (e *TableElement) Children(children ...htemel.Node) *TableElement {
+func (e *TableElement) Children(children ...TableChild) *TableElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +77,8 @@ func (e *TableElement) With(fn func(*TableElement)) *TableElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *TableElement) Text(text string) *TableElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *TableElement) Textf(format string, args ...any) *TableElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TableElement) If(cond bool, child htemel.Node) *TableElement {
+func (e *TableElement) If(cond bool, child TableChild) *TableElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *TableElement) If(cond bool, child htemel.Node) *TableElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TableElement) IfElse(cond bool, then, els htemel.Node) *TableElement {
+func (e *TableElement) IfElse(cond bool, then, els TableChild) *TableElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *TableElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TableAutocapitalize string
-
-const (
-	TableAutocapitalizeCharacters TableAutocapitalize = "characters"
-	TableAutocapitalizeNone       TableAutocapitalize = "none"
-	TableAutocapitalizeOff        TableAutocapitalize = "off"
-	TableAutocapitalizeOn         TableAutocapitalize = "on"
-	TableAutocapitalizeSentences  TableAutocapitalize = "sentences"
-	TableAutocapitalizeWords      TableAutocapitalize = "words"
-)
-
-type TableAutocorrect string
-
-const (
-	TableAutocorrectOff   TableAutocorrect = "off"
-	TableAutocorrectOn    TableAutocorrect = "on"
-	TableAutocorrectEmpty TableAutocorrect = ""
-)
-
-type TableContenteditable string
-
-const (
-	TableContenteditableFalse         TableContenteditable = "false"
-	TableContenteditablePlaintextOnly TableContenteditable = "plaintext-only"
-	TableContenteditableTrue          TableContenteditable = "true"
-	TableContenteditableEmpty         TableContenteditable = ""
-)
-
-type TableDir string
-
-const (
-	TableDirAuto TableDir = "auto"
-	TableDirLtr  TableDir = "ltr"
-	TableDirRtl  TableDir = "rtl"
-)
-
-type TableDraggable string
-
-const (
-	TableDraggableFalse TableDraggable = "false"
-	TableDraggableTrue  TableDraggable = "true"
-)
-
-type TableEnterkeyhint string
-
-const (
-	TableEnterkeyhintDone     TableEnterkeyhint = "done"
-	TableEnterkeyhintEnter    TableEnterkeyhint = "enter"
-	TableEnterkeyhintGo       TableEnterkeyhint = "go"
-	TableEnterkeyhintNext     TableEnterkeyhint = "next"
-	TableEnterkeyhintPrevious TableEnterkeyhint = "previous"
-	TableEnterkeyhintSearch   TableEnterkeyhint = "search"
-	TableEnterkeyhintSend     TableEnterkeyhint = "send"
-)
-
-type TableHidden string
-
-const (
-	TableHiddenHidden     TableHidden = "hidden"
-	TableHiddenUntilFound TableHidden = "until-found"
-	TableHiddenEmpty      TableHidden = ""
-)
-
-type TableInputmode string
-
-const (
-	TableInputmodeDecimal TableInputmode = "decimal"
-	TableInputmodeEmail   TableInputmode = "email"
-	TableInputmodeNone    TableInputmode = "none"
-	TableInputmodeNumeric TableInputmode = "numeric"
-	TableInputmodeSearch  TableInputmode = "search"
-	TableInputmodeTel     TableInputmode = "tel"
-	TableInputmodeText    TableInputmode = "text"
-	TableInputmodeUrl     TableInputmode = "url"
-)
-
-type TablePopover string
-
-const (
-	TablePopoverAuto   TablePopover = "auto"
-	TablePopoverHint   TablePopover = "hint"
-	TablePopoverManual TablePopover = "manual"
-	TablePopoverEmpty  TablePopover = ""
-)
-
-type TableSpellcheck string
-
-const (
-	TableSpellcheckFalse TableSpellcheck = "false"
-	TableSpellcheckTrue  TableSpellcheck = "true"
-	TableSpellcheckEmpty TableSpellcheck = ""
-)
-
-type TableTranslate string
-
-const (
-	TableTranslateNo    TableTranslate = "no"
-	TableTranslateYes   TableTranslate = "yes"
-	TableTranslateEmpty TableTranslate = ""
-)
-
-type TableWritingsuggestions string
-
-const (
-	TableWritingsuggestionsFalse TableWritingsuggestions = "false"
-	TableWritingsuggestionsTrue  TableWritingsuggestions = "true"
-	TableWritingsuggestionsEmpty TableWritingsuggestions = ""
-)
-
 func (e *TableElement) Accesskey(r rune) *TableElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *TableElement) Aria(name string, s string) *TableElement {
 	return e
 }
 
-func (e *TableElement) Autocapitalize(a TableAutocapitalize) *TableElement {
+func (e *TableElement) Autocapitalize(a Autocapitalize) *TableElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *TableElement) Autocapitalize(a TableAutocapitalize) *TableElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Autocorrect(v ...TableAutocorrect) *TableElement {
-	var val TableAutocorrect
+func (e *TableElement) Autocorrect(v ...Autocorrect) *TableElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *TableElement) Class(s ...string) *TableElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Contenteditable(v ...TableContenteditable) *TableElement {
-	var val TableContenteditable
+func (e *TableElement) Contenteditable(v ...Contenteditable) *TableElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *TableElement) Data(name string, s string) *TableElement {
 	return e
 }
 
-func (e *TableElement) Dir(a TableDir) *TableElement {
+func (e *TableElement) Dir(a Dir) *TableElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TableElement) Draggable(a TableDraggable) *TableElement {
+func (e *TableElement) Draggable(a Draggable) *TableElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TableElement) Enterkeyhint(a TableEnterkeyhint) *TableElement {
+func (e *TableElement) Enterkeyhint(a Enterkeyhint) *TableElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *TableElement) Headingreset(b bool) *TableElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Hidden(v ...TableHidden) *TableElement {
-	var val TableHidden
+func (e *TableElement) Hidden(v ...Hidden) *TableElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *TableElement) Inert(b bool) *TableElement {
 	return e
 }
 
-func (e *TableElement) Inputmode(a TableInputmode) *TableElement {
+func (e *TableElement) Inputmode(a Inputmode) *TableElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *TableElement) Part(s ...string) *TableElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Popover(v ...TablePopover) *TableElement {
-	var val TablePopover
+func (e *TableElement) Popover(v ...Popover) *TableElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *TableElement) Slot(s string) *TableElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Spellcheck(v ...TableSpellcheck) *TableElement {
-	var val TableSpellcheck
+func (e *TableElement) Spellcheck(v ...Spellcheck) *TableElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *TableElement) Title(s string) *TableElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Translate(v ...TableTranslate) *TableElement {
-	var val TableTranslate
+func (e *TableElement) Translate(v ...Translate) *TableElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *TableElement) Translate(v ...TableTranslate) *TableElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TableElement) Writingsuggestions(v ...TableWritingsuggestions) *TableElement {
-	var val TableWritingsuggestions
+func (e *TableElement) Writingsuggestions(v ...Writingsuggestions) *TableElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

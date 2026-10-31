@@ -1,0 +1,390 @@
+{
+  "name": "HTML",
+  "elements": [
+    {
+      "tag": "html",
+      "description": "html",
+      "content_model": {
+        "kind": "children",
+        "elements": [
+          "body",
+          "head"
+        ],
+        "note": "head*; body*"
+      }
+    },
+    {
+      "tag": "head",
+      "description": "head",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "metadata"
+        ],
+        "note": "metadata content*"
+      }
+    },
+    {
+      "tag": "body",
+      "description": "body",
+      "text": true,
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
+    },
+    {
+      "tag": "title",
+      "description": "title",
+      "text": true,
+      "categories": [
+        "metadata"
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "text*"
+      }
+    },
+    {
+      "tag": "meta",
+      "description": "meta",
+      "void": true,
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing"
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
+    },
+    {
+      "tag": "script",
+      "description": "script",
+      "text": true,
+      "raw_text": true,
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing",
+        "script-supporting"
+      ],
+      "content_model": {
+        "kind": "text",
+        "text": true,
+        "note": "script, data, or script documentation*"
+      },
+      "attributes": [
+        {
+          "name": "type",
+          "description": "",
+          "allowed": {
+            "module": {},
+            "importmap": {}
+          },
+          "allow_empty": true,
+          "allow_custom": true,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ]
+    },
+    {
+      "tag": "template",
+      "description": "template",
+      "text": true,
+      "categories": [
+        "flow",
+        "metadata",
+        "phrasing",
+        "script-supporting"
+      ],
+      "content_model": {
+        "kind": "unknown",
+        "note": "empty (index). The template element itself has no children (content model nothing), but markup written inside it in the HTML syntax becomes the template contents (a DocumentFragment), which may hold any content, including elements such as tr or li that are invalid elsewhere. Treat as unchecked."
+      }
+    },
+    {
+      "tag": "div",
+      "description": "div",
+      "text": true,
+      "categories": [
+        "flow",
+        "palpable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow*"
+      }
+    },
+    {
+      "tag": "p",
+      "description": "p",
+      "text": true,
+      "categories": [
+        "flow",
+        "palpable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
+    },
+    {
+      "tag": "span",
+      "description": "span",
+      "text": true,
+      "categories": [
+        "flow",
+        "palpable",
+        "phrasing"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
+    },
+    {
+      "tag": "h1",
+      "description": "h1",
+      "text": true,
+      "categories": [
+        "flow",
+        "heading",
+        "palpable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "text": true,
+        "note": "phrasing"
+      }
+    },
+    {
+      "tag": "a",
+      "description": "a",
+      "text": true,
+      "categories": [
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ],
+      "content_model": {
+        "kind": "transparent",
+        "note": "transparent*"
+      }
+    },
+    {
+      "tag": "ul",
+      "description": "ul",
+      "categories": [
+        "flow",
+        "palpable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "li"
+        ],
+        "note": "li; script-supporting elements"
+      },
+      "attributes": [
+        {
+          "name": "type",
+          "description": "",
+          "allowed": {
+            "disc": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        }
+      ]
+    },
+    {
+      "tag": "li",
+      "description": "li",
+      "text": true,
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
+    },
+    {
+      "tag": "table",
+      "description": "table",
+      "categories": [
+        "flow",
+        "palpable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "caption",
+          "colgroup",
+          "tbody",
+          "tfoot",
+          "thead",
+          "tr"
+        ],
+        "note": "caption*; colgroup*; thead*; tbody*; tfoot*; tr*; script-supporting elements"
+      }
+    },
+    {
+      "tag": "tr",
+      "description": "tr",
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "td",
+          "th"
+        ],
+        "note": "th*; td; script-supporting elements"
+      }
+    },
+    {
+      "tag": "td",
+      "description": "td",
+      "text": true,
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "flow"
+        ],
+        "text": true,
+        "note": "flow"
+      }
+    },
+    {
+      "tag": "img",
+      "description": "img",
+      "void": true,
+      "categories": [
+        "embedded",
+        "flow",
+        "form-associated",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty"
+      }
+    },
+    {
+      "tag": "iframe",
+      "description": "iframe",
+      "categories": [
+        "embedded",
+        "flow",
+        "interactive",
+        "palpable",
+        "phrasing"
+      ],
+      "content_model": {
+        "kind": "empty",
+        "note": "empty (Content model nothing, but not a void element: it takes an end tag.)"
+      }
+    },
+    {
+      "tag": "select",
+      "description": "select",
+      "categories": [
+        "flow",
+        "form-associated",
+        "interactive",
+        "labelable",
+        "listed",
+        "palpable",
+        "phrasing",
+        "resettable",
+        "submittable"
+      ],
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "script-supporting"
+        ],
+        "elements": [
+          "button",
+          "div",
+          "hr",
+          "noscript",
+          "optgroup",
+          "option"
+        ],
+        "note": "option*; optgroup*; hr*; script-supporting elements*; noscript*; div*; button*"
+      }
+    },
+    {
+      "tag": "option",
+      "description": "option",
+      "text": true,
+      "content_model": {
+        "kind": "children",
+        "categories": [
+          "phrasing"
+        ],
+        "elements": [
+          "div"
+        ],
+        "text": true,
+        "note": "text*; div*; phrasing*"
+      }
+    }
+  ],
+  "attributes": [
+    {
+      "name": "popover",
+      "description": "",
+      "allowed": {
+        "auto": {},
+        "manual": {},
+        "hint": {}
+      },
+      "allow_empty": true,
+      "allow_custom": false,
+      "attribute_type": "AttributeTypeEnum"
+    },
+    {
+      "name": "class",
+      "description": "",
+      "attribute_type": "AttributeTypeSST"
+    }
+  ]
+}

@@ -13,16 +13,20 @@ import (
 )
 
 type MeterElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Meter creates a tag <meter> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The meter element represents a scalar measurement within a known range, or a fractional value; for example disk usage, the relevance of a query result, or the fraction of a voting population to have selected a particular candidate.
-func Meter(children ...htemel.Node) *MeterElement {
+func Meter(children ...htemel.PhrasingContent) *MeterElement {
 	node := &MeterElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Meter(children ...htemel.Node) *MeterElement {
 }
 
 // MeterIf creates a tag <meter> instance that is only rendered when condition is true.
-func MeterIf(condition bool, children ...htemel.Node) *MeterElement {
+func MeterIf(condition bool, children ...htemel.PhrasingContent) *MeterElement {
 	if condition {
 		return Meter(children...)
 	}
@@ -43,7 +47,7 @@ func MeterIf(condition bool, children ...htemel.Node) *MeterElement {
 }
 
 // MeterTernary creates a tag <meter> containing then when condition is true, otherwise containing otherwise.
-func MeterTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MeterElement {
+func MeterTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *MeterElement {
 	if condition {
 		return Meter(then)
 	}
@@ -51,7 +55,7 @@ func MeterTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mete
 }
 
 // Children appends children to this element.
-func (e *MeterElement) Children(children ...htemel.Node) *MeterElement {
+func (e *MeterElement) Children(children ...htemel.PhrasingContent) *MeterElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *MeterElement) Textf(format string, args ...any) *MeterElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MeterElement) If(cond bool, child htemel.Node) *MeterElement {
+func (e *MeterElement) If(cond bool, child htemel.PhrasingContent) *MeterElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *MeterElement) If(cond bool, child htemel.Node) *MeterElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MeterElement) IfElse(cond bool, then, els htemel.Node) *MeterElement {
+func (e *MeterElement) IfElse(cond bool, then, els htemel.PhrasingContent) *MeterElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *MeterElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MeterAutocapitalize string
-
-const (
-	MeterAutocapitalizeCharacters MeterAutocapitalize = "characters"
-	MeterAutocapitalizeNone       MeterAutocapitalize = "none"
-	MeterAutocapitalizeOff        MeterAutocapitalize = "off"
-	MeterAutocapitalizeOn         MeterAutocapitalize = "on"
-	MeterAutocapitalizeSentences  MeterAutocapitalize = "sentences"
-	MeterAutocapitalizeWords      MeterAutocapitalize = "words"
-)
-
-type MeterAutocorrect string
-
-const (
-	MeterAutocorrectOff   MeterAutocorrect = "off"
-	MeterAutocorrectOn    MeterAutocorrect = "on"
-	MeterAutocorrectEmpty MeterAutocorrect = ""
-)
-
-type MeterContenteditable string
-
-const (
-	MeterContenteditableFalse         MeterContenteditable = "false"
-	MeterContenteditablePlaintextOnly MeterContenteditable = "plaintext-only"
-	MeterContenteditableTrue          MeterContenteditable = "true"
-	MeterContenteditableEmpty         MeterContenteditable = ""
-)
-
-type MeterDir string
-
-const (
-	MeterDirAuto MeterDir = "auto"
-	MeterDirLtr  MeterDir = "ltr"
-	MeterDirRtl  MeterDir = "rtl"
-)
-
-type MeterDraggable string
-
-const (
-	MeterDraggableFalse MeterDraggable = "false"
-	MeterDraggableTrue  MeterDraggable = "true"
-)
-
-type MeterEnterkeyhint string
-
-const (
-	MeterEnterkeyhintDone     MeterEnterkeyhint = "done"
-	MeterEnterkeyhintEnter    MeterEnterkeyhint = "enter"
-	MeterEnterkeyhintGo       MeterEnterkeyhint = "go"
-	MeterEnterkeyhintNext     MeterEnterkeyhint = "next"
-	MeterEnterkeyhintPrevious MeterEnterkeyhint = "previous"
-	MeterEnterkeyhintSearch   MeterEnterkeyhint = "search"
-	MeterEnterkeyhintSend     MeterEnterkeyhint = "send"
-)
-
-type MeterHidden string
-
-const (
-	MeterHiddenHidden     MeterHidden = "hidden"
-	MeterHiddenUntilFound MeterHidden = "until-found"
-	MeterHiddenEmpty      MeterHidden = ""
-)
-
-type MeterInputmode string
-
-const (
-	MeterInputmodeDecimal MeterInputmode = "decimal"
-	MeterInputmodeEmail   MeterInputmode = "email"
-	MeterInputmodeNone    MeterInputmode = "none"
-	MeterInputmodeNumeric MeterInputmode = "numeric"
-	MeterInputmodeSearch  MeterInputmode = "search"
-	MeterInputmodeTel     MeterInputmode = "tel"
-	MeterInputmodeText    MeterInputmode = "text"
-	MeterInputmodeUrl     MeterInputmode = "url"
-)
-
-type MeterPopover string
-
-const (
-	MeterPopoverAuto   MeterPopover = "auto"
-	MeterPopoverHint   MeterPopover = "hint"
-	MeterPopoverManual MeterPopover = "manual"
-	MeterPopoverEmpty  MeterPopover = ""
-)
-
-type MeterSpellcheck string
-
-const (
-	MeterSpellcheckFalse MeterSpellcheck = "false"
-	MeterSpellcheckTrue  MeterSpellcheck = "true"
-	MeterSpellcheckEmpty MeterSpellcheck = ""
-)
-
-type MeterTranslate string
-
-const (
-	MeterTranslateNo    MeterTranslate = "no"
-	MeterTranslateYes   MeterTranslate = "yes"
-	MeterTranslateEmpty MeterTranslate = ""
-)
-
-type MeterWritingsuggestions string
-
-const (
-	MeterWritingsuggestionsFalse MeterWritingsuggestions = "false"
-	MeterWritingsuggestionsTrue  MeterWritingsuggestions = "true"
-	MeterWritingsuggestionsEmpty MeterWritingsuggestions = ""
-)
-
 func (e *MeterElement) High(f float64) *MeterElement {
 	e.attributes.Set("high", strconv.FormatFloat(f, 'g', -1, 64))
 
@@ -331,7 +226,7 @@ func (e *MeterElement) Aria(name string, s string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Autocapitalize(a MeterAutocapitalize) *MeterElement {
+func (e *MeterElement) Autocapitalize(a Autocapitalize) *MeterElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -339,8 +234,8 @@ func (e *MeterElement) Autocapitalize(a MeterAutocapitalize) *MeterElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Autocorrect(v ...MeterAutocorrect) *MeterElement {
-	var val MeterAutocorrect
+func (e *MeterElement) Autocorrect(v ...Autocorrect) *MeterElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -365,8 +260,8 @@ func (e *MeterElement) Class(s ...string) *MeterElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Contenteditable(v ...MeterContenteditable) *MeterElement {
-	var val MeterContenteditable
+func (e *MeterElement) Contenteditable(v ...Contenteditable) *MeterElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -391,19 +286,19 @@ func (e *MeterElement) Data(name string, s string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Dir(a MeterDir) *MeterElement {
+func (e *MeterElement) Dir(a Dir) *MeterElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MeterElement) Draggable(a MeterDraggable) *MeterElement {
+func (e *MeterElement) Draggable(a Draggable) *MeterElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MeterElement) Enterkeyhint(a MeterEnterkeyhint) *MeterElement {
+func (e *MeterElement) Enterkeyhint(a Enterkeyhint) *MeterElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -431,8 +326,8 @@ func (e *MeterElement) Headingreset(b bool) *MeterElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Hidden(v ...MeterHidden) *MeterElement {
-	var val MeterHidden
+func (e *MeterElement) Hidden(v ...Hidden) *MeterElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -455,7 +350,7 @@ func (e *MeterElement) Inert(b bool) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Inputmode(a MeterInputmode) *MeterElement {
+func (e *MeterElement) Inputmode(a Inputmode) *MeterElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -521,8 +416,8 @@ func (e *MeterElement) Part(s ...string) *MeterElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Popover(v ...MeterPopover) *MeterElement {
-	var val MeterPopover
+func (e *MeterElement) Popover(v ...Popover) *MeterElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +440,8 @@ func (e *MeterElement) Slot(s string) *MeterElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Spellcheck(v ...MeterSpellcheck) *MeterElement {
-	var val MeterSpellcheck
+func (e *MeterElement) Spellcheck(v ...Spellcheck) *MeterElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -575,8 +470,8 @@ func (e *MeterElement) Title(s string) *MeterElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Translate(v ...MeterTranslate) *MeterElement {
-	var val MeterTranslate
+func (e *MeterElement) Translate(v ...Translate) *MeterElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -587,8 +482,8 @@ func (e *MeterElement) Translate(v ...MeterTranslate) *MeterElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MeterElement) Writingsuggestions(v ...MeterWritingsuggestions) *MeterElement {
-	var val MeterWritingsuggestions
+func (e *MeterElement) Writingsuggestions(v ...Writingsuggestions) *MeterElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

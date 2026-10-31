@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,32 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// HgroupChild is a permitted child of <hgroup>: <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <p>,
+// script-supporting elements.
+//
+// It is implemented by <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <p>, <script>, <template>, by any type
+// embedding htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group,
+// Each, If, Unchecked, ...).
+type HgroupChild interface {
+	htemel.Node
+	HTMLHgroupChild()
+}
+
 type HgroupElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []HgroupChild
 	skipRender bool
 }
 
 // Hgroup creates a tag <hgroup> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <p>, script-supporting elements (HgroupChild).
+//
 // Spec Description: The hgroup element represents a heading and related content. The element may be used to group an h1–h6 element with one or more p elements containing content representing a subheading, alternative title, or tagline.
-func Hgroup(children ...htemel.Node) *HgroupElement {
+func Hgroup(children ...HgroupChild) *HgroupElement {
 	node := &HgroupElement{
 		children: children,
 	}
@@ -31,7 +45,7 @@ func Hgroup(children ...htemel.Node) *HgroupElement {
 }
 
 // HgroupIf creates a tag <hgroup> instance that is only rendered when condition is true.
-func HgroupIf(condition bool, children ...htemel.Node) *HgroupElement {
+func HgroupIf(condition bool, children ...HgroupChild) *HgroupElement {
 	if condition {
 		return Hgroup(children...)
 	}
@@ -43,7 +57,7 @@ func HgroupIf(condition bool, children ...htemel.Node) *HgroupElement {
 }
 
 // HgroupTernary creates a tag <hgroup> containing then when condition is true, otherwise containing otherwise.
-func HgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HgroupElement {
+func HgroupTernary(condition bool, then HgroupChild, otherwise HgroupChild) *HgroupElement {
 	if condition {
 		return Hgroup(then)
 	}
@@ -51,7 +65,7 @@ func HgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Hgr
 }
 
 // Children appends children to this element.
-func (e *HgroupElement) Children(children ...htemel.Node) *HgroupElement {
+func (e *HgroupElement) Children(children ...HgroupChild) *HgroupElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +76,8 @@ func (e *HgroupElement) With(fn func(*HgroupElement)) *HgroupElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *HgroupElement) Text(text string) *HgroupElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *HgroupElement) Textf(format string, args ...any) *HgroupElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HgroupElement) If(cond bool, child htemel.Node) *HgroupElement {
+func (e *HgroupElement) If(cond bool, child HgroupChild) *HgroupElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +85,7 @@ func (e *HgroupElement) If(cond bool, child htemel.Node) *HgroupElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HgroupElement) IfElse(cond bool, then, els htemel.Node) *HgroupElement {
+func (e *HgroupElement) IfElse(cond bool, then, els HgroupChild) *HgroupElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +167,6 @@ func (e *HgroupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type HgroupAutocapitalize string
-
-const (
-	HgroupAutocapitalizeCharacters HgroupAutocapitalize = "characters"
-	HgroupAutocapitalizeNone       HgroupAutocapitalize = "none"
-	HgroupAutocapitalizeOff        HgroupAutocapitalize = "off"
-	HgroupAutocapitalizeOn         HgroupAutocapitalize = "on"
-	HgroupAutocapitalizeSentences  HgroupAutocapitalize = "sentences"
-	HgroupAutocapitalizeWords      HgroupAutocapitalize = "words"
-)
-
-type HgroupAutocorrect string
-
-const (
-	HgroupAutocorrectOff   HgroupAutocorrect = "off"
-	HgroupAutocorrectOn    HgroupAutocorrect = "on"
-	HgroupAutocorrectEmpty HgroupAutocorrect = ""
-)
-
-type HgroupContenteditable string
-
-const (
-	HgroupContenteditableFalse         HgroupContenteditable = "false"
-	HgroupContenteditablePlaintextOnly HgroupContenteditable = "plaintext-only"
-	HgroupContenteditableTrue          HgroupContenteditable = "true"
-	HgroupContenteditableEmpty         HgroupContenteditable = ""
-)
-
-type HgroupDir string
-
-const (
-	HgroupDirAuto HgroupDir = "auto"
-	HgroupDirLtr  HgroupDir = "ltr"
-	HgroupDirRtl  HgroupDir = "rtl"
-)
-
-type HgroupDraggable string
-
-const (
-	HgroupDraggableFalse HgroupDraggable = "false"
-	HgroupDraggableTrue  HgroupDraggable = "true"
-)
-
-type HgroupEnterkeyhint string
-
-const (
-	HgroupEnterkeyhintDone     HgroupEnterkeyhint = "done"
-	HgroupEnterkeyhintEnter    HgroupEnterkeyhint = "enter"
-	HgroupEnterkeyhintGo       HgroupEnterkeyhint = "go"
-	HgroupEnterkeyhintNext     HgroupEnterkeyhint = "next"
-	HgroupEnterkeyhintPrevious HgroupEnterkeyhint = "previous"
-	HgroupEnterkeyhintSearch   HgroupEnterkeyhint = "search"
-	HgroupEnterkeyhintSend     HgroupEnterkeyhint = "send"
-)
-
-type HgroupHidden string
-
-const (
-	HgroupHiddenHidden     HgroupHidden = "hidden"
-	HgroupHiddenUntilFound HgroupHidden = "until-found"
-	HgroupHiddenEmpty      HgroupHidden = ""
-)
-
-type HgroupInputmode string
-
-const (
-	HgroupInputmodeDecimal HgroupInputmode = "decimal"
-	HgroupInputmodeEmail   HgroupInputmode = "email"
-	HgroupInputmodeNone    HgroupInputmode = "none"
-	HgroupInputmodeNumeric HgroupInputmode = "numeric"
-	HgroupInputmodeSearch  HgroupInputmode = "search"
-	HgroupInputmodeTel     HgroupInputmode = "tel"
-	HgroupInputmodeText    HgroupInputmode = "text"
-	HgroupInputmodeUrl     HgroupInputmode = "url"
-)
-
-type HgroupPopover string
-
-const (
-	HgroupPopoverAuto   HgroupPopover = "auto"
-	HgroupPopoverHint   HgroupPopover = "hint"
-	HgroupPopoverManual HgroupPopover = "manual"
-	HgroupPopoverEmpty  HgroupPopover = ""
-)
-
-type HgroupSpellcheck string
-
-const (
-	HgroupSpellcheckFalse HgroupSpellcheck = "false"
-	HgroupSpellcheckTrue  HgroupSpellcheck = "true"
-	HgroupSpellcheckEmpty HgroupSpellcheck = ""
-)
-
-type HgroupTranslate string
-
-const (
-	HgroupTranslateNo    HgroupTranslate = "no"
-	HgroupTranslateYes   HgroupTranslate = "yes"
-	HgroupTranslateEmpty HgroupTranslate = ""
-)
-
-type HgroupWritingsuggestions string
-
-const (
-	HgroupWritingsuggestionsFalse HgroupWritingsuggestions = "false"
-	HgroupWritingsuggestionsTrue  HgroupWritingsuggestions = "true"
-	HgroupWritingsuggestionsEmpty HgroupWritingsuggestions = ""
-)
-
 func (e *HgroupElement) Accesskey(r rune) *HgroupElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +189,7 @@ func (e *HgroupElement) Aria(name string, s string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Autocapitalize(a HgroupAutocapitalize) *HgroupElement {
+func (e *HgroupElement) Autocapitalize(a Autocapitalize) *HgroupElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *HgroupElement) Autocapitalize(a HgroupAutocapitalize) *HgroupElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Autocorrect(v ...HgroupAutocorrect) *HgroupElement {
-	var val HgroupAutocorrect
+func (e *HgroupElement) Autocorrect(v ...Autocorrect) *HgroupElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *HgroupElement) Class(s ...string) *HgroupElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Contenteditable(v ...HgroupContenteditable) *HgroupElement {
-	var val HgroupContenteditable
+func (e *HgroupElement) Contenteditable(v ...Contenteditable) *HgroupElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *HgroupElement) Data(name string, s string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Dir(a HgroupDir) *HgroupElement {
+func (e *HgroupElement) Dir(a Dir) *HgroupElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *HgroupElement) Draggable(a HgroupDraggable) *HgroupElement {
+func (e *HgroupElement) Draggable(a Draggable) *HgroupElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *HgroupElement) Enterkeyhint(a HgroupEnterkeyhint) *HgroupElement {
+func (e *HgroupElement) Enterkeyhint(a Enterkeyhint) *HgroupElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *HgroupElement) Headingreset(b bool) *HgroupElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Hidden(v ...HgroupHidden) *HgroupElement {
-	var val HgroupHidden
+func (e *HgroupElement) Hidden(v ...Hidden) *HgroupElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *HgroupElement) Inert(b bool) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Inputmode(a HgroupInputmode) *HgroupElement {
+func (e *HgroupElement) Inputmode(a Inputmode) *HgroupElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *HgroupElement) Part(s ...string) *HgroupElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Popover(v ...HgroupPopover) *HgroupElement {
-	var val HgroupPopover
+func (e *HgroupElement) Popover(v ...Popover) *HgroupElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *HgroupElement) Slot(s string) *HgroupElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Spellcheck(v ...HgroupSpellcheck) *HgroupElement {
-	var val HgroupSpellcheck
+func (e *HgroupElement) Spellcheck(v ...Spellcheck) *HgroupElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *HgroupElement) Title(s string) *HgroupElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Translate(v ...HgroupTranslate) *HgroupElement {
-	var val HgroupTranslate
+func (e *HgroupElement) Translate(v ...Translate) *HgroupElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *HgroupElement) Translate(v ...HgroupTranslate) *HgroupElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HgroupElement) Writingsuggestions(v ...HgroupWritingsuggestions) *HgroupElement {
-	var val HgroupWritingsuggestions
+func (e *HgroupElement) Writingsuggestions(v ...Writingsuggestions) *HgroupElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

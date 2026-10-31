@@ -14,15 +14,17 @@ import (
 
 type SymbolElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Symbol creates a tag <symbol> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The symbol element defines reusable graphical content that is only rendered when instantiated by a use element.
-func Symbol(children ...htemel.Node) *SymbolElement {
+func Symbol(children ...Content) *SymbolElement {
 	node := &SymbolElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Symbol(children ...htemel.Node) *SymbolElement {
 }
 
 // SymbolIf creates a tag <symbol> instance that is only rendered when condition is true.
-func SymbolIf(condition bool, children ...htemel.Node) *SymbolElement {
+func SymbolIf(condition bool, children ...Content) *SymbolElement {
 	if condition {
 		return Symbol(children...)
 	}
@@ -43,7 +45,7 @@ func SymbolIf(condition bool, children ...htemel.Node) *SymbolElement {
 }
 
 // SymbolTernary creates a tag <symbol> containing then when condition is true, otherwise containing otherwise.
-func SymbolTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SymbolElement {
+func SymbolTernary(condition bool, then Content, otherwise Content) *SymbolElement {
 	if condition {
 		return Symbol(then)
 	}
@@ -51,7 +53,7 @@ func SymbolTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Sym
 }
 
 // Children appends children to this element.
-func (e *SymbolElement) Children(children ...htemel.Node) *SymbolElement {
+func (e *SymbolElement) Children(children ...Content) *SymbolElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *SymbolElement) Textf(format string, args ...any) *SymbolElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SymbolElement) If(cond bool, child htemel.Node) *SymbolElement {
+func (e *SymbolElement) If(cond bool, child Content) *SymbolElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *SymbolElement) If(cond bool, child htemel.Node) *SymbolElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SymbolElement) IfElse(cond bool, then, els htemel.Node) *SymbolElement {
+func (e *SymbolElement) IfElse(cond bool, then, els Content) *SymbolElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *SymbolElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SymbolAlignmentBaseline string
-
-const (
-	SymbolAlignmentBaselineAfterEdge      SymbolAlignmentBaseline = "after-edge"
-	SymbolAlignmentBaselineAlphabetic     SymbolAlignmentBaseline = "alphabetic"
-	SymbolAlignmentBaselineAuto           SymbolAlignmentBaseline = "auto"
-	SymbolAlignmentBaselineBaseline       SymbolAlignmentBaseline = "baseline"
-	SymbolAlignmentBaselineBeforeEdge     SymbolAlignmentBaseline = "before-edge"
-	SymbolAlignmentBaselineBottom         SymbolAlignmentBaseline = "bottom"
-	SymbolAlignmentBaselineCenter         SymbolAlignmentBaseline = "center"
-	SymbolAlignmentBaselineCentral        SymbolAlignmentBaseline = "central"
-	SymbolAlignmentBaselineHanging        SymbolAlignmentBaseline = "hanging"
-	SymbolAlignmentBaselineIdeographic    SymbolAlignmentBaseline = "ideographic"
-	SymbolAlignmentBaselineMathematical   SymbolAlignmentBaseline = "mathematical"
-	SymbolAlignmentBaselineMiddle         SymbolAlignmentBaseline = "middle"
-	SymbolAlignmentBaselineTextAfterEdge  SymbolAlignmentBaseline = "text-after-edge"
-	SymbolAlignmentBaselineTextBeforeEdge SymbolAlignmentBaseline = "text-before-edge"
-	SymbolAlignmentBaselineTextBottom     SymbolAlignmentBaseline = "text-bottom"
-	SymbolAlignmentBaselineTextTop        SymbolAlignmentBaseline = "text-top"
-	SymbolAlignmentBaselineTop            SymbolAlignmentBaseline = "top"
-)
-
-type SymbolClipRule string
-
-const (
-	SymbolClipRuleEvenodd SymbolClipRule = "evenodd"
-	SymbolClipRuleNonzero SymbolClipRule = "nonzero"
-)
-
-type SymbolColorInterpolation string
-
-const (
-	SymbolColorInterpolationAuto      SymbolColorInterpolation = "auto"
-	SymbolColorInterpolationLinearRGB SymbolColorInterpolation = "linearRGB"
-	SymbolColorInterpolationSRGB      SymbolColorInterpolation = "sRGB"
-)
-
-type SymbolColorInterpolationFilters string
-
-const (
-	SymbolColorInterpolationFiltersAuto      SymbolColorInterpolationFilters = "auto"
-	SymbolColorInterpolationFiltersLinearRGB SymbolColorInterpolationFilters = "linearRGB"
-	SymbolColorInterpolationFiltersSRGB      SymbolColorInterpolationFilters = "sRGB"
-)
-
-type SymbolDirection string
-
-const (
-	SymbolDirectionLtr SymbolDirection = "ltr"
-	SymbolDirectionRtl SymbolDirection = "rtl"
-)
-
-type SymbolDominantBaseline string
-
-const (
-	SymbolDominantBaselineAlphabetic   SymbolDominantBaseline = "alphabetic"
-	SymbolDominantBaselineAuto         SymbolDominantBaseline = "auto"
-	SymbolDominantBaselineCentral      SymbolDominantBaseline = "central"
-	SymbolDominantBaselineHanging      SymbolDominantBaseline = "hanging"
-	SymbolDominantBaselineIdeographic  SymbolDominantBaseline = "ideographic"
-	SymbolDominantBaselineMathematical SymbolDominantBaseline = "mathematical"
-	SymbolDominantBaselineMiddle       SymbolDominantBaseline = "middle"
-	SymbolDominantBaselineTextBottom   SymbolDominantBaseline = "text-bottom"
-	SymbolDominantBaselineTextTop      SymbolDominantBaseline = "text-top"
-)
-
-type SymbolFillRule string
-
-const (
-	SymbolFillRuleEvenodd SymbolFillRule = "evenodd"
-	SymbolFillRuleNonzero SymbolFillRule = "nonzero"
-)
-
-type SymbolFontStyle string
-
-const (
-	SymbolFontStyleItalic  SymbolFontStyle = "italic"
-	SymbolFontStyleNormal  SymbolFontStyle = "normal"
-	SymbolFontStyleOblique SymbolFontStyle = "oblique"
-)
-
-type SymbolImageRendering string
-
-const (
-	SymbolImageRenderingAuto            SymbolImageRendering = "auto"
-	SymbolImageRenderingCrispEdges      SymbolImageRendering = "crisp-edges"
-	SymbolImageRenderingHighQuality     SymbolImageRendering = "high-quality"
-	SymbolImageRenderingOptimizeQuality SymbolImageRendering = "optimizeQuality"
-	SymbolImageRenderingOptimizeSpeed   SymbolImageRendering = "optimizeSpeed"
-	SymbolImageRenderingPixelated       SymbolImageRendering = "pixelated"
-	SymbolImageRenderingSmooth          SymbolImageRendering = "smooth"
-)
-
-type SymbolOverflow string
-
-const (
-	SymbolOverflowAuto    SymbolOverflow = "auto"
-	SymbolOverflowClip    SymbolOverflow = "clip"
-	SymbolOverflowHidden  SymbolOverflow = "hidden"
-	SymbolOverflowScroll  SymbolOverflow = "scroll"
-	SymbolOverflowVisible SymbolOverflow = "visible"
-)
-
-type SymbolPointerEvents string
-
-const (
-	SymbolPointerEventsAll            SymbolPointerEvents = "all"
-	SymbolPointerEventsAuto           SymbolPointerEvents = "auto"
-	SymbolPointerEventsBoundingBox    SymbolPointerEvents = "bounding-box"
-	SymbolPointerEventsFill           SymbolPointerEvents = "fill"
-	SymbolPointerEventsNone           SymbolPointerEvents = "none"
-	SymbolPointerEventsPainted        SymbolPointerEvents = "painted"
-	SymbolPointerEventsStroke         SymbolPointerEvents = "stroke"
-	SymbolPointerEventsVisible        SymbolPointerEvents = "visible"
-	SymbolPointerEventsVisibleFill    SymbolPointerEvents = "visibleFill"
-	SymbolPointerEventsVisiblePainted SymbolPointerEvents = "visiblePainted"
-	SymbolPointerEventsVisibleStroke  SymbolPointerEvents = "visibleStroke"
-)
-
-type SymbolShapeRendering string
-
-const (
-	SymbolShapeRenderingAuto               SymbolShapeRendering = "auto"
-	SymbolShapeRenderingCrispEdges         SymbolShapeRendering = "crispEdges"
-	SymbolShapeRenderingGeometricPrecision SymbolShapeRendering = "geometricPrecision"
-	SymbolShapeRenderingOptimizeSpeed      SymbolShapeRendering = "optimizeSpeed"
-)
-
-type SymbolStrokeLinecap string
-
-const (
-	SymbolStrokeLinecapButt   SymbolStrokeLinecap = "butt"
-	SymbolStrokeLinecapRound  SymbolStrokeLinecap = "round"
-	SymbolStrokeLinecapSquare SymbolStrokeLinecap = "square"
-)
-
-type SymbolStrokeLinejoin string
-
-const (
-	SymbolStrokeLinejoinArcs      SymbolStrokeLinejoin = "arcs"
-	SymbolStrokeLinejoinBevel     SymbolStrokeLinejoin = "bevel"
-	SymbolStrokeLinejoinMiter     SymbolStrokeLinejoin = "miter"
-	SymbolStrokeLinejoinMiterClip SymbolStrokeLinejoin = "miter-clip"
-	SymbolStrokeLinejoinRound     SymbolStrokeLinejoin = "round"
-)
-
-type SymbolTextAnchor string
-
-const (
-	SymbolTextAnchorEnd    SymbolTextAnchor = "end"
-	SymbolTextAnchorMiddle SymbolTextAnchor = "middle"
-	SymbolTextAnchorStart  SymbolTextAnchor = "start"
-)
-
-type SymbolTextRendering string
-
-const (
-	SymbolTextRenderingAuto               SymbolTextRendering = "auto"
-	SymbolTextRenderingGeometricPrecision SymbolTextRendering = "geometricPrecision"
-	SymbolTextRenderingOptimizeLegibility SymbolTextRendering = "optimizeLegibility"
-	SymbolTextRenderingOptimizeSpeed      SymbolTextRendering = "optimizeSpeed"
-)
-
-type SymbolTransformBox string
-
-const (
-	SymbolTransformBoxBorderBox  SymbolTransformBox = "border-box"
-	SymbolTransformBoxContentBox SymbolTransformBox = "content-box"
-	SymbolTransformBoxFillBox    SymbolTransformBox = "fill-box"
-	SymbolTransformBoxStrokeBox  SymbolTransformBox = "stroke-box"
-	SymbolTransformBoxViewBox    SymbolTransformBox = "view-box"
-)
-
-type SymbolVectorEffect string
-
-const (
-	SymbolVectorEffectFixedPosition    SymbolVectorEffect = "fixed-position"
-	SymbolVectorEffectNonRotation      SymbolVectorEffect = "non-rotation"
-	SymbolVectorEffectNonScalingSize   SymbolVectorEffect = "non-scaling-size"
-	SymbolVectorEffectNonScalingStroke SymbolVectorEffect = "non-scaling-stroke"
-	SymbolVectorEffectNone             SymbolVectorEffect = "none"
-)
-
-type SymbolVisibility string
-
-const (
-	SymbolVisibilityCollapse SymbolVisibility = "collapse"
-	SymbolVisibilityHidden   SymbolVisibility = "hidden"
-	SymbolVisibilityVisible  SymbolVisibility = "visible"
-)
-
-type SymbolWritingMode string
-
-const (
-	SymbolWritingModeHorizontalTb SymbolWritingMode = "horizontal-tb"
-	SymbolWritingModeLr           SymbolWritingMode = "lr"
-	SymbolWritingModeLrTb         SymbolWritingMode = "lr-tb"
-	SymbolWritingModeRl           SymbolWritingMode = "rl"
-	SymbolWritingModeRlTb         SymbolWritingMode = "rl-tb"
-	SymbolWritingModeSidewaysLr   SymbolWritingMode = "sideways-lr"
-	SymbolWritingModeSidewaysRl   SymbolWritingMode = "sideways-rl"
-	SymbolWritingModeTb           SymbolWritingMode = "tb"
-	SymbolWritingModeTbRl         SymbolWritingMode = "tb-rl"
-	SymbolWritingModeVerticalLr   SymbolWritingMode = "vertical-lr"
-	SymbolWritingModeVerticalRl   SymbolWritingMode = "vertical-rl"
-)
-
-type SymbolXmlSpace string
-
-const (
-	SymbolXmlSpaceDefault  SymbolXmlSpace = "default"
-	SymbolXmlSpacePreserve SymbolXmlSpace = "preserve"
-)
+// SVGContent marks <symbol> as a permitted child (Content).
+func (*SymbolElement) SVGContent() {}
 
 func (e *SymbolElement) Height(s string) *SymbolElement {
 	e.attributes.Set("height", s)
@@ -426,14 +217,10 @@ func (e *SymbolElement) Y(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) AlignmentBaseline(a SymbolAlignmentBaseline) *SymbolElement {
+func (e *SymbolElement) AlignmentBaseline(a AlignmentBaseline) *SymbolElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func SymbolAlignmentBaselineCustom(s string) SymbolAlignmentBaseline {
-	return SymbolAlignmentBaseline(s)
 }
 
 func (e *SymbolElement) AriaUnsafe(name string, s string) *SymbolElement {
@@ -487,14 +274,10 @@ func (e *SymbolElement) ClipPath(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) ClipRule(a SymbolClipRule) *SymbolElement {
+func (e *SymbolElement) ClipRule(a ClipRule) *SymbolElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func SymbolClipRuleCustom(s string) SymbolClipRule {
-	return SymbolClipRule(s)
 }
 
 func (e *SymbolElement) Color(s string) *SymbolElement {
@@ -503,24 +286,16 @@ func (e *SymbolElement) Color(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) ColorInterpolation(a SymbolColorInterpolation) *SymbolElement {
+func (e *SymbolElement) ColorInterpolation(a ColorInterpolation) *SymbolElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func SymbolColorInterpolationCustom(s string) SymbolColorInterpolation {
-	return SymbolColorInterpolation(s)
-}
-
-func (e *SymbolElement) ColorInterpolationFilters(a SymbolColorInterpolationFilters) *SymbolElement {
+func (e *SymbolElement) ColorInterpolationFilters(a ColorInterpolationFilters) *SymbolElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func SymbolColorInterpolationFiltersCustom(s string) SymbolColorInterpolationFilters {
-	return SymbolColorInterpolationFilters(s)
 }
 
 func (e *SymbolElement) Cursor(s string) *SymbolElement {
@@ -545,14 +320,10 @@ func (e *SymbolElement) Data(name string, s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) Direction(a SymbolDirection) *SymbolElement {
+func (e *SymbolElement) Direction(a Direction) *SymbolElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func SymbolDirectionCustom(s string) SymbolDirection {
-	return SymbolDirection(s)
 }
 
 func (e *SymbolElement) Display(s string) *SymbolElement {
@@ -561,14 +332,10 @@ func (e *SymbolElement) Display(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) DominantBaseline(a SymbolDominantBaseline) *SymbolElement {
+func (e *SymbolElement) DominantBaseline(a DominantBaseline) *SymbolElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func SymbolDominantBaselineCustom(s string) SymbolDominantBaseline {
-	return SymbolDominantBaseline(s)
 }
 
 func (e *SymbolElement) Fill(s string) *SymbolElement {
@@ -583,14 +350,10 @@ func (e *SymbolElement) FillOpacity(f float64) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) FillRule(a SymbolFillRule) *SymbolElement {
+func (e *SymbolElement) FillRule(a FillRule) *SymbolElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func SymbolFillRuleCustom(s string) SymbolFillRule {
-	return SymbolFillRule(s)
 }
 
 func (e *SymbolElement) Filter(s string) *SymbolElement {
@@ -635,14 +398,10 @@ func (e *SymbolElement) FontStretch(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) FontStyle(a SymbolFontStyle) *SymbolElement {
+func (e *SymbolElement) FontStyle(a FontStyle) *SymbolElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func SymbolFontStyleCustom(s string) SymbolFontStyle {
-	return SymbolFontStyle(s)
 }
 
 func (e *SymbolElement) FontVariant(s string) *SymbolElement {
@@ -681,14 +440,10 @@ func (e *SymbolElement) Id(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) ImageRendering(a SymbolImageRendering) *SymbolElement {
+func (e *SymbolElement) ImageRendering(a ImageRendering) *SymbolElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func SymbolImageRenderingCustom(s string) SymbolImageRendering {
-	return SymbolImageRendering(s)
 }
 
 func (e *SymbolElement) Lang(s string) *SymbolElement {
@@ -739,14 +494,10 @@ func (e *SymbolElement) Opacity(f float64) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) Overflow(a SymbolOverflow) *SymbolElement {
+func (e *SymbolElement) Overflow(a Overflow) *SymbolElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func SymbolOverflowCustom(s string) SymbolOverflow {
-	return SymbolOverflow(s)
 }
 
 func (e *SymbolElement) PaintOrder(s string) *SymbolElement {
@@ -755,14 +506,10 @@ func (e *SymbolElement) PaintOrder(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) PointerEvents(a SymbolPointerEvents) *SymbolElement {
+func (e *SymbolElement) PointerEvents(a PointerEvents) *SymbolElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func SymbolPointerEventsCustom(s string) SymbolPointerEvents {
-	return SymbolPointerEvents(s)
 }
 
 func (e *SymbolElement) RequiredExtensions(s string) *SymbolElement {
@@ -771,14 +518,10 @@ func (e *SymbolElement) RequiredExtensions(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) ShapeRendering(a SymbolShapeRendering) *SymbolElement {
+func (e *SymbolElement) ShapeRendering(a ShapeRendering) *SymbolElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func SymbolShapeRenderingCustom(s string) SymbolShapeRendering {
-	return SymbolShapeRendering(s)
 }
 
 func (e *SymbolElement) StopColor(s string) *SymbolElement {
@@ -811,24 +554,16 @@ func (e *SymbolElement) StrokeDashoffset(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) StrokeLinecap(a SymbolStrokeLinecap) *SymbolElement {
+func (e *SymbolElement) StrokeLinecap(a StrokeLinecap) *SymbolElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func SymbolStrokeLinecapCustom(s string) SymbolStrokeLinecap {
-	return SymbolStrokeLinecap(s)
-}
-
-func (e *SymbolElement) StrokeLinejoin(a SymbolStrokeLinejoin) *SymbolElement {
+func (e *SymbolElement) StrokeLinejoin(a StrokeLinejoin) *SymbolElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func SymbolStrokeLinejoinCustom(s string) SymbolStrokeLinejoin {
-	return SymbolStrokeLinejoin(s)
 }
 
 func (e *SymbolElement) StrokeMiterlimit(f float64) *SymbolElement {
@@ -861,14 +596,10 @@ func (e *SymbolElement) Tabindex(i int) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) TextAnchor(a SymbolTextAnchor) *SymbolElement {
+func (e *SymbolElement) TextAnchor(a TextAnchor) *SymbolElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func SymbolTextAnchorCustom(s string) SymbolTextAnchor {
-	return SymbolTextAnchor(s)
 }
 
 func (e *SymbolElement) TextDecoration(s string) *SymbolElement {
@@ -883,14 +614,10 @@ func (e *SymbolElement) TextOverflow(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) TextRendering(a SymbolTextRendering) *SymbolElement {
+func (e *SymbolElement) TextRendering(a TextRendering) *SymbolElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func SymbolTextRenderingCustom(s string) SymbolTextRendering {
-	return SymbolTextRendering(s)
 }
 
 func (e *SymbolElement) Transform(s string) *SymbolElement {
@@ -899,14 +626,10 @@ func (e *SymbolElement) Transform(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) TransformBox(a SymbolTransformBox) *SymbolElement {
+func (e *SymbolElement) TransformBox(a TransformBox) *SymbolElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func SymbolTransformBoxCustom(s string) SymbolTransformBox {
-	return SymbolTransformBox(s)
 }
 
 func (e *SymbolElement) TransformOrigin(s string) *SymbolElement {
@@ -921,24 +644,16 @@ func (e *SymbolElement) UnicodeBidi(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) VectorEffect(a SymbolVectorEffect) *SymbolElement {
+func (e *SymbolElement) VectorEffect(a VectorEffect) *SymbolElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func SymbolVectorEffectCustom(s string) SymbolVectorEffect {
-	return SymbolVectorEffect(s)
-}
-
-func (e *SymbolElement) Visibility(a SymbolVisibility) *SymbolElement {
+func (e *SymbolElement) Visibility(a Visibility) *SymbolElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func SymbolVisibilityCustom(s string) SymbolVisibility {
-	return SymbolVisibility(s)
 }
 
 func (e *SymbolElement) WhiteSpace(s string) *SymbolElement {
@@ -953,14 +668,10 @@ func (e *SymbolElement) WordSpacing(s string) *SymbolElement {
 	return e
 }
 
-func (e *SymbolElement) WritingMode(a SymbolWritingMode) *SymbolElement {
+func (e *SymbolElement) WritingMode(a WritingMode) *SymbolElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func SymbolWritingModeCustom(s string) SymbolWritingMode {
-	return SymbolWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -975,7 +686,7 @@ func (e *SymbolElement) XmlLang(s string) *SymbolElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *SymbolElement) XmlSpace(a SymbolXmlSpace) *SymbolElement {
+func (e *SymbolElement) XmlSpace(a XmlSpace) *SymbolElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

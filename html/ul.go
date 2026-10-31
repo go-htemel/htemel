@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,31 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// UlChild is a permitted child of <ul>: <li>, script-supporting elements.
+//
+// It is implemented by <li>, <script>, <template>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type UlChild interface {
+	htemel.Node
+	HTMLUlChild()
+}
+
 type UlElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []UlChild
 	skipRender bool
 }
 
 // Ul creates a tag <ul> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <li>, script-supporting elements (UlChild).
+//
 // Spec Description: The ul element represents a list of items, where the order of the items is not important — that is, where changing the order would not materially change the meaning of the document.
-func Ul(children ...htemel.Node) *UlElement {
+func Ul(children ...UlChild) *UlElement {
 	node := &UlElement{
 		children: children,
 	}
@@ -31,7 +44,7 @@ func Ul(children ...htemel.Node) *UlElement {
 }
 
 // UlIf creates a tag <ul> instance that is only rendered when condition is true.
-func UlIf(condition bool, children ...htemel.Node) *UlElement {
+func UlIf(condition bool, children ...UlChild) *UlElement {
 	if condition {
 		return Ul(children...)
 	}
@@ -43,7 +56,7 @@ func UlIf(condition bool, children ...htemel.Node) *UlElement {
 }
 
 // UlTernary creates a tag <ul> containing then when condition is true, otherwise containing otherwise.
-func UlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UlElement {
+func UlTernary(condition bool, then UlChild, otherwise UlChild) *UlElement {
 	if condition {
 		return Ul(then)
 	}
@@ -51,7 +64,7 @@ func UlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UlEleme
 }
 
 // Children appends children to this element.
-func (e *UlElement) Children(children ...htemel.Node) *UlElement {
+func (e *UlElement) Children(children ...UlChild) *UlElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +75,8 @@ func (e *UlElement) With(fn func(*UlElement)) *UlElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *UlElement) Text(text string) *UlElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *UlElement) Textf(format string, args ...any) *UlElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *UlElement) If(cond bool, child htemel.Node) *UlElement {
+func (e *UlElement) If(cond bool, child UlChild) *UlElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *UlElement) If(cond bool, child htemel.Node) *UlElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *UlElement) IfElse(cond bool, then, els htemel.Node) *UlElement {
+func (e *UlElement) IfElse(cond bool, then, els UlChild) *UlElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +166,6 @@ func (e *UlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type UlAutocapitalize string
-
-const (
-	UlAutocapitalizeCharacters UlAutocapitalize = "characters"
-	UlAutocapitalizeNone       UlAutocapitalize = "none"
-	UlAutocapitalizeOff        UlAutocapitalize = "off"
-	UlAutocapitalizeOn         UlAutocapitalize = "on"
-	UlAutocapitalizeSentences  UlAutocapitalize = "sentences"
-	UlAutocapitalizeWords      UlAutocapitalize = "words"
-)
-
-type UlAutocorrect string
-
-const (
-	UlAutocorrectOff   UlAutocorrect = "off"
-	UlAutocorrectOn    UlAutocorrect = "on"
-	UlAutocorrectEmpty UlAutocorrect = ""
-)
-
-type UlContenteditable string
-
-const (
-	UlContenteditableFalse         UlContenteditable = "false"
-	UlContenteditablePlaintextOnly UlContenteditable = "plaintext-only"
-	UlContenteditableTrue          UlContenteditable = "true"
-	UlContenteditableEmpty         UlContenteditable = ""
-)
-
-type UlDir string
-
-const (
-	UlDirAuto UlDir = "auto"
-	UlDirLtr  UlDir = "ltr"
-	UlDirRtl  UlDir = "rtl"
-)
-
-type UlDraggable string
-
-const (
-	UlDraggableFalse UlDraggable = "false"
-	UlDraggableTrue  UlDraggable = "true"
-)
-
-type UlEnterkeyhint string
-
-const (
-	UlEnterkeyhintDone     UlEnterkeyhint = "done"
-	UlEnterkeyhintEnter    UlEnterkeyhint = "enter"
-	UlEnterkeyhintGo       UlEnterkeyhint = "go"
-	UlEnterkeyhintNext     UlEnterkeyhint = "next"
-	UlEnterkeyhintPrevious UlEnterkeyhint = "previous"
-	UlEnterkeyhintSearch   UlEnterkeyhint = "search"
-	UlEnterkeyhintSend     UlEnterkeyhint = "send"
-)
-
-type UlHidden string
-
-const (
-	UlHiddenHidden     UlHidden = "hidden"
-	UlHiddenUntilFound UlHidden = "until-found"
-	UlHiddenEmpty      UlHidden = ""
-)
-
-type UlInputmode string
-
-const (
-	UlInputmodeDecimal UlInputmode = "decimal"
-	UlInputmodeEmail   UlInputmode = "email"
-	UlInputmodeNone    UlInputmode = "none"
-	UlInputmodeNumeric UlInputmode = "numeric"
-	UlInputmodeSearch  UlInputmode = "search"
-	UlInputmodeTel     UlInputmode = "tel"
-	UlInputmodeText    UlInputmode = "text"
-	UlInputmodeUrl     UlInputmode = "url"
-)
-
-type UlPopover string
-
-const (
-	UlPopoverAuto   UlPopover = "auto"
-	UlPopoverHint   UlPopover = "hint"
-	UlPopoverManual UlPopover = "manual"
-	UlPopoverEmpty  UlPopover = ""
-)
-
-type UlSpellcheck string
-
-const (
-	UlSpellcheckFalse UlSpellcheck = "false"
-	UlSpellcheckTrue  UlSpellcheck = "true"
-	UlSpellcheckEmpty UlSpellcheck = ""
-)
-
-type UlTranslate string
-
-const (
-	UlTranslateNo    UlTranslate = "no"
-	UlTranslateYes   UlTranslate = "yes"
-	UlTranslateEmpty UlTranslate = ""
-)
-
-type UlWritingsuggestions string
-
-const (
-	UlWritingsuggestionsFalse UlWritingsuggestions = "false"
-	UlWritingsuggestionsTrue  UlWritingsuggestions = "true"
-	UlWritingsuggestionsEmpty UlWritingsuggestions = ""
-)
-
 func (e *UlElement) Accesskey(r rune) *UlElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +188,7 @@ func (e *UlElement) Aria(name string, s string) *UlElement {
 	return e
 }
 
-func (e *UlElement) Autocapitalize(a UlAutocapitalize) *UlElement {
+func (e *UlElement) Autocapitalize(a Autocapitalize) *UlElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +196,8 @@ func (e *UlElement) Autocapitalize(a UlAutocapitalize) *UlElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Autocorrect(v ...UlAutocorrect) *UlElement {
-	var val UlAutocorrect
+func (e *UlElement) Autocorrect(v ...Autocorrect) *UlElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +222,8 @@ func (e *UlElement) Class(s ...string) *UlElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Contenteditable(v ...UlContenteditable) *UlElement {
-	var val UlContenteditable
+func (e *UlElement) Contenteditable(v ...Contenteditable) *UlElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +248,19 @@ func (e *UlElement) Data(name string, s string) *UlElement {
 	return e
 }
 
-func (e *UlElement) Dir(a UlDir) *UlElement {
+func (e *UlElement) Dir(a Dir) *UlElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *UlElement) Draggable(a UlDraggable) *UlElement {
+func (e *UlElement) Draggable(a Draggable) *UlElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *UlElement) Enterkeyhint(a UlEnterkeyhint) *UlElement {
+func (e *UlElement) Enterkeyhint(a Enterkeyhint) *UlElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +288,8 @@ func (e *UlElement) Headingreset(b bool) *UlElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Hidden(v ...UlHidden) *UlElement {
-	var val UlHidden
+func (e *UlElement) Hidden(v ...Hidden) *UlElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +312,7 @@ func (e *UlElement) Inert(b bool) *UlElement {
 	return e
 }
 
-func (e *UlElement) Inputmode(a UlInputmode) *UlElement {
+func (e *UlElement) Inputmode(a Inputmode) *UlElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +378,8 @@ func (e *UlElement) Part(s ...string) *UlElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Popover(v ...UlPopover) *UlElement {
-	var val UlPopover
+func (e *UlElement) Popover(v ...Popover) *UlElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +402,8 @@ func (e *UlElement) Slot(s string) *UlElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Spellcheck(v ...UlSpellcheck) *UlElement {
-	var val UlSpellcheck
+func (e *UlElement) Spellcheck(v ...Spellcheck) *UlElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +432,8 @@ func (e *UlElement) Title(s string) *UlElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Translate(v ...UlTranslate) *UlElement {
-	var val UlTranslate
+func (e *UlElement) Translate(v ...Translate) *UlElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +444,8 @@ func (e *UlElement) Translate(v ...UlTranslate) *UlElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UlElement) Writingsuggestions(v ...UlWritingsuggestions) *UlElement {
-	var val UlWritingsuggestions
+func (e *UlElement) Writingsuggestions(v ...Writingsuggestions) *UlElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

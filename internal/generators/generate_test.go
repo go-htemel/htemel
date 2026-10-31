@@ -81,6 +81,13 @@ func TestGenerateSVGFixture(t *testing.T) {
 
 	fset := token.NewFileSet()
 	all := &strings.Builder{}
+	for _, name := range []string{"enums.go", "content.go"} {
+		src, err := os.ReadFile(filepath.Join(pkgDir, name))
+		if err != nil {
+			t.Fatal(err)
+		}
+		all.Write(src)
+	}
 	for _, e := range sp.Elements {
 		path := filepath.Join(pkgDir, strings.ToLower(e.Tag)+".go")
 		src, err := os.ReadFile(path)
@@ -104,8 +111,10 @@ func TestGenerateSVGFixture(t *testing.T) {
 		"func LinearGradient(",
 		"func FeGaussianBlur(",
 		"func (e *PathElement) StrokeWidth(s string) *PathElement",
-		"func (e *PathElement) StrokeLinecap(a PathStrokeLinecap) *PathElement",
-		"PathStrokeLinecapButt PathStrokeLinecap = \"butt\"",
+		"func (e *PathElement) StrokeLinecap(a StrokeLinecap) *PathElement",
+		"StrokeLinecapButt StrokeLinecap = \"butt\"",
+		"func Svg(children ...Content) *SvgElement",
+		"htemel.PhrasingMarker",
 		"func (e *SvgElement) ViewBox(",
 		"func (e *SvgElement) PreserveAspectRatio(",
 		"func (e *SvgElement) XmlnsXlink(",
@@ -157,7 +166,7 @@ func main() {
 	out, err := htemel.RenderString(
 		svg.Svg(
 			svg.ClipPath().Id("c"),
-			svg.Path().D("M0 0L1 1").Stroke("currentColor").StrokeWidth("2").StrokeLinecap(svg.PathStrokeLinecapRound),
+			svg.Path().D("M0 0L1 1").Stroke("currentColor").StrokeWidth("2").StrokeLinecap(svg.StrokeLinecapRound),
 			svg.FeGaussianBlur().StdDeviation("3"),
 			svg.Script().Text("if (a < b) {}"),
 		).ViewBox("0 0 24 24").XmlSpace("preserve"),
@@ -242,5 +251,192 @@ func TestGenerateSpecFlags(t *testing.T) {
 	}
 	if i := strings.Index(plain, "func (e *PlainElement) Title("); i < 0 || strings.Contains(plain[:i][strings.LastIndex(plain[:i], "}"):], "URL") {
 		t.Error("non-URL string attribute must not get the URL doc")
+	}
+}
+
+func TestCheckNamesContentModelCollisions(t *testing.T) {
+	ul := func() *spec.Element {
+		return &spec.Element{Tag: "ul", ContentModel: &spec.ContentModel{Kind: spec.ContentKindChildren, Elements: []string{"li"}}}
+	}
+	li := func(attrs ...spec.Attribute) *spec.Element {
+		return &spec.Element{Tag: "li", Attributes: attrs, ContentModel: &spec.ContentModel{Kind: spec.ContentKindChildren, Categories: []string{"flow"}, Text: true}}
+	}
+	str := func(n string) spec.Attribute { return &spec.AttributeTypeString{Name: n} }
+	for name, elems := range map[string][]*spec.Element{
+		"element named like a child interface":    {ul(), li(), {Tag: "ulChild"}},
+		"attribute named like a marker method":    {ul(), li(str("HTMLUlChild"))},
+		"attribute named like an embedded marker": {{Tag: "div", Categories: []string{"flow"}, Attributes: []spec.Attribute{str("FlowMarker")}}},
+	} {
+		p, err := NewPlan(&spec.Spec{Name: "HTML", Elements: elems}, "html")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := p.Check(); err == nil {
+			t.Errorf("%s: expected a collision error", name)
+		}
+	}
+
+	// A shared enum name that collides with an element falls back to per-element types.
+	pop := &spec.AttributeTypeEnum{Name: "popover", Allowed: map[string]struct{}{"auto": {}}}
+	p, err := NewPlan(&spec.Spec{Name: "HTML", Elements: []*spec.Element{
+		{Tag: "div", Attributes: []spec.Attribute{pop}},
+		{Tag: "popoverAuto"},
+	}}, "html")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.Check(); err != nil {
+		t.Fatal(err)
+	}
+	if _, shared := p.SharedEnums["popover"]; shared || len(p.EnumReport) != 1 || p.EnumType("div", "popover") != "DivPopover" {
+		t.Errorf("popover should fall back to DivPopover: shared=%v report=%v", shared, p.EnumReport)
+	}
+}
+
+// TestGenerateContentModelFixture generates a small HTML spec with content models covering every
+// kind, checks the generated signatures and builds a program using the package.
+func TestGenerateContentModelFixture(t *testing.T) {
+	b, err := os.ReadFile(filepath.Join("testdata", "html_cm_fixture.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sp := spec.Spec{}
+	if err = json.Unmarshal(b, &sp); err != nil {
+		t.Fatal(err)
+	}
+
+	dir, err := os.MkdirTemp("testdata", "gen-")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.RemoveAll(dir) })
+	pkgDir := filepath.Join(dir, "html")
+	slots := filepath.Join(dir, "slots.go.txt")
+
+	if err = GenerateWith(&sp, pkgDir, "html", Options{SlotsFile: slots}); err != nil {
+		t.Fatal(err)
+	}
+	read := func(name string) string {
+		b, err := os.ReadFile(name)
+		if err != nil {
+			t.Fatal(err)
+		}
+		return strings.Join(strings.Fields(string(b)), " ")
+	}
+	file := func(tag string) string { return read(filepath.Join(pkgDir, tag+".go")) }
+
+	for tag, wants := range map[string][]string{
+		"div":      {"func Div(children ...htemel.FlowContent) *DivElement", "htemel.FlowMarker htemel.PalpableMarker attributes", "func (e *DivElement) Text(", "func DivTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent)", "func (*DivElement) HTMLSelectChild() {}", "func (e *DivElement) Popover(v ...Popover) *DivElement"},
+		"p":        {"func P(children ...htemel.PhrasingContent) *PElement", "func (e *PElement) If(cond bool, child htemel.PhrasingContent)"},
+		"span":     {"htemel.PhrasingMarker htemel.PalpableMarker attributes", "func (e *SpanElement) Popover(v ...Popover)"},
+		"ul":       {"type UlChild interface { htemel.Node HTMLUlChild() }", "func Ul(children ...UlChild) *UlElement", "func (e *UlElement) Type(a UlType)", "type UlType string"},
+		"li":       {"func (*LiElement) HTMLUlChild() {}", "func Li(children ...htemel.FlowContent)"},
+		"table":    {"func Table(children ...TableChild)"},
+		"tr":       {"func Tr(children ...TrChild)", "func (*TrElement) HTMLTableChild() {}"},
+		"td":       {"func (*TdElement) HTMLTrChild() {}"},
+		"a":        {"func A(children ...htemel.FlowContent)", "htemel.PhrasingMarker htemel.InteractiveMarker htemel.PalpableMarker", "Content model: transparent."},
+		"img":      {"func Img() *ImgElement", "func ImgIf(condition bool) *ImgElement"},
+		"iframe":   {"func Iframe() *IframeElement", `"</iframe>"`, "takes no children"},
+		"script":   {"func Script(children ...htemel.TextContent)", `render.RawText("script", text)`, "type ScriptType string", "ScriptTypeModule ScriptType = \"module\"", "func ScriptTypeCustom(s string) ScriptType"},
+		"title":    {"func Title(children ...htemel.TextContent)"},
+		"h1":       {"func H1(children ...htemel.PhrasingContent)", "htemel.HeadingMarker"},
+		"head":     {"func Head(children ...htemel.MetadataContent)"},
+		"meta":     {"func Meta() *MetaElement", "htemel.PhrasingMarker htemel.MetadataMarker"},
+		"html":     {"type HtmlChild interface", "func Html(children ...HtmlChild)"},
+		"body":     {"func (*BodyElement) HTMLHtmlChild() {}", "func Body(children ...htemel.FlowContent)"},
+		"template": {"func Template(children ...htemel.Node)", "func (e *TemplateElement) Text("},
+		"select":   {"func Select(children ...SelectChild)"},
+		"option":   {"func Option(children ...OptionChild)", "func (*OptionElement) HTMLSelectChild() {}", "func (e *OptionElement) Text("},
+	} {
+		src := file(tag)
+		for _, want := range wants {
+			if !strings.Contains(src, want) {
+				t.Errorf("%s.go is missing %s", tag, want)
+			}
+		}
+	}
+	for tag, bads := range map[string][]string{
+		"img":    {"Children(", "Text(", "children []"},
+		"iframe": {"Children(", "Text(", "IframeTernary"},
+		"meta":   {"Children("},
+		"ul":     {"func (e *UlElement) Text("},
+		"script": {"HTMLUlChild"}, // promoted from htemel.ScriptSupportingMarker
+		"span":   {"HTMLOptionChild"},
+	} {
+		src := file(tag)
+		for _, bad := range bads {
+			if strings.Contains(src, bad) {
+				t.Errorf("%s.go must not contain %s", tag, bad)
+			}
+		}
+	}
+
+	enums := read(filepath.Join(pkgDir, "enums.go"))
+	for _, want := range []string{"type Popover string", "PopoverManual Popover = \"manual\"", "PopoverEmpty Popover = \"\"", "- type: allowed values differ between elements (Script, Ul)"} {
+		if !strings.Contains(enums, want) {
+			t.Errorf("enums.go is missing %s", want)
+		}
+	}
+	slotSrc := read(slots)
+	for _, want := range []string{"package htemel", "func (Wildcard) HTMLUlChild() {}", "func (NodeFunc) HTMLUlChild() {}", "func (ScriptSupportingMarker) HTMLUlChild() {}", "func (*TextElement) HTMLOptionChild() {}", "func (PhrasingMarker) HTMLOptionChild() {}"} {
+		if !strings.Contains(slotSrc, want) {
+			t.Errorf("slots file is missing %s", want)
+		}
+	}
+	if strings.Contains(slotSrc, "func (*TextElement) HTMLUlChild()") {
+		t.Error("text must not be a permitted child of <ul>")
+	}
+
+	if testing.Short() {
+		return
+	}
+
+	// The package builds and renders. (The marker methods of the real html package, in package
+	// htemel, have the same names, so Group and Each are accepted here too.)
+	mainDir := filepath.Join(dir, "main")
+	if err = os.MkdirAll(mainDir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	src := strings.Replace(`package main
+
+import (
+	"fmt"
+
+	"github.com/go-htemel/htemel"
+	"github.com/go-htemel/htemel/internal/generators/DIR/html"
+)
+
+func main() {
+	out, err := htemel.RenderString(html.Html(
+		html.Head(html.Title().Text("t"), html.Meta(), html.Script().Text("a < b")),
+		html.Body(
+			html.Div(html.P(html.Span().Text("x & y"), html.A(html.Img())), html.H1().Text("h")),
+			html.Ul(html.Li().Text("1"), htemel.Each([]string{"2"}, func(s string) htemel.Node { return html.Li().Text(s) }), html.Script()),
+			html.Table(html.Tr(html.Td().Text("c"))),
+			html.Iframe().Popover(html.PopoverManual),
+			html.Select(html.Option(html.Span().Text("o")), html.Div()),
+			html.Template(html.Tr(), html.Li()),
+		),
+	))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Print(out)
+}
+`, "DIR", filepath.ToSlash(dir), 1)
+	if err = os.WriteFile(filepath.Join(mainDir, "main.go"), []byte(src), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got, err := exec.Command("go", "run", "./"+filepath.ToSlash(mainDir)).CombinedOutput()
+	if err != nil {
+		t.Fatalf("building/running the generated package failed: %v\n%s", err, got)
+	}
+	want := `<html><head><title>t</title><meta><script>a < b</script></head><body>` +
+		`<div><p><span>x &amp; y</span><a><img></a></p><h1>h</h1></div>` +
+		`<ul><li>1</li><li>2</li><script></script></ul><table><tr><td>c</td></tr></table>` +
+		`<iframe popover="manual"></iframe><select><option><span>o</span></option><div></div></select>` +
+		`<template><tr></tr><li></li></template></body></html>`
+	if string(got) != want {
+		t.Errorf("rendered\n%s\nwant\n%s", got, want)
 	}
 }

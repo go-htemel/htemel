@@ -13,16 +13,20 @@ import (
 )
 
 type SampElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Samp creates a tag <samp> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The samp element represents sample or quoted output from another program or computing system.
-func Samp(children ...htemel.Node) *SampElement {
+func Samp(children ...htemel.PhrasingContent) *SampElement {
 	node := &SampElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Samp(children ...htemel.Node) *SampElement {
 }
 
 // SampIf creates a tag <samp> instance that is only rendered when condition is true.
-func SampIf(condition bool, children ...htemel.Node) *SampElement {
+func SampIf(condition bool, children ...htemel.PhrasingContent) *SampElement {
 	if condition {
 		return Samp(children...)
 	}
@@ -43,7 +47,7 @@ func SampIf(condition bool, children ...htemel.Node) *SampElement {
 }
 
 // SampTernary creates a tag <samp> containing then when condition is true, otherwise containing otherwise.
-func SampTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SampElement {
+func SampTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SampElement {
 	if condition {
 		return Samp(then)
 	}
@@ -51,7 +55,7 @@ func SampTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SampE
 }
 
 // Children appends children to this element.
-func (e *SampElement) Children(children ...htemel.Node) *SampElement {
+func (e *SampElement) Children(children ...htemel.PhrasingContent) *SampElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SampElement) Textf(format string, args ...any) *SampElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SampElement) If(cond bool, child htemel.Node) *SampElement {
+func (e *SampElement) If(cond bool, child htemel.PhrasingContent) *SampElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SampElement) If(cond bool, child htemel.Node) *SampElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SampElement) IfElse(cond bool, then, els htemel.Node) *SampElement {
+func (e *SampElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SampElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SampElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SampAutocapitalize string
-
-const (
-	SampAutocapitalizeCharacters SampAutocapitalize = "characters"
-	SampAutocapitalizeNone       SampAutocapitalize = "none"
-	SampAutocapitalizeOff        SampAutocapitalize = "off"
-	SampAutocapitalizeOn         SampAutocapitalize = "on"
-	SampAutocapitalizeSentences  SampAutocapitalize = "sentences"
-	SampAutocapitalizeWords      SampAutocapitalize = "words"
-)
-
-type SampAutocorrect string
-
-const (
-	SampAutocorrectOff   SampAutocorrect = "off"
-	SampAutocorrectOn    SampAutocorrect = "on"
-	SampAutocorrectEmpty SampAutocorrect = ""
-)
-
-type SampContenteditable string
-
-const (
-	SampContenteditableFalse         SampContenteditable = "false"
-	SampContenteditablePlaintextOnly SampContenteditable = "plaintext-only"
-	SampContenteditableTrue          SampContenteditable = "true"
-	SampContenteditableEmpty         SampContenteditable = ""
-)
-
-type SampDir string
-
-const (
-	SampDirAuto SampDir = "auto"
-	SampDirLtr  SampDir = "ltr"
-	SampDirRtl  SampDir = "rtl"
-)
-
-type SampDraggable string
-
-const (
-	SampDraggableFalse SampDraggable = "false"
-	SampDraggableTrue  SampDraggable = "true"
-)
-
-type SampEnterkeyhint string
-
-const (
-	SampEnterkeyhintDone     SampEnterkeyhint = "done"
-	SampEnterkeyhintEnter    SampEnterkeyhint = "enter"
-	SampEnterkeyhintGo       SampEnterkeyhint = "go"
-	SampEnterkeyhintNext     SampEnterkeyhint = "next"
-	SampEnterkeyhintPrevious SampEnterkeyhint = "previous"
-	SampEnterkeyhintSearch   SampEnterkeyhint = "search"
-	SampEnterkeyhintSend     SampEnterkeyhint = "send"
-)
-
-type SampHidden string
-
-const (
-	SampHiddenHidden     SampHidden = "hidden"
-	SampHiddenUntilFound SampHidden = "until-found"
-	SampHiddenEmpty      SampHidden = ""
-)
-
-type SampInputmode string
-
-const (
-	SampInputmodeDecimal SampInputmode = "decimal"
-	SampInputmodeEmail   SampInputmode = "email"
-	SampInputmodeNone    SampInputmode = "none"
-	SampInputmodeNumeric SampInputmode = "numeric"
-	SampInputmodeSearch  SampInputmode = "search"
-	SampInputmodeTel     SampInputmode = "tel"
-	SampInputmodeText    SampInputmode = "text"
-	SampInputmodeUrl     SampInputmode = "url"
-)
-
-type SampPopover string
-
-const (
-	SampPopoverAuto   SampPopover = "auto"
-	SampPopoverHint   SampPopover = "hint"
-	SampPopoverManual SampPopover = "manual"
-	SampPopoverEmpty  SampPopover = ""
-)
-
-type SampSpellcheck string
-
-const (
-	SampSpellcheckFalse SampSpellcheck = "false"
-	SampSpellcheckTrue  SampSpellcheck = "true"
-	SampSpellcheckEmpty SampSpellcheck = ""
-)
-
-type SampTranslate string
-
-const (
-	SampTranslateNo    SampTranslate = "no"
-	SampTranslateYes   SampTranslate = "yes"
-	SampTranslateEmpty SampTranslate = ""
-)
-
-type SampWritingsuggestions string
-
-const (
-	SampWritingsuggestionsFalse SampWritingsuggestions = "false"
-	SampWritingsuggestionsTrue  SampWritingsuggestions = "true"
-	SampWritingsuggestionsEmpty SampWritingsuggestions = ""
-)
-
 func (e *SampElement) Accesskey(r rune) *SampElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SampElement) Aria(name string, s string) *SampElement {
 	return e
 }
 
-func (e *SampElement) Autocapitalize(a SampAutocapitalize) *SampElement {
+func (e *SampElement) Autocapitalize(a Autocapitalize) *SampElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SampElement) Autocapitalize(a SampAutocapitalize) *SampElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Autocorrect(v ...SampAutocorrect) *SampElement {
-	var val SampAutocorrect
+func (e *SampElement) Autocorrect(v ...Autocorrect) *SampElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SampElement) Class(s ...string) *SampElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Contenteditable(v ...SampContenteditable) *SampElement {
-	var val SampContenteditable
+func (e *SampElement) Contenteditable(v ...Contenteditable) *SampElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SampElement) Data(name string, s string) *SampElement {
 	return e
 }
 
-func (e *SampElement) Dir(a SampDir) *SampElement {
+func (e *SampElement) Dir(a Dir) *SampElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SampElement) Draggable(a SampDraggable) *SampElement {
+func (e *SampElement) Draggable(a Draggable) *SampElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SampElement) Enterkeyhint(a SampEnterkeyhint) *SampElement {
+func (e *SampElement) Enterkeyhint(a Enterkeyhint) *SampElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SampElement) Headingreset(b bool) *SampElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Hidden(v ...SampHidden) *SampElement {
-	var val SampHidden
+func (e *SampElement) Hidden(v ...Hidden) *SampElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SampElement) Inert(b bool) *SampElement {
 	return e
 }
 
-func (e *SampElement) Inputmode(a SampInputmode) *SampElement {
+func (e *SampElement) Inputmode(a Inputmode) *SampElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SampElement) Part(s ...string) *SampElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Popover(v ...SampPopover) *SampElement {
-	var val SampPopover
+func (e *SampElement) Popover(v ...Popover) *SampElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SampElement) Slot(s string) *SampElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Spellcheck(v ...SampSpellcheck) *SampElement {
-	var val SampSpellcheck
+func (e *SampElement) Spellcheck(v ...Spellcheck) *SampElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SampElement) Title(s string) *SampElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Translate(v ...SampTranslate) *SampElement {
-	var val SampTranslate
+func (e *SampElement) Translate(v ...Translate) *SampElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SampElement) Translate(v ...SampTranslate) *SampElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SampElement) Writingsuggestions(v ...SampWritingsuggestions) *SampElement {
-	var val SampWritingsuggestions
+func (e *SampElement) Writingsuggestions(v ...Writingsuggestions) *SampElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

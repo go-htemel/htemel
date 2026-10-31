@@ -14,15 +14,17 @@ import (
 
 type FeOffsetElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeOffset creates a tag <feOffset> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feOffset filter primitive offsets the input image.
-func FeOffset(children ...htemel.Node) *FeOffsetElement {
+func FeOffset(children ...Content) *FeOffsetElement {
 	node := &FeOffsetElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeOffset(children ...htemel.Node) *FeOffsetElement {
 }
 
 // FeOffsetIf creates a tag <feOffset> instance that is only rendered when condition is true.
-func FeOffsetIf(condition bool, children ...htemel.Node) *FeOffsetElement {
+func FeOffsetIf(condition bool, children ...Content) *FeOffsetElement {
 	if condition {
 		return FeOffset(children...)
 	}
@@ -43,7 +45,7 @@ func FeOffsetIf(condition bool, children ...htemel.Node) *FeOffsetElement {
 }
 
 // FeOffsetTernary creates a tag <feOffset> containing then when condition is true, otherwise containing otherwise.
-func FeOffsetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeOffsetElement {
+func FeOffsetTernary(condition bool, then Content, otherwise Content) *FeOffsetElement {
 	if condition {
 		return FeOffset(then)
 	}
@@ -51,7 +53,7 @@ func FeOffsetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *F
 }
 
 // Children appends children to this element.
-func (e *FeOffsetElement) Children(children ...htemel.Node) *FeOffsetElement {
+func (e *FeOffsetElement) Children(children ...Content) *FeOffsetElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeOffsetElement) Textf(format string, args ...any) *FeOffsetElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeOffsetElement) If(cond bool, child htemel.Node) *FeOffsetElement {
+func (e *FeOffsetElement) If(cond bool, child Content) *FeOffsetElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeOffsetElement) If(cond bool, child htemel.Node) *FeOffsetElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeOffsetElement) IfElse(cond bool, then, els htemel.Node) *FeOffsetElement {
+func (e *FeOffsetElement) IfElse(cond bool, then, els Content) *FeOffsetElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeOffsetElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeOffsetAlignmentBaseline string
-
-const (
-	FeOffsetAlignmentBaselineAfterEdge      FeOffsetAlignmentBaseline = "after-edge"
-	FeOffsetAlignmentBaselineAlphabetic     FeOffsetAlignmentBaseline = "alphabetic"
-	FeOffsetAlignmentBaselineAuto           FeOffsetAlignmentBaseline = "auto"
-	FeOffsetAlignmentBaselineBaseline       FeOffsetAlignmentBaseline = "baseline"
-	FeOffsetAlignmentBaselineBeforeEdge     FeOffsetAlignmentBaseline = "before-edge"
-	FeOffsetAlignmentBaselineBottom         FeOffsetAlignmentBaseline = "bottom"
-	FeOffsetAlignmentBaselineCenter         FeOffsetAlignmentBaseline = "center"
-	FeOffsetAlignmentBaselineCentral        FeOffsetAlignmentBaseline = "central"
-	FeOffsetAlignmentBaselineHanging        FeOffsetAlignmentBaseline = "hanging"
-	FeOffsetAlignmentBaselineIdeographic    FeOffsetAlignmentBaseline = "ideographic"
-	FeOffsetAlignmentBaselineMathematical   FeOffsetAlignmentBaseline = "mathematical"
-	FeOffsetAlignmentBaselineMiddle         FeOffsetAlignmentBaseline = "middle"
-	FeOffsetAlignmentBaselineTextAfterEdge  FeOffsetAlignmentBaseline = "text-after-edge"
-	FeOffsetAlignmentBaselineTextBeforeEdge FeOffsetAlignmentBaseline = "text-before-edge"
-	FeOffsetAlignmentBaselineTextBottom     FeOffsetAlignmentBaseline = "text-bottom"
-	FeOffsetAlignmentBaselineTextTop        FeOffsetAlignmentBaseline = "text-top"
-	FeOffsetAlignmentBaselineTop            FeOffsetAlignmentBaseline = "top"
-)
-
-type FeOffsetClipRule string
-
-const (
-	FeOffsetClipRuleEvenodd FeOffsetClipRule = "evenodd"
-	FeOffsetClipRuleNonzero FeOffsetClipRule = "nonzero"
-)
-
-type FeOffsetColorInterpolation string
-
-const (
-	FeOffsetColorInterpolationAuto      FeOffsetColorInterpolation = "auto"
-	FeOffsetColorInterpolationLinearRGB FeOffsetColorInterpolation = "linearRGB"
-	FeOffsetColorInterpolationSRGB      FeOffsetColorInterpolation = "sRGB"
-)
-
-type FeOffsetColorInterpolationFilters string
-
-const (
-	FeOffsetColorInterpolationFiltersAuto      FeOffsetColorInterpolationFilters = "auto"
-	FeOffsetColorInterpolationFiltersLinearRGB FeOffsetColorInterpolationFilters = "linearRGB"
-	FeOffsetColorInterpolationFiltersSRGB      FeOffsetColorInterpolationFilters = "sRGB"
-)
-
-type FeOffsetDirection string
-
-const (
-	FeOffsetDirectionLtr FeOffsetDirection = "ltr"
-	FeOffsetDirectionRtl FeOffsetDirection = "rtl"
-)
-
-type FeOffsetDominantBaseline string
-
-const (
-	FeOffsetDominantBaselineAlphabetic   FeOffsetDominantBaseline = "alphabetic"
-	FeOffsetDominantBaselineAuto         FeOffsetDominantBaseline = "auto"
-	FeOffsetDominantBaselineCentral      FeOffsetDominantBaseline = "central"
-	FeOffsetDominantBaselineHanging      FeOffsetDominantBaseline = "hanging"
-	FeOffsetDominantBaselineIdeographic  FeOffsetDominantBaseline = "ideographic"
-	FeOffsetDominantBaselineMathematical FeOffsetDominantBaseline = "mathematical"
-	FeOffsetDominantBaselineMiddle       FeOffsetDominantBaseline = "middle"
-	FeOffsetDominantBaselineTextBottom   FeOffsetDominantBaseline = "text-bottom"
-	FeOffsetDominantBaselineTextTop      FeOffsetDominantBaseline = "text-top"
-)
-
-type FeOffsetFillRule string
-
-const (
-	FeOffsetFillRuleEvenodd FeOffsetFillRule = "evenodd"
-	FeOffsetFillRuleNonzero FeOffsetFillRule = "nonzero"
-)
-
-type FeOffsetFontStyle string
-
-const (
-	FeOffsetFontStyleItalic  FeOffsetFontStyle = "italic"
-	FeOffsetFontStyleNormal  FeOffsetFontStyle = "normal"
-	FeOffsetFontStyleOblique FeOffsetFontStyle = "oblique"
-)
-
-type FeOffsetImageRendering string
-
-const (
-	FeOffsetImageRenderingAuto            FeOffsetImageRendering = "auto"
-	FeOffsetImageRenderingCrispEdges      FeOffsetImageRendering = "crisp-edges"
-	FeOffsetImageRenderingHighQuality     FeOffsetImageRendering = "high-quality"
-	FeOffsetImageRenderingOptimizeQuality FeOffsetImageRendering = "optimizeQuality"
-	FeOffsetImageRenderingOptimizeSpeed   FeOffsetImageRendering = "optimizeSpeed"
-	FeOffsetImageRenderingPixelated       FeOffsetImageRendering = "pixelated"
-	FeOffsetImageRenderingSmooth          FeOffsetImageRendering = "smooth"
-)
-
-type FeOffsetOverflow string
-
-const (
-	FeOffsetOverflowAuto    FeOffsetOverflow = "auto"
-	FeOffsetOverflowClip    FeOffsetOverflow = "clip"
-	FeOffsetOverflowHidden  FeOffsetOverflow = "hidden"
-	FeOffsetOverflowScroll  FeOffsetOverflow = "scroll"
-	FeOffsetOverflowVisible FeOffsetOverflow = "visible"
-)
-
-type FeOffsetPointerEvents string
-
-const (
-	FeOffsetPointerEventsAll            FeOffsetPointerEvents = "all"
-	FeOffsetPointerEventsAuto           FeOffsetPointerEvents = "auto"
-	FeOffsetPointerEventsBoundingBox    FeOffsetPointerEvents = "bounding-box"
-	FeOffsetPointerEventsFill           FeOffsetPointerEvents = "fill"
-	FeOffsetPointerEventsNone           FeOffsetPointerEvents = "none"
-	FeOffsetPointerEventsPainted        FeOffsetPointerEvents = "painted"
-	FeOffsetPointerEventsStroke         FeOffsetPointerEvents = "stroke"
-	FeOffsetPointerEventsVisible        FeOffsetPointerEvents = "visible"
-	FeOffsetPointerEventsVisibleFill    FeOffsetPointerEvents = "visibleFill"
-	FeOffsetPointerEventsVisiblePainted FeOffsetPointerEvents = "visiblePainted"
-	FeOffsetPointerEventsVisibleStroke  FeOffsetPointerEvents = "visibleStroke"
-)
-
-type FeOffsetShapeRendering string
-
-const (
-	FeOffsetShapeRenderingAuto               FeOffsetShapeRendering = "auto"
-	FeOffsetShapeRenderingCrispEdges         FeOffsetShapeRendering = "crispEdges"
-	FeOffsetShapeRenderingGeometricPrecision FeOffsetShapeRendering = "geometricPrecision"
-	FeOffsetShapeRenderingOptimizeSpeed      FeOffsetShapeRendering = "optimizeSpeed"
-)
-
-type FeOffsetStrokeLinecap string
-
-const (
-	FeOffsetStrokeLinecapButt   FeOffsetStrokeLinecap = "butt"
-	FeOffsetStrokeLinecapRound  FeOffsetStrokeLinecap = "round"
-	FeOffsetStrokeLinecapSquare FeOffsetStrokeLinecap = "square"
-)
-
-type FeOffsetStrokeLinejoin string
-
-const (
-	FeOffsetStrokeLinejoinArcs      FeOffsetStrokeLinejoin = "arcs"
-	FeOffsetStrokeLinejoinBevel     FeOffsetStrokeLinejoin = "bevel"
-	FeOffsetStrokeLinejoinMiter     FeOffsetStrokeLinejoin = "miter"
-	FeOffsetStrokeLinejoinMiterClip FeOffsetStrokeLinejoin = "miter-clip"
-	FeOffsetStrokeLinejoinRound     FeOffsetStrokeLinejoin = "round"
-)
-
-type FeOffsetTextAnchor string
-
-const (
-	FeOffsetTextAnchorEnd    FeOffsetTextAnchor = "end"
-	FeOffsetTextAnchorMiddle FeOffsetTextAnchor = "middle"
-	FeOffsetTextAnchorStart  FeOffsetTextAnchor = "start"
-)
-
-type FeOffsetTextRendering string
-
-const (
-	FeOffsetTextRenderingAuto               FeOffsetTextRendering = "auto"
-	FeOffsetTextRenderingGeometricPrecision FeOffsetTextRendering = "geometricPrecision"
-	FeOffsetTextRenderingOptimizeLegibility FeOffsetTextRendering = "optimizeLegibility"
-	FeOffsetTextRenderingOptimizeSpeed      FeOffsetTextRendering = "optimizeSpeed"
-)
-
-type FeOffsetTransformBox string
-
-const (
-	FeOffsetTransformBoxBorderBox  FeOffsetTransformBox = "border-box"
-	FeOffsetTransformBoxContentBox FeOffsetTransformBox = "content-box"
-	FeOffsetTransformBoxFillBox    FeOffsetTransformBox = "fill-box"
-	FeOffsetTransformBoxStrokeBox  FeOffsetTransformBox = "stroke-box"
-	FeOffsetTransformBoxViewBox    FeOffsetTransformBox = "view-box"
-)
-
-type FeOffsetVectorEffect string
-
-const (
-	FeOffsetVectorEffectFixedPosition    FeOffsetVectorEffect = "fixed-position"
-	FeOffsetVectorEffectNonRotation      FeOffsetVectorEffect = "non-rotation"
-	FeOffsetVectorEffectNonScalingSize   FeOffsetVectorEffect = "non-scaling-size"
-	FeOffsetVectorEffectNonScalingStroke FeOffsetVectorEffect = "non-scaling-stroke"
-	FeOffsetVectorEffectNone             FeOffsetVectorEffect = "none"
-)
-
-type FeOffsetVisibility string
-
-const (
-	FeOffsetVisibilityCollapse FeOffsetVisibility = "collapse"
-	FeOffsetVisibilityHidden   FeOffsetVisibility = "hidden"
-	FeOffsetVisibilityVisible  FeOffsetVisibility = "visible"
-)
-
-type FeOffsetWritingMode string
-
-const (
-	FeOffsetWritingModeHorizontalTb FeOffsetWritingMode = "horizontal-tb"
-	FeOffsetWritingModeLr           FeOffsetWritingMode = "lr"
-	FeOffsetWritingModeLrTb         FeOffsetWritingMode = "lr-tb"
-	FeOffsetWritingModeRl           FeOffsetWritingMode = "rl"
-	FeOffsetWritingModeRlTb         FeOffsetWritingMode = "rl-tb"
-	FeOffsetWritingModeSidewaysLr   FeOffsetWritingMode = "sideways-lr"
-	FeOffsetWritingModeSidewaysRl   FeOffsetWritingMode = "sideways-rl"
-	FeOffsetWritingModeTb           FeOffsetWritingMode = "tb"
-	FeOffsetWritingModeTbRl         FeOffsetWritingMode = "tb-rl"
-	FeOffsetWritingModeVerticalLr   FeOffsetWritingMode = "vertical-lr"
-	FeOffsetWritingModeVerticalRl   FeOffsetWritingMode = "vertical-rl"
-)
-
-type FeOffsetXmlSpace string
-
-const (
-	FeOffsetXmlSpaceDefault  FeOffsetXmlSpace = "default"
-	FeOffsetXmlSpacePreserve FeOffsetXmlSpace = "preserve"
-)
+// SVGContent marks <feOffset> as a permitted child (Content).
+func (*FeOffsetElement) SVGContent() {}
 
 func (e *FeOffsetElement) Dx(f float64) *FeOffsetElement {
 	e.attributes.Set("dx", strconv.FormatFloat(f, 'g', -1, 64))
@@ -426,14 +217,10 @@ func (e *FeOffsetElement) Y(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) AlignmentBaseline(a FeOffsetAlignmentBaseline) *FeOffsetElement {
+func (e *FeOffsetElement) AlignmentBaseline(a AlignmentBaseline) *FeOffsetElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeOffsetAlignmentBaselineCustom(s string) FeOffsetAlignmentBaseline {
-	return FeOffsetAlignmentBaseline(s)
 }
 
 func (e *FeOffsetElement) AriaUnsafe(name string, s string) *FeOffsetElement {
@@ -487,14 +274,10 @@ func (e *FeOffsetElement) ClipPath(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) ClipRule(a FeOffsetClipRule) *FeOffsetElement {
+func (e *FeOffsetElement) ClipRule(a ClipRule) *FeOffsetElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeOffsetClipRuleCustom(s string) FeOffsetClipRule {
-	return FeOffsetClipRule(s)
 }
 
 func (e *FeOffsetElement) Color(s string) *FeOffsetElement {
@@ -503,24 +286,16 @@ func (e *FeOffsetElement) Color(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) ColorInterpolation(a FeOffsetColorInterpolation) *FeOffsetElement {
+func (e *FeOffsetElement) ColorInterpolation(a ColorInterpolation) *FeOffsetElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeOffsetColorInterpolationCustom(s string) FeOffsetColorInterpolation {
-	return FeOffsetColorInterpolation(s)
-}
-
-func (e *FeOffsetElement) ColorInterpolationFilters(a FeOffsetColorInterpolationFilters) *FeOffsetElement {
+func (e *FeOffsetElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeOffsetElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeOffsetColorInterpolationFiltersCustom(s string) FeOffsetColorInterpolationFilters {
-	return FeOffsetColorInterpolationFilters(s)
 }
 
 func (e *FeOffsetElement) Cursor(s string) *FeOffsetElement {
@@ -545,14 +320,10 @@ func (e *FeOffsetElement) Data(name string, s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) Direction(a FeOffsetDirection) *FeOffsetElement {
+func (e *FeOffsetElement) Direction(a Direction) *FeOffsetElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeOffsetDirectionCustom(s string) FeOffsetDirection {
-	return FeOffsetDirection(s)
 }
 
 func (e *FeOffsetElement) Display(s string) *FeOffsetElement {
@@ -561,14 +332,10 @@ func (e *FeOffsetElement) Display(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) DominantBaseline(a FeOffsetDominantBaseline) *FeOffsetElement {
+func (e *FeOffsetElement) DominantBaseline(a DominantBaseline) *FeOffsetElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeOffsetDominantBaselineCustom(s string) FeOffsetDominantBaseline {
-	return FeOffsetDominantBaseline(s)
 }
 
 func (e *FeOffsetElement) Fill(s string) *FeOffsetElement {
@@ -583,14 +350,10 @@ func (e *FeOffsetElement) FillOpacity(f float64) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) FillRule(a FeOffsetFillRule) *FeOffsetElement {
+func (e *FeOffsetElement) FillRule(a FillRule) *FeOffsetElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeOffsetFillRuleCustom(s string) FeOffsetFillRule {
-	return FeOffsetFillRule(s)
 }
 
 func (e *FeOffsetElement) Filter(s string) *FeOffsetElement {
@@ -635,14 +398,10 @@ func (e *FeOffsetElement) FontStretch(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) FontStyle(a FeOffsetFontStyle) *FeOffsetElement {
+func (e *FeOffsetElement) FontStyle(a FontStyle) *FeOffsetElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeOffsetFontStyleCustom(s string) FeOffsetFontStyle {
-	return FeOffsetFontStyle(s)
 }
 
 func (e *FeOffsetElement) FontVariant(s string) *FeOffsetElement {
@@ -681,14 +440,10 @@ func (e *FeOffsetElement) Id(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) ImageRendering(a FeOffsetImageRendering) *FeOffsetElement {
+func (e *FeOffsetElement) ImageRendering(a ImageRendering) *FeOffsetElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeOffsetImageRenderingCustom(s string) FeOffsetImageRendering {
-	return FeOffsetImageRendering(s)
 }
 
 func (e *FeOffsetElement) Lang(s string) *FeOffsetElement {
@@ -739,14 +494,10 @@ func (e *FeOffsetElement) Opacity(f float64) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) Overflow(a FeOffsetOverflow) *FeOffsetElement {
+func (e *FeOffsetElement) Overflow(a Overflow) *FeOffsetElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeOffsetOverflowCustom(s string) FeOffsetOverflow {
-	return FeOffsetOverflow(s)
 }
 
 func (e *FeOffsetElement) PaintOrder(s string) *FeOffsetElement {
@@ -755,14 +506,10 @@ func (e *FeOffsetElement) PaintOrder(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) PointerEvents(a FeOffsetPointerEvents) *FeOffsetElement {
+func (e *FeOffsetElement) PointerEvents(a PointerEvents) *FeOffsetElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeOffsetPointerEventsCustom(s string) FeOffsetPointerEvents {
-	return FeOffsetPointerEvents(s)
 }
 
 func (e *FeOffsetElement) RequiredExtensions(s string) *FeOffsetElement {
@@ -771,14 +518,10 @@ func (e *FeOffsetElement) RequiredExtensions(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) ShapeRendering(a FeOffsetShapeRendering) *FeOffsetElement {
+func (e *FeOffsetElement) ShapeRendering(a ShapeRendering) *FeOffsetElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeOffsetShapeRenderingCustom(s string) FeOffsetShapeRendering {
-	return FeOffsetShapeRendering(s)
 }
 
 func (e *FeOffsetElement) StopColor(s string) *FeOffsetElement {
@@ -811,24 +554,16 @@ func (e *FeOffsetElement) StrokeDashoffset(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) StrokeLinecap(a FeOffsetStrokeLinecap) *FeOffsetElement {
+func (e *FeOffsetElement) StrokeLinecap(a StrokeLinecap) *FeOffsetElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeOffsetStrokeLinecapCustom(s string) FeOffsetStrokeLinecap {
-	return FeOffsetStrokeLinecap(s)
-}
-
-func (e *FeOffsetElement) StrokeLinejoin(a FeOffsetStrokeLinejoin) *FeOffsetElement {
+func (e *FeOffsetElement) StrokeLinejoin(a StrokeLinejoin) *FeOffsetElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeOffsetStrokeLinejoinCustom(s string) FeOffsetStrokeLinejoin {
-	return FeOffsetStrokeLinejoin(s)
 }
 
 func (e *FeOffsetElement) StrokeMiterlimit(f float64) *FeOffsetElement {
@@ -861,14 +596,10 @@ func (e *FeOffsetElement) Tabindex(i int) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) TextAnchor(a FeOffsetTextAnchor) *FeOffsetElement {
+func (e *FeOffsetElement) TextAnchor(a TextAnchor) *FeOffsetElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeOffsetTextAnchorCustom(s string) FeOffsetTextAnchor {
-	return FeOffsetTextAnchor(s)
 }
 
 func (e *FeOffsetElement) TextDecoration(s string) *FeOffsetElement {
@@ -883,14 +614,10 @@ func (e *FeOffsetElement) TextOverflow(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) TextRendering(a FeOffsetTextRendering) *FeOffsetElement {
+func (e *FeOffsetElement) TextRendering(a TextRendering) *FeOffsetElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeOffsetTextRenderingCustom(s string) FeOffsetTextRendering {
-	return FeOffsetTextRendering(s)
 }
 
 func (e *FeOffsetElement) Transform(s string) *FeOffsetElement {
@@ -899,14 +626,10 @@ func (e *FeOffsetElement) Transform(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) TransformBox(a FeOffsetTransformBox) *FeOffsetElement {
+func (e *FeOffsetElement) TransformBox(a TransformBox) *FeOffsetElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeOffsetTransformBoxCustom(s string) FeOffsetTransformBox {
-	return FeOffsetTransformBox(s)
 }
 
 func (e *FeOffsetElement) TransformOrigin(s string) *FeOffsetElement {
@@ -921,24 +644,16 @@ func (e *FeOffsetElement) UnicodeBidi(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) VectorEffect(a FeOffsetVectorEffect) *FeOffsetElement {
+func (e *FeOffsetElement) VectorEffect(a VectorEffect) *FeOffsetElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeOffsetVectorEffectCustom(s string) FeOffsetVectorEffect {
-	return FeOffsetVectorEffect(s)
-}
-
-func (e *FeOffsetElement) Visibility(a FeOffsetVisibility) *FeOffsetElement {
+func (e *FeOffsetElement) Visibility(a Visibility) *FeOffsetElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeOffsetVisibilityCustom(s string) FeOffsetVisibility {
-	return FeOffsetVisibility(s)
 }
 
 func (e *FeOffsetElement) WhiteSpace(s string) *FeOffsetElement {
@@ -953,14 +668,10 @@ func (e *FeOffsetElement) WordSpacing(s string) *FeOffsetElement {
 	return e
 }
 
-func (e *FeOffsetElement) WritingMode(a FeOffsetWritingMode) *FeOffsetElement {
+func (e *FeOffsetElement) WritingMode(a WritingMode) *FeOffsetElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeOffsetWritingModeCustom(s string) FeOffsetWritingMode {
-	return FeOffsetWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -975,7 +686,7 @@ func (e *FeOffsetElement) XmlLang(s string) *FeOffsetElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeOffsetElement) XmlSpace(a FeOffsetXmlSpace) *FeOffsetElement {
+func (e *FeOffsetElement) XmlSpace(a XmlSpace) *FeOffsetElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

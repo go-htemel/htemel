@@ -14,15 +14,17 @@ import (
 
 type DescElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Desc creates a tag <desc> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The desc element provides a longer human-readable description of its parent element.
-func Desc(children ...htemel.Node) *DescElement {
+func Desc(children ...Content) *DescElement {
 	node := &DescElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Desc(children ...htemel.Node) *DescElement {
 }
 
 // DescIf creates a tag <desc> instance that is only rendered when condition is true.
-func DescIf(condition bool, children ...htemel.Node) *DescElement {
+func DescIf(condition bool, children ...Content) *DescElement {
 	if condition {
 		return Desc(children...)
 	}
@@ -43,7 +45,7 @@ func DescIf(condition bool, children ...htemel.Node) *DescElement {
 }
 
 // DescTernary creates a tag <desc> containing then when condition is true, otherwise containing otherwise.
-func DescTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DescElement {
+func DescTernary(condition bool, then Content, otherwise Content) *DescElement {
 	if condition {
 		return Desc(then)
 	}
@@ -51,7 +53,7 @@ func DescTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DescE
 }
 
 // Children appends children to this element.
-func (e *DescElement) Children(children ...htemel.Node) *DescElement {
+func (e *DescElement) Children(children ...Content) *DescElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *DescElement) Textf(format string, args ...any) *DescElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DescElement) If(cond bool, child htemel.Node) *DescElement {
+func (e *DescElement) If(cond bool, child Content) *DescElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *DescElement) If(cond bool, child htemel.Node) *DescElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DescElement) IfElse(cond bool, then, els htemel.Node) *DescElement {
+func (e *DescElement) IfElse(cond bool, then, els Content) *DescElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,228 +166,13 @@ func (e *DescElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DescAlignmentBaseline string
+// SVGContent marks <desc> as a permitted child (Content).
+func (*DescElement) SVGContent() {}
 
-const (
-	DescAlignmentBaselineAfterEdge      DescAlignmentBaseline = "after-edge"
-	DescAlignmentBaselineAlphabetic     DescAlignmentBaseline = "alphabetic"
-	DescAlignmentBaselineAuto           DescAlignmentBaseline = "auto"
-	DescAlignmentBaselineBaseline       DescAlignmentBaseline = "baseline"
-	DescAlignmentBaselineBeforeEdge     DescAlignmentBaseline = "before-edge"
-	DescAlignmentBaselineBottom         DescAlignmentBaseline = "bottom"
-	DescAlignmentBaselineCenter         DescAlignmentBaseline = "center"
-	DescAlignmentBaselineCentral        DescAlignmentBaseline = "central"
-	DescAlignmentBaselineHanging        DescAlignmentBaseline = "hanging"
-	DescAlignmentBaselineIdeographic    DescAlignmentBaseline = "ideographic"
-	DescAlignmentBaselineMathematical   DescAlignmentBaseline = "mathematical"
-	DescAlignmentBaselineMiddle         DescAlignmentBaseline = "middle"
-	DescAlignmentBaselineTextAfterEdge  DescAlignmentBaseline = "text-after-edge"
-	DescAlignmentBaselineTextBeforeEdge DescAlignmentBaseline = "text-before-edge"
-	DescAlignmentBaselineTextBottom     DescAlignmentBaseline = "text-bottom"
-	DescAlignmentBaselineTextTop        DescAlignmentBaseline = "text-top"
-	DescAlignmentBaselineTop            DescAlignmentBaseline = "top"
-)
-
-type DescClipRule string
-
-const (
-	DescClipRuleEvenodd DescClipRule = "evenodd"
-	DescClipRuleNonzero DescClipRule = "nonzero"
-)
-
-type DescColorInterpolation string
-
-const (
-	DescColorInterpolationAuto      DescColorInterpolation = "auto"
-	DescColorInterpolationLinearRGB DescColorInterpolation = "linearRGB"
-	DescColorInterpolationSRGB      DescColorInterpolation = "sRGB"
-)
-
-type DescColorInterpolationFilters string
-
-const (
-	DescColorInterpolationFiltersAuto      DescColorInterpolationFilters = "auto"
-	DescColorInterpolationFiltersLinearRGB DescColorInterpolationFilters = "linearRGB"
-	DescColorInterpolationFiltersSRGB      DescColorInterpolationFilters = "sRGB"
-)
-
-type DescDirection string
-
-const (
-	DescDirectionLtr DescDirection = "ltr"
-	DescDirectionRtl DescDirection = "rtl"
-)
-
-type DescDominantBaseline string
-
-const (
-	DescDominantBaselineAlphabetic   DescDominantBaseline = "alphabetic"
-	DescDominantBaselineAuto         DescDominantBaseline = "auto"
-	DescDominantBaselineCentral      DescDominantBaseline = "central"
-	DescDominantBaselineHanging      DescDominantBaseline = "hanging"
-	DescDominantBaselineIdeographic  DescDominantBaseline = "ideographic"
-	DescDominantBaselineMathematical DescDominantBaseline = "mathematical"
-	DescDominantBaselineMiddle       DescDominantBaseline = "middle"
-	DescDominantBaselineTextBottom   DescDominantBaseline = "text-bottom"
-	DescDominantBaselineTextTop      DescDominantBaseline = "text-top"
-)
-
-type DescFillRule string
-
-const (
-	DescFillRuleEvenodd DescFillRule = "evenodd"
-	DescFillRuleNonzero DescFillRule = "nonzero"
-)
-
-type DescFontStyle string
-
-const (
-	DescFontStyleItalic  DescFontStyle = "italic"
-	DescFontStyleNormal  DescFontStyle = "normal"
-	DescFontStyleOblique DescFontStyle = "oblique"
-)
-
-type DescImageRendering string
-
-const (
-	DescImageRenderingAuto            DescImageRendering = "auto"
-	DescImageRenderingCrispEdges      DescImageRendering = "crisp-edges"
-	DescImageRenderingHighQuality     DescImageRendering = "high-quality"
-	DescImageRenderingOptimizeQuality DescImageRendering = "optimizeQuality"
-	DescImageRenderingOptimizeSpeed   DescImageRendering = "optimizeSpeed"
-	DescImageRenderingPixelated       DescImageRendering = "pixelated"
-	DescImageRenderingSmooth          DescImageRendering = "smooth"
-)
-
-type DescOverflow string
-
-const (
-	DescOverflowAuto    DescOverflow = "auto"
-	DescOverflowClip    DescOverflow = "clip"
-	DescOverflowHidden  DescOverflow = "hidden"
-	DescOverflowScroll  DescOverflow = "scroll"
-	DescOverflowVisible DescOverflow = "visible"
-)
-
-type DescPointerEvents string
-
-const (
-	DescPointerEventsAll            DescPointerEvents = "all"
-	DescPointerEventsAuto           DescPointerEvents = "auto"
-	DescPointerEventsBoundingBox    DescPointerEvents = "bounding-box"
-	DescPointerEventsFill           DescPointerEvents = "fill"
-	DescPointerEventsNone           DescPointerEvents = "none"
-	DescPointerEventsPainted        DescPointerEvents = "painted"
-	DescPointerEventsStroke         DescPointerEvents = "stroke"
-	DescPointerEventsVisible        DescPointerEvents = "visible"
-	DescPointerEventsVisibleFill    DescPointerEvents = "visibleFill"
-	DescPointerEventsVisiblePainted DescPointerEvents = "visiblePainted"
-	DescPointerEventsVisibleStroke  DescPointerEvents = "visibleStroke"
-)
-
-type DescShapeRendering string
-
-const (
-	DescShapeRenderingAuto               DescShapeRendering = "auto"
-	DescShapeRenderingCrispEdges         DescShapeRendering = "crispEdges"
-	DescShapeRenderingGeometricPrecision DescShapeRendering = "geometricPrecision"
-	DescShapeRenderingOptimizeSpeed      DescShapeRendering = "optimizeSpeed"
-)
-
-type DescStrokeLinecap string
-
-const (
-	DescStrokeLinecapButt   DescStrokeLinecap = "butt"
-	DescStrokeLinecapRound  DescStrokeLinecap = "round"
-	DescStrokeLinecapSquare DescStrokeLinecap = "square"
-)
-
-type DescStrokeLinejoin string
-
-const (
-	DescStrokeLinejoinArcs      DescStrokeLinejoin = "arcs"
-	DescStrokeLinejoinBevel     DescStrokeLinejoin = "bevel"
-	DescStrokeLinejoinMiter     DescStrokeLinejoin = "miter"
-	DescStrokeLinejoinMiterClip DescStrokeLinejoin = "miter-clip"
-	DescStrokeLinejoinRound     DescStrokeLinejoin = "round"
-)
-
-type DescTextAnchor string
-
-const (
-	DescTextAnchorEnd    DescTextAnchor = "end"
-	DescTextAnchorMiddle DescTextAnchor = "middle"
-	DescTextAnchorStart  DescTextAnchor = "start"
-)
-
-type DescTextRendering string
-
-const (
-	DescTextRenderingAuto               DescTextRendering = "auto"
-	DescTextRenderingGeometricPrecision DescTextRendering = "geometricPrecision"
-	DescTextRenderingOptimizeLegibility DescTextRendering = "optimizeLegibility"
-	DescTextRenderingOptimizeSpeed      DescTextRendering = "optimizeSpeed"
-)
-
-type DescTransformBox string
-
-const (
-	DescTransformBoxBorderBox  DescTransformBox = "border-box"
-	DescTransformBoxContentBox DescTransformBox = "content-box"
-	DescTransformBoxFillBox    DescTransformBox = "fill-box"
-	DescTransformBoxStrokeBox  DescTransformBox = "stroke-box"
-	DescTransformBoxViewBox    DescTransformBox = "view-box"
-)
-
-type DescVectorEffect string
-
-const (
-	DescVectorEffectFixedPosition    DescVectorEffect = "fixed-position"
-	DescVectorEffectNonRotation      DescVectorEffect = "non-rotation"
-	DescVectorEffectNonScalingSize   DescVectorEffect = "non-scaling-size"
-	DescVectorEffectNonScalingStroke DescVectorEffect = "non-scaling-stroke"
-	DescVectorEffectNone             DescVectorEffect = "none"
-)
-
-type DescVisibility string
-
-const (
-	DescVisibilityCollapse DescVisibility = "collapse"
-	DescVisibilityHidden   DescVisibility = "hidden"
-	DescVisibilityVisible  DescVisibility = "visible"
-)
-
-type DescWritingMode string
-
-const (
-	DescWritingModeHorizontalTb DescWritingMode = "horizontal-tb"
-	DescWritingModeLr           DescWritingMode = "lr"
-	DescWritingModeLrTb         DescWritingMode = "lr-tb"
-	DescWritingModeRl           DescWritingMode = "rl"
-	DescWritingModeRlTb         DescWritingMode = "rl-tb"
-	DescWritingModeSidewaysLr   DescWritingMode = "sideways-lr"
-	DescWritingModeSidewaysRl   DescWritingMode = "sideways-rl"
-	DescWritingModeTb           DescWritingMode = "tb"
-	DescWritingModeTbRl         DescWritingMode = "tb-rl"
-	DescWritingModeVerticalLr   DescWritingMode = "vertical-lr"
-	DescWritingModeVerticalRl   DescWritingMode = "vertical-rl"
-)
-
-type DescXmlSpace string
-
-const (
-	DescXmlSpaceDefault  DescXmlSpace = "default"
-	DescXmlSpacePreserve DescXmlSpace = "preserve"
-)
-
-func (e *DescElement) AlignmentBaseline(a DescAlignmentBaseline) *DescElement {
+func (e *DescElement) AlignmentBaseline(a AlignmentBaseline) *DescElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func DescAlignmentBaselineCustom(s string) DescAlignmentBaseline {
-	return DescAlignmentBaseline(s)
 }
 
 func (e *DescElement) AriaUnsafe(name string, s string) *DescElement {
@@ -439,14 +226,10 @@ func (e *DescElement) ClipPath(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) ClipRule(a DescClipRule) *DescElement {
+func (e *DescElement) ClipRule(a ClipRule) *DescElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func DescClipRuleCustom(s string) DescClipRule {
-	return DescClipRule(s)
 }
 
 func (e *DescElement) Color(s string) *DescElement {
@@ -455,24 +238,16 @@ func (e *DescElement) Color(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) ColorInterpolation(a DescColorInterpolation) *DescElement {
+func (e *DescElement) ColorInterpolation(a ColorInterpolation) *DescElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func DescColorInterpolationCustom(s string) DescColorInterpolation {
-	return DescColorInterpolation(s)
-}
-
-func (e *DescElement) ColorInterpolationFilters(a DescColorInterpolationFilters) *DescElement {
+func (e *DescElement) ColorInterpolationFilters(a ColorInterpolationFilters) *DescElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func DescColorInterpolationFiltersCustom(s string) DescColorInterpolationFilters {
-	return DescColorInterpolationFilters(s)
 }
 
 func (e *DescElement) Cursor(s string) *DescElement {
@@ -497,14 +272,10 @@ func (e *DescElement) Data(name string, s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) Direction(a DescDirection) *DescElement {
+func (e *DescElement) Direction(a Direction) *DescElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func DescDirectionCustom(s string) DescDirection {
-	return DescDirection(s)
 }
 
 func (e *DescElement) Display(s string) *DescElement {
@@ -513,14 +284,10 @@ func (e *DescElement) Display(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) DominantBaseline(a DescDominantBaseline) *DescElement {
+func (e *DescElement) DominantBaseline(a DominantBaseline) *DescElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func DescDominantBaselineCustom(s string) DescDominantBaseline {
-	return DescDominantBaseline(s)
 }
 
 func (e *DescElement) Fill(s string) *DescElement {
@@ -535,14 +302,10 @@ func (e *DescElement) FillOpacity(f float64) *DescElement {
 	return e
 }
 
-func (e *DescElement) FillRule(a DescFillRule) *DescElement {
+func (e *DescElement) FillRule(a FillRule) *DescElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func DescFillRuleCustom(s string) DescFillRule {
-	return DescFillRule(s)
 }
 
 func (e *DescElement) Filter(s string) *DescElement {
@@ -587,14 +350,10 @@ func (e *DescElement) FontStretch(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) FontStyle(a DescFontStyle) *DescElement {
+func (e *DescElement) FontStyle(a FontStyle) *DescElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func DescFontStyleCustom(s string) DescFontStyle {
-	return DescFontStyle(s)
 }
 
 func (e *DescElement) FontVariant(s string) *DescElement {
@@ -633,14 +392,10 @@ func (e *DescElement) Id(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) ImageRendering(a DescImageRendering) *DescElement {
+func (e *DescElement) ImageRendering(a ImageRendering) *DescElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func DescImageRenderingCustom(s string) DescImageRendering {
-	return DescImageRendering(s)
 }
 
 func (e *DescElement) Lang(s string) *DescElement {
@@ -691,14 +446,10 @@ func (e *DescElement) Opacity(f float64) *DescElement {
 	return e
 }
 
-func (e *DescElement) Overflow(a DescOverflow) *DescElement {
+func (e *DescElement) Overflow(a Overflow) *DescElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func DescOverflowCustom(s string) DescOverflow {
-	return DescOverflow(s)
 }
 
 func (e *DescElement) PaintOrder(s string) *DescElement {
@@ -707,14 +458,10 @@ func (e *DescElement) PaintOrder(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) PointerEvents(a DescPointerEvents) *DescElement {
+func (e *DescElement) PointerEvents(a PointerEvents) *DescElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func DescPointerEventsCustom(s string) DescPointerEvents {
-	return DescPointerEvents(s)
 }
 
 func (e *DescElement) RequiredExtensions(s string) *DescElement {
@@ -723,14 +470,10 @@ func (e *DescElement) RequiredExtensions(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) ShapeRendering(a DescShapeRendering) *DescElement {
+func (e *DescElement) ShapeRendering(a ShapeRendering) *DescElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func DescShapeRenderingCustom(s string) DescShapeRendering {
-	return DescShapeRendering(s)
 }
 
 func (e *DescElement) StopColor(s string) *DescElement {
@@ -763,24 +506,16 @@ func (e *DescElement) StrokeDashoffset(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) StrokeLinecap(a DescStrokeLinecap) *DescElement {
+func (e *DescElement) StrokeLinecap(a StrokeLinecap) *DescElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func DescStrokeLinecapCustom(s string) DescStrokeLinecap {
-	return DescStrokeLinecap(s)
-}
-
-func (e *DescElement) StrokeLinejoin(a DescStrokeLinejoin) *DescElement {
+func (e *DescElement) StrokeLinejoin(a StrokeLinejoin) *DescElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func DescStrokeLinejoinCustom(s string) DescStrokeLinejoin {
-	return DescStrokeLinejoin(s)
 }
 
 func (e *DescElement) StrokeMiterlimit(f float64) *DescElement {
@@ -813,14 +548,10 @@ func (e *DescElement) Tabindex(i int) *DescElement {
 	return e
 }
 
-func (e *DescElement) TextAnchor(a DescTextAnchor) *DescElement {
+func (e *DescElement) TextAnchor(a TextAnchor) *DescElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func DescTextAnchorCustom(s string) DescTextAnchor {
-	return DescTextAnchor(s)
 }
 
 func (e *DescElement) TextDecoration(s string) *DescElement {
@@ -835,14 +566,10 @@ func (e *DescElement) TextOverflow(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) TextRendering(a DescTextRendering) *DescElement {
+func (e *DescElement) TextRendering(a TextRendering) *DescElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func DescTextRenderingCustom(s string) DescTextRendering {
-	return DescTextRendering(s)
 }
 
 func (e *DescElement) Transform(s string) *DescElement {
@@ -851,14 +578,10 @@ func (e *DescElement) Transform(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) TransformBox(a DescTransformBox) *DescElement {
+func (e *DescElement) TransformBox(a TransformBox) *DescElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func DescTransformBoxCustom(s string) DescTransformBox {
-	return DescTransformBox(s)
 }
 
 func (e *DescElement) TransformOrigin(s string) *DescElement {
@@ -873,24 +596,16 @@ func (e *DescElement) UnicodeBidi(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) VectorEffect(a DescVectorEffect) *DescElement {
+func (e *DescElement) VectorEffect(a VectorEffect) *DescElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func DescVectorEffectCustom(s string) DescVectorEffect {
-	return DescVectorEffect(s)
-}
-
-func (e *DescElement) Visibility(a DescVisibility) *DescElement {
+func (e *DescElement) Visibility(a Visibility) *DescElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func DescVisibilityCustom(s string) DescVisibility {
-	return DescVisibility(s)
 }
 
 func (e *DescElement) WhiteSpace(s string) *DescElement {
@@ -905,14 +620,10 @@ func (e *DescElement) WordSpacing(s string) *DescElement {
 	return e
 }
 
-func (e *DescElement) WritingMode(a DescWritingMode) *DescElement {
+func (e *DescElement) WritingMode(a WritingMode) *DescElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func DescWritingModeCustom(s string) DescWritingMode {
-	return DescWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -927,7 +638,7 @@ func (e *DescElement) XmlLang(s string) *DescElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *DescElement) XmlSpace(a DescXmlSpace) *DescElement {
+func (e *DescElement) XmlSpace(a XmlSpace) *DescElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

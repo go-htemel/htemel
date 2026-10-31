@@ -13,16 +13,19 @@ import (
 )
 
 type DialogElement struct {
+	htemel.FlowMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Dialog creates a tag <dialog> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The dialog element represents a transitory part of an application, in the form of a small window ("dialog box"), which the user interacts with to perform a task or gather information. Once the user is done, the dialog can be automatically closed by the application, or manually closed by the user.
-func Dialog(children ...htemel.Node) *DialogElement {
+func Dialog(children ...htemel.FlowContent) *DialogElement {
 	node := &DialogElement{
 		children: children,
 	}
@@ -31,7 +34,7 @@ func Dialog(children ...htemel.Node) *DialogElement {
 }
 
 // DialogIf creates a tag <dialog> instance that is only rendered when condition is true.
-func DialogIf(condition bool, children ...htemel.Node) *DialogElement {
+func DialogIf(condition bool, children ...htemel.FlowContent) *DialogElement {
 	if condition {
 		return Dialog(children...)
 	}
@@ -43,7 +46,7 @@ func DialogIf(condition bool, children ...htemel.Node) *DialogElement {
 }
 
 // DialogTernary creates a tag <dialog> containing then when condition is true, otherwise containing otherwise.
-func DialogTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DialogElement {
+func DialogTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *DialogElement {
 	if condition {
 		return Dialog(then)
 	}
@@ -51,7 +54,7 @@ func DialogTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Dia
 }
 
 // Children appends children to this element.
-func (e *DialogElement) Children(children ...htemel.Node) *DialogElement {
+func (e *DialogElement) Children(children ...htemel.FlowContent) *DialogElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +77,7 @@ func (e *DialogElement) Textf(format string, args ...any) *DialogElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DialogElement) If(cond bool, child htemel.Node) *DialogElement {
+func (e *DialogElement) If(cond bool, child htemel.FlowContent) *DialogElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +85,7 @@ func (e *DialogElement) If(cond bool, child htemel.Node) *DialogElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DialogElement) IfElse(cond bool, then, els htemel.Node) *DialogElement {
+func (e *DialogElement) IfElse(cond bool, then, els htemel.FlowContent) *DialogElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,124 +167,7 @@ func (e *DialogElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DialogClosedby string
-
-const (
-	DialogClosedbyAny          DialogClosedby = "any"
-	DialogClosedbyCloserequest DialogClosedby = "closerequest"
-	DialogClosedbyNone         DialogClosedby = "none"
-)
-
-type DialogAutocapitalize string
-
-const (
-	DialogAutocapitalizeCharacters DialogAutocapitalize = "characters"
-	DialogAutocapitalizeNone       DialogAutocapitalize = "none"
-	DialogAutocapitalizeOff        DialogAutocapitalize = "off"
-	DialogAutocapitalizeOn         DialogAutocapitalize = "on"
-	DialogAutocapitalizeSentences  DialogAutocapitalize = "sentences"
-	DialogAutocapitalizeWords      DialogAutocapitalize = "words"
-)
-
-type DialogAutocorrect string
-
-const (
-	DialogAutocorrectOff   DialogAutocorrect = "off"
-	DialogAutocorrectOn    DialogAutocorrect = "on"
-	DialogAutocorrectEmpty DialogAutocorrect = ""
-)
-
-type DialogContenteditable string
-
-const (
-	DialogContenteditableFalse         DialogContenteditable = "false"
-	DialogContenteditablePlaintextOnly DialogContenteditable = "plaintext-only"
-	DialogContenteditableTrue          DialogContenteditable = "true"
-	DialogContenteditableEmpty         DialogContenteditable = ""
-)
-
-type DialogDir string
-
-const (
-	DialogDirAuto DialogDir = "auto"
-	DialogDirLtr  DialogDir = "ltr"
-	DialogDirRtl  DialogDir = "rtl"
-)
-
-type DialogDraggable string
-
-const (
-	DialogDraggableFalse DialogDraggable = "false"
-	DialogDraggableTrue  DialogDraggable = "true"
-)
-
-type DialogEnterkeyhint string
-
-const (
-	DialogEnterkeyhintDone     DialogEnterkeyhint = "done"
-	DialogEnterkeyhintEnter    DialogEnterkeyhint = "enter"
-	DialogEnterkeyhintGo       DialogEnterkeyhint = "go"
-	DialogEnterkeyhintNext     DialogEnterkeyhint = "next"
-	DialogEnterkeyhintPrevious DialogEnterkeyhint = "previous"
-	DialogEnterkeyhintSearch   DialogEnterkeyhint = "search"
-	DialogEnterkeyhintSend     DialogEnterkeyhint = "send"
-)
-
-type DialogHidden string
-
-const (
-	DialogHiddenHidden     DialogHidden = "hidden"
-	DialogHiddenUntilFound DialogHidden = "until-found"
-	DialogHiddenEmpty      DialogHidden = ""
-)
-
-type DialogInputmode string
-
-const (
-	DialogInputmodeDecimal DialogInputmode = "decimal"
-	DialogInputmodeEmail   DialogInputmode = "email"
-	DialogInputmodeNone    DialogInputmode = "none"
-	DialogInputmodeNumeric DialogInputmode = "numeric"
-	DialogInputmodeSearch  DialogInputmode = "search"
-	DialogInputmodeTel     DialogInputmode = "tel"
-	DialogInputmodeText    DialogInputmode = "text"
-	DialogInputmodeUrl     DialogInputmode = "url"
-)
-
-type DialogPopover string
-
-const (
-	DialogPopoverAuto   DialogPopover = "auto"
-	DialogPopoverHint   DialogPopover = "hint"
-	DialogPopoverManual DialogPopover = "manual"
-	DialogPopoverEmpty  DialogPopover = ""
-)
-
-type DialogSpellcheck string
-
-const (
-	DialogSpellcheckFalse DialogSpellcheck = "false"
-	DialogSpellcheckTrue  DialogSpellcheck = "true"
-	DialogSpellcheckEmpty DialogSpellcheck = ""
-)
-
-type DialogTranslate string
-
-const (
-	DialogTranslateNo    DialogTranslate = "no"
-	DialogTranslateYes   DialogTranslate = "yes"
-	DialogTranslateEmpty DialogTranslate = ""
-)
-
-type DialogWritingsuggestions string
-
-const (
-	DialogWritingsuggestionsFalse DialogWritingsuggestions = "false"
-	DialogWritingsuggestionsTrue  DialogWritingsuggestions = "true"
-	DialogWritingsuggestionsEmpty DialogWritingsuggestions = ""
-)
-
-func (e *DialogElement) Closedby(a DialogClosedby) *DialogElement {
+func (e *DialogElement) Closedby(a Closedby) *DialogElement {
 	e.attributes.Set("closedby", string(a))
 
 	return e
@@ -317,7 +203,7 @@ func (e *DialogElement) Aria(name string, s string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Autocapitalize(a DialogAutocapitalize) *DialogElement {
+func (e *DialogElement) Autocapitalize(a Autocapitalize) *DialogElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -325,8 +211,8 @@ func (e *DialogElement) Autocapitalize(a DialogAutocapitalize) *DialogElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Autocorrect(v ...DialogAutocorrect) *DialogElement {
-	var val DialogAutocorrect
+func (e *DialogElement) Autocorrect(v ...Autocorrect) *DialogElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -351,8 +237,8 @@ func (e *DialogElement) Class(s ...string) *DialogElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Contenteditable(v ...DialogContenteditable) *DialogElement {
-	var val DialogContenteditable
+func (e *DialogElement) Contenteditable(v ...Contenteditable) *DialogElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -377,19 +263,19 @@ func (e *DialogElement) Data(name string, s string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Dir(a DialogDir) *DialogElement {
+func (e *DialogElement) Dir(a Dir) *DialogElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DialogElement) Draggable(a DialogDraggable) *DialogElement {
+func (e *DialogElement) Draggable(a Draggable) *DialogElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DialogElement) Enterkeyhint(a DialogEnterkeyhint) *DialogElement {
+func (e *DialogElement) Enterkeyhint(a Enterkeyhint) *DialogElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -417,8 +303,8 @@ func (e *DialogElement) Headingreset(b bool) *DialogElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Hidden(v ...DialogHidden) *DialogElement {
-	var val DialogHidden
+func (e *DialogElement) Hidden(v ...Hidden) *DialogElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -441,7 +327,7 @@ func (e *DialogElement) Inert(b bool) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Inputmode(a DialogInputmode) *DialogElement {
+func (e *DialogElement) Inputmode(a Inputmode) *DialogElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -507,8 +393,8 @@ func (e *DialogElement) Part(s ...string) *DialogElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Popover(v ...DialogPopover) *DialogElement {
-	var val DialogPopover
+func (e *DialogElement) Popover(v ...Popover) *DialogElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -531,8 +417,8 @@ func (e *DialogElement) Slot(s string) *DialogElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Spellcheck(v ...DialogSpellcheck) *DialogElement {
-	var val DialogSpellcheck
+func (e *DialogElement) Spellcheck(v ...Spellcheck) *DialogElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -561,8 +447,8 @@ func (e *DialogElement) Title(s string) *DialogElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Translate(v ...DialogTranslate) *DialogElement {
-	var val DialogTranslate
+func (e *DialogElement) Translate(v ...Translate) *DialogElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -573,8 +459,8 @@ func (e *DialogElement) Translate(v ...DialogTranslate) *DialogElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DialogElement) Writingsuggestions(v ...DialogWritingsuggestions) *DialogElement {
-	var val DialogWritingsuggestions
+func (e *DialogElement) Writingsuggestions(v ...Writingsuggestions) *DialogElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

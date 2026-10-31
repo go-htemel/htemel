@@ -13,16 +13,21 @@ import (
 )
 
 type MathElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Math creates a tag <math> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Math(children ...htemel.Node) *MathElement {
+func Math(children ...Content) *MathElement {
 	node := &MathElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Math(children ...htemel.Node) *MathElement {
 }
 
 // MathIf creates a tag <math> instance that is only rendered when condition is true.
-func MathIf(condition bool, children ...htemel.Node) *MathElement {
+func MathIf(condition bool, children ...Content) *MathElement {
 	if condition {
 		return Math(children...)
 	}
@@ -43,7 +48,7 @@ func MathIf(condition bool, children ...htemel.Node) *MathElement {
 }
 
 // MathTernary creates a tag <math> containing then when condition is true, otherwise containing otherwise.
-func MathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MathElement {
+func MathTernary(condition bool, then Content, otherwise Content) *MathElement {
 	if condition {
 		return Math(then)
 	}
@@ -51,7 +56,7 @@ func MathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MathE
 }
 
 // Children appends children to this element.
-func (e *MathElement) Children(children ...htemel.Node) *MathElement {
+func (e *MathElement) Children(children ...Content) *MathElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *MathElement) Textf(format string, args ...any) *MathElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MathElement) If(cond bool, child htemel.Node) *MathElement {
+func (e *MathElement) If(cond bool, child Content) *MathElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *MathElement) If(cond bool, child htemel.Node) *MathElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MathElement) IfElse(cond bool, then, els htemel.Node) *MathElement {
+func (e *MathElement) IfElse(cond bool, then, els Content) *MathElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,28 +169,10 @@ func (e *MathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MathDisplay string
+// MathMLContent marks <math> as a permitted child (Content).
+func (*MathElement) MathMLContent() {}
 
-const (
-	MathDisplayBlock  MathDisplay = "block"
-	MathDisplayInline MathDisplay = "inline"
-)
-
-type MathDir string
-
-const (
-	MathDirLtr MathDir = "ltr"
-	MathDirRtl MathDir = "rtl"
-)
-
-type MathDisplaystyle string
-
-const (
-	MathDisplaystyleFalse MathDisplaystyle = "false"
-	MathDisplaystyleTrue  MathDisplaystyle = "true"
-)
-
-func (e *MathElement) Display(a MathDisplay) *MathElement {
+func (e *MathElement) Display(a Display) *MathElement {
 	e.attributes.Set("display", string(a))
 
 	return e
@@ -221,13 +208,13 @@ func (e *MathElement) Data(name string, s string) *MathElement {
 	return e
 }
 
-func (e *MathElement) Dir(a MathDir) *MathElement {
+func (e *MathElement) Dir(a Dir) *MathElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MathElement) Displaystyle(a MathDisplaystyle) *MathElement {
+func (e *MathElement) Displaystyle(a Displaystyle) *MathElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

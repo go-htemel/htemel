@@ -14,15 +14,17 @@ import (
 
 type MsElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Ms creates a tag <ms> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Ms(children ...htemel.Node) *MsElement {
+func Ms(children ...Content) *MsElement {
 	node := &MsElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Ms(children ...htemel.Node) *MsElement {
 }
 
 // MsIf creates a tag <ms> instance that is only rendered when condition is true.
-func MsIf(condition bool, children ...htemel.Node) *MsElement {
+func MsIf(condition bool, children ...Content) *MsElement {
 	if condition {
 		return Ms(children...)
 	}
@@ -43,7 +45,7 @@ func MsIf(condition bool, children ...htemel.Node) *MsElement {
 }
 
 // MsTernary creates a tag <ms> containing then when condition is true, otherwise containing otherwise.
-func MsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MsElement {
+func MsTernary(condition bool, then Content, otherwise Content) *MsElement {
 	if condition {
 		return Ms(then)
 	}
@@ -51,7 +53,7 @@ func MsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MsEleme
 }
 
 // Children appends children to this element.
-func (e *MsElement) Children(children ...htemel.Node) *MsElement {
+func (e *MsElement) Children(children ...Content) *MsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MsElement) Textf(format string, args ...any) *MsElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MsElement) If(cond bool, child htemel.Node) *MsElement {
+func (e *MsElement) If(cond bool, child Content) *MsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MsElement) If(cond bool, child htemel.Node) *MsElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MsElement) IfElse(cond bool, then, els htemel.Node) *MsElement {
+func (e *MsElement) IfElse(cond bool, then, els Content) *MsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MsDir string
-
-const (
-	MsDirLtr MsDir = "ltr"
-	MsDirRtl MsDir = "rtl"
-)
-
-type MsDisplaystyle string
-
-const (
-	MsDisplaystyleFalse MsDisplaystyle = "false"
-	MsDisplaystyleTrue  MsDisplaystyle = "true"
-)
+// MathMLContent marks <ms> as a permitted child (Content).
+func (*MsElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MsElement) Data(name string, s string) *MsElement {
 	return e
 }
 
-func (e *MsElement) Dir(a MsDir) *MsElement {
+func (e *MsElement) Dir(a Dir) *MsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MsElement) Displaystyle(a MsDisplaystyle) *MsElement {
+func (e *MsElement) Displaystyle(a Displaystyle) *MsElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

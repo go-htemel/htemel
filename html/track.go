@@ -44,6 +44,14 @@ func (e *TrackElement) With(fn func(*TrackElement)) *TrackElement {
 	return e
 }
 
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *TrackElement) IfThen(cond bool, fn func(*TrackElement)) *TrackElement {
+	if cond {
+		fn(e)
+	}
+	return e
+}
+
 // AddClass appends a class to the element.
 func (e *TrackElement) AddClass(classes ...string) *TrackElement {
 	current, _ := e.attributes.Get("class")
@@ -109,124 +117,11 @@ func (e *TrackElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TrackKind string
+// HTMLAudioChild marks <track> as a permitted child of <audio> (AudioChild).
+func (*TrackElement) HTMLAudioChild() {}
 
-const (
-	TrackKindCaptions     TrackKind = "captions"
-	TrackKindChapters     TrackKind = "chapters"
-	TrackKindDescriptions TrackKind = "descriptions"
-	TrackKindMetadata     TrackKind = "metadata"
-	TrackKindSubtitles    TrackKind = "subtitles"
-)
-
-type TrackAutocapitalize string
-
-const (
-	TrackAutocapitalizeCharacters TrackAutocapitalize = "characters"
-	TrackAutocapitalizeNone       TrackAutocapitalize = "none"
-	TrackAutocapitalizeOff        TrackAutocapitalize = "off"
-	TrackAutocapitalizeOn         TrackAutocapitalize = "on"
-	TrackAutocapitalizeSentences  TrackAutocapitalize = "sentences"
-	TrackAutocapitalizeWords      TrackAutocapitalize = "words"
-)
-
-type TrackAutocorrect string
-
-const (
-	TrackAutocorrectOff   TrackAutocorrect = "off"
-	TrackAutocorrectOn    TrackAutocorrect = "on"
-	TrackAutocorrectEmpty TrackAutocorrect = ""
-)
-
-type TrackContenteditable string
-
-const (
-	TrackContenteditableFalse         TrackContenteditable = "false"
-	TrackContenteditablePlaintextOnly TrackContenteditable = "plaintext-only"
-	TrackContenteditableTrue          TrackContenteditable = "true"
-	TrackContenteditableEmpty         TrackContenteditable = ""
-)
-
-type TrackDir string
-
-const (
-	TrackDirAuto TrackDir = "auto"
-	TrackDirLtr  TrackDir = "ltr"
-	TrackDirRtl  TrackDir = "rtl"
-)
-
-type TrackDraggable string
-
-const (
-	TrackDraggableFalse TrackDraggable = "false"
-	TrackDraggableTrue  TrackDraggable = "true"
-)
-
-type TrackEnterkeyhint string
-
-const (
-	TrackEnterkeyhintDone     TrackEnterkeyhint = "done"
-	TrackEnterkeyhintEnter    TrackEnterkeyhint = "enter"
-	TrackEnterkeyhintGo       TrackEnterkeyhint = "go"
-	TrackEnterkeyhintNext     TrackEnterkeyhint = "next"
-	TrackEnterkeyhintPrevious TrackEnterkeyhint = "previous"
-	TrackEnterkeyhintSearch   TrackEnterkeyhint = "search"
-	TrackEnterkeyhintSend     TrackEnterkeyhint = "send"
-)
-
-type TrackHidden string
-
-const (
-	TrackHiddenHidden     TrackHidden = "hidden"
-	TrackHiddenUntilFound TrackHidden = "until-found"
-	TrackHiddenEmpty      TrackHidden = ""
-)
-
-type TrackInputmode string
-
-const (
-	TrackInputmodeDecimal TrackInputmode = "decimal"
-	TrackInputmodeEmail   TrackInputmode = "email"
-	TrackInputmodeNone    TrackInputmode = "none"
-	TrackInputmodeNumeric TrackInputmode = "numeric"
-	TrackInputmodeSearch  TrackInputmode = "search"
-	TrackInputmodeTel     TrackInputmode = "tel"
-	TrackInputmodeText    TrackInputmode = "text"
-	TrackInputmodeUrl     TrackInputmode = "url"
-)
-
-type TrackPopover string
-
-const (
-	TrackPopoverAuto   TrackPopover = "auto"
-	TrackPopoverHint   TrackPopover = "hint"
-	TrackPopoverManual TrackPopover = "manual"
-	TrackPopoverEmpty  TrackPopover = ""
-)
-
-type TrackSpellcheck string
-
-const (
-	TrackSpellcheckFalse TrackSpellcheck = "false"
-	TrackSpellcheckTrue  TrackSpellcheck = "true"
-	TrackSpellcheckEmpty TrackSpellcheck = ""
-)
-
-type TrackTranslate string
-
-const (
-	TrackTranslateNo    TrackTranslate = "no"
-	TrackTranslateYes   TrackTranslate = "yes"
-	TrackTranslateEmpty TrackTranslate = ""
-)
-
-type TrackWritingsuggestions string
-
-const (
-	TrackWritingsuggestionsFalse TrackWritingsuggestions = "false"
-	TrackWritingsuggestionsTrue  TrackWritingsuggestions = "true"
-	TrackWritingsuggestionsEmpty TrackWritingsuggestions = ""
-)
+// HTMLVideoChild marks <track> as a permitted child of <video> (VideoChild).
+func (*TrackElement) HTMLVideoChild() {}
 
 // Default sets the boolean attribute "default". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -236,7 +131,7 @@ func (e *TrackElement) Default(b bool) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Kind(a TrackKind) *TrackElement {
+func (e *TrackElement) Kind(a Kind) *TrackElement {
 	e.attributes.Set("kind", string(a))
 
 	return e
@@ -284,7 +179,7 @@ func (e *TrackElement) Aria(name string, s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Autocapitalize(a TrackAutocapitalize) *TrackElement {
+func (e *TrackElement) Autocapitalize(a Autocapitalize) *TrackElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -292,8 +187,8 @@ func (e *TrackElement) Autocapitalize(a TrackAutocapitalize) *TrackElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Autocorrect(v ...TrackAutocorrect) *TrackElement {
-	var val TrackAutocorrect
+func (e *TrackElement) Autocorrect(v ...Autocorrect) *TrackElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -318,8 +213,8 @@ func (e *TrackElement) Class(s ...string) *TrackElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Contenteditable(v ...TrackContenteditable) *TrackElement {
-	var val TrackContenteditable
+func (e *TrackElement) Contenteditable(v ...Contenteditable) *TrackElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -344,19 +239,19 @@ func (e *TrackElement) Data(name string, s string) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Dir(a TrackDir) *TrackElement {
+func (e *TrackElement) Dir(a Dir) *TrackElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TrackElement) Draggable(a TrackDraggable) *TrackElement {
+func (e *TrackElement) Draggable(a Draggable) *TrackElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TrackElement) Enterkeyhint(a TrackEnterkeyhint) *TrackElement {
+func (e *TrackElement) Enterkeyhint(a Enterkeyhint) *TrackElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -384,8 +279,8 @@ func (e *TrackElement) Headingreset(b bool) *TrackElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Hidden(v ...TrackHidden) *TrackElement {
-	var val TrackHidden
+func (e *TrackElement) Hidden(v ...Hidden) *TrackElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -408,7 +303,7 @@ func (e *TrackElement) Inert(b bool) *TrackElement {
 	return e
 }
 
-func (e *TrackElement) Inputmode(a TrackInputmode) *TrackElement {
+func (e *TrackElement) Inputmode(a Inputmode) *TrackElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -474,8 +369,8 @@ func (e *TrackElement) Part(s ...string) *TrackElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Popover(v ...TrackPopover) *TrackElement {
-	var val TrackPopover
+func (e *TrackElement) Popover(v ...Popover) *TrackElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -498,8 +393,8 @@ func (e *TrackElement) Slot(s string) *TrackElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Spellcheck(v ...TrackSpellcheck) *TrackElement {
-	var val TrackSpellcheck
+func (e *TrackElement) Spellcheck(v ...Spellcheck) *TrackElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -528,8 +423,8 @@ func (e *TrackElement) Title(s string) *TrackElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Translate(v ...TrackTranslate) *TrackElement {
-	var val TrackTranslate
+func (e *TrackElement) Translate(v ...Translate) *TrackElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -540,8 +435,8 @@ func (e *TrackElement) Translate(v ...TrackTranslate) *TrackElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TrackElement) Writingsuggestions(v ...TrackWritingsuggestions) *TrackElement {
-	var val TrackWritingsuggestions
+func (e *TrackElement) Writingsuggestions(v ...Writingsuggestions) *TrackElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

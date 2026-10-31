@@ -14,15 +14,17 @@ import (
 
 type CaptionElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Caption creates a tag <caption> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The caption element represents the title of the table that is its parent, if it has a parent and that is a table element.
-func Caption(children ...htemel.Node) *CaptionElement {
+func Caption(children ...htemel.FlowContent) *CaptionElement {
 	node := &CaptionElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Caption(children ...htemel.Node) *CaptionElement {
 }
 
 // CaptionIf creates a tag <caption> instance that is only rendered when condition is true.
-func CaptionIf(condition bool, children ...htemel.Node) *CaptionElement {
+func CaptionIf(condition bool, children ...htemel.FlowContent) *CaptionElement {
 	if condition {
 		return Caption(children...)
 	}
@@ -43,7 +45,7 @@ func CaptionIf(condition bool, children ...htemel.Node) *CaptionElement {
 }
 
 // CaptionTernary creates a tag <caption> containing then when condition is true, otherwise containing otherwise.
-func CaptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *CaptionElement {
+func CaptionTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *CaptionElement {
 	if condition {
 		return Caption(then)
 	}
@@ -51,7 +53,7 @@ func CaptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Ca
 }
 
 // Children appends children to this element.
-func (e *CaptionElement) Children(children ...htemel.Node) *CaptionElement {
+func (e *CaptionElement) Children(children ...htemel.FlowContent) *CaptionElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *CaptionElement) Textf(format string, args ...any) *CaptionElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *CaptionElement) If(cond bool, child htemel.Node) *CaptionElement {
+func (e *CaptionElement) If(cond bool, child htemel.FlowContent) *CaptionElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *CaptionElement) If(cond bool, child htemel.Node) *CaptionElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *CaptionElement) IfElse(cond bool, then, els htemel.Node) *CaptionElement {
+func (e *CaptionElement) IfElse(cond bool, then, els htemel.FlowContent) *CaptionElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *CaptionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type CaptionAutocapitalize string
-
-const (
-	CaptionAutocapitalizeCharacters CaptionAutocapitalize = "characters"
-	CaptionAutocapitalizeNone       CaptionAutocapitalize = "none"
-	CaptionAutocapitalizeOff        CaptionAutocapitalize = "off"
-	CaptionAutocapitalizeOn         CaptionAutocapitalize = "on"
-	CaptionAutocapitalizeSentences  CaptionAutocapitalize = "sentences"
-	CaptionAutocapitalizeWords      CaptionAutocapitalize = "words"
-)
-
-type CaptionAutocorrect string
-
-const (
-	CaptionAutocorrectOff   CaptionAutocorrect = "off"
-	CaptionAutocorrectOn    CaptionAutocorrect = "on"
-	CaptionAutocorrectEmpty CaptionAutocorrect = ""
-)
-
-type CaptionContenteditable string
-
-const (
-	CaptionContenteditableFalse         CaptionContenteditable = "false"
-	CaptionContenteditablePlaintextOnly CaptionContenteditable = "plaintext-only"
-	CaptionContenteditableTrue          CaptionContenteditable = "true"
-	CaptionContenteditableEmpty         CaptionContenteditable = ""
-)
-
-type CaptionDir string
-
-const (
-	CaptionDirAuto CaptionDir = "auto"
-	CaptionDirLtr  CaptionDir = "ltr"
-	CaptionDirRtl  CaptionDir = "rtl"
-)
-
-type CaptionDraggable string
-
-const (
-	CaptionDraggableFalse CaptionDraggable = "false"
-	CaptionDraggableTrue  CaptionDraggable = "true"
-)
-
-type CaptionEnterkeyhint string
-
-const (
-	CaptionEnterkeyhintDone     CaptionEnterkeyhint = "done"
-	CaptionEnterkeyhintEnter    CaptionEnterkeyhint = "enter"
-	CaptionEnterkeyhintGo       CaptionEnterkeyhint = "go"
-	CaptionEnterkeyhintNext     CaptionEnterkeyhint = "next"
-	CaptionEnterkeyhintPrevious CaptionEnterkeyhint = "previous"
-	CaptionEnterkeyhintSearch   CaptionEnterkeyhint = "search"
-	CaptionEnterkeyhintSend     CaptionEnterkeyhint = "send"
-)
-
-type CaptionHidden string
-
-const (
-	CaptionHiddenHidden     CaptionHidden = "hidden"
-	CaptionHiddenUntilFound CaptionHidden = "until-found"
-	CaptionHiddenEmpty      CaptionHidden = ""
-)
-
-type CaptionInputmode string
-
-const (
-	CaptionInputmodeDecimal CaptionInputmode = "decimal"
-	CaptionInputmodeEmail   CaptionInputmode = "email"
-	CaptionInputmodeNone    CaptionInputmode = "none"
-	CaptionInputmodeNumeric CaptionInputmode = "numeric"
-	CaptionInputmodeSearch  CaptionInputmode = "search"
-	CaptionInputmodeTel     CaptionInputmode = "tel"
-	CaptionInputmodeText    CaptionInputmode = "text"
-	CaptionInputmodeUrl     CaptionInputmode = "url"
-)
-
-type CaptionPopover string
-
-const (
-	CaptionPopoverAuto   CaptionPopover = "auto"
-	CaptionPopoverHint   CaptionPopover = "hint"
-	CaptionPopoverManual CaptionPopover = "manual"
-	CaptionPopoverEmpty  CaptionPopover = ""
-)
-
-type CaptionSpellcheck string
-
-const (
-	CaptionSpellcheckFalse CaptionSpellcheck = "false"
-	CaptionSpellcheckTrue  CaptionSpellcheck = "true"
-	CaptionSpellcheckEmpty CaptionSpellcheck = ""
-)
-
-type CaptionTranslate string
-
-const (
-	CaptionTranslateNo    CaptionTranslate = "no"
-	CaptionTranslateYes   CaptionTranslate = "yes"
-	CaptionTranslateEmpty CaptionTranslate = ""
-)
-
-type CaptionWritingsuggestions string
-
-const (
-	CaptionWritingsuggestionsFalse CaptionWritingsuggestions = "false"
-	CaptionWritingsuggestionsTrue  CaptionWritingsuggestions = "true"
-	CaptionWritingsuggestionsEmpty CaptionWritingsuggestions = ""
-)
+// HTMLTableChild marks <caption> as a permitted child of <table> (TableChild).
+func (*CaptionElement) HTMLTableChild() {}
 
 func (e *CaptionElement) Accesskey(r rune) *CaptionElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +191,7 @@ func (e *CaptionElement) Aria(name string, s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Autocapitalize(a CaptionAutocapitalize) *CaptionElement {
+func (e *CaptionElement) Autocapitalize(a Autocapitalize) *CaptionElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *CaptionElement) Autocapitalize(a CaptionAutocapitalize) *CaptionElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Autocorrect(v ...CaptionAutocorrect) *CaptionElement {
-	var val CaptionAutocorrect
+func (e *CaptionElement) Autocorrect(v ...Autocorrect) *CaptionElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *CaptionElement) Class(s ...string) *CaptionElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Contenteditable(v ...CaptionContenteditable) *CaptionElement {
-	var val CaptionContenteditable
+func (e *CaptionElement) Contenteditable(v ...Contenteditable) *CaptionElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *CaptionElement) Data(name string, s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Dir(a CaptionDir) *CaptionElement {
+func (e *CaptionElement) Dir(a Dir) *CaptionElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *CaptionElement) Draggable(a CaptionDraggable) *CaptionElement {
+func (e *CaptionElement) Draggable(a Draggable) *CaptionElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *CaptionElement) Enterkeyhint(a CaptionEnterkeyhint) *CaptionElement {
+func (e *CaptionElement) Enterkeyhint(a Enterkeyhint) *CaptionElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *CaptionElement) Headingreset(b bool) *CaptionElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Hidden(v ...CaptionHidden) *CaptionElement {
-	var val CaptionHidden
+func (e *CaptionElement) Hidden(v ...Hidden) *CaptionElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *CaptionElement) Inert(b bool) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Inputmode(a CaptionInputmode) *CaptionElement {
+func (e *CaptionElement) Inputmode(a Inputmode) *CaptionElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *CaptionElement) Part(s ...string) *CaptionElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Popover(v ...CaptionPopover) *CaptionElement {
-	var val CaptionPopover
+func (e *CaptionElement) Popover(v ...Popover) *CaptionElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *CaptionElement) Slot(s string) *CaptionElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Spellcheck(v ...CaptionSpellcheck) *CaptionElement {
-	var val CaptionSpellcheck
+func (e *CaptionElement) Spellcheck(v ...Spellcheck) *CaptionElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *CaptionElement) Title(s string) *CaptionElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Translate(v ...CaptionTranslate) *CaptionElement {
-	var val CaptionTranslate
+func (e *CaptionElement) Translate(v ...Translate) *CaptionElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *CaptionElement) Translate(v ...CaptionTranslate) *CaptionElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *CaptionElement) Writingsuggestions(v ...CaptionWritingsuggestions) *CaptionElement {
-	var val CaptionWritingsuggestions
+func (e *CaptionElement) Writingsuggestions(v ...Writingsuggestions) *CaptionElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

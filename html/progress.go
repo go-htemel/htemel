@@ -13,16 +13,20 @@ import (
 )
 
 type ProgressElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Progress creates a tag <progress> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The progress element represents the completion progress of a task. The progress is either indeterminate, indicating that progress is being made but that it is not clear how much more work remains to be done before the task is complete (e.g. because the task is waiting for a remote host to respond), or the progress is a number in the range zero to a maximum, giving the fraction of work that has so far been completed.
-func Progress(children ...htemel.Node) *ProgressElement {
+func Progress(children ...htemel.PhrasingContent) *ProgressElement {
 	node := &ProgressElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Progress(children ...htemel.Node) *ProgressElement {
 }
 
 // ProgressIf creates a tag <progress> instance that is only rendered when condition is true.
-func ProgressIf(condition bool, children ...htemel.Node) *ProgressElement {
+func ProgressIf(condition bool, children ...htemel.PhrasingContent) *ProgressElement {
 	if condition {
 		return Progress(children...)
 	}
@@ -43,7 +47,7 @@ func ProgressIf(condition bool, children ...htemel.Node) *ProgressElement {
 }
 
 // ProgressTernary creates a tag <progress> containing then when condition is true, otherwise containing otherwise.
-func ProgressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ProgressElement {
+func ProgressTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *ProgressElement {
 	if condition {
 		return Progress(then)
 	}
@@ -51,7 +55,7 @@ func ProgressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *P
 }
 
 // Children appends children to this element.
-func (e *ProgressElement) Children(children ...htemel.Node) *ProgressElement {
+func (e *ProgressElement) Children(children ...htemel.PhrasingContent) *ProgressElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *ProgressElement) Textf(format string, args ...any) *ProgressElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ProgressElement) If(cond bool, child htemel.Node) *ProgressElement {
+func (e *ProgressElement) If(cond bool, child htemel.PhrasingContent) *ProgressElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *ProgressElement) If(cond bool, child htemel.Node) *ProgressElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ProgressElement) IfElse(cond bool, then, els htemel.Node) *ProgressElement {
+func (e *ProgressElement) IfElse(cond bool, then, els htemel.PhrasingContent) *ProgressElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *ProgressElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ProgressAutocapitalize string
-
-const (
-	ProgressAutocapitalizeCharacters ProgressAutocapitalize = "characters"
-	ProgressAutocapitalizeNone       ProgressAutocapitalize = "none"
-	ProgressAutocapitalizeOff        ProgressAutocapitalize = "off"
-	ProgressAutocapitalizeOn         ProgressAutocapitalize = "on"
-	ProgressAutocapitalizeSentences  ProgressAutocapitalize = "sentences"
-	ProgressAutocapitalizeWords      ProgressAutocapitalize = "words"
-)
-
-type ProgressAutocorrect string
-
-const (
-	ProgressAutocorrectOff   ProgressAutocorrect = "off"
-	ProgressAutocorrectOn    ProgressAutocorrect = "on"
-	ProgressAutocorrectEmpty ProgressAutocorrect = ""
-)
-
-type ProgressContenteditable string
-
-const (
-	ProgressContenteditableFalse         ProgressContenteditable = "false"
-	ProgressContenteditablePlaintextOnly ProgressContenteditable = "plaintext-only"
-	ProgressContenteditableTrue          ProgressContenteditable = "true"
-	ProgressContenteditableEmpty         ProgressContenteditable = ""
-)
-
-type ProgressDir string
-
-const (
-	ProgressDirAuto ProgressDir = "auto"
-	ProgressDirLtr  ProgressDir = "ltr"
-	ProgressDirRtl  ProgressDir = "rtl"
-)
-
-type ProgressDraggable string
-
-const (
-	ProgressDraggableFalse ProgressDraggable = "false"
-	ProgressDraggableTrue  ProgressDraggable = "true"
-)
-
-type ProgressEnterkeyhint string
-
-const (
-	ProgressEnterkeyhintDone     ProgressEnterkeyhint = "done"
-	ProgressEnterkeyhintEnter    ProgressEnterkeyhint = "enter"
-	ProgressEnterkeyhintGo       ProgressEnterkeyhint = "go"
-	ProgressEnterkeyhintNext     ProgressEnterkeyhint = "next"
-	ProgressEnterkeyhintPrevious ProgressEnterkeyhint = "previous"
-	ProgressEnterkeyhintSearch   ProgressEnterkeyhint = "search"
-	ProgressEnterkeyhintSend     ProgressEnterkeyhint = "send"
-)
-
-type ProgressHidden string
-
-const (
-	ProgressHiddenHidden     ProgressHidden = "hidden"
-	ProgressHiddenUntilFound ProgressHidden = "until-found"
-	ProgressHiddenEmpty      ProgressHidden = ""
-)
-
-type ProgressInputmode string
-
-const (
-	ProgressInputmodeDecimal ProgressInputmode = "decimal"
-	ProgressInputmodeEmail   ProgressInputmode = "email"
-	ProgressInputmodeNone    ProgressInputmode = "none"
-	ProgressInputmodeNumeric ProgressInputmode = "numeric"
-	ProgressInputmodeSearch  ProgressInputmode = "search"
-	ProgressInputmodeTel     ProgressInputmode = "tel"
-	ProgressInputmodeText    ProgressInputmode = "text"
-	ProgressInputmodeUrl     ProgressInputmode = "url"
-)
-
-type ProgressPopover string
-
-const (
-	ProgressPopoverAuto   ProgressPopover = "auto"
-	ProgressPopoverHint   ProgressPopover = "hint"
-	ProgressPopoverManual ProgressPopover = "manual"
-	ProgressPopoverEmpty  ProgressPopover = ""
-)
-
-type ProgressSpellcheck string
-
-const (
-	ProgressSpellcheckFalse ProgressSpellcheck = "false"
-	ProgressSpellcheckTrue  ProgressSpellcheck = "true"
-	ProgressSpellcheckEmpty ProgressSpellcheck = ""
-)
-
-type ProgressTranslate string
-
-const (
-	ProgressTranslateNo    ProgressTranslate = "no"
-	ProgressTranslateYes   ProgressTranslate = "yes"
-	ProgressTranslateEmpty ProgressTranslate = ""
-)
-
-type ProgressWritingsuggestions string
-
-const (
-	ProgressWritingsuggestionsFalse ProgressWritingsuggestions = "false"
-	ProgressWritingsuggestionsTrue  ProgressWritingsuggestions = "true"
-	ProgressWritingsuggestionsEmpty ProgressWritingsuggestions = ""
-)
-
 func (e *ProgressElement) Max(f float64) *ProgressElement {
 	e.attributes.Set("max", strconv.FormatFloat(f, 'g', -1, 64))
 
@@ -307,7 +202,7 @@ func (e *ProgressElement) Aria(name string, s string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Autocapitalize(a ProgressAutocapitalize) *ProgressElement {
+func (e *ProgressElement) Autocapitalize(a Autocapitalize) *ProgressElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -315,8 +210,8 @@ func (e *ProgressElement) Autocapitalize(a ProgressAutocapitalize) *ProgressElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Autocorrect(v ...ProgressAutocorrect) *ProgressElement {
-	var val ProgressAutocorrect
+func (e *ProgressElement) Autocorrect(v ...Autocorrect) *ProgressElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -341,8 +236,8 @@ func (e *ProgressElement) Class(s ...string) *ProgressElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Contenteditable(v ...ProgressContenteditable) *ProgressElement {
-	var val ProgressContenteditable
+func (e *ProgressElement) Contenteditable(v ...Contenteditable) *ProgressElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -367,19 +262,19 @@ func (e *ProgressElement) Data(name string, s string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Dir(a ProgressDir) *ProgressElement {
+func (e *ProgressElement) Dir(a Dir) *ProgressElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ProgressElement) Draggable(a ProgressDraggable) *ProgressElement {
+func (e *ProgressElement) Draggable(a Draggable) *ProgressElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ProgressElement) Enterkeyhint(a ProgressEnterkeyhint) *ProgressElement {
+func (e *ProgressElement) Enterkeyhint(a Enterkeyhint) *ProgressElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -407,8 +302,8 @@ func (e *ProgressElement) Headingreset(b bool) *ProgressElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Hidden(v ...ProgressHidden) *ProgressElement {
-	var val ProgressHidden
+func (e *ProgressElement) Hidden(v ...Hidden) *ProgressElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -431,7 +326,7 @@ func (e *ProgressElement) Inert(b bool) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Inputmode(a ProgressInputmode) *ProgressElement {
+func (e *ProgressElement) Inputmode(a Inputmode) *ProgressElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -497,8 +392,8 @@ func (e *ProgressElement) Part(s ...string) *ProgressElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Popover(v ...ProgressPopover) *ProgressElement {
-	var val ProgressPopover
+func (e *ProgressElement) Popover(v ...Popover) *ProgressElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -521,8 +416,8 @@ func (e *ProgressElement) Slot(s string) *ProgressElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Spellcheck(v ...ProgressSpellcheck) *ProgressElement {
-	var val ProgressSpellcheck
+func (e *ProgressElement) Spellcheck(v ...Spellcheck) *ProgressElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *ProgressElement) Title(s string) *ProgressElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Translate(v ...ProgressTranslate) *ProgressElement {
-	var val ProgressTranslate
+func (e *ProgressElement) Translate(v ...Translate) *ProgressElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -563,8 +458,8 @@ func (e *ProgressElement) Translate(v ...ProgressTranslate) *ProgressElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ProgressElement) Writingsuggestions(v ...ProgressWritingsuggestions) *ProgressElement {
-	var val ProgressWritingsuggestions
+func (e *ProgressElement) Writingsuggestions(v ...Writingsuggestions) *ProgressElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

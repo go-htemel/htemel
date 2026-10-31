@@ -13,16 +13,20 @@ import (
 )
 
 type UElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // U creates a tag <u> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The u element represents a span of text with an unarticulated, though explicitly rendered, non-textual annotation, such as labeling the text as being a proper name in Chinese text (a Chinese proper name mark), or labeling the text as being misspelt.
-func U(children ...htemel.Node) *UElement {
+func U(children ...htemel.PhrasingContent) *UElement {
 	node := &UElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func U(children ...htemel.Node) *UElement {
 }
 
 // UIf creates a tag <u> instance that is only rendered when condition is true.
-func UIf(condition bool, children ...htemel.Node) *UElement {
+func UIf(condition bool, children ...htemel.PhrasingContent) *UElement {
 	if condition {
 		return U(children...)
 	}
@@ -43,7 +47,7 @@ func UIf(condition bool, children ...htemel.Node) *UElement {
 }
 
 // UTernary creates a tag <u> containing then when condition is true, otherwise containing otherwise.
-func UTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UElement {
+func UTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *UElement {
 	if condition {
 		return U(then)
 	}
@@ -51,7 +55,7 @@ func UTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UElement
 }
 
 // Children appends children to this element.
-func (e *UElement) Children(children ...htemel.Node) *UElement {
+func (e *UElement) Children(children ...htemel.PhrasingContent) *UElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *UElement) Textf(format string, args ...any) *UElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *UElement) If(cond bool, child htemel.Node) *UElement {
+func (e *UElement) If(cond bool, child htemel.PhrasingContent) *UElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *UElement) If(cond bool, child htemel.Node) *UElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *UElement) IfElse(cond bool, then, els htemel.Node) *UElement {
+func (e *UElement) IfElse(cond bool, then, els htemel.PhrasingContent) *UElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *UElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type UAutocapitalize string
-
-const (
-	UAutocapitalizeCharacters UAutocapitalize = "characters"
-	UAutocapitalizeNone       UAutocapitalize = "none"
-	UAutocapitalizeOff        UAutocapitalize = "off"
-	UAutocapitalizeOn         UAutocapitalize = "on"
-	UAutocapitalizeSentences  UAutocapitalize = "sentences"
-	UAutocapitalizeWords      UAutocapitalize = "words"
-)
-
-type UAutocorrect string
-
-const (
-	UAutocorrectOff   UAutocorrect = "off"
-	UAutocorrectOn    UAutocorrect = "on"
-	UAutocorrectEmpty UAutocorrect = ""
-)
-
-type UContenteditable string
-
-const (
-	UContenteditableFalse         UContenteditable = "false"
-	UContenteditablePlaintextOnly UContenteditable = "plaintext-only"
-	UContenteditableTrue          UContenteditable = "true"
-	UContenteditableEmpty         UContenteditable = ""
-)
-
-type UDir string
-
-const (
-	UDirAuto UDir = "auto"
-	UDirLtr  UDir = "ltr"
-	UDirRtl  UDir = "rtl"
-)
-
-type UDraggable string
-
-const (
-	UDraggableFalse UDraggable = "false"
-	UDraggableTrue  UDraggable = "true"
-)
-
-type UEnterkeyhint string
-
-const (
-	UEnterkeyhintDone     UEnterkeyhint = "done"
-	UEnterkeyhintEnter    UEnterkeyhint = "enter"
-	UEnterkeyhintGo       UEnterkeyhint = "go"
-	UEnterkeyhintNext     UEnterkeyhint = "next"
-	UEnterkeyhintPrevious UEnterkeyhint = "previous"
-	UEnterkeyhintSearch   UEnterkeyhint = "search"
-	UEnterkeyhintSend     UEnterkeyhint = "send"
-)
-
-type UHidden string
-
-const (
-	UHiddenHidden     UHidden = "hidden"
-	UHiddenUntilFound UHidden = "until-found"
-	UHiddenEmpty      UHidden = ""
-)
-
-type UInputmode string
-
-const (
-	UInputmodeDecimal UInputmode = "decimal"
-	UInputmodeEmail   UInputmode = "email"
-	UInputmodeNone    UInputmode = "none"
-	UInputmodeNumeric UInputmode = "numeric"
-	UInputmodeSearch  UInputmode = "search"
-	UInputmodeTel     UInputmode = "tel"
-	UInputmodeText    UInputmode = "text"
-	UInputmodeUrl     UInputmode = "url"
-)
-
-type UPopover string
-
-const (
-	UPopoverAuto   UPopover = "auto"
-	UPopoverHint   UPopover = "hint"
-	UPopoverManual UPopover = "manual"
-	UPopoverEmpty  UPopover = ""
-)
-
-type USpellcheck string
-
-const (
-	USpellcheckFalse USpellcheck = "false"
-	USpellcheckTrue  USpellcheck = "true"
-	USpellcheckEmpty USpellcheck = ""
-)
-
-type UTranslate string
-
-const (
-	UTranslateNo    UTranslate = "no"
-	UTranslateYes   UTranslate = "yes"
-	UTranslateEmpty UTranslate = ""
-)
-
-type UWritingsuggestions string
-
-const (
-	UWritingsuggestionsFalse UWritingsuggestions = "false"
-	UWritingsuggestionsTrue  UWritingsuggestions = "true"
-	UWritingsuggestionsEmpty UWritingsuggestions = ""
-)
-
 func (e *UElement) Accesskey(r rune) *UElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *UElement) Aria(name string, s string) *UElement {
 	return e
 }
 
-func (e *UElement) Autocapitalize(a UAutocapitalize) *UElement {
+func (e *UElement) Autocapitalize(a Autocapitalize) *UElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *UElement) Autocapitalize(a UAutocapitalize) *UElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Autocorrect(v ...UAutocorrect) *UElement {
-	var val UAutocorrect
+func (e *UElement) Autocorrect(v ...Autocorrect) *UElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *UElement) Class(s ...string) *UElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Contenteditable(v ...UContenteditable) *UElement {
-	var val UContenteditable
+func (e *UElement) Contenteditable(v ...Contenteditable) *UElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *UElement) Data(name string, s string) *UElement {
 	return e
 }
 
-func (e *UElement) Dir(a UDir) *UElement {
+func (e *UElement) Dir(a Dir) *UElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *UElement) Draggable(a UDraggable) *UElement {
+func (e *UElement) Draggable(a Draggable) *UElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *UElement) Enterkeyhint(a UEnterkeyhint) *UElement {
+func (e *UElement) Enterkeyhint(a Enterkeyhint) *UElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *UElement) Headingreset(b bool) *UElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Hidden(v ...UHidden) *UElement {
-	var val UHidden
+func (e *UElement) Hidden(v ...Hidden) *UElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *UElement) Inert(b bool) *UElement {
 	return e
 }
 
-func (e *UElement) Inputmode(a UInputmode) *UElement {
+func (e *UElement) Inputmode(a Inputmode) *UElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *UElement) Part(s ...string) *UElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Popover(v ...UPopover) *UElement {
-	var val UPopover
+func (e *UElement) Popover(v ...Popover) *UElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *UElement) Slot(s string) *UElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Spellcheck(v ...USpellcheck) *UElement {
-	var val USpellcheck
+func (e *UElement) Spellcheck(v ...Spellcheck) *UElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *UElement) Title(s string) *UElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Translate(v ...UTranslate) *UElement {
-	var val UTranslate
+func (e *UElement) Translate(v ...Translate) *UElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *UElement) Translate(v ...UTranslate) *UElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *UElement) Writingsuggestions(v ...UWritingsuggestions) *UElement {
-	var val UWritingsuggestions
+func (e *UElement) Writingsuggestions(v ...Writingsuggestions) *UElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

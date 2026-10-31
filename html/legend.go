@@ -12,17 +12,34 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// LegendChild is a permitted child of <legend>: phrasing content, heading content.
+//
+// It is implemented by <a>, <abbr>, <area>, <audio>, <b>, <bdi>, <bdo>, <br>, <button>, <canvas>,
+// <cite>, <code>, <data>, <datalist>, <del>, <dfn>, <em>, <embed>, <h1>, <h2>, <h3>, <h4>, <h5>,
+// <h6>, <i>, <iframe>, <img>, <input>, <ins>, <kbd>, <label>, <link>, <map>, <mark>, <meta>,
+// <meter>, <noscript>, <object>, <output>, <picture>, <progress>, <q>, <ruby>, <s>, <samp>,
+// <script>, <select>, <slot>, <small>, <span>, <strong>, <sub>, <sup>, <template>, <textarea>,
+// <time>, <u>, <var>, <video>, <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type
+// embedding htemel.PhrasingMarker or htemel.HeadingMarker and by the unchecked nodes of package
+// htemel (Group, Each, If, Unchecked, ...).
+type LegendChild interface {
+	htemel.Node
+	HTMLLegendChild()
+}
+
 type LegendElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []LegendChild
 	skipRender bool
 }
 
 // Legend creates a tag <legend> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content, heading content (LegendChild).
+//
 // Spec Description: The legend element represents a caption for the rest of the contents of the legend element's parent fieldset element, if any. Otherwise, if the legend has a parent optgroup element, then the legend represents the optgroup's label.
-func Legend(children ...htemel.Node) *LegendElement {
+func Legend(children ...LegendChild) *LegendElement {
 	node := &LegendElement{
 		children: children,
 	}
@@ -31,7 +48,7 @@ func Legend(children ...htemel.Node) *LegendElement {
 }
 
 // LegendIf creates a tag <legend> instance that is only rendered when condition is true.
-func LegendIf(condition bool, children ...htemel.Node) *LegendElement {
+func LegendIf(condition bool, children ...LegendChild) *LegendElement {
 	if condition {
 		return Legend(children...)
 	}
@@ -43,7 +60,7 @@ func LegendIf(condition bool, children ...htemel.Node) *LegendElement {
 }
 
 // LegendTernary creates a tag <legend> containing then when condition is true, otherwise containing otherwise.
-func LegendTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LegendElement {
+func LegendTernary(condition bool, then LegendChild, otherwise LegendChild) *LegendElement {
 	if condition {
 		return Legend(then)
 	}
@@ -51,7 +68,7 @@ func LegendTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Leg
 }
 
 // Children appends children to this element.
-func (e *LegendElement) Children(children ...htemel.Node) *LegendElement {
+func (e *LegendElement) Children(children ...LegendChild) *LegendElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +91,7 @@ func (e *LegendElement) Textf(format string, args ...any) *LegendElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LegendElement) If(cond bool, child htemel.Node) *LegendElement {
+func (e *LegendElement) If(cond bool, child LegendChild) *LegendElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +99,7 @@ func (e *LegendElement) If(cond bool, child htemel.Node) *LegendElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LegendElement) IfElse(cond bool, then, els htemel.Node) *LegendElement {
+func (e *LegendElement) IfElse(cond bool, then, els LegendChild) *LegendElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +181,11 @@ func (e *LegendElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LegendAutocapitalize string
+// HTMLFieldsetChild marks <legend> as a permitted child of <fieldset> (FieldsetChild).
+func (*LegendElement) HTMLFieldsetChild() {}
 
-const (
-	LegendAutocapitalizeCharacters LegendAutocapitalize = "characters"
-	LegendAutocapitalizeNone       LegendAutocapitalize = "none"
-	LegendAutocapitalizeOff        LegendAutocapitalize = "off"
-	LegendAutocapitalizeOn         LegendAutocapitalize = "on"
-	LegendAutocapitalizeSentences  LegendAutocapitalize = "sentences"
-	LegendAutocapitalizeWords      LegendAutocapitalize = "words"
-)
-
-type LegendAutocorrect string
-
-const (
-	LegendAutocorrectOff   LegendAutocorrect = "off"
-	LegendAutocorrectOn    LegendAutocorrect = "on"
-	LegendAutocorrectEmpty LegendAutocorrect = ""
-)
-
-type LegendContenteditable string
-
-const (
-	LegendContenteditableFalse         LegendContenteditable = "false"
-	LegendContenteditablePlaintextOnly LegendContenteditable = "plaintext-only"
-	LegendContenteditableTrue          LegendContenteditable = "true"
-	LegendContenteditableEmpty         LegendContenteditable = ""
-)
-
-type LegendDir string
-
-const (
-	LegendDirAuto LegendDir = "auto"
-	LegendDirLtr  LegendDir = "ltr"
-	LegendDirRtl  LegendDir = "rtl"
-)
-
-type LegendDraggable string
-
-const (
-	LegendDraggableFalse LegendDraggable = "false"
-	LegendDraggableTrue  LegendDraggable = "true"
-)
-
-type LegendEnterkeyhint string
-
-const (
-	LegendEnterkeyhintDone     LegendEnterkeyhint = "done"
-	LegendEnterkeyhintEnter    LegendEnterkeyhint = "enter"
-	LegendEnterkeyhintGo       LegendEnterkeyhint = "go"
-	LegendEnterkeyhintNext     LegendEnterkeyhint = "next"
-	LegendEnterkeyhintPrevious LegendEnterkeyhint = "previous"
-	LegendEnterkeyhintSearch   LegendEnterkeyhint = "search"
-	LegendEnterkeyhintSend     LegendEnterkeyhint = "send"
-)
-
-type LegendHidden string
-
-const (
-	LegendHiddenHidden     LegendHidden = "hidden"
-	LegendHiddenUntilFound LegendHidden = "until-found"
-	LegendHiddenEmpty      LegendHidden = ""
-)
-
-type LegendInputmode string
-
-const (
-	LegendInputmodeDecimal LegendInputmode = "decimal"
-	LegendInputmodeEmail   LegendInputmode = "email"
-	LegendInputmodeNone    LegendInputmode = "none"
-	LegendInputmodeNumeric LegendInputmode = "numeric"
-	LegendInputmodeSearch  LegendInputmode = "search"
-	LegendInputmodeTel     LegendInputmode = "tel"
-	LegendInputmodeText    LegendInputmode = "text"
-	LegendInputmodeUrl     LegendInputmode = "url"
-)
-
-type LegendPopover string
-
-const (
-	LegendPopoverAuto   LegendPopover = "auto"
-	LegendPopoverHint   LegendPopover = "hint"
-	LegendPopoverManual LegendPopover = "manual"
-	LegendPopoverEmpty  LegendPopover = ""
-)
-
-type LegendSpellcheck string
-
-const (
-	LegendSpellcheckFalse LegendSpellcheck = "false"
-	LegendSpellcheckTrue  LegendSpellcheck = "true"
-	LegendSpellcheckEmpty LegendSpellcheck = ""
-)
-
-type LegendTranslate string
-
-const (
-	LegendTranslateNo    LegendTranslate = "no"
-	LegendTranslateYes   LegendTranslate = "yes"
-	LegendTranslateEmpty LegendTranslate = ""
-)
-
-type LegendWritingsuggestions string
-
-const (
-	LegendWritingsuggestionsFalse LegendWritingsuggestions = "false"
-	LegendWritingsuggestionsTrue  LegendWritingsuggestions = "true"
-	LegendWritingsuggestionsEmpty LegendWritingsuggestions = ""
-)
+// HTMLOptgroupChild marks <legend> as a permitted child of <optgroup> (OptgroupChild).
+func (*LegendElement) HTMLOptgroupChild() {}
 
 func (e *LegendElement) Accesskey(r rune) *LegendElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +209,7 @@ func (e *LegendElement) Aria(name string, s string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Autocapitalize(a LegendAutocapitalize) *LegendElement {
+func (e *LegendElement) Autocapitalize(a Autocapitalize) *LegendElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +217,8 @@ func (e *LegendElement) Autocapitalize(a LegendAutocapitalize) *LegendElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Autocorrect(v ...LegendAutocorrect) *LegendElement {
-	var val LegendAutocorrect
+func (e *LegendElement) Autocorrect(v ...Autocorrect) *LegendElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +243,8 @@ func (e *LegendElement) Class(s ...string) *LegendElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Contenteditable(v ...LegendContenteditable) *LegendElement {
-	var val LegendContenteditable
+func (e *LegendElement) Contenteditable(v ...Contenteditable) *LegendElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +269,19 @@ func (e *LegendElement) Data(name string, s string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Dir(a LegendDir) *LegendElement {
+func (e *LegendElement) Dir(a Dir) *LegendElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *LegendElement) Draggable(a LegendDraggable) *LegendElement {
+func (e *LegendElement) Draggable(a Draggable) *LegendElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *LegendElement) Enterkeyhint(a LegendEnterkeyhint) *LegendElement {
+func (e *LegendElement) Enterkeyhint(a Enterkeyhint) *LegendElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +309,8 @@ func (e *LegendElement) Headingreset(b bool) *LegendElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Hidden(v ...LegendHidden) *LegendElement {
-	var val LegendHidden
+func (e *LegendElement) Hidden(v ...Hidden) *LegendElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +333,7 @@ func (e *LegendElement) Inert(b bool) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Inputmode(a LegendInputmode) *LegendElement {
+func (e *LegendElement) Inputmode(a Inputmode) *LegendElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +399,8 @@ func (e *LegendElement) Part(s ...string) *LegendElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Popover(v ...LegendPopover) *LegendElement {
-	var val LegendPopover
+func (e *LegendElement) Popover(v ...Popover) *LegendElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +423,8 @@ func (e *LegendElement) Slot(s string) *LegendElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Spellcheck(v ...LegendSpellcheck) *LegendElement {
-	var val LegendSpellcheck
+func (e *LegendElement) Spellcheck(v ...Spellcheck) *LegendElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +453,8 @@ func (e *LegendElement) Title(s string) *LegendElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Translate(v ...LegendTranslate) *LegendElement {
-	var val LegendTranslate
+func (e *LegendElement) Translate(v ...Translate) *LegendElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +465,8 @@ func (e *LegendElement) Translate(v ...LegendTranslate) *LegendElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LegendElement) Writingsuggestions(v ...LegendWritingsuggestions) *LegendElement {
-	var val LegendWritingsuggestions
+func (e *LegendElement) Writingsuggestions(v ...Writingsuggestions) *LegendElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

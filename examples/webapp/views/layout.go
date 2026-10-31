@@ -13,7 +13,9 @@ type PageData struct {
 	Request *http.Request
 }
 
-func Layout(data PageData, children ...Node) Node {
+// Layout wraps page content in the document shell. Children are flow content, since they are
+// placed in a <div> inside <body>.
+func Layout(data PageData, children ...FlowContent) Node {
 	var path string
 	if data.Request != nil {
 		path = data.Request.URL.Path
@@ -47,7 +49,7 @@ type navLink struct {
 	active bool
 }
 
-func Navigation(currentPage string) Node {
+func Navigation(currentPage string) FlowContent {
 	links := []navLink{
 		{"/about", "About", false},
 		{"/contact", "Contact", false},
@@ -84,7 +86,7 @@ func Navigation(currentPage string) Node {
 }
 
 // LogoIcon is a small inline SVG mark. It uses currentColor, so it takes the text color of the link.
-func LogoIcon() Node {
+func LogoIcon() PhrasingContent {
 	return svg.Svg().
 		Class("size-6 text-red-500").
 		ViewBox("0 0 24 24").
@@ -95,13 +97,13 @@ func LogoIcon() Node {
 				Fill("none").
 				Stroke("currentColor").
 				StrokeWidth("2").
-				StrokeLinejoin(svg.PathStrokeLinejoinRound),
+				StrokeLinejoin(svg.StrokeLinejoinRound),
 			svg.Path().
 				D("M2 17l10 5 10-5M2 12l10 5 10-5").
 				Fill("none").
 				Stroke("currentColor").
 				StrokeWidth("2").
-				StrokeLinejoin(svg.PathStrokeLinejoinRound),
+				StrokeLinejoin(svg.StrokeLinejoinRound),
 		)
 }
 
@@ -114,7 +116,7 @@ func NavigationLink(link navLink) Node {
 		Text(link.text)
 }
 
-func PageContent(name string, children ...Node) Node {
+func PageContent(name string, children ...FlowContent) FlowContent {
 	return Div().
 		Class("max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 space-y-4").
 		Children(

@@ -14,15 +14,17 @@ import (
 
 type FeFuncAElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeFuncA creates a tag <feFuncA> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feFuncA filter primitive defines the transfer function for the alpha channel of feComponentTransfer.
-func FeFuncA(children ...htemel.Node) *FeFuncAElement {
+func FeFuncA(children ...Content) *FeFuncAElement {
 	node := &FeFuncAElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeFuncA(children ...htemel.Node) *FeFuncAElement {
 }
 
 // FeFuncAIf creates a tag <feFuncA> instance that is only rendered when condition is true.
-func FeFuncAIf(condition bool, children ...htemel.Node) *FeFuncAElement {
+func FeFuncAIf(condition bool, children ...Content) *FeFuncAElement {
 	if condition {
 		return FeFuncA(children...)
 	}
@@ -43,7 +45,7 @@ func FeFuncAIf(condition bool, children ...htemel.Node) *FeFuncAElement {
 }
 
 // FeFuncATernary creates a tag <feFuncA> containing then when condition is true, otherwise containing otherwise.
-func FeFuncATernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeFuncAElement {
+func FeFuncATernary(condition bool, then Content, otherwise Content) *FeFuncAElement {
 	if condition {
 		return FeFuncA(then)
 	}
@@ -51,7 +53,7 @@ func FeFuncATernary(condition bool, then htemel.Node, otherwise htemel.Node) *Fe
 }
 
 // Children appends children to this element.
-func (e *FeFuncAElement) Children(children ...htemel.Node) *FeFuncAElement {
+func (e *FeFuncAElement) Children(children ...Content) *FeFuncAElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeFuncAElement) Textf(format string, args ...any) *FeFuncAElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeFuncAElement) If(cond bool, child htemel.Node) *FeFuncAElement {
+func (e *FeFuncAElement) If(cond bool, child Content) *FeFuncAElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeFuncAElement) If(cond bool, child htemel.Node) *FeFuncAElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeFuncAElement) IfElse(cond bool, then, els htemel.Node) *FeFuncAElement {
+func (e *FeFuncAElement) IfElse(cond bool, then, els Content) *FeFuncAElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,6 +166,10 @@ func (e *FeFuncAElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
+// SVGContent marks <feFuncA> as a permitted child (Content).
+func (*FeFuncAElement) SVGContent() {}
+
+// FeFuncAType is a value of the "type" attribute of <feFuncA>.
 type FeFuncAType string
 
 const (
@@ -172,220 +178,6 @@ const (
 	FeFuncATypeIdentity FeFuncAType = "identity"
 	FeFuncATypeLinear   FeFuncAType = "linear"
 	FeFuncATypeTable    FeFuncAType = "table"
-)
-
-type FeFuncAAlignmentBaseline string
-
-const (
-	FeFuncAAlignmentBaselineAfterEdge      FeFuncAAlignmentBaseline = "after-edge"
-	FeFuncAAlignmentBaselineAlphabetic     FeFuncAAlignmentBaseline = "alphabetic"
-	FeFuncAAlignmentBaselineAuto           FeFuncAAlignmentBaseline = "auto"
-	FeFuncAAlignmentBaselineBaseline       FeFuncAAlignmentBaseline = "baseline"
-	FeFuncAAlignmentBaselineBeforeEdge     FeFuncAAlignmentBaseline = "before-edge"
-	FeFuncAAlignmentBaselineBottom         FeFuncAAlignmentBaseline = "bottom"
-	FeFuncAAlignmentBaselineCenter         FeFuncAAlignmentBaseline = "center"
-	FeFuncAAlignmentBaselineCentral        FeFuncAAlignmentBaseline = "central"
-	FeFuncAAlignmentBaselineHanging        FeFuncAAlignmentBaseline = "hanging"
-	FeFuncAAlignmentBaselineIdeographic    FeFuncAAlignmentBaseline = "ideographic"
-	FeFuncAAlignmentBaselineMathematical   FeFuncAAlignmentBaseline = "mathematical"
-	FeFuncAAlignmentBaselineMiddle         FeFuncAAlignmentBaseline = "middle"
-	FeFuncAAlignmentBaselineTextAfterEdge  FeFuncAAlignmentBaseline = "text-after-edge"
-	FeFuncAAlignmentBaselineTextBeforeEdge FeFuncAAlignmentBaseline = "text-before-edge"
-	FeFuncAAlignmentBaselineTextBottom     FeFuncAAlignmentBaseline = "text-bottom"
-	FeFuncAAlignmentBaselineTextTop        FeFuncAAlignmentBaseline = "text-top"
-	FeFuncAAlignmentBaselineTop            FeFuncAAlignmentBaseline = "top"
-)
-
-type FeFuncAClipRule string
-
-const (
-	FeFuncAClipRuleEvenodd FeFuncAClipRule = "evenodd"
-	FeFuncAClipRuleNonzero FeFuncAClipRule = "nonzero"
-)
-
-type FeFuncAColorInterpolation string
-
-const (
-	FeFuncAColorInterpolationAuto      FeFuncAColorInterpolation = "auto"
-	FeFuncAColorInterpolationLinearRGB FeFuncAColorInterpolation = "linearRGB"
-	FeFuncAColorInterpolationSRGB      FeFuncAColorInterpolation = "sRGB"
-)
-
-type FeFuncAColorInterpolationFilters string
-
-const (
-	FeFuncAColorInterpolationFiltersAuto      FeFuncAColorInterpolationFilters = "auto"
-	FeFuncAColorInterpolationFiltersLinearRGB FeFuncAColorInterpolationFilters = "linearRGB"
-	FeFuncAColorInterpolationFiltersSRGB      FeFuncAColorInterpolationFilters = "sRGB"
-)
-
-type FeFuncADirection string
-
-const (
-	FeFuncADirectionLtr FeFuncADirection = "ltr"
-	FeFuncADirectionRtl FeFuncADirection = "rtl"
-)
-
-type FeFuncADominantBaseline string
-
-const (
-	FeFuncADominantBaselineAlphabetic   FeFuncADominantBaseline = "alphabetic"
-	FeFuncADominantBaselineAuto         FeFuncADominantBaseline = "auto"
-	FeFuncADominantBaselineCentral      FeFuncADominantBaseline = "central"
-	FeFuncADominantBaselineHanging      FeFuncADominantBaseline = "hanging"
-	FeFuncADominantBaselineIdeographic  FeFuncADominantBaseline = "ideographic"
-	FeFuncADominantBaselineMathematical FeFuncADominantBaseline = "mathematical"
-	FeFuncADominantBaselineMiddle       FeFuncADominantBaseline = "middle"
-	FeFuncADominantBaselineTextBottom   FeFuncADominantBaseline = "text-bottom"
-	FeFuncADominantBaselineTextTop      FeFuncADominantBaseline = "text-top"
-)
-
-type FeFuncAFillRule string
-
-const (
-	FeFuncAFillRuleEvenodd FeFuncAFillRule = "evenodd"
-	FeFuncAFillRuleNonzero FeFuncAFillRule = "nonzero"
-)
-
-type FeFuncAFontStyle string
-
-const (
-	FeFuncAFontStyleItalic  FeFuncAFontStyle = "italic"
-	FeFuncAFontStyleNormal  FeFuncAFontStyle = "normal"
-	FeFuncAFontStyleOblique FeFuncAFontStyle = "oblique"
-)
-
-type FeFuncAImageRendering string
-
-const (
-	FeFuncAImageRenderingAuto            FeFuncAImageRendering = "auto"
-	FeFuncAImageRenderingCrispEdges      FeFuncAImageRendering = "crisp-edges"
-	FeFuncAImageRenderingHighQuality     FeFuncAImageRendering = "high-quality"
-	FeFuncAImageRenderingOptimizeQuality FeFuncAImageRendering = "optimizeQuality"
-	FeFuncAImageRenderingOptimizeSpeed   FeFuncAImageRendering = "optimizeSpeed"
-	FeFuncAImageRenderingPixelated       FeFuncAImageRendering = "pixelated"
-	FeFuncAImageRenderingSmooth          FeFuncAImageRendering = "smooth"
-)
-
-type FeFuncAOverflow string
-
-const (
-	FeFuncAOverflowAuto    FeFuncAOverflow = "auto"
-	FeFuncAOverflowClip    FeFuncAOverflow = "clip"
-	FeFuncAOverflowHidden  FeFuncAOverflow = "hidden"
-	FeFuncAOverflowScroll  FeFuncAOverflow = "scroll"
-	FeFuncAOverflowVisible FeFuncAOverflow = "visible"
-)
-
-type FeFuncAPointerEvents string
-
-const (
-	FeFuncAPointerEventsAll            FeFuncAPointerEvents = "all"
-	FeFuncAPointerEventsAuto           FeFuncAPointerEvents = "auto"
-	FeFuncAPointerEventsBoundingBox    FeFuncAPointerEvents = "bounding-box"
-	FeFuncAPointerEventsFill           FeFuncAPointerEvents = "fill"
-	FeFuncAPointerEventsNone           FeFuncAPointerEvents = "none"
-	FeFuncAPointerEventsPainted        FeFuncAPointerEvents = "painted"
-	FeFuncAPointerEventsStroke         FeFuncAPointerEvents = "stroke"
-	FeFuncAPointerEventsVisible        FeFuncAPointerEvents = "visible"
-	FeFuncAPointerEventsVisibleFill    FeFuncAPointerEvents = "visibleFill"
-	FeFuncAPointerEventsVisiblePainted FeFuncAPointerEvents = "visiblePainted"
-	FeFuncAPointerEventsVisibleStroke  FeFuncAPointerEvents = "visibleStroke"
-)
-
-type FeFuncAShapeRendering string
-
-const (
-	FeFuncAShapeRenderingAuto               FeFuncAShapeRendering = "auto"
-	FeFuncAShapeRenderingCrispEdges         FeFuncAShapeRendering = "crispEdges"
-	FeFuncAShapeRenderingGeometricPrecision FeFuncAShapeRendering = "geometricPrecision"
-	FeFuncAShapeRenderingOptimizeSpeed      FeFuncAShapeRendering = "optimizeSpeed"
-)
-
-type FeFuncAStrokeLinecap string
-
-const (
-	FeFuncAStrokeLinecapButt   FeFuncAStrokeLinecap = "butt"
-	FeFuncAStrokeLinecapRound  FeFuncAStrokeLinecap = "round"
-	FeFuncAStrokeLinecapSquare FeFuncAStrokeLinecap = "square"
-)
-
-type FeFuncAStrokeLinejoin string
-
-const (
-	FeFuncAStrokeLinejoinArcs      FeFuncAStrokeLinejoin = "arcs"
-	FeFuncAStrokeLinejoinBevel     FeFuncAStrokeLinejoin = "bevel"
-	FeFuncAStrokeLinejoinMiter     FeFuncAStrokeLinejoin = "miter"
-	FeFuncAStrokeLinejoinMiterClip FeFuncAStrokeLinejoin = "miter-clip"
-	FeFuncAStrokeLinejoinRound     FeFuncAStrokeLinejoin = "round"
-)
-
-type FeFuncATextAnchor string
-
-const (
-	FeFuncATextAnchorEnd    FeFuncATextAnchor = "end"
-	FeFuncATextAnchorMiddle FeFuncATextAnchor = "middle"
-	FeFuncATextAnchorStart  FeFuncATextAnchor = "start"
-)
-
-type FeFuncATextRendering string
-
-const (
-	FeFuncATextRenderingAuto               FeFuncATextRendering = "auto"
-	FeFuncATextRenderingGeometricPrecision FeFuncATextRendering = "geometricPrecision"
-	FeFuncATextRenderingOptimizeLegibility FeFuncATextRendering = "optimizeLegibility"
-	FeFuncATextRenderingOptimizeSpeed      FeFuncATextRendering = "optimizeSpeed"
-)
-
-type FeFuncATransformBox string
-
-const (
-	FeFuncATransformBoxBorderBox  FeFuncATransformBox = "border-box"
-	FeFuncATransformBoxContentBox FeFuncATransformBox = "content-box"
-	FeFuncATransformBoxFillBox    FeFuncATransformBox = "fill-box"
-	FeFuncATransformBoxStrokeBox  FeFuncATransformBox = "stroke-box"
-	FeFuncATransformBoxViewBox    FeFuncATransformBox = "view-box"
-)
-
-type FeFuncAVectorEffect string
-
-const (
-	FeFuncAVectorEffectFixedPosition    FeFuncAVectorEffect = "fixed-position"
-	FeFuncAVectorEffectNonRotation      FeFuncAVectorEffect = "non-rotation"
-	FeFuncAVectorEffectNonScalingSize   FeFuncAVectorEffect = "non-scaling-size"
-	FeFuncAVectorEffectNonScalingStroke FeFuncAVectorEffect = "non-scaling-stroke"
-	FeFuncAVectorEffectNone             FeFuncAVectorEffect = "none"
-)
-
-type FeFuncAVisibility string
-
-const (
-	FeFuncAVisibilityCollapse FeFuncAVisibility = "collapse"
-	FeFuncAVisibilityHidden   FeFuncAVisibility = "hidden"
-	FeFuncAVisibilityVisible  FeFuncAVisibility = "visible"
-)
-
-type FeFuncAWritingMode string
-
-const (
-	FeFuncAWritingModeHorizontalTb FeFuncAWritingMode = "horizontal-tb"
-	FeFuncAWritingModeLr           FeFuncAWritingMode = "lr"
-	FeFuncAWritingModeLrTb         FeFuncAWritingMode = "lr-tb"
-	FeFuncAWritingModeRl           FeFuncAWritingMode = "rl"
-	FeFuncAWritingModeRlTb         FeFuncAWritingMode = "rl-tb"
-	FeFuncAWritingModeSidewaysLr   FeFuncAWritingMode = "sideways-lr"
-	FeFuncAWritingModeSidewaysRl   FeFuncAWritingMode = "sideways-rl"
-	FeFuncAWritingModeTb           FeFuncAWritingMode = "tb"
-	FeFuncAWritingModeTbRl         FeFuncAWritingMode = "tb-rl"
-	FeFuncAWritingModeVerticalLr   FeFuncAWritingMode = "vertical-lr"
-	FeFuncAWritingModeVerticalRl   FeFuncAWritingMode = "vertical-rl"
-)
-
-type FeFuncAXmlSpace string
-
-const (
-	FeFuncAXmlSpaceDefault  FeFuncAXmlSpace = "default"
-	FeFuncAXmlSpacePreserve FeFuncAXmlSpace = "preserve"
 )
 
 func (e *FeFuncAElement) Amplitude(f float64) *FeFuncAElement {
@@ -430,14 +222,10 @@ func (e *FeFuncAElement) Type(a FeFuncAType) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) AlignmentBaseline(a FeFuncAAlignmentBaseline) *FeFuncAElement {
+func (e *FeFuncAElement) AlignmentBaseline(a AlignmentBaseline) *FeFuncAElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeFuncAAlignmentBaselineCustom(s string) FeFuncAAlignmentBaseline {
-	return FeFuncAAlignmentBaseline(s)
 }
 
 func (e *FeFuncAElement) AriaUnsafe(name string, s string) *FeFuncAElement {
@@ -491,14 +279,10 @@ func (e *FeFuncAElement) ClipPath(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) ClipRule(a FeFuncAClipRule) *FeFuncAElement {
+func (e *FeFuncAElement) ClipRule(a ClipRule) *FeFuncAElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeFuncAClipRuleCustom(s string) FeFuncAClipRule {
-	return FeFuncAClipRule(s)
 }
 
 func (e *FeFuncAElement) Color(s string) *FeFuncAElement {
@@ -507,24 +291,16 @@ func (e *FeFuncAElement) Color(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) ColorInterpolation(a FeFuncAColorInterpolation) *FeFuncAElement {
+func (e *FeFuncAElement) ColorInterpolation(a ColorInterpolation) *FeFuncAElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeFuncAColorInterpolationCustom(s string) FeFuncAColorInterpolation {
-	return FeFuncAColorInterpolation(s)
-}
-
-func (e *FeFuncAElement) ColorInterpolationFilters(a FeFuncAColorInterpolationFilters) *FeFuncAElement {
+func (e *FeFuncAElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeFuncAElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeFuncAColorInterpolationFiltersCustom(s string) FeFuncAColorInterpolationFilters {
-	return FeFuncAColorInterpolationFilters(s)
 }
 
 func (e *FeFuncAElement) Cursor(s string) *FeFuncAElement {
@@ -549,14 +325,10 @@ func (e *FeFuncAElement) Data(name string, s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) Direction(a FeFuncADirection) *FeFuncAElement {
+func (e *FeFuncAElement) Direction(a Direction) *FeFuncAElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeFuncADirectionCustom(s string) FeFuncADirection {
-	return FeFuncADirection(s)
 }
 
 func (e *FeFuncAElement) Display(s string) *FeFuncAElement {
@@ -565,14 +337,10 @@ func (e *FeFuncAElement) Display(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) DominantBaseline(a FeFuncADominantBaseline) *FeFuncAElement {
+func (e *FeFuncAElement) DominantBaseline(a DominantBaseline) *FeFuncAElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeFuncADominantBaselineCustom(s string) FeFuncADominantBaseline {
-	return FeFuncADominantBaseline(s)
 }
 
 func (e *FeFuncAElement) Fill(s string) *FeFuncAElement {
@@ -587,14 +355,10 @@ func (e *FeFuncAElement) FillOpacity(f float64) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) FillRule(a FeFuncAFillRule) *FeFuncAElement {
+func (e *FeFuncAElement) FillRule(a FillRule) *FeFuncAElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeFuncAFillRuleCustom(s string) FeFuncAFillRule {
-	return FeFuncAFillRule(s)
 }
 
 func (e *FeFuncAElement) Filter(s string) *FeFuncAElement {
@@ -639,14 +403,10 @@ func (e *FeFuncAElement) FontStretch(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) FontStyle(a FeFuncAFontStyle) *FeFuncAElement {
+func (e *FeFuncAElement) FontStyle(a FontStyle) *FeFuncAElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeFuncAFontStyleCustom(s string) FeFuncAFontStyle {
-	return FeFuncAFontStyle(s)
 }
 
 func (e *FeFuncAElement) FontVariant(s string) *FeFuncAElement {
@@ -685,14 +445,10 @@ func (e *FeFuncAElement) Id(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) ImageRendering(a FeFuncAImageRendering) *FeFuncAElement {
+func (e *FeFuncAElement) ImageRendering(a ImageRendering) *FeFuncAElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeFuncAImageRenderingCustom(s string) FeFuncAImageRendering {
-	return FeFuncAImageRendering(s)
 }
 
 func (e *FeFuncAElement) Lang(s string) *FeFuncAElement {
@@ -743,14 +499,10 @@ func (e *FeFuncAElement) Opacity(f float64) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) Overflow(a FeFuncAOverflow) *FeFuncAElement {
+func (e *FeFuncAElement) Overflow(a Overflow) *FeFuncAElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeFuncAOverflowCustom(s string) FeFuncAOverflow {
-	return FeFuncAOverflow(s)
 }
 
 func (e *FeFuncAElement) PaintOrder(s string) *FeFuncAElement {
@@ -759,14 +511,10 @@ func (e *FeFuncAElement) PaintOrder(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) PointerEvents(a FeFuncAPointerEvents) *FeFuncAElement {
+func (e *FeFuncAElement) PointerEvents(a PointerEvents) *FeFuncAElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeFuncAPointerEventsCustom(s string) FeFuncAPointerEvents {
-	return FeFuncAPointerEvents(s)
 }
 
 func (e *FeFuncAElement) RequiredExtensions(s string) *FeFuncAElement {
@@ -775,14 +523,10 @@ func (e *FeFuncAElement) RequiredExtensions(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) ShapeRendering(a FeFuncAShapeRendering) *FeFuncAElement {
+func (e *FeFuncAElement) ShapeRendering(a ShapeRendering) *FeFuncAElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeFuncAShapeRenderingCustom(s string) FeFuncAShapeRendering {
-	return FeFuncAShapeRendering(s)
 }
 
 func (e *FeFuncAElement) StopColor(s string) *FeFuncAElement {
@@ -815,24 +559,16 @@ func (e *FeFuncAElement) StrokeDashoffset(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) StrokeLinecap(a FeFuncAStrokeLinecap) *FeFuncAElement {
+func (e *FeFuncAElement) StrokeLinecap(a StrokeLinecap) *FeFuncAElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeFuncAStrokeLinecapCustom(s string) FeFuncAStrokeLinecap {
-	return FeFuncAStrokeLinecap(s)
-}
-
-func (e *FeFuncAElement) StrokeLinejoin(a FeFuncAStrokeLinejoin) *FeFuncAElement {
+func (e *FeFuncAElement) StrokeLinejoin(a StrokeLinejoin) *FeFuncAElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeFuncAStrokeLinejoinCustom(s string) FeFuncAStrokeLinejoin {
-	return FeFuncAStrokeLinejoin(s)
 }
 
 func (e *FeFuncAElement) StrokeMiterlimit(f float64) *FeFuncAElement {
@@ -865,14 +601,10 @@ func (e *FeFuncAElement) Tabindex(i int) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) TextAnchor(a FeFuncATextAnchor) *FeFuncAElement {
+func (e *FeFuncAElement) TextAnchor(a TextAnchor) *FeFuncAElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeFuncATextAnchorCustom(s string) FeFuncATextAnchor {
-	return FeFuncATextAnchor(s)
 }
 
 func (e *FeFuncAElement) TextDecoration(s string) *FeFuncAElement {
@@ -887,14 +619,10 @@ func (e *FeFuncAElement) TextOverflow(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) TextRendering(a FeFuncATextRendering) *FeFuncAElement {
+func (e *FeFuncAElement) TextRendering(a TextRendering) *FeFuncAElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeFuncATextRenderingCustom(s string) FeFuncATextRendering {
-	return FeFuncATextRendering(s)
 }
 
 func (e *FeFuncAElement) Transform(s string) *FeFuncAElement {
@@ -903,14 +631,10 @@ func (e *FeFuncAElement) Transform(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) TransformBox(a FeFuncATransformBox) *FeFuncAElement {
+func (e *FeFuncAElement) TransformBox(a TransformBox) *FeFuncAElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeFuncATransformBoxCustom(s string) FeFuncATransformBox {
-	return FeFuncATransformBox(s)
 }
 
 func (e *FeFuncAElement) TransformOrigin(s string) *FeFuncAElement {
@@ -925,24 +649,16 @@ func (e *FeFuncAElement) UnicodeBidi(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) VectorEffect(a FeFuncAVectorEffect) *FeFuncAElement {
+func (e *FeFuncAElement) VectorEffect(a VectorEffect) *FeFuncAElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeFuncAVectorEffectCustom(s string) FeFuncAVectorEffect {
-	return FeFuncAVectorEffect(s)
-}
-
-func (e *FeFuncAElement) Visibility(a FeFuncAVisibility) *FeFuncAElement {
+func (e *FeFuncAElement) Visibility(a Visibility) *FeFuncAElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeFuncAVisibilityCustom(s string) FeFuncAVisibility {
-	return FeFuncAVisibility(s)
 }
 
 func (e *FeFuncAElement) WhiteSpace(s string) *FeFuncAElement {
@@ -957,14 +673,10 @@ func (e *FeFuncAElement) WordSpacing(s string) *FeFuncAElement {
 	return e
 }
 
-func (e *FeFuncAElement) WritingMode(a FeFuncAWritingMode) *FeFuncAElement {
+func (e *FeFuncAElement) WritingMode(a WritingMode) *FeFuncAElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeFuncAWritingModeCustom(s string) FeFuncAWritingMode {
-	return FeFuncAWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -979,7 +691,7 @@ func (e *FeFuncAElement) XmlLang(s string) *FeFuncAElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeFuncAElement) XmlSpace(a FeFuncAXmlSpace) *FeFuncAElement {
+func (e *FeFuncAElement) XmlSpace(a XmlSpace) *FeFuncAElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,28 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// HtmlChild is a permitted child of <html>: <body>, <head>.
+//
+// It is implemented by <body>, <head> and by the unchecked nodes of package htemel (Group, Each,
+// If, Unchecked, ...).
+type HtmlChild interface {
+	htemel.Node
+	HTMLHtmlChild()
+}
+
 type HtmlElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []HtmlChild
 	skipRender bool
 }
 
 // Html creates a tag <html> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <body>, <head> (HtmlChild).
+//
 // Spec Description: The html element represents the root of an HTML document.
-func Html(children ...htemel.Node) *HtmlElement {
+func Html(children ...HtmlChild) *HtmlElement {
 	node := &HtmlElement{
 		children: children,
 	}
@@ -31,7 +41,7 @@ func Html(children ...htemel.Node) *HtmlElement {
 }
 
 // HtmlIf creates a tag <html> instance that is only rendered when condition is true.
-func HtmlIf(condition bool, children ...htemel.Node) *HtmlElement {
+func HtmlIf(condition bool, children ...HtmlChild) *HtmlElement {
 	if condition {
 		return Html(children...)
 	}
@@ -43,7 +53,7 @@ func HtmlIf(condition bool, children ...htemel.Node) *HtmlElement {
 }
 
 // HtmlTernary creates a tag <html> containing then when condition is true, otherwise containing otherwise.
-func HtmlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HtmlElement {
+func HtmlTernary(condition bool, then HtmlChild, otherwise HtmlChild) *HtmlElement {
 	if condition {
 		return Html(then)
 	}
@@ -51,7 +61,7 @@ func HtmlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HtmlE
 }
 
 // Children appends children to this element.
-func (e *HtmlElement) Children(children ...htemel.Node) *HtmlElement {
+func (e *HtmlElement) Children(children ...HtmlChild) *HtmlElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +72,8 @@ func (e *HtmlElement) With(fn func(*HtmlElement)) *HtmlElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *HtmlElement) Text(text string) *HtmlElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *HtmlElement) Textf(format string, args ...any) *HtmlElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HtmlElement) If(cond bool, child htemel.Node) *HtmlElement {
+func (e *HtmlElement) If(cond bool, child HtmlChild) *HtmlElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +81,7 @@ func (e *HtmlElement) If(cond bool, child htemel.Node) *HtmlElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HtmlElement) IfElse(cond bool, then, els htemel.Node) *HtmlElement {
+func (e *HtmlElement) IfElse(cond bool, then, els HtmlChild) *HtmlElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +163,6 @@ func (e *HtmlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type HtmlAutocapitalize string
-
-const (
-	HtmlAutocapitalizeCharacters HtmlAutocapitalize = "characters"
-	HtmlAutocapitalizeNone       HtmlAutocapitalize = "none"
-	HtmlAutocapitalizeOff        HtmlAutocapitalize = "off"
-	HtmlAutocapitalizeOn         HtmlAutocapitalize = "on"
-	HtmlAutocapitalizeSentences  HtmlAutocapitalize = "sentences"
-	HtmlAutocapitalizeWords      HtmlAutocapitalize = "words"
-)
-
-type HtmlAutocorrect string
-
-const (
-	HtmlAutocorrectOff   HtmlAutocorrect = "off"
-	HtmlAutocorrectOn    HtmlAutocorrect = "on"
-	HtmlAutocorrectEmpty HtmlAutocorrect = ""
-)
-
-type HtmlContenteditable string
-
-const (
-	HtmlContenteditableFalse         HtmlContenteditable = "false"
-	HtmlContenteditablePlaintextOnly HtmlContenteditable = "plaintext-only"
-	HtmlContenteditableTrue          HtmlContenteditable = "true"
-	HtmlContenteditableEmpty         HtmlContenteditable = ""
-)
-
-type HtmlDir string
-
-const (
-	HtmlDirAuto HtmlDir = "auto"
-	HtmlDirLtr  HtmlDir = "ltr"
-	HtmlDirRtl  HtmlDir = "rtl"
-)
-
-type HtmlDraggable string
-
-const (
-	HtmlDraggableFalse HtmlDraggable = "false"
-	HtmlDraggableTrue  HtmlDraggable = "true"
-)
-
-type HtmlEnterkeyhint string
-
-const (
-	HtmlEnterkeyhintDone     HtmlEnterkeyhint = "done"
-	HtmlEnterkeyhintEnter    HtmlEnterkeyhint = "enter"
-	HtmlEnterkeyhintGo       HtmlEnterkeyhint = "go"
-	HtmlEnterkeyhintNext     HtmlEnterkeyhint = "next"
-	HtmlEnterkeyhintPrevious HtmlEnterkeyhint = "previous"
-	HtmlEnterkeyhintSearch   HtmlEnterkeyhint = "search"
-	HtmlEnterkeyhintSend     HtmlEnterkeyhint = "send"
-)
-
-type HtmlHidden string
-
-const (
-	HtmlHiddenHidden     HtmlHidden = "hidden"
-	HtmlHiddenUntilFound HtmlHidden = "until-found"
-	HtmlHiddenEmpty      HtmlHidden = ""
-)
-
-type HtmlInputmode string
-
-const (
-	HtmlInputmodeDecimal HtmlInputmode = "decimal"
-	HtmlInputmodeEmail   HtmlInputmode = "email"
-	HtmlInputmodeNone    HtmlInputmode = "none"
-	HtmlInputmodeNumeric HtmlInputmode = "numeric"
-	HtmlInputmodeSearch  HtmlInputmode = "search"
-	HtmlInputmodeTel     HtmlInputmode = "tel"
-	HtmlInputmodeText    HtmlInputmode = "text"
-	HtmlInputmodeUrl     HtmlInputmode = "url"
-)
-
-type HtmlPopover string
-
-const (
-	HtmlPopoverAuto   HtmlPopover = "auto"
-	HtmlPopoverHint   HtmlPopover = "hint"
-	HtmlPopoverManual HtmlPopover = "manual"
-	HtmlPopoverEmpty  HtmlPopover = ""
-)
-
-type HtmlSpellcheck string
-
-const (
-	HtmlSpellcheckFalse HtmlSpellcheck = "false"
-	HtmlSpellcheckTrue  HtmlSpellcheck = "true"
-	HtmlSpellcheckEmpty HtmlSpellcheck = ""
-)
-
-type HtmlTranslate string
-
-const (
-	HtmlTranslateNo    HtmlTranslate = "no"
-	HtmlTranslateYes   HtmlTranslate = "yes"
-	HtmlTranslateEmpty HtmlTranslate = ""
-)
-
-type HtmlWritingsuggestions string
-
-const (
-	HtmlWritingsuggestionsFalse HtmlWritingsuggestions = "false"
-	HtmlWritingsuggestionsTrue  HtmlWritingsuggestions = "true"
-	HtmlWritingsuggestionsEmpty HtmlWritingsuggestions = ""
-)
-
 func (e *HtmlElement) Accesskey(r rune) *HtmlElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +185,7 @@ func (e *HtmlElement) Aria(name string, s string) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Autocapitalize(a HtmlAutocapitalize) *HtmlElement {
+func (e *HtmlElement) Autocapitalize(a Autocapitalize) *HtmlElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +193,8 @@ func (e *HtmlElement) Autocapitalize(a HtmlAutocapitalize) *HtmlElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Autocorrect(v ...HtmlAutocorrect) *HtmlElement {
-	var val HtmlAutocorrect
+func (e *HtmlElement) Autocorrect(v ...Autocorrect) *HtmlElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +219,8 @@ func (e *HtmlElement) Class(s ...string) *HtmlElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Contenteditable(v ...HtmlContenteditable) *HtmlElement {
-	var val HtmlContenteditable
+func (e *HtmlElement) Contenteditable(v ...Contenteditable) *HtmlElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +245,19 @@ func (e *HtmlElement) Data(name string, s string) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Dir(a HtmlDir) *HtmlElement {
+func (e *HtmlElement) Dir(a Dir) *HtmlElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *HtmlElement) Draggable(a HtmlDraggable) *HtmlElement {
+func (e *HtmlElement) Draggable(a Draggable) *HtmlElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *HtmlElement) Enterkeyhint(a HtmlEnterkeyhint) *HtmlElement {
+func (e *HtmlElement) Enterkeyhint(a Enterkeyhint) *HtmlElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +285,8 @@ func (e *HtmlElement) Headingreset(b bool) *HtmlElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Hidden(v ...HtmlHidden) *HtmlElement {
-	var val HtmlHidden
+func (e *HtmlElement) Hidden(v ...Hidden) *HtmlElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +309,7 @@ func (e *HtmlElement) Inert(b bool) *HtmlElement {
 	return e
 }
 
-func (e *HtmlElement) Inputmode(a HtmlInputmode) *HtmlElement {
+func (e *HtmlElement) Inputmode(a Inputmode) *HtmlElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +375,8 @@ func (e *HtmlElement) Part(s ...string) *HtmlElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Popover(v ...HtmlPopover) *HtmlElement {
-	var val HtmlPopover
+func (e *HtmlElement) Popover(v ...Popover) *HtmlElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +399,8 @@ func (e *HtmlElement) Slot(s string) *HtmlElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Spellcheck(v ...HtmlSpellcheck) *HtmlElement {
-	var val HtmlSpellcheck
+func (e *HtmlElement) Spellcheck(v ...Spellcheck) *HtmlElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +429,8 @@ func (e *HtmlElement) Title(s string) *HtmlElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Translate(v ...HtmlTranslate) *HtmlElement {
-	var val HtmlTranslate
+func (e *HtmlElement) Translate(v ...Translate) *HtmlElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +441,8 @@ func (e *HtmlElement) Translate(v ...HtmlTranslate) *HtmlElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HtmlElement) Writingsuggestions(v ...HtmlWritingsuggestions) *HtmlElement {
-	var val HtmlWritingsuggestions
+func (e *HtmlElement) Writingsuggestions(v ...Writingsuggestions) *HtmlElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

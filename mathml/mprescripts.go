@@ -14,15 +14,17 @@ import (
 
 type MprescriptsElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mprescripts creates a tag <mprescripts> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mprescripts(children ...htemel.Node) *MprescriptsElement {
+func Mprescripts(children ...Content) *MprescriptsElement {
 	node := &MprescriptsElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mprescripts(children ...htemel.Node) *MprescriptsElement {
 }
 
 // MprescriptsIf creates a tag <mprescripts> instance that is only rendered when condition is true.
-func MprescriptsIf(condition bool, children ...htemel.Node) *MprescriptsElement {
+func MprescriptsIf(condition bool, children ...Content) *MprescriptsElement {
 	if condition {
 		return Mprescripts(children...)
 	}
@@ -43,7 +45,7 @@ func MprescriptsIf(condition bool, children ...htemel.Node) *MprescriptsElement 
 }
 
 // MprescriptsTernary creates a tag <mprescripts> containing then when condition is true, otherwise containing otherwise.
-func MprescriptsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MprescriptsElement {
+func MprescriptsTernary(condition bool, then Content, otherwise Content) *MprescriptsElement {
 	if condition {
 		return Mprescripts(then)
 	}
@@ -51,7 +53,7 @@ func MprescriptsTernary(condition bool, then htemel.Node, otherwise htemel.Node)
 }
 
 // Children appends children to this element.
-func (e *MprescriptsElement) Children(children ...htemel.Node) *MprescriptsElement {
+func (e *MprescriptsElement) Children(children ...Content) *MprescriptsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MprescriptsElement) Textf(format string, args ...any) *MprescriptsEleme
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MprescriptsElement) If(cond bool, child htemel.Node) *MprescriptsElement {
+func (e *MprescriptsElement) If(cond bool, child Content) *MprescriptsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MprescriptsElement) If(cond bool, child htemel.Node) *MprescriptsElemen
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MprescriptsElement) IfElse(cond bool, then, els htemel.Node) *MprescriptsElement {
+func (e *MprescriptsElement) IfElse(cond bool, then, els Content) *MprescriptsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MprescriptsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MprescriptsDir string
-
-const (
-	MprescriptsDirLtr MprescriptsDir = "ltr"
-	MprescriptsDirRtl MprescriptsDir = "rtl"
-)
-
-type MprescriptsDisplaystyle string
-
-const (
-	MprescriptsDisplaystyleFalse MprescriptsDisplaystyle = "false"
-	MprescriptsDisplaystyleTrue  MprescriptsDisplaystyle = "true"
-)
+// MathMLContent marks <mprescripts> as a permitted child (Content).
+func (*MprescriptsElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MprescriptsElement) Data(name string, s string) *MprescriptsElement {
 	return e
 }
 
-func (e *MprescriptsElement) Dir(a MprescriptsDir) *MprescriptsElement {
+func (e *MprescriptsElement) Dir(a Dir) *MprescriptsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MprescriptsElement) Displaystyle(a MprescriptsDisplaystyle) *MprescriptsElement {
+func (e *MprescriptsElement) Displaystyle(a Displaystyle) *MprescriptsElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

@@ -13,16 +13,20 @@ import (
 )
 
 type StyleElement struct {
+	htemel.FlowMarker
+	htemel.MetadataMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.TextContent
 	skipRender bool
 }
 
 // Style creates a tag <style> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: text only (htemel.TextContent).
+//
 // Spec Description: The style element allows authors to embed CSS style sheets in their documents. The style element is one of several inputs to the styling processing model. The element does not represent content for the user.
-func Style(children ...htemel.Node) *StyleElement {
+func Style(children ...htemel.TextContent) *StyleElement {
 	node := &StyleElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Style(children ...htemel.Node) *StyleElement {
 }
 
 // StyleIf creates a tag <style> instance that is only rendered when condition is true.
-func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
+func StyleIf(condition bool, children ...htemel.TextContent) *StyleElement {
 	if condition {
 		return Style(children...)
 	}
@@ -43,7 +47,7 @@ func StyleIf(condition bool, children ...htemel.Node) *StyleElement {
 }
 
 // StyleTernary creates a tag <style> containing then when condition is true, otherwise containing otherwise.
-func StyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *StyleElement {
+func StyleTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *StyleElement {
 	if condition {
 		return Style(then)
 	}
@@ -51,7 +55,7 @@ func StyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Styl
 }
 
 // Children appends children to this element.
-func (e *StyleElement) Children(children ...htemel.Node) *StyleElement {
+func (e *StyleElement) Children(children ...htemel.TextContent) *StyleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -77,7 +81,7 @@ func (e *StyleElement) Textf(format string, args ...any) *StyleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StyleElement) If(cond bool, child htemel.Node) *StyleElement {
+func (e *StyleElement) If(cond bool, child htemel.TextContent) *StyleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -85,7 +89,7 @@ func (e *StyleElement) If(cond bool, child htemel.Node) *StyleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StyleElement) IfElse(cond bool, then, els htemel.Node) *StyleElement {
+func (e *StyleElement) IfElse(cond bool, then, els htemel.TextContent) *StyleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -167,115 +171,6 @@ func (e *StyleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type StyleAutocapitalize string
-
-const (
-	StyleAutocapitalizeCharacters StyleAutocapitalize = "characters"
-	StyleAutocapitalizeNone       StyleAutocapitalize = "none"
-	StyleAutocapitalizeOff        StyleAutocapitalize = "off"
-	StyleAutocapitalizeOn         StyleAutocapitalize = "on"
-	StyleAutocapitalizeSentences  StyleAutocapitalize = "sentences"
-	StyleAutocapitalizeWords      StyleAutocapitalize = "words"
-)
-
-type StyleAutocorrect string
-
-const (
-	StyleAutocorrectOff   StyleAutocorrect = "off"
-	StyleAutocorrectOn    StyleAutocorrect = "on"
-	StyleAutocorrectEmpty StyleAutocorrect = ""
-)
-
-type StyleContenteditable string
-
-const (
-	StyleContenteditableFalse         StyleContenteditable = "false"
-	StyleContenteditablePlaintextOnly StyleContenteditable = "plaintext-only"
-	StyleContenteditableTrue          StyleContenteditable = "true"
-	StyleContenteditableEmpty         StyleContenteditable = ""
-)
-
-type StyleDir string
-
-const (
-	StyleDirAuto StyleDir = "auto"
-	StyleDirLtr  StyleDir = "ltr"
-	StyleDirRtl  StyleDir = "rtl"
-)
-
-type StyleDraggable string
-
-const (
-	StyleDraggableFalse StyleDraggable = "false"
-	StyleDraggableTrue  StyleDraggable = "true"
-)
-
-type StyleEnterkeyhint string
-
-const (
-	StyleEnterkeyhintDone     StyleEnterkeyhint = "done"
-	StyleEnterkeyhintEnter    StyleEnterkeyhint = "enter"
-	StyleEnterkeyhintGo       StyleEnterkeyhint = "go"
-	StyleEnterkeyhintNext     StyleEnterkeyhint = "next"
-	StyleEnterkeyhintPrevious StyleEnterkeyhint = "previous"
-	StyleEnterkeyhintSearch   StyleEnterkeyhint = "search"
-	StyleEnterkeyhintSend     StyleEnterkeyhint = "send"
-)
-
-type StyleHidden string
-
-const (
-	StyleHiddenHidden     StyleHidden = "hidden"
-	StyleHiddenUntilFound StyleHidden = "until-found"
-	StyleHiddenEmpty      StyleHidden = ""
-)
-
-type StyleInputmode string
-
-const (
-	StyleInputmodeDecimal StyleInputmode = "decimal"
-	StyleInputmodeEmail   StyleInputmode = "email"
-	StyleInputmodeNone    StyleInputmode = "none"
-	StyleInputmodeNumeric StyleInputmode = "numeric"
-	StyleInputmodeSearch  StyleInputmode = "search"
-	StyleInputmodeTel     StyleInputmode = "tel"
-	StyleInputmodeText    StyleInputmode = "text"
-	StyleInputmodeUrl     StyleInputmode = "url"
-)
-
-type StylePopover string
-
-const (
-	StylePopoverAuto   StylePopover = "auto"
-	StylePopoverHint   StylePopover = "hint"
-	StylePopoverManual StylePopover = "manual"
-	StylePopoverEmpty  StylePopover = ""
-)
-
-type StyleSpellcheck string
-
-const (
-	StyleSpellcheckFalse StyleSpellcheck = "false"
-	StyleSpellcheckTrue  StyleSpellcheck = "true"
-	StyleSpellcheckEmpty StyleSpellcheck = ""
-)
-
-type StyleTranslate string
-
-const (
-	StyleTranslateNo    StyleTranslate = "no"
-	StyleTranslateYes   StyleTranslate = "yes"
-	StyleTranslateEmpty StyleTranslate = ""
-)
-
-type StyleWritingsuggestions string
-
-const (
-	StyleWritingsuggestionsFalse StyleWritingsuggestions = "false"
-	StyleWritingsuggestionsTrue  StyleWritingsuggestions = "true"
-	StyleWritingsuggestionsEmpty StyleWritingsuggestions = ""
-)
-
 func (e *StyleElement) Blocking(s ...string) *StyleElement {
 	e.attributes.Set("blocking", strings.Join(s, " "))
 
@@ -310,7 +205,7 @@ func (e *StyleElement) Aria(name string, s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Autocapitalize(a StyleAutocapitalize) *StyleElement {
+func (e *StyleElement) Autocapitalize(a Autocapitalize) *StyleElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -318,8 +213,8 @@ func (e *StyleElement) Autocapitalize(a StyleAutocapitalize) *StyleElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Autocorrect(v ...StyleAutocorrect) *StyleElement {
-	var val StyleAutocorrect
+func (e *StyleElement) Autocorrect(v ...Autocorrect) *StyleElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -344,8 +239,8 @@ func (e *StyleElement) Class(s ...string) *StyleElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Contenteditable(v ...StyleContenteditable) *StyleElement {
-	var val StyleContenteditable
+func (e *StyleElement) Contenteditable(v ...Contenteditable) *StyleElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -370,19 +265,19 @@ func (e *StyleElement) Data(name string, s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Dir(a StyleDir) *StyleElement {
+func (e *StyleElement) Dir(a Dir) *StyleElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *StyleElement) Draggable(a StyleDraggable) *StyleElement {
+func (e *StyleElement) Draggable(a Draggable) *StyleElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *StyleElement) Enterkeyhint(a StyleEnterkeyhint) *StyleElement {
+func (e *StyleElement) Enterkeyhint(a Enterkeyhint) *StyleElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -410,8 +305,8 @@ func (e *StyleElement) Headingreset(b bool) *StyleElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Hidden(v ...StyleHidden) *StyleElement {
-	var val StyleHidden
+func (e *StyleElement) Hidden(v ...Hidden) *StyleElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -434,7 +329,7 @@ func (e *StyleElement) Inert(b bool) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Inputmode(a StyleInputmode) *StyleElement {
+func (e *StyleElement) Inputmode(a Inputmode) *StyleElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -500,8 +395,8 @@ func (e *StyleElement) Part(s ...string) *StyleElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Popover(v ...StylePopover) *StyleElement {
-	var val StylePopover
+func (e *StyleElement) Popover(v ...Popover) *StyleElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -524,8 +419,8 @@ func (e *StyleElement) Slot(s string) *StyleElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Spellcheck(v ...StyleSpellcheck) *StyleElement {
-	var val StyleSpellcheck
+func (e *StyleElement) Spellcheck(v ...Spellcheck) *StyleElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -554,8 +449,8 @@ func (e *StyleElement) Title(s string) *StyleElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Translate(v ...StyleTranslate) *StyleElement {
-	var val StyleTranslate
+func (e *StyleElement) Translate(v ...Translate) *StyleElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -566,8 +461,8 @@ func (e *StyleElement) Translate(v ...StyleTranslate) *StyleElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StyleElement) Writingsuggestions(v ...StyleWritingsuggestions) *StyleElement {
-	var val StyleWritingsuggestions
+func (e *StyleElement) Writingsuggestions(v ...Writingsuggestions) *StyleElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

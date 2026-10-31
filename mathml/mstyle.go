@@ -14,15 +14,17 @@ import (
 
 type MstyleElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mstyle creates a tag <mstyle> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mstyle(children ...htemel.Node) *MstyleElement {
+func Mstyle(children ...Content) *MstyleElement {
 	node := &MstyleElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mstyle(children ...htemel.Node) *MstyleElement {
 }
 
 // MstyleIf creates a tag <mstyle> instance that is only rendered when condition is true.
-func MstyleIf(condition bool, children ...htemel.Node) *MstyleElement {
+func MstyleIf(condition bool, children ...Content) *MstyleElement {
 	if condition {
 		return Mstyle(children...)
 	}
@@ -43,7 +45,7 @@ func MstyleIf(condition bool, children ...htemel.Node) *MstyleElement {
 }
 
 // MstyleTernary creates a tag <mstyle> containing then when condition is true, otherwise containing otherwise.
-func MstyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MstyleElement {
+func MstyleTernary(condition bool, then Content, otherwise Content) *MstyleElement {
 	if condition {
 		return Mstyle(then)
 	}
@@ -51,7 +53,7 @@ func MstyleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mst
 }
 
 // Children appends children to this element.
-func (e *MstyleElement) Children(children ...htemel.Node) *MstyleElement {
+func (e *MstyleElement) Children(children ...Content) *MstyleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MstyleElement) Textf(format string, args ...any) *MstyleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MstyleElement) If(cond bool, child htemel.Node) *MstyleElement {
+func (e *MstyleElement) If(cond bool, child Content) *MstyleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MstyleElement) If(cond bool, child htemel.Node) *MstyleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MstyleElement) IfElse(cond bool, then, els htemel.Node) *MstyleElement {
+func (e *MstyleElement) IfElse(cond bool, then, els Content) *MstyleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MstyleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MstyleDir string
-
-const (
-	MstyleDirLtr MstyleDir = "ltr"
-	MstyleDirRtl MstyleDir = "rtl"
-)
-
-type MstyleDisplaystyle string
-
-const (
-	MstyleDisplaystyleFalse MstyleDisplaystyle = "false"
-	MstyleDisplaystyleTrue  MstyleDisplaystyle = "true"
-)
+// MathMLContent marks <mstyle> as a permitted child (Content).
+func (*MstyleElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MstyleElement) Data(name string, s string) *MstyleElement {
 	return e
 }
 
-func (e *MstyleElement) Dir(a MstyleDir) *MstyleElement {
+func (e *MstyleElement) Dir(a Dir) *MstyleElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MstyleElement) Displaystyle(a MstyleDisplaystyle) *MstyleElement {
+func (e *MstyleElement) Displaystyle(a Displaystyle) *MstyleElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

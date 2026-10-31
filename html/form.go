@@ -13,16 +13,20 @@ import (
 )
 
 type FormElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Form creates a tag <form> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The form element represents a hyperlink that can be manipulated through a collection of form-associated elements, some of which can represent editable values that can be submitted to a server for processing.
-func Form(children ...htemel.Node) *FormElement {
+func Form(children ...htemel.FlowContent) *FormElement {
 	node := &FormElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Form(children ...htemel.Node) *FormElement {
 }
 
 // FormIf creates a tag <form> instance that is only rendered when condition is true.
-func FormIf(condition bool, children ...htemel.Node) *FormElement {
+func FormIf(condition bool, children ...htemel.FlowContent) *FormElement {
 	if condition {
 		return Form(children...)
 	}
@@ -43,7 +47,7 @@ func FormIf(condition bool, children ...htemel.Node) *FormElement {
 }
 
 // FormTernary creates a tag <form> containing then when condition is true, otherwise containing otherwise.
-func FormTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FormElement {
+func FormTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *FormElement {
 	if condition {
 		return Form(then)
 	}
@@ -51,7 +55,7 @@ func FormTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FormE
 }
 
 // Children appends children to this element.
-func (e *FormElement) Children(children ...htemel.Node) *FormElement {
+func (e *FormElement) Children(children ...htemel.FlowContent) *FormElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *FormElement) Textf(format string, args ...any) *FormElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FormElement) If(cond bool, child htemel.Node) *FormElement {
+func (e *FormElement) If(cond bool, child htemel.FlowContent) *FormElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *FormElement) If(cond bool, child htemel.Node) *FormElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FormElement) IfElse(cond bool, then, els htemel.Node) *FormElement {
+func (e *FormElement) IfElse(cond bool, then, els htemel.FlowContent) *FormElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,138 +168,6 @@ func (e *FormElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FormAutocomplete string
-
-const (
-	FormAutocompleteOff FormAutocomplete = "off"
-	FormAutocompleteOn  FormAutocomplete = "on"
-)
-
-type FormEnctype string
-
-const (
-	FormEnctypeApplicationXWwwFormUrlencoded FormEnctype = "application/x-www-form-urlencoded"
-	FormEnctypeMultipartFormData             FormEnctype = "multipart/form-data"
-	FormEnctypeTextPlain                     FormEnctype = "text/plain"
-)
-
-type FormMethod string
-
-const (
-	FormMethodDialog FormMethod = "dialog"
-	FormMethodGet    FormMethod = "get"
-	FormMethodPost   FormMethod = "post"
-)
-
-type FormAutocapitalize string
-
-const (
-	FormAutocapitalizeCharacters FormAutocapitalize = "characters"
-	FormAutocapitalizeNone       FormAutocapitalize = "none"
-	FormAutocapitalizeOff        FormAutocapitalize = "off"
-	FormAutocapitalizeOn         FormAutocapitalize = "on"
-	FormAutocapitalizeSentences  FormAutocapitalize = "sentences"
-	FormAutocapitalizeWords      FormAutocapitalize = "words"
-)
-
-type FormAutocorrect string
-
-const (
-	FormAutocorrectOff   FormAutocorrect = "off"
-	FormAutocorrectOn    FormAutocorrect = "on"
-	FormAutocorrectEmpty FormAutocorrect = ""
-)
-
-type FormContenteditable string
-
-const (
-	FormContenteditableFalse         FormContenteditable = "false"
-	FormContenteditablePlaintextOnly FormContenteditable = "plaintext-only"
-	FormContenteditableTrue          FormContenteditable = "true"
-	FormContenteditableEmpty         FormContenteditable = ""
-)
-
-type FormDir string
-
-const (
-	FormDirAuto FormDir = "auto"
-	FormDirLtr  FormDir = "ltr"
-	FormDirRtl  FormDir = "rtl"
-)
-
-type FormDraggable string
-
-const (
-	FormDraggableFalse FormDraggable = "false"
-	FormDraggableTrue  FormDraggable = "true"
-)
-
-type FormEnterkeyhint string
-
-const (
-	FormEnterkeyhintDone     FormEnterkeyhint = "done"
-	FormEnterkeyhintEnter    FormEnterkeyhint = "enter"
-	FormEnterkeyhintGo       FormEnterkeyhint = "go"
-	FormEnterkeyhintNext     FormEnterkeyhint = "next"
-	FormEnterkeyhintPrevious FormEnterkeyhint = "previous"
-	FormEnterkeyhintSearch   FormEnterkeyhint = "search"
-	FormEnterkeyhintSend     FormEnterkeyhint = "send"
-)
-
-type FormHidden string
-
-const (
-	FormHiddenHidden     FormHidden = "hidden"
-	FormHiddenUntilFound FormHidden = "until-found"
-	FormHiddenEmpty      FormHidden = ""
-)
-
-type FormInputmode string
-
-const (
-	FormInputmodeDecimal FormInputmode = "decimal"
-	FormInputmodeEmail   FormInputmode = "email"
-	FormInputmodeNone    FormInputmode = "none"
-	FormInputmodeNumeric FormInputmode = "numeric"
-	FormInputmodeSearch  FormInputmode = "search"
-	FormInputmodeTel     FormInputmode = "tel"
-	FormInputmodeText    FormInputmode = "text"
-	FormInputmodeUrl     FormInputmode = "url"
-)
-
-type FormPopover string
-
-const (
-	FormPopoverAuto   FormPopover = "auto"
-	FormPopoverHint   FormPopover = "hint"
-	FormPopoverManual FormPopover = "manual"
-	FormPopoverEmpty  FormPopover = ""
-)
-
-type FormSpellcheck string
-
-const (
-	FormSpellcheckFalse FormSpellcheck = "false"
-	FormSpellcheckTrue  FormSpellcheck = "true"
-	FormSpellcheckEmpty FormSpellcheck = ""
-)
-
-type FormTranslate string
-
-const (
-	FormTranslateNo    FormTranslate = "no"
-	FormTranslateYes   FormTranslate = "yes"
-	FormTranslateEmpty FormTranslate = ""
-)
-
-type FormWritingsuggestions string
-
-const (
-	FormWritingsuggestionsFalse FormWritingsuggestions = "false"
-	FormWritingsuggestionsTrue  FormWritingsuggestions = "true"
-	FormWritingsuggestionsEmpty FormWritingsuggestions = ""
-)
-
 func (e *FormElement) AcceptCharset(s string) *FormElement {
 	e.attributes.Set("accept-charset", s)
 
@@ -310,19 +182,19 @@ func (e *FormElement) Action(s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Autocomplete(a FormAutocomplete) *FormElement {
+func (e *FormElement) Autocomplete(a Autocomplete) *FormElement {
 	e.attributes.Set("autocomplete", string(a))
 
 	return e
 }
 
-func (e *FormElement) Enctype(a FormEnctype) *FormElement {
+func (e *FormElement) Enctype(a Enctype) *FormElement {
 	e.attributes.Set("enctype", string(a))
 
 	return e
 }
 
-func (e *FormElement) Method(a FormMethod) *FormElement {
+func (e *FormElement) Method(a Method) *FormElement {
 	e.attributes.Set("method", string(a))
 
 	return e
@@ -376,7 +248,7 @@ func (e *FormElement) Aria(name string, s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Autocapitalize(a FormAutocapitalize) *FormElement {
+func (e *FormElement) Autocapitalize(a Autocapitalize) *FormElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -384,8 +256,8 @@ func (e *FormElement) Autocapitalize(a FormAutocapitalize) *FormElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Autocorrect(v ...FormAutocorrect) *FormElement {
-	var val FormAutocorrect
+func (e *FormElement) Autocorrect(v ...Autocorrect) *FormElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -410,8 +282,8 @@ func (e *FormElement) Class(s ...string) *FormElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Contenteditable(v ...FormContenteditable) *FormElement {
-	var val FormContenteditable
+func (e *FormElement) Contenteditable(v ...Contenteditable) *FormElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -436,19 +308,19 @@ func (e *FormElement) Data(name string, s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Dir(a FormDir) *FormElement {
+func (e *FormElement) Dir(a Dir) *FormElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *FormElement) Draggable(a FormDraggable) *FormElement {
+func (e *FormElement) Draggable(a Draggable) *FormElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *FormElement) Enterkeyhint(a FormEnterkeyhint) *FormElement {
+func (e *FormElement) Enterkeyhint(a Enterkeyhint) *FormElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -476,8 +348,8 @@ func (e *FormElement) Headingreset(b bool) *FormElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Hidden(v ...FormHidden) *FormElement {
-	var val FormHidden
+func (e *FormElement) Hidden(v ...Hidden) *FormElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -500,7 +372,7 @@ func (e *FormElement) Inert(b bool) *FormElement {
 	return e
 }
 
-func (e *FormElement) Inputmode(a FormInputmode) *FormElement {
+func (e *FormElement) Inputmode(a Inputmode) *FormElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -566,8 +438,8 @@ func (e *FormElement) Part(s ...string) *FormElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Popover(v ...FormPopover) *FormElement {
-	var val FormPopover
+func (e *FormElement) Popover(v ...Popover) *FormElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -590,8 +462,8 @@ func (e *FormElement) Slot(s string) *FormElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Spellcheck(v ...FormSpellcheck) *FormElement {
-	var val FormSpellcheck
+func (e *FormElement) Spellcheck(v ...Spellcheck) *FormElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -620,8 +492,8 @@ func (e *FormElement) Title(s string) *FormElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Translate(v ...FormTranslate) *FormElement {
-	var val FormTranslate
+func (e *FormElement) Translate(v ...Translate) *FormElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -632,8 +504,8 @@ func (e *FormElement) Translate(v ...FormTranslate) *FormElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FormElement) Writingsuggestions(v ...FormWritingsuggestions) *FormElement {
-	var val FormWritingsuggestions
+func (e *FormElement) Writingsuggestions(v ...Writingsuggestions) *FormElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

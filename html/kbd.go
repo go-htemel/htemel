@@ -13,16 +13,20 @@ import (
 )
 
 type KbdElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Kbd creates a tag <kbd> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The kbd element represents user input (typically keyboard input, although it may also be used to represent other input, such as voice commands).
-func Kbd(children ...htemel.Node) *KbdElement {
+func Kbd(children ...htemel.PhrasingContent) *KbdElement {
 	node := &KbdElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Kbd(children ...htemel.Node) *KbdElement {
 }
 
 // KbdIf creates a tag <kbd> instance that is only rendered when condition is true.
-func KbdIf(condition bool, children ...htemel.Node) *KbdElement {
+func KbdIf(condition bool, children ...htemel.PhrasingContent) *KbdElement {
 	if condition {
 		return Kbd(children...)
 	}
@@ -43,7 +47,7 @@ func KbdIf(condition bool, children ...htemel.Node) *KbdElement {
 }
 
 // KbdTernary creates a tag <kbd> containing then when condition is true, otherwise containing otherwise.
-func KbdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *KbdElement {
+func KbdTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *KbdElement {
 	if condition {
 		return Kbd(then)
 	}
@@ -51,7 +55,7 @@ func KbdTernary(condition bool, then htemel.Node, otherwise htemel.Node) *KbdEle
 }
 
 // Children appends children to this element.
-func (e *KbdElement) Children(children ...htemel.Node) *KbdElement {
+func (e *KbdElement) Children(children ...htemel.PhrasingContent) *KbdElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *KbdElement) Textf(format string, args ...any) *KbdElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *KbdElement) If(cond bool, child htemel.Node) *KbdElement {
+func (e *KbdElement) If(cond bool, child htemel.PhrasingContent) *KbdElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *KbdElement) If(cond bool, child htemel.Node) *KbdElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *KbdElement) IfElse(cond bool, then, els htemel.Node) *KbdElement {
+func (e *KbdElement) IfElse(cond bool, then, els htemel.PhrasingContent) *KbdElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *KbdElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type KbdAutocapitalize string
-
-const (
-	KbdAutocapitalizeCharacters KbdAutocapitalize = "characters"
-	KbdAutocapitalizeNone       KbdAutocapitalize = "none"
-	KbdAutocapitalizeOff        KbdAutocapitalize = "off"
-	KbdAutocapitalizeOn         KbdAutocapitalize = "on"
-	KbdAutocapitalizeSentences  KbdAutocapitalize = "sentences"
-	KbdAutocapitalizeWords      KbdAutocapitalize = "words"
-)
-
-type KbdAutocorrect string
-
-const (
-	KbdAutocorrectOff   KbdAutocorrect = "off"
-	KbdAutocorrectOn    KbdAutocorrect = "on"
-	KbdAutocorrectEmpty KbdAutocorrect = ""
-)
-
-type KbdContenteditable string
-
-const (
-	KbdContenteditableFalse         KbdContenteditable = "false"
-	KbdContenteditablePlaintextOnly KbdContenteditable = "plaintext-only"
-	KbdContenteditableTrue          KbdContenteditable = "true"
-	KbdContenteditableEmpty         KbdContenteditable = ""
-)
-
-type KbdDir string
-
-const (
-	KbdDirAuto KbdDir = "auto"
-	KbdDirLtr  KbdDir = "ltr"
-	KbdDirRtl  KbdDir = "rtl"
-)
-
-type KbdDraggable string
-
-const (
-	KbdDraggableFalse KbdDraggable = "false"
-	KbdDraggableTrue  KbdDraggable = "true"
-)
-
-type KbdEnterkeyhint string
-
-const (
-	KbdEnterkeyhintDone     KbdEnterkeyhint = "done"
-	KbdEnterkeyhintEnter    KbdEnterkeyhint = "enter"
-	KbdEnterkeyhintGo       KbdEnterkeyhint = "go"
-	KbdEnterkeyhintNext     KbdEnterkeyhint = "next"
-	KbdEnterkeyhintPrevious KbdEnterkeyhint = "previous"
-	KbdEnterkeyhintSearch   KbdEnterkeyhint = "search"
-	KbdEnterkeyhintSend     KbdEnterkeyhint = "send"
-)
-
-type KbdHidden string
-
-const (
-	KbdHiddenHidden     KbdHidden = "hidden"
-	KbdHiddenUntilFound KbdHidden = "until-found"
-	KbdHiddenEmpty      KbdHidden = ""
-)
-
-type KbdInputmode string
-
-const (
-	KbdInputmodeDecimal KbdInputmode = "decimal"
-	KbdInputmodeEmail   KbdInputmode = "email"
-	KbdInputmodeNone    KbdInputmode = "none"
-	KbdInputmodeNumeric KbdInputmode = "numeric"
-	KbdInputmodeSearch  KbdInputmode = "search"
-	KbdInputmodeTel     KbdInputmode = "tel"
-	KbdInputmodeText    KbdInputmode = "text"
-	KbdInputmodeUrl     KbdInputmode = "url"
-)
-
-type KbdPopover string
-
-const (
-	KbdPopoverAuto   KbdPopover = "auto"
-	KbdPopoverHint   KbdPopover = "hint"
-	KbdPopoverManual KbdPopover = "manual"
-	KbdPopoverEmpty  KbdPopover = ""
-)
-
-type KbdSpellcheck string
-
-const (
-	KbdSpellcheckFalse KbdSpellcheck = "false"
-	KbdSpellcheckTrue  KbdSpellcheck = "true"
-	KbdSpellcheckEmpty KbdSpellcheck = ""
-)
-
-type KbdTranslate string
-
-const (
-	KbdTranslateNo    KbdTranslate = "no"
-	KbdTranslateYes   KbdTranslate = "yes"
-	KbdTranslateEmpty KbdTranslate = ""
-)
-
-type KbdWritingsuggestions string
-
-const (
-	KbdWritingsuggestionsFalse KbdWritingsuggestions = "false"
-	KbdWritingsuggestionsTrue  KbdWritingsuggestions = "true"
-	KbdWritingsuggestionsEmpty KbdWritingsuggestions = ""
-)
-
 func (e *KbdElement) Accesskey(r rune) *KbdElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *KbdElement) Aria(name string, s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Autocapitalize(a KbdAutocapitalize) *KbdElement {
+func (e *KbdElement) Autocapitalize(a Autocapitalize) *KbdElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *KbdElement) Autocapitalize(a KbdAutocapitalize) *KbdElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Autocorrect(v ...KbdAutocorrect) *KbdElement {
-	var val KbdAutocorrect
+func (e *KbdElement) Autocorrect(v ...Autocorrect) *KbdElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *KbdElement) Class(s ...string) *KbdElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Contenteditable(v ...KbdContenteditable) *KbdElement {
-	var val KbdContenteditable
+func (e *KbdElement) Contenteditable(v ...Contenteditable) *KbdElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *KbdElement) Data(name string, s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Dir(a KbdDir) *KbdElement {
+func (e *KbdElement) Dir(a Dir) *KbdElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *KbdElement) Draggable(a KbdDraggable) *KbdElement {
+func (e *KbdElement) Draggable(a Draggable) *KbdElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *KbdElement) Enterkeyhint(a KbdEnterkeyhint) *KbdElement {
+func (e *KbdElement) Enterkeyhint(a Enterkeyhint) *KbdElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *KbdElement) Headingreset(b bool) *KbdElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Hidden(v ...KbdHidden) *KbdElement {
-	var val KbdHidden
+func (e *KbdElement) Hidden(v ...Hidden) *KbdElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *KbdElement) Inert(b bool) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Inputmode(a KbdInputmode) *KbdElement {
+func (e *KbdElement) Inputmode(a Inputmode) *KbdElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *KbdElement) Part(s ...string) *KbdElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Popover(v ...KbdPopover) *KbdElement {
-	var val KbdPopover
+func (e *KbdElement) Popover(v ...Popover) *KbdElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *KbdElement) Slot(s string) *KbdElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Spellcheck(v ...KbdSpellcheck) *KbdElement {
-	var val KbdSpellcheck
+func (e *KbdElement) Spellcheck(v ...Spellcheck) *KbdElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *KbdElement) Title(s string) *KbdElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Translate(v ...KbdTranslate) *KbdElement {
-	var val KbdTranslate
+func (e *KbdElement) Translate(v ...Translate) *KbdElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *KbdElement) Translate(v ...KbdTranslate) *KbdElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *KbdElement) Writingsuggestions(v ...KbdWritingsuggestions) *KbdElement {
-	var val KbdWritingsuggestions
+func (e *KbdElement) Writingsuggestions(v ...Writingsuggestions) *KbdElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

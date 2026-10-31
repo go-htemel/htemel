@@ -14,15 +14,17 @@ import (
 
 type DtElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Dt creates a tag <dt> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The dt element represents the term, or name, part of a term-description group in a description list (dl element).
-func Dt(children ...htemel.Node) *DtElement {
+func Dt(children ...htemel.FlowContent) *DtElement {
 	node := &DtElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Dt(children ...htemel.Node) *DtElement {
 }
 
 // DtIf creates a tag <dt> instance that is only rendered when condition is true.
-func DtIf(condition bool, children ...htemel.Node) *DtElement {
+func DtIf(condition bool, children ...htemel.FlowContent) *DtElement {
 	if condition {
 		return Dt(children...)
 	}
@@ -43,7 +45,7 @@ func DtIf(condition bool, children ...htemel.Node) *DtElement {
 }
 
 // DtTernary creates a tag <dt> containing then when condition is true, otherwise containing otherwise.
-func DtTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DtElement {
+func DtTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *DtElement {
 	if condition {
 		return Dt(then)
 	}
@@ -51,7 +53,7 @@ func DtTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DtEleme
 }
 
 // Children appends children to this element.
-func (e *DtElement) Children(children ...htemel.Node) *DtElement {
+func (e *DtElement) Children(children ...htemel.FlowContent) *DtElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *DtElement) Textf(format string, args ...any) *DtElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DtElement) If(cond bool, child htemel.Node) *DtElement {
+func (e *DtElement) If(cond bool, child htemel.FlowContent) *DtElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *DtElement) If(cond bool, child htemel.Node) *DtElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DtElement) IfElse(cond bool, then, els htemel.Node) *DtElement {
+func (e *DtElement) IfElse(cond bool, then, els htemel.FlowContent) *DtElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *DtElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DtAutocapitalize string
-
-const (
-	DtAutocapitalizeCharacters DtAutocapitalize = "characters"
-	DtAutocapitalizeNone       DtAutocapitalize = "none"
-	DtAutocapitalizeOff        DtAutocapitalize = "off"
-	DtAutocapitalizeOn         DtAutocapitalize = "on"
-	DtAutocapitalizeSentences  DtAutocapitalize = "sentences"
-	DtAutocapitalizeWords      DtAutocapitalize = "words"
-)
-
-type DtAutocorrect string
-
-const (
-	DtAutocorrectOff   DtAutocorrect = "off"
-	DtAutocorrectOn    DtAutocorrect = "on"
-	DtAutocorrectEmpty DtAutocorrect = ""
-)
-
-type DtContenteditable string
-
-const (
-	DtContenteditableFalse         DtContenteditable = "false"
-	DtContenteditablePlaintextOnly DtContenteditable = "plaintext-only"
-	DtContenteditableTrue          DtContenteditable = "true"
-	DtContenteditableEmpty         DtContenteditable = ""
-)
-
-type DtDir string
-
-const (
-	DtDirAuto DtDir = "auto"
-	DtDirLtr  DtDir = "ltr"
-	DtDirRtl  DtDir = "rtl"
-)
-
-type DtDraggable string
-
-const (
-	DtDraggableFalse DtDraggable = "false"
-	DtDraggableTrue  DtDraggable = "true"
-)
-
-type DtEnterkeyhint string
-
-const (
-	DtEnterkeyhintDone     DtEnterkeyhint = "done"
-	DtEnterkeyhintEnter    DtEnterkeyhint = "enter"
-	DtEnterkeyhintGo       DtEnterkeyhint = "go"
-	DtEnterkeyhintNext     DtEnterkeyhint = "next"
-	DtEnterkeyhintPrevious DtEnterkeyhint = "previous"
-	DtEnterkeyhintSearch   DtEnterkeyhint = "search"
-	DtEnterkeyhintSend     DtEnterkeyhint = "send"
-)
-
-type DtHidden string
-
-const (
-	DtHiddenHidden     DtHidden = "hidden"
-	DtHiddenUntilFound DtHidden = "until-found"
-	DtHiddenEmpty      DtHidden = ""
-)
-
-type DtInputmode string
-
-const (
-	DtInputmodeDecimal DtInputmode = "decimal"
-	DtInputmodeEmail   DtInputmode = "email"
-	DtInputmodeNone    DtInputmode = "none"
-	DtInputmodeNumeric DtInputmode = "numeric"
-	DtInputmodeSearch  DtInputmode = "search"
-	DtInputmodeTel     DtInputmode = "tel"
-	DtInputmodeText    DtInputmode = "text"
-	DtInputmodeUrl     DtInputmode = "url"
-)
-
-type DtPopover string
-
-const (
-	DtPopoverAuto   DtPopover = "auto"
-	DtPopoverHint   DtPopover = "hint"
-	DtPopoverManual DtPopover = "manual"
-	DtPopoverEmpty  DtPopover = ""
-)
-
-type DtSpellcheck string
-
-const (
-	DtSpellcheckFalse DtSpellcheck = "false"
-	DtSpellcheckTrue  DtSpellcheck = "true"
-	DtSpellcheckEmpty DtSpellcheck = ""
-)
-
-type DtTranslate string
-
-const (
-	DtTranslateNo    DtTranslate = "no"
-	DtTranslateYes   DtTranslate = "yes"
-	DtTranslateEmpty DtTranslate = ""
-)
-
-type DtWritingsuggestions string
-
-const (
-	DtWritingsuggestionsFalse DtWritingsuggestions = "false"
-	DtWritingsuggestionsTrue  DtWritingsuggestions = "true"
-	DtWritingsuggestionsEmpty DtWritingsuggestions = ""
-)
+// HTMLDlChild marks <dt> as a permitted child of <dl> (DlChild).
+func (*DtElement) HTMLDlChild() {}
 
 func (e *DtElement) Accesskey(r rune) *DtElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +191,7 @@ func (e *DtElement) Aria(name string, s string) *DtElement {
 	return e
 }
 
-func (e *DtElement) Autocapitalize(a DtAutocapitalize) *DtElement {
+func (e *DtElement) Autocapitalize(a Autocapitalize) *DtElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *DtElement) Autocapitalize(a DtAutocapitalize) *DtElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Autocorrect(v ...DtAutocorrect) *DtElement {
-	var val DtAutocorrect
+func (e *DtElement) Autocorrect(v ...Autocorrect) *DtElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *DtElement) Class(s ...string) *DtElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Contenteditable(v ...DtContenteditable) *DtElement {
-	var val DtContenteditable
+func (e *DtElement) Contenteditable(v ...Contenteditable) *DtElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *DtElement) Data(name string, s string) *DtElement {
 	return e
 }
 
-func (e *DtElement) Dir(a DtDir) *DtElement {
+func (e *DtElement) Dir(a Dir) *DtElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DtElement) Draggable(a DtDraggable) *DtElement {
+func (e *DtElement) Draggable(a Draggable) *DtElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DtElement) Enterkeyhint(a DtEnterkeyhint) *DtElement {
+func (e *DtElement) Enterkeyhint(a Enterkeyhint) *DtElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *DtElement) Headingreset(b bool) *DtElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Hidden(v ...DtHidden) *DtElement {
-	var val DtHidden
+func (e *DtElement) Hidden(v ...Hidden) *DtElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *DtElement) Inert(b bool) *DtElement {
 	return e
 }
 
-func (e *DtElement) Inputmode(a DtInputmode) *DtElement {
+func (e *DtElement) Inputmode(a Inputmode) *DtElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *DtElement) Part(s ...string) *DtElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Popover(v ...DtPopover) *DtElement {
-	var val DtPopover
+func (e *DtElement) Popover(v ...Popover) *DtElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *DtElement) Slot(s string) *DtElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Spellcheck(v ...DtSpellcheck) *DtElement {
-	var val DtSpellcheck
+func (e *DtElement) Spellcheck(v ...Spellcheck) *DtElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *DtElement) Title(s string) *DtElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Translate(v ...DtTranslate) *DtElement {
-	var val DtTranslate
+func (e *DtElement) Translate(v ...Translate) *DtElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *DtElement) Translate(v ...DtTranslate) *DtElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DtElement) Writingsuggestions(v ...DtWritingsuggestions) *DtElement {
-	var val DtWritingsuggestions
+func (e *DtElement) Writingsuggestions(v ...Writingsuggestions) *DtElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

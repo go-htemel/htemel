@@ -54,7 +54,7 @@ The application uses a shared layout (`views.Layout`) that provides:
 All views are written in pure Go using htemel's chainable API:
 
 ```go
-func Index() Node {
+func Index() FlowContent {
     return PageContent(
         "Home",
         P().Text("Welcome to the htemel example web application!"),
@@ -81,7 +81,9 @@ w.Write(buf.Bytes())
 
 ### Component Composition
 
-Components can be nested and reused. The `Layout` function accepts child nodes:
+Components can be nested and reused. The `Layout` function accepts flow content, because its
+children end up inside a `<div>` in `<body>`; page views therefore return `FlowContent` rather than
+a plain `Node`, and the compiler rejects a view that could not legally go there:
 
 ```go
 Layout(PageData{Title: "Home", Request: r}, Index())

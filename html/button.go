@@ -13,16 +13,21 @@ import (
 )
 
 type ButtonElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Button creates a tag <button> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The button element represents a button labeled by its contents.
-func Button(children ...htemel.Node) *ButtonElement {
+func Button(children ...htemel.PhrasingContent) *ButtonElement {
 	node := &ButtonElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Button(children ...htemel.Node) *ButtonElement {
 }
 
 // ButtonIf creates a tag <button> instance that is only rendered when condition is true.
-func ButtonIf(condition bool, children ...htemel.Node) *ButtonElement {
+func ButtonIf(condition bool, children ...htemel.PhrasingContent) *ButtonElement {
 	if condition {
 		return Button(children...)
 	}
@@ -43,7 +48,7 @@ func ButtonIf(condition bool, children ...htemel.Node) *ButtonElement {
 }
 
 // ButtonTernary creates a tag <button> containing then when condition is true, otherwise containing otherwise.
-func ButtonTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ButtonElement {
+func ButtonTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *ButtonElement {
 	if condition {
 		return Button(then)
 	}
@@ -51,7 +56,7 @@ func ButtonTernary(condition bool, then htemel.Node, otherwise htemel.Node) *But
 }
 
 // Children appends children to this element.
-func (e *ButtonElement) Children(children ...htemel.Node) *ButtonElement {
+func (e *ButtonElement) Children(children ...htemel.PhrasingContent) *ButtonElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *ButtonElement) Textf(format string, args ...any) *ButtonElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ButtonElement) If(cond bool, child htemel.Node) *ButtonElement {
+func (e *ButtonElement) If(cond bool, child htemel.PhrasingContent) *ButtonElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *ButtonElement) If(cond bool, child htemel.Node) *ButtonElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ButtonElement) IfElse(cond bool, then, els htemel.Node) *ButtonElement {
+func (e *ButtonElement) IfElse(cond bool, then, els htemel.PhrasingContent) *ButtonElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,41 +169,10 @@ func (e *ButtonElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ButtonCommand string
+// HTMLSelectChild marks <button> as a permitted child of <select> (SelectChild).
+func (*ButtonElement) HTMLSelectChild() {}
 
-const (
-	ButtonCommandClose         ButtonCommand = "close"
-	ButtonCommandHidePopover   ButtonCommand = "hide-popover"
-	ButtonCommandRequestClose  ButtonCommand = "request-close"
-	ButtonCommandShowModal     ButtonCommand = "show-modal"
-	ButtonCommandShowPopover   ButtonCommand = "show-popover"
-	ButtonCommandTogglePopover ButtonCommand = "toggle-popover"
-)
-
-type ButtonFormenctype string
-
-const (
-	ButtonFormenctypeApplicationXWwwFormUrlencoded ButtonFormenctype = "application/x-www-form-urlencoded"
-	ButtonFormenctypeMultipartFormData             ButtonFormenctype = "multipart/form-data"
-	ButtonFormenctypeTextPlain                     ButtonFormenctype = "text/plain"
-)
-
-type ButtonFormmethod string
-
-const (
-	ButtonFormmethodDialog ButtonFormmethod = "dialog"
-	ButtonFormmethodGet    ButtonFormmethod = "get"
-	ButtonFormmethodPost   ButtonFormmethod = "post"
-)
-
-type ButtonPopovertargetaction string
-
-const (
-	ButtonPopovertargetactionHide   ButtonPopovertargetaction = "hide"
-	ButtonPopovertargetactionShow   ButtonPopovertargetaction = "show"
-	ButtonPopovertargetactionToggle ButtonPopovertargetaction = "toggle"
-)
-
+// ButtonType is a value of the "type" attribute of <button>.
 type ButtonType string
 
 const (
@@ -207,123 +181,10 @@ const (
 	ButtonTypeSubmit ButtonType = "submit"
 )
 
-type ButtonAutocapitalize string
-
-const (
-	ButtonAutocapitalizeCharacters ButtonAutocapitalize = "characters"
-	ButtonAutocapitalizeNone       ButtonAutocapitalize = "none"
-	ButtonAutocapitalizeOff        ButtonAutocapitalize = "off"
-	ButtonAutocapitalizeOn         ButtonAutocapitalize = "on"
-	ButtonAutocapitalizeSentences  ButtonAutocapitalize = "sentences"
-	ButtonAutocapitalizeWords      ButtonAutocapitalize = "words"
-)
-
-type ButtonAutocorrect string
-
-const (
-	ButtonAutocorrectOff   ButtonAutocorrect = "off"
-	ButtonAutocorrectOn    ButtonAutocorrect = "on"
-	ButtonAutocorrectEmpty ButtonAutocorrect = ""
-)
-
-type ButtonContenteditable string
-
-const (
-	ButtonContenteditableFalse         ButtonContenteditable = "false"
-	ButtonContenteditablePlaintextOnly ButtonContenteditable = "plaintext-only"
-	ButtonContenteditableTrue          ButtonContenteditable = "true"
-	ButtonContenteditableEmpty         ButtonContenteditable = ""
-)
-
-type ButtonDir string
-
-const (
-	ButtonDirAuto ButtonDir = "auto"
-	ButtonDirLtr  ButtonDir = "ltr"
-	ButtonDirRtl  ButtonDir = "rtl"
-)
-
-type ButtonDraggable string
-
-const (
-	ButtonDraggableFalse ButtonDraggable = "false"
-	ButtonDraggableTrue  ButtonDraggable = "true"
-)
-
-type ButtonEnterkeyhint string
-
-const (
-	ButtonEnterkeyhintDone     ButtonEnterkeyhint = "done"
-	ButtonEnterkeyhintEnter    ButtonEnterkeyhint = "enter"
-	ButtonEnterkeyhintGo       ButtonEnterkeyhint = "go"
-	ButtonEnterkeyhintNext     ButtonEnterkeyhint = "next"
-	ButtonEnterkeyhintPrevious ButtonEnterkeyhint = "previous"
-	ButtonEnterkeyhintSearch   ButtonEnterkeyhint = "search"
-	ButtonEnterkeyhintSend     ButtonEnterkeyhint = "send"
-)
-
-type ButtonHidden string
-
-const (
-	ButtonHiddenHidden     ButtonHidden = "hidden"
-	ButtonHiddenUntilFound ButtonHidden = "until-found"
-	ButtonHiddenEmpty      ButtonHidden = ""
-)
-
-type ButtonInputmode string
-
-const (
-	ButtonInputmodeDecimal ButtonInputmode = "decimal"
-	ButtonInputmodeEmail   ButtonInputmode = "email"
-	ButtonInputmodeNone    ButtonInputmode = "none"
-	ButtonInputmodeNumeric ButtonInputmode = "numeric"
-	ButtonInputmodeSearch  ButtonInputmode = "search"
-	ButtonInputmodeTel     ButtonInputmode = "tel"
-	ButtonInputmodeText    ButtonInputmode = "text"
-	ButtonInputmodeUrl     ButtonInputmode = "url"
-)
-
-type ButtonPopover string
-
-const (
-	ButtonPopoverAuto   ButtonPopover = "auto"
-	ButtonPopoverHint   ButtonPopover = "hint"
-	ButtonPopoverManual ButtonPopover = "manual"
-	ButtonPopoverEmpty  ButtonPopover = ""
-)
-
-type ButtonSpellcheck string
-
-const (
-	ButtonSpellcheckFalse ButtonSpellcheck = "false"
-	ButtonSpellcheckTrue  ButtonSpellcheck = "true"
-	ButtonSpellcheckEmpty ButtonSpellcheck = ""
-)
-
-type ButtonTranslate string
-
-const (
-	ButtonTranslateNo    ButtonTranslate = "no"
-	ButtonTranslateYes   ButtonTranslate = "yes"
-	ButtonTranslateEmpty ButtonTranslate = ""
-)
-
-type ButtonWritingsuggestions string
-
-const (
-	ButtonWritingsuggestionsFalse ButtonWritingsuggestions = "false"
-	ButtonWritingsuggestionsTrue  ButtonWritingsuggestions = "true"
-	ButtonWritingsuggestionsEmpty ButtonWritingsuggestions = ""
-)
-
-func (e *ButtonElement) Command(a ButtonCommand) *ButtonElement {
+func (e *ButtonElement) Command(a Command) *ButtonElement {
 	e.attributes.Set("command", string(a))
 
 	return e
-}
-
-func ButtonCommandCustom(s string) ButtonCommand {
-	return ButtonCommand(s)
 }
 
 func (e *ButtonElement) Commandfor(s string) *ButtonElement {
@@ -354,13 +215,13 @@ func (e *ButtonElement) Formaction(s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Formenctype(a ButtonFormenctype) *ButtonElement {
+func (e *ButtonElement) Formenctype(a Formenctype) *ButtonElement {
 	e.attributes.Set("formenctype", string(a))
 
 	return e
 }
 
-func (e *ButtonElement) Formmethod(a ButtonFormmethod) *ButtonElement {
+func (e *ButtonElement) Formmethod(a Formmethod) *ButtonElement {
 	e.attributes.Set("formmethod", string(a))
 
 	return e
@@ -392,7 +253,7 @@ func (e *ButtonElement) Popovertarget(s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Popovertargetaction(a ButtonPopovertargetaction) *ButtonElement {
+func (e *ButtonElement) Popovertargetaction(a Popovertargetaction) *ButtonElement {
 	e.attributes.Set("popovertargetaction", string(a))
 
 	return e
@@ -432,7 +293,7 @@ func (e *ButtonElement) Aria(name string, s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Autocapitalize(a ButtonAutocapitalize) *ButtonElement {
+func (e *ButtonElement) Autocapitalize(a Autocapitalize) *ButtonElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -440,8 +301,8 @@ func (e *ButtonElement) Autocapitalize(a ButtonAutocapitalize) *ButtonElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Autocorrect(v ...ButtonAutocorrect) *ButtonElement {
-	var val ButtonAutocorrect
+func (e *ButtonElement) Autocorrect(v ...Autocorrect) *ButtonElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -466,8 +327,8 @@ func (e *ButtonElement) Class(s ...string) *ButtonElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Contenteditable(v ...ButtonContenteditable) *ButtonElement {
-	var val ButtonContenteditable
+func (e *ButtonElement) Contenteditable(v ...Contenteditable) *ButtonElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -492,19 +353,19 @@ func (e *ButtonElement) Data(name string, s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Dir(a ButtonDir) *ButtonElement {
+func (e *ButtonElement) Dir(a Dir) *ButtonElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ButtonElement) Draggable(a ButtonDraggable) *ButtonElement {
+func (e *ButtonElement) Draggable(a Draggable) *ButtonElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ButtonElement) Enterkeyhint(a ButtonEnterkeyhint) *ButtonElement {
+func (e *ButtonElement) Enterkeyhint(a Enterkeyhint) *ButtonElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -532,8 +393,8 @@ func (e *ButtonElement) Headingreset(b bool) *ButtonElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Hidden(v ...ButtonHidden) *ButtonElement {
-	var val ButtonHidden
+func (e *ButtonElement) Hidden(v ...Hidden) *ButtonElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -556,7 +417,7 @@ func (e *ButtonElement) Inert(b bool) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Inputmode(a ButtonInputmode) *ButtonElement {
+func (e *ButtonElement) Inputmode(a Inputmode) *ButtonElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -622,8 +483,8 @@ func (e *ButtonElement) Part(s ...string) *ButtonElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Popover(v ...ButtonPopover) *ButtonElement {
-	var val ButtonPopover
+func (e *ButtonElement) Popover(v ...Popover) *ButtonElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -646,8 +507,8 @@ func (e *ButtonElement) Slot(s string) *ButtonElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Spellcheck(v ...ButtonSpellcheck) *ButtonElement {
-	var val ButtonSpellcheck
+func (e *ButtonElement) Spellcheck(v ...Spellcheck) *ButtonElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -676,8 +537,8 @@ func (e *ButtonElement) Title(s string) *ButtonElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Translate(v ...ButtonTranslate) *ButtonElement {
-	var val ButtonTranslate
+func (e *ButtonElement) Translate(v ...Translate) *ButtonElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -688,8 +549,8 @@ func (e *ButtonElement) Translate(v ...ButtonTranslate) *ButtonElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ButtonElement) Writingsuggestions(v ...ButtonWritingsuggestions) *ButtonElement {
-	var val ButtonWritingsuggestions
+func (e *ButtonElement) Writingsuggestions(v ...Writingsuggestions) *ButtonElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

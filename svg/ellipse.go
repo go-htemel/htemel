@@ -14,15 +14,17 @@ import (
 
 type EllipseElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Ellipse creates a tag <ellipse> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The ellipse element draws an ellipse from a center point and two radii.
-func Ellipse(children ...htemel.Node) *EllipseElement {
+func Ellipse(children ...Content) *EllipseElement {
 	node := &EllipseElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Ellipse(children ...htemel.Node) *EllipseElement {
 }
 
 // EllipseIf creates a tag <ellipse> instance that is only rendered when condition is true.
-func EllipseIf(condition bool, children ...htemel.Node) *EllipseElement {
+func EllipseIf(condition bool, children ...Content) *EllipseElement {
 	if condition {
 		return Ellipse(children...)
 	}
@@ -43,7 +45,7 @@ func EllipseIf(condition bool, children ...htemel.Node) *EllipseElement {
 }
 
 // EllipseTernary creates a tag <ellipse> containing then when condition is true, otherwise containing otherwise.
-func EllipseTernary(condition bool, then htemel.Node, otherwise htemel.Node) *EllipseElement {
+func EllipseTernary(condition bool, then Content, otherwise Content) *EllipseElement {
 	if condition {
 		return Ellipse(then)
 	}
@@ -51,7 +53,7 @@ func EllipseTernary(condition bool, then htemel.Node, otherwise htemel.Node) *El
 }
 
 // Children appends children to this element.
-func (e *EllipseElement) Children(children ...htemel.Node) *EllipseElement {
+func (e *EllipseElement) Children(children ...Content) *EllipseElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *EllipseElement) Textf(format string, args ...any) *EllipseElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *EllipseElement) If(cond bool, child htemel.Node) *EllipseElement {
+func (e *EllipseElement) If(cond bool, child Content) *EllipseElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *EllipseElement) If(cond bool, child htemel.Node) *EllipseElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *EllipseElement) IfElse(cond bool, then, els htemel.Node) *EllipseElement {
+func (e *EllipseElement) IfElse(cond bool, then, els Content) *EllipseElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *EllipseElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type EllipseAlignmentBaseline string
-
-const (
-	EllipseAlignmentBaselineAfterEdge      EllipseAlignmentBaseline = "after-edge"
-	EllipseAlignmentBaselineAlphabetic     EllipseAlignmentBaseline = "alphabetic"
-	EllipseAlignmentBaselineAuto           EllipseAlignmentBaseline = "auto"
-	EllipseAlignmentBaselineBaseline       EllipseAlignmentBaseline = "baseline"
-	EllipseAlignmentBaselineBeforeEdge     EllipseAlignmentBaseline = "before-edge"
-	EllipseAlignmentBaselineBottom         EllipseAlignmentBaseline = "bottom"
-	EllipseAlignmentBaselineCenter         EllipseAlignmentBaseline = "center"
-	EllipseAlignmentBaselineCentral        EllipseAlignmentBaseline = "central"
-	EllipseAlignmentBaselineHanging        EllipseAlignmentBaseline = "hanging"
-	EllipseAlignmentBaselineIdeographic    EllipseAlignmentBaseline = "ideographic"
-	EllipseAlignmentBaselineMathematical   EllipseAlignmentBaseline = "mathematical"
-	EllipseAlignmentBaselineMiddle         EllipseAlignmentBaseline = "middle"
-	EllipseAlignmentBaselineTextAfterEdge  EllipseAlignmentBaseline = "text-after-edge"
-	EllipseAlignmentBaselineTextBeforeEdge EllipseAlignmentBaseline = "text-before-edge"
-	EllipseAlignmentBaselineTextBottom     EllipseAlignmentBaseline = "text-bottom"
-	EllipseAlignmentBaselineTextTop        EllipseAlignmentBaseline = "text-top"
-	EllipseAlignmentBaselineTop            EllipseAlignmentBaseline = "top"
-)
-
-type EllipseClipRule string
-
-const (
-	EllipseClipRuleEvenodd EllipseClipRule = "evenodd"
-	EllipseClipRuleNonzero EllipseClipRule = "nonzero"
-)
-
-type EllipseColorInterpolation string
-
-const (
-	EllipseColorInterpolationAuto      EllipseColorInterpolation = "auto"
-	EllipseColorInterpolationLinearRGB EllipseColorInterpolation = "linearRGB"
-	EllipseColorInterpolationSRGB      EllipseColorInterpolation = "sRGB"
-)
-
-type EllipseColorInterpolationFilters string
-
-const (
-	EllipseColorInterpolationFiltersAuto      EllipseColorInterpolationFilters = "auto"
-	EllipseColorInterpolationFiltersLinearRGB EllipseColorInterpolationFilters = "linearRGB"
-	EllipseColorInterpolationFiltersSRGB      EllipseColorInterpolationFilters = "sRGB"
-)
-
-type EllipseDirection string
-
-const (
-	EllipseDirectionLtr EllipseDirection = "ltr"
-	EllipseDirectionRtl EllipseDirection = "rtl"
-)
-
-type EllipseDominantBaseline string
-
-const (
-	EllipseDominantBaselineAlphabetic   EllipseDominantBaseline = "alphabetic"
-	EllipseDominantBaselineAuto         EllipseDominantBaseline = "auto"
-	EllipseDominantBaselineCentral      EllipseDominantBaseline = "central"
-	EllipseDominantBaselineHanging      EllipseDominantBaseline = "hanging"
-	EllipseDominantBaselineIdeographic  EllipseDominantBaseline = "ideographic"
-	EllipseDominantBaselineMathematical EllipseDominantBaseline = "mathematical"
-	EllipseDominantBaselineMiddle       EllipseDominantBaseline = "middle"
-	EllipseDominantBaselineTextBottom   EllipseDominantBaseline = "text-bottom"
-	EllipseDominantBaselineTextTop      EllipseDominantBaseline = "text-top"
-)
-
-type EllipseFillRule string
-
-const (
-	EllipseFillRuleEvenodd EllipseFillRule = "evenodd"
-	EllipseFillRuleNonzero EllipseFillRule = "nonzero"
-)
-
-type EllipseFontStyle string
-
-const (
-	EllipseFontStyleItalic  EllipseFontStyle = "italic"
-	EllipseFontStyleNormal  EllipseFontStyle = "normal"
-	EllipseFontStyleOblique EllipseFontStyle = "oblique"
-)
-
-type EllipseImageRendering string
-
-const (
-	EllipseImageRenderingAuto            EllipseImageRendering = "auto"
-	EllipseImageRenderingCrispEdges      EllipseImageRendering = "crisp-edges"
-	EllipseImageRenderingHighQuality     EllipseImageRendering = "high-quality"
-	EllipseImageRenderingOptimizeQuality EllipseImageRendering = "optimizeQuality"
-	EllipseImageRenderingOptimizeSpeed   EllipseImageRendering = "optimizeSpeed"
-	EllipseImageRenderingPixelated       EllipseImageRendering = "pixelated"
-	EllipseImageRenderingSmooth          EllipseImageRendering = "smooth"
-)
-
-type EllipseOverflow string
-
-const (
-	EllipseOverflowAuto    EllipseOverflow = "auto"
-	EllipseOverflowClip    EllipseOverflow = "clip"
-	EllipseOverflowHidden  EllipseOverflow = "hidden"
-	EllipseOverflowScroll  EllipseOverflow = "scroll"
-	EllipseOverflowVisible EllipseOverflow = "visible"
-)
-
-type EllipsePointerEvents string
-
-const (
-	EllipsePointerEventsAll            EllipsePointerEvents = "all"
-	EllipsePointerEventsAuto           EllipsePointerEvents = "auto"
-	EllipsePointerEventsBoundingBox    EllipsePointerEvents = "bounding-box"
-	EllipsePointerEventsFill           EllipsePointerEvents = "fill"
-	EllipsePointerEventsNone           EllipsePointerEvents = "none"
-	EllipsePointerEventsPainted        EllipsePointerEvents = "painted"
-	EllipsePointerEventsStroke         EllipsePointerEvents = "stroke"
-	EllipsePointerEventsVisible        EllipsePointerEvents = "visible"
-	EllipsePointerEventsVisibleFill    EllipsePointerEvents = "visibleFill"
-	EllipsePointerEventsVisiblePainted EllipsePointerEvents = "visiblePainted"
-	EllipsePointerEventsVisibleStroke  EllipsePointerEvents = "visibleStroke"
-)
-
-type EllipseShapeRendering string
-
-const (
-	EllipseShapeRenderingAuto               EllipseShapeRendering = "auto"
-	EllipseShapeRenderingCrispEdges         EllipseShapeRendering = "crispEdges"
-	EllipseShapeRenderingGeometricPrecision EllipseShapeRendering = "geometricPrecision"
-	EllipseShapeRenderingOptimizeSpeed      EllipseShapeRendering = "optimizeSpeed"
-)
-
-type EllipseStrokeLinecap string
-
-const (
-	EllipseStrokeLinecapButt   EllipseStrokeLinecap = "butt"
-	EllipseStrokeLinecapRound  EllipseStrokeLinecap = "round"
-	EllipseStrokeLinecapSquare EllipseStrokeLinecap = "square"
-)
-
-type EllipseStrokeLinejoin string
-
-const (
-	EllipseStrokeLinejoinArcs      EllipseStrokeLinejoin = "arcs"
-	EllipseStrokeLinejoinBevel     EllipseStrokeLinejoin = "bevel"
-	EllipseStrokeLinejoinMiter     EllipseStrokeLinejoin = "miter"
-	EllipseStrokeLinejoinMiterClip EllipseStrokeLinejoin = "miter-clip"
-	EllipseStrokeLinejoinRound     EllipseStrokeLinejoin = "round"
-)
-
-type EllipseTextAnchor string
-
-const (
-	EllipseTextAnchorEnd    EllipseTextAnchor = "end"
-	EllipseTextAnchorMiddle EllipseTextAnchor = "middle"
-	EllipseTextAnchorStart  EllipseTextAnchor = "start"
-)
-
-type EllipseTextRendering string
-
-const (
-	EllipseTextRenderingAuto               EllipseTextRendering = "auto"
-	EllipseTextRenderingGeometricPrecision EllipseTextRendering = "geometricPrecision"
-	EllipseTextRenderingOptimizeLegibility EllipseTextRendering = "optimizeLegibility"
-	EllipseTextRenderingOptimizeSpeed      EllipseTextRendering = "optimizeSpeed"
-)
-
-type EllipseTransformBox string
-
-const (
-	EllipseTransformBoxBorderBox  EllipseTransformBox = "border-box"
-	EllipseTransformBoxContentBox EllipseTransformBox = "content-box"
-	EllipseTransformBoxFillBox    EllipseTransformBox = "fill-box"
-	EllipseTransformBoxStrokeBox  EllipseTransformBox = "stroke-box"
-	EllipseTransformBoxViewBox    EllipseTransformBox = "view-box"
-)
-
-type EllipseVectorEffect string
-
-const (
-	EllipseVectorEffectFixedPosition    EllipseVectorEffect = "fixed-position"
-	EllipseVectorEffectNonRotation      EllipseVectorEffect = "non-rotation"
-	EllipseVectorEffectNonScalingSize   EllipseVectorEffect = "non-scaling-size"
-	EllipseVectorEffectNonScalingStroke EllipseVectorEffect = "non-scaling-stroke"
-	EllipseVectorEffectNone             EllipseVectorEffect = "none"
-)
-
-type EllipseVisibility string
-
-const (
-	EllipseVisibilityCollapse EllipseVisibility = "collapse"
-	EllipseVisibilityHidden   EllipseVisibility = "hidden"
-	EllipseVisibilityVisible  EllipseVisibility = "visible"
-)
-
-type EllipseWritingMode string
-
-const (
-	EllipseWritingModeHorizontalTb EllipseWritingMode = "horizontal-tb"
-	EllipseWritingModeLr           EllipseWritingMode = "lr"
-	EllipseWritingModeLrTb         EllipseWritingMode = "lr-tb"
-	EllipseWritingModeRl           EllipseWritingMode = "rl"
-	EllipseWritingModeRlTb         EllipseWritingMode = "rl-tb"
-	EllipseWritingModeSidewaysLr   EllipseWritingMode = "sideways-lr"
-	EllipseWritingModeSidewaysRl   EllipseWritingMode = "sideways-rl"
-	EllipseWritingModeTb           EllipseWritingMode = "tb"
-	EllipseWritingModeTbRl         EllipseWritingMode = "tb-rl"
-	EllipseWritingModeVerticalLr   EllipseWritingMode = "vertical-lr"
-	EllipseWritingModeVerticalRl   EllipseWritingMode = "vertical-rl"
-)
-
-type EllipseXmlSpace string
-
-const (
-	EllipseXmlSpaceDefault  EllipseXmlSpace = "default"
-	EllipseXmlSpacePreserve EllipseXmlSpace = "preserve"
-)
+// SVGContent marks <ellipse> as a permitted child (Content).
+func (*EllipseElement) SVGContent() {}
 
 func (e *EllipseElement) Cx(s string) *EllipseElement {
 	e.attributes.Set("cx", s)
@@ -414,14 +205,10 @@ func (e *EllipseElement) SystemLanguage(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) AlignmentBaseline(a EllipseAlignmentBaseline) *EllipseElement {
+func (e *EllipseElement) AlignmentBaseline(a AlignmentBaseline) *EllipseElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func EllipseAlignmentBaselineCustom(s string) EllipseAlignmentBaseline {
-	return EllipseAlignmentBaseline(s)
 }
 
 func (e *EllipseElement) AriaUnsafe(name string, s string) *EllipseElement {
@@ -475,14 +262,10 @@ func (e *EllipseElement) ClipPath(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) ClipRule(a EllipseClipRule) *EllipseElement {
+func (e *EllipseElement) ClipRule(a ClipRule) *EllipseElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func EllipseClipRuleCustom(s string) EllipseClipRule {
-	return EllipseClipRule(s)
 }
 
 func (e *EllipseElement) Color(s string) *EllipseElement {
@@ -491,24 +274,16 @@ func (e *EllipseElement) Color(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) ColorInterpolation(a EllipseColorInterpolation) *EllipseElement {
+func (e *EllipseElement) ColorInterpolation(a ColorInterpolation) *EllipseElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func EllipseColorInterpolationCustom(s string) EllipseColorInterpolation {
-	return EllipseColorInterpolation(s)
-}
-
-func (e *EllipseElement) ColorInterpolationFilters(a EllipseColorInterpolationFilters) *EllipseElement {
+func (e *EllipseElement) ColorInterpolationFilters(a ColorInterpolationFilters) *EllipseElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func EllipseColorInterpolationFiltersCustom(s string) EllipseColorInterpolationFilters {
-	return EllipseColorInterpolationFilters(s)
 }
 
 func (e *EllipseElement) Cursor(s string) *EllipseElement {
@@ -533,14 +308,10 @@ func (e *EllipseElement) Data(name string, s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) Direction(a EllipseDirection) *EllipseElement {
+func (e *EllipseElement) Direction(a Direction) *EllipseElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func EllipseDirectionCustom(s string) EllipseDirection {
-	return EllipseDirection(s)
 }
 
 func (e *EllipseElement) Display(s string) *EllipseElement {
@@ -549,14 +320,10 @@ func (e *EllipseElement) Display(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) DominantBaseline(a EllipseDominantBaseline) *EllipseElement {
+func (e *EllipseElement) DominantBaseline(a DominantBaseline) *EllipseElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func EllipseDominantBaselineCustom(s string) EllipseDominantBaseline {
-	return EllipseDominantBaseline(s)
 }
 
 func (e *EllipseElement) Fill(s string) *EllipseElement {
@@ -571,14 +338,10 @@ func (e *EllipseElement) FillOpacity(f float64) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) FillRule(a EllipseFillRule) *EllipseElement {
+func (e *EllipseElement) FillRule(a FillRule) *EllipseElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func EllipseFillRuleCustom(s string) EllipseFillRule {
-	return EllipseFillRule(s)
 }
 
 func (e *EllipseElement) Filter(s string) *EllipseElement {
@@ -623,14 +386,10 @@ func (e *EllipseElement) FontStretch(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) FontStyle(a EllipseFontStyle) *EllipseElement {
+func (e *EllipseElement) FontStyle(a FontStyle) *EllipseElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func EllipseFontStyleCustom(s string) EllipseFontStyle {
-	return EllipseFontStyle(s)
 }
 
 func (e *EllipseElement) FontVariant(s string) *EllipseElement {
@@ -669,14 +428,10 @@ func (e *EllipseElement) Id(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) ImageRendering(a EllipseImageRendering) *EllipseElement {
+func (e *EllipseElement) ImageRendering(a ImageRendering) *EllipseElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func EllipseImageRenderingCustom(s string) EllipseImageRendering {
-	return EllipseImageRendering(s)
 }
 
 func (e *EllipseElement) Lang(s string) *EllipseElement {
@@ -727,14 +482,10 @@ func (e *EllipseElement) Opacity(f float64) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) Overflow(a EllipseOverflow) *EllipseElement {
+func (e *EllipseElement) Overflow(a Overflow) *EllipseElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func EllipseOverflowCustom(s string) EllipseOverflow {
-	return EllipseOverflow(s)
 }
 
 func (e *EllipseElement) PaintOrder(s string) *EllipseElement {
@@ -743,14 +494,10 @@ func (e *EllipseElement) PaintOrder(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) PointerEvents(a EllipsePointerEvents) *EllipseElement {
+func (e *EllipseElement) PointerEvents(a PointerEvents) *EllipseElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func EllipsePointerEventsCustom(s string) EllipsePointerEvents {
-	return EllipsePointerEvents(s)
 }
 
 func (e *EllipseElement) RequiredExtensions(s string) *EllipseElement {
@@ -759,14 +506,10 @@ func (e *EllipseElement) RequiredExtensions(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) ShapeRendering(a EllipseShapeRendering) *EllipseElement {
+func (e *EllipseElement) ShapeRendering(a ShapeRendering) *EllipseElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func EllipseShapeRenderingCustom(s string) EllipseShapeRendering {
-	return EllipseShapeRendering(s)
 }
 
 func (e *EllipseElement) StopColor(s string) *EllipseElement {
@@ -799,24 +542,16 @@ func (e *EllipseElement) StrokeDashoffset(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) StrokeLinecap(a EllipseStrokeLinecap) *EllipseElement {
+func (e *EllipseElement) StrokeLinecap(a StrokeLinecap) *EllipseElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func EllipseStrokeLinecapCustom(s string) EllipseStrokeLinecap {
-	return EllipseStrokeLinecap(s)
-}
-
-func (e *EllipseElement) StrokeLinejoin(a EllipseStrokeLinejoin) *EllipseElement {
+func (e *EllipseElement) StrokeLinejoin(a StrokeLinejoin) *EllipseElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func EllipseStrokeLinejoinCustom(s string) EllipseStrokeLinejoin {
-	return EllipseStrokeLinejoin(s)
 }
 
 func (e *EllipseElement) StrokeMiterlimit(f float64) *EllipseElement {
@@ -849,14 +584,10 @@ func (e *EllipseElement) Tabindex(i int) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) TextAnchor(a EllipseTextAnchor) *EllipseElement {
+func (e *EllipseElement) TextAnchor(a TextAnchor) *EllipseElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func EllipseTextAnchorCustom(s string) EllipseTextAnchor {
-	return EllipseTextAnchor(s)
 }
 
 func (e *EllipseElement) TextDecoration(s string) *EllipseElement {
@@ -871,14 +602,10 @@ func (e *EllipseElement) TextOverflow(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) TextRendering(a EllipseTextRendering) *EllipseElement {
+func (e *EllipseElement) TextRendering(a TextRendering) *EllipseElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func EllipseTextRenderingCustom(s string) EllipseTextRendering {
-	return EllipseTextRendering(s)
 }
 
 func (e *EllipseElement) Transform(s string) *EllipseElement {
@@ -887,14 +614,10 @@ func (e *EllipseElement) Transform(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) TransformBox(a EllipseTransformBox) *EllipseElement {
+func (e *EllipseElement) TransformBox(a TransformBox) *EllipseElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func EllipseTransformBoxCustom(s string) EllipseTransformBox {
-	return EllipseTransformBox(s)
 }
 
 func (e *EllipseElement) TransformOrigin(s string) *EllipseElement {
@@ -909,24 +632,16 @@ func (e *EllipseElement) UnicodeBidi(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) VectorEffect(a EllipseVectorEffect) *EllipseElement {
+func (e *EllipseElement) VectorEffect(a VectorEffect) *EllipseElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func EllipseVectorEffectCustom(s string) EllipseVectorEffect {
-	return EllipseVectorEffect(s)
-}
-
-func (e *EllipseElement) Visibility(a EllipseVisibility) *EllipseElement {
+func (e *EllipseElement) Visibility(a Visibility) *EllipseElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func EllipseVisibilityCustom(s string) EllipseVisibility {
-	return EllipseVisibility(s)
 }
 
 func (e *EllipseElement) WhiteSpace(s string) *EllipseElement {
@@ -941,14 +656,10 @@ func (e *EllipseElement) WordSpacing(s string) *EllipseElement {
 	return e
 }
 
-func (e *EllipseElement) WritingMode(a EllipseWritingMode) *EllipseElement {
+func (e *EllipseElement) WritingMode(a WritingMode) *EllipseElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func EllipseWritingModeCustom(s string) EllipseWritingMode {
-	return EllipseWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -963,7 +674,7 @@ func (e *EllipseElement) XmlLang(s string) *EllipseElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *EllipseElement) XmlSpace(a EllipseXmlSpace) *EllipseElement {
+func (e *EllipseElement) XmlSpace(a XmlSpace) *EllipseElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

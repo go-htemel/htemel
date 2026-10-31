@@ -17,7 +17,7 @@ func deepTree(depth, leaves int) htemel.Node {
 	for i := 0; i < leaves; i++ {
 		inner.Children(html.Span().Class("leaf").Attr("data-i", strconv.Itoa(i)).Text("leaf <" + strconv.Itoa(i) + ">"))
 	}
-	var n htemel.Node = inner
+	var n htemel.FlowContent = inner
 	for d := 1; d < depth; d++ {
 		n = html.Div().Class("level").Id("l"+strconv.Itoa(d)).Children(n, html.P().Text("sibling & text"))
 	}

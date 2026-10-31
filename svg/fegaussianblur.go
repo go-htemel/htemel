@@ -14,15 +14,17 @@ import (
 
 type FeGaussianBlurElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeGaussianBlur creates a tag <feGaussianBlur> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feGaussianBlur filter primitive blurs the input image with a Gaussian function.
-func FeGaussianBlur(children ...htemel.Node) *FeGaussianBlurElement {
+func FeGaussianBlur(children ...Content) *FeGaussianBlurElement {
 	node := &FeGaussianBlurElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeGaussianBlur(children ...htemel.Node) *FeGaussianBlurElement {
 }
 
 // FeGaussianBlurIf creates a tag <feGaussianBlur> instance that is only rendered when condition is true.
-func FeGaussianBlurIf(condition bool, children ...htemel.Node) *FeGaussianBlurElement {
+func FeGaussianBlurIf(condition bool, children ...Content) *FeGaussianBlurElement {
 	if condition {
 		return FeGaussianBlur(children...)
 	}
@@ -43,7 +45,7 @@ func FeGaussianBlurIf(condition bool, children ...htemel.Node) *FeGaussianBlurEl
 }
 
 // FeGaussianBlurTernary creates a tag <feGaussianBlur> containing then when condition is true, otherwise containing otherwise.
-func FeGaussianBlurTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeGaussianBlurElement {
+func FeGaussianBlurTernary(condition bool, then Content, otherwise Content) *FeGaussianBlurElement {
 	if condition {
 		return FeGaussianBlur(then)
 	}
@@ -51,7 +53,7 @@ func FeGaussianBlurTernary(condition bool, then htemel.Node, otherwise htemel.No
 }
 
 // Children appends children to this element.
-func (e *FeGaussianBlurElement) Children(children ...htemel.Node) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) Children(children ...Content) *FeGaussianBlurElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeGaussianBlurElement) Textf(format string, args ...any) *FeGaussianBlu
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeGaussianBlurElement) If(cond bool, child htemel.Node) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) If(cond bool, child Content) *FeGaussianBlurElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeGaussianBlurElement) If(cond bool, child htemel.Node) *FeGaussianBlur
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeGaussianBlurElement) IfElse(cond bool, then, els htemel.Node) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) IfElse(cond bool, then, els Content) *FeGaussianBlurElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,229 +166,10 @@ func (e *FeGaussianBlurElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeGaussianBlurEdgeMode string
+// SVGContent marks <feGaussianBlur> as a permitted child (Content).
+func (*FeGaussianBlurElement) SVGContent() {}
 
-const (
-	FeGaussianBlurEdgeModeDuplicate FeGaussianBlurEdgeMode = "duplicate"
-	FeGaussianBlurEdgeModeNone      FeGaussianBlurEdgeMode = "none"
-	FeGaussianBlurEdgeModeWrap      FeGaussianBlurEdgeMode = "wrap"
-)
-
-type FeGaussianBlurAlignmentBaseline string
-
-const (
-	FeGaussianBlurAlignmentBaselineAfterEdge      FeGaussianBlurAlignmentBaseline = "after-edge"
-	FeGaussianBlurAlignmentBaselineAlphabetic     FeGaussianBlurAlignmentBaseline = "alphabetic"
-	FeGaussianBlurAlignmentBaselineAuto           FeGaussianBlurAlignmentBaseline = "auto"
-	FeGaussianBlurAlignmentBaselineBaseline       FeGaussianBlurAlignmentBaseline = "baseline"
-	FeGaussianBlurAlignmentBaselineBeforeEdge     FeGaussianBlurAlignmentBaseline = "before-edge"
-	FeGaussianBlurAlignmentBaselineBottom         FeGaussianBlurAlignmentBaseline = "bottom"
-	FeGaussianBlurAlignmentBaselineCenter         FeGaussianBlurAlignmentBaseline = "center"
-	FeGaussianBlurAlignmentBaselineCentral        FeGaussianBlurAlignmentBaseline = "central"
-	FeGaussianBlurAlignmentBaselineHanging        FeGaussianBlurAlignmentBaseline = "hanging"
-	FeGaussianBlurAlignmentBaselineIdeographic    FeGaussianBlurAlignmentBaseline = "ideographic"
-	FeGaussianBlurAlignmentBaselineMathematical   FeGaussianBlurAlignmentBaseline = "mathematical"
-	FeGaussianBlurAlignmentBaselineMiddle         FeGaussianBlurAlignmentBaseline = "middle"
-	FeGaussianBlurAlignmentBaselineTextAfterEdge  FeGaussianBlurAlignmentBaseline = "text-after-edge"
-	FeGaussianBlurAlignmentBaselineTextBeforeEdge FeGaussianBlurAlignmentBaseline = "text-before-edge"
-	FeGaussianBlurAlignmentBaselineTextBottom     FeGaussianBlurAlignmentBaseline = "text-bottom"
-	FeGaussianBlurAlignmentBaselineTextTop        FeGaussianBlurAlignmentBaseline = "text-top"
-	FeGaussianBlurAlignmentBaselineTop            FeGaussianBlurAlignmentBaseline = "top"
-)
-
-type FeGaussianBlurClipRule string
-
-const (
-	FeGaussianBlurClipRuleEvenodd FeGaussianBlurClipRule = "evenodd"
-	FeGaussianBlurClipRuleNonzero FeGaussianBlurClipRule = "nonzero"
-)
-
-type FeGaussianBlurColorInterpolation string
-
-const (
-	FeGaussianBlurColorInterpolationAuto      FeGaussianBlurColorInterpolation = "auto"
-	FeGaussianBlurColorInterpolationLinearRGB FeGaussianBlurColorInterpolation = "linearRGB"
-	FeGaussianBlurColorInterpolationSRGB      FeGaussianBlurColorInterpolation = "sRGB"
-)
-
-type FeGaussianBlurColorInterpolationFilters string
-
-const (
-	FeGaussianBlurColorInterpolationFiltersAuto      FeGaussianBlurColorInterpolationFilters = "auto"
-	FeGaussianBlurColorInterpolationFiltersLinearRGB FeGaussianBlurColorInterpolationFilters = "linearRGB"
-	FeGaussianBlurColorInterpolationFiltersSRGB      FeGaussianBlurColorInterpolationFilters = "sRGB"
-)
-
-type FeGaussianBlurDirection string
-
-const (
-	FeGaussianBlurDirectionLtr FeGaussianBlurDirection = "ltr"
-	FeGaussianBlurDirectionRtl FeGaussianBlurDirection = "rtl"
-)
-
-type FeGaussianBlurDominantBaseline string
-
-const (
-	FeGaussianBlurDominantBaselineAlphabetic   FeGaussianBlurDominantBaseline = "alphabetic"
-	FeGaussianBlurDominantBaselineAuto         FeGaussianBlurDominantBaseline = "auto"
-	FeGaussianBlurDominantBaselineCentral      FeGaussianBlurDominantBaseline = "central"
-	FeGaussianBlurDominantBaselineHanging      FeGaussianBlurDominantBaseline = "hanging"
-	FeGaussianBlurDominantBaselineIdeographic  FeGaussianBlurDominantBaseline = "ideographic"
-	FeGaussianBlurDominantBaselineMathematical FeGaussianBlurDominantBaseline = "mathematical"
-	FeGaussianBlurDominantBaselineMiddle       FeGaussianBlurDominantBaseline = "middle"
-	FeGaussianBlurDominantBaselineTextBottom   FeGaussianBlurDominantBaseline = "text-bottom"
-	FeGaussianBlurDominantBaselineTextTop      FeGaussianBlurDominantBaseline = "text-top"
-)
-
-type FeGaussianBlurFillRule string
-
-const (
-	FeGaussianBlurFillRuleEvenodd FeGaussianBlurFillRule = "evenodd"
-	FeGaussianBlurFillRuleNonzero FeGaussianBlurFillRule = "nonzero"
-)
-
-type FeGaussianBlurFontStyle string
-
-const (
-	FeGaussianBlurFontStyleItalic  FeGaussianBlurFontStyle = "italic"
-	FeGaussianBlurFontStyleNormal  FeGaussianBlurFontStyle = "normal"
-	FeGaussianBlurFontStyleOblique FeGaussianBlurFontStyle = "oblique"
-)
-
-type FeGaussianBlurImageRendering string
-
-const (
-	FeGaussianBlurImageRenderingAuto            FeGaussianBlurImageRendering = "auto"
-	FeGaussianBlurImageRenderingCrispEdges      FeGaussianBlurImageRendering = "crisp-edges"
-	FeGaussianBlurImageRenderingHighQuality     FeGaussianBlurImageRendering = "high-quality"
-	FeGaussianBlurImageRenderingOptimizeQuality FeGaussianBlurImageRendering = "optimizeQuality"
-	FeGaussianBlurImageRenderingOptimizeSpeed   FeGaussianBlurImageRendering = "optimizeSpeed"
-	FeGaussianBlurImageRenderingPixelated       FeGaussianBlurImageRendering = "pixelated"
-	FeGaussianBlurImageRenderingSmooth          FeGaussianBlurImageRendering = "smooth"
-)
-
-type FeGaussianBlurOverflow string
-
-const (
-	FeGaussianBlurOverflowAuto    FeGaussianBlurOverflow = "auto"
-	FeGaussianBlurOverflowClip    FeGaussianBlurOverflow = "clip"
-	FeGaussianBlurOverflowHidden  FeGaussianBlurOverflow = "hidden"
-	FeGaussianBlurOverflowScroll  FeGaussianBlurOverflow = "scroll"
-	FeGaussianBlurOverflowVisible FeGaussianBlurOverflow = "visible"
-)
-
-type FeGaussianBlurPointerEvents string
-
-const (
-	FeGaussianBlurPointerEventsAll            FeGaussianBlurPointerEvents = "all"
-	FeGaussianBlurPointerEventsAuto           FeGaussianBlurPointerEvents = "auto"
-	FeGaussianBlurPointerEventsBoundingBox    FeGaussianBlurPointerEvents = "bounding-box"
-	FeGaussianBlurPointerEventsFill           FeGaussianBlurPointerEvents = "fill"
-	FeGaussianBlurPointerEventsNone           FeGaussianBlurPointerEvents = "none"
-	FeGaussianBlurPointerEventsPainted        FeGaussianBlurPointerEvents = "painted"
-	FeGaussianBlurPointerEventsStroke         FeGaussianBlurPointerEvents = "stroke"
-	FeGaussianBlurPointerEventsVisible        FeGaussianBlurPointerEvents = "visible"
-	FeGaussianBlurPointerEventsVisibleFill    FeGaussianBlurPointerEvents = "visibleFill"
-	FeGaussianBlurPointerEventsVisiblePainted FeGaussianBlurPointerEvents = "visiblePainted"
-	FeGaussianBlurPointerEventsVisibleStroke  FeGaussianBlurPointerEvents = "visibleStroke"
-)
-
-type FeGaussianBlurShapeRendering string
-
-const (
-	FeGaussianBlurShapeRenderingAuto               FeGaussianBlurShapeRendering = "auto"
-	FeGaussianBlurShapeRenderingCrispEdges         FeGaussianBlurShapeRendering = "crispEdges"
-	FeGaussianBlurShapeRenderingGeometricPrecision FeGaussianBlurShapeRendering = "geometricPrecision"
-	FeGaussianBlurShapeRenderingOptimizeSpeed      FeGaussianBlurShapeRendering = "optimizeSpeed"
-)
-
-type FeGaussianBlurStrokeLinecap string
-
-const (
-	FeGaussianBlurStrokeLinecapButt   FeGaussianBlurStrokeLinecap = "butt"
-	FeGaussianBlurStrokeLinecapRound  FeGaussianBlurStrokeLinecap = "round"
-	FeGaussianBlurStrokeLinecapSquare FeGaussianBlurStrokeLinecap = "square"
-)
-
-type FeGaussianBlurStrokeLinejoin string
-
-const (
-	FeGaussianBlurStrokeLinejoinArcs      FeGaussianBlurStrokeLinejoin = "arcs"
-	FeGaussianBlurStrokeLinejoinBevel     FeGaussianBlurStrokeLinejoin = "bevel"
-	FeGaussianBlurStrokeLinejoinMiter     FeGaussianBlurStrokeLinejoin = "miter"
-	FeGaussianBlurStrokeLinejoinMiterClip FeGaussianBlurStrokeLinejoin = "miter-clip"
-	FeGaussianBlurStrokeLinejoinRound     FeGaussianBlurStrokeLinejoin = "round"
-)
-
-type FeGaussianBlurTextAnchor string
-
-const (
-	FeGaussianBlurTextAnchorEnd    FeGaussianBlurTextAnchor = "end"
-	FeGaussianBlurTextAnchorMiddle FeGaussianBlurTextAnchor = "middle"
-	FeGaussianBlurTextAnchorStart  FeGaussianBlurTextAnchor = "start"
-)
-
-type FeGaussianBlurTextRendering string
-
-const (
-	FeGaussianBlurTextRenderingAuto               FeGaussianBlurTextRendering = "auto"
-	FeGaussianBlurTextRenderingGeometricPrecision FeGaussianBlurTextRendering = "geometricPrecision"
-	FeGaussianBlurTextRenderingOptimizeLegibility FeGaussianBlurTextRendering = "optimizeLegibility"
-	FeGaussianBlurTextRenderingOptimizeSpeed      FeGaussianBlurTextRendering = "optimizeSpeed"
-)
-
-type FeGaussianBlurTransformBox string
-
-const (
-	FeGaussianBlurTransformBoxBorderBox  FeGaussianBlurTransformBox = "border-box"
-	FeGaussianBlurTransformBoxContentBox FeGaussianBlurTransformBox = "content-box"
-	FeGaussianBlurTransformBoxFillBox    FeGaussianBlurTransformBox = "fill-box"
-	FeGaussianBlurTransformBoxStrokeBox  FeGaussianBlurTransformBox = "stroke-box"
-	FeGaussianBlurTransformBoxViewBox    FeGaussianBlurTransformBox = "view-box"
-)
-
-type FeGaussianBlurVectorEffect string
-
-const (
-	FeGaussianBlurVectorEffectFixedPosition    FeGaussianBlurVectorEffect = "fixed-position"
-	FeGaussianBlurVectorEffectNonRotation      FeGaussianBlurVectorEffect = "non-rotation"
-	FeGaussianBlurVectorEffectNonScalingSize   FeGaussianBlurVectorEffect = "non-scaling-size"
-	FeGaussianBlurVectorEffectNonScalingStroke FeGaussianBlurVectorEffect = "non-scaling-stroke"
-	FeGaussianBlurVectorEffectNone             FeGaussianBlurVectorEffect = "none"
-)
-
-type FeGaussianBlurVisibility string
-
-const (
-	FeGaussianBlurVisibilityCollapse FeGaussianBlurVisibility = "collapse"
-	FeGaussianBlurVisibilityHidden   FeGaussianBlurVisibility = "hidden"
-	FeGaussianBlurVisibilityVisible  FeGaussianBlurVisibility = "visible"
-)
-
-type FeGaussianBlurWritingMode string
-
-const (
-	FeGaussianBlurWritingModeHorizontalTb FeGaussianBlurWritingMode = "horizontal-tb"
-	FeGaussianBlurWritingModeLr           FeGaussianBlurWritingMode = "lr"
-	FeGaussianBlurWritingModeLrTb         FeGaussianBlurWritingMode = "lr-tb"
-	FeGaussianBlurWritingModeRl           FeGaussianBlurWritingMode = "rl"
-	FeGaussianBlurWritingModeRlTb         FeGaussianBlurWritingMode = "rl-tb"
-	FeGaussianBlurWritingModeSidewaysLr   FeGaussianBlurWritingMode = "sideways-lr"
-	FeGaussianBlurWritingModeSidewaysRl   FeGaussianBlurWritingMode = "sideways-rl"
-	FeGaussianBlurWritingModeTb           FeGaussianBlurWritingMode = "tb"
-	FeGaussianBlurWritingModeTbRl         FeGaussianBlurWritingMode = "tb-rl"
-	FeGaussianBlurWritingModeVerticalLr   FeGaussianBlurWritingMode = "vertical-lr"
-	FeGaussianBlurWritingModeVerticalRl   FeGaussianBlurWritingMode = "vertical-rl"
-)
-
-type FeGaussianBlurXmlSpace string
-
-const (
-	FeGaussianBlurXmlSpaceDefault  FeGaussianBlurXmlSpace = "default"
-	FeGaussianBlurXmlSpacePreserve FeGaussianBlurXmlSpace = "preserve"
-)
-
-func (e *FeGaussianBlurElement) EdgeMode(a FeGaussianBlurEdgeMode) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) EdgeMode(a EdgeMode) *FeGaussianBlurElement {
 	e.attributes.Set("edgeMode", string(a))
 
 	return e
@@ -434,14 +217,10 @@ func (e *FeGaussianBlurElement) Y(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) AlignmentBaseline(a FeGaussianBlurAlignmentBaseline) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) AlignmentBaseline(a AlignmentBaseline) *FeGaussianBlurElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeGaussianBlurAlignmentBaselineCustom(s string) FeGaussianBlurAlignmentBaseline {
-	return FeGaussianBlurAlignmentBaseline(s)
 }
 
 func (e *FeGaussianBlurElement) AriaUnsafe(name string, s string) *FeGaussianBlurElement {
@@ -495,14 +274,10 @@ func (e *FeGaussianBlurElement) ClipPath(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) ClipRule(a FeGaussianBlurClipRule) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) ClipRule(a ClipRule) *FeGaussianBlurElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeGaussianBlurClipRuleCustom(s string) FeGaussianBlurClipRule {
-	return FeGaussianBlurClipRule(s)
 }
 
 func (e *FeGaussianBlurElement) Color(s string) *FeGaussianBlurElement {
@@ -511,24 +286,16 @@ func (e *FeGaussianBlurElement) Color(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) ColorInterpolation(a FeGaussianBlurColorInterpolation) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) ColorInterpolation(a ColorInterpolation) *FeGaussianBlurElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeGaussianBlurColorInterpolationCustom(s string) FeGaussianBlurColorInterpolation {
-	return FeGaussianBlurColorInterpolation(s)
-}
-
-func (e *FeGaussianBlurElement) ColorInterpolationFilters(a FeGaussianBlurColorInterpolationFilters) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeGaussianBlurElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeGaussianBlurColorInterpolationFiltersCustom(s string) FeGaussianBlurColorInterpolationFilters {
-	return FeGaussianBlurColorInterpolationFilters(s)
 }
 
 func (e *FeGaussianBlurElement) Cursor(s string) *FeGaussianBlurElement {
@@ -553,14 +320,10 @@ func (e *FeGaussianBlurElement) Data(name string, s string) *FeGaussianBlurEleme
 	return e
 }
 
-func (e *FeGaussianBlurElement) Direction(a FeGaussianBlurDirection) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) Direction(a Direction) *FeGaussianBlurElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeGaussianBlurDirectionCustom(s string) FeGaussianBlurDirection {
-	return FeGaussianBlurDirection(s)
 }
 
 func (e *FeGaussianBlurElement) Display(s string) *FeGaussianBlurElement {
@@ -569,14 +332,10 @@ func (e *FeGaussianBlurElement) Display(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) DominantBaseline(a FeGaussianBlurDominantBaseline) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) DominantBaseline(a DominantBaseline) *FeGaussianBlurElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeGaussianBlurDominantBaselineCustom(s string) FeGaussianBlurDominantBaseline {
-	return FeGaussianBlurDominantBaseline(s)
 }
 
 func (e *FeGaussianBlurElement) Fill(s string) *FeGaussianBlurElement {
@@ -591,14 +350,10 @@ func (e *FeGaussianBlurElement) FillOpacity(f float64) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) FillRule(a FeGaussianBlurFillRule) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) FillRule(a FillRule) *FeGaussianBlurElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeGaussianBlurFillRuleCustom(s string) FeGaussianBlurFillRule {
-	return FeGaussianBlurFillRule(s)
 }
 
 func (e *FeGaussianBlurElement) Filter(s string) *FeGaussianBlurElement {
@@ -643,14 +398,10 @@ func (e *FeGaussianBlurElement) FontStretch(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) FontStyle(a FeGaussianBlurFontStyle) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) FontStyle(a FontStyle) *FeGaussianBlurElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeGaussianBlurFontStyleCustom(s string) FeGaussianBlurFontStyle {
-	return FeGaussianBlurFontStyle(s)
 }
 
 func (e *FeGaussianBlurElement) FontVariant(s string) *FeGaussianBlurElement {
@@ -689,14 +440,10 @@ func (e *FeGaussianBlurElement) Id(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) ImageRendering(a FeGaussianBlurImageRendering) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) ImageRendering(a ImageRendering) *FeGaussianBlurElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeGaussianBlurImageRenderingCustom(s string) FeGaussianBlurImageRendering {
-	return FeGaussianBlurImageRendering(s)
 }
 
 func (e *FeGaussianBlurElement) Lang(s string) *FeGaussianBlurElement {
@@ -747,14 +494,10 @@ func (e *FeGaussianBlurElement) Opacity(f float64) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) Overflow(a FeGaussianBlurOverflow) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) Overflow(a Overflow) *FeGaussianBlurElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeGaussianBlurOverflowCustom(s string) FeGaussianBlurOverflow {
-	return FeGaussianBlurOverflow(s)
 }
 
 func (e *FeGaussianBlurElement) PaintOrder(s string) *FeGaussianBlurElement {
@@ -763,14 +506,10 @@ func (e *FeGaussianBlurElement) PaintOrder(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) PointerEvents(a FeGaussianBlurPointerEvents) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) PointerEvents(a PointerEvents) *FeGaussianBlurElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeGaussianBlurPointerEventsCustom(s string) FeGaussianBlurPointerEvents {
-	return FeGaussianBlurPointerEvents(s)
 }
 
 func (e *FeGaussianBlurElement) RequiredExtensions(s string) *FeGaussianBlurElement {
@@ -779,14 +518,10 @@ func (e *FeGaussianBlurElement) RequiredExtensions(s string) *FeGaussianBlurElem
 	return e
 }
 
-func (e *FeGaussianBlurElement) ShapeRendering(a FeGaussianBlurShapeRendering) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) ShapeRendering(a ShapeRendering) *FeGaussianBlurElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeGaussianBlurShapeRenderingCustom(s string) FeGaussianBlurShapeRendering {
-	return FeGaussianBlurShapeRendering(s)
 }
 
 func (e *FeGaussianBlurElement) StopColor(s string) *FeGaussianBlurElement {
@@ -819,24 +554,16 @@ func (e *FeGaussianBlurElement) StrokeDashoffset(s string) *FeGaussianBlurElemen
 	return e
 }
 
-func (e *FeGaussianBlurElement) StrokeLinecap(a FeGaussianBlurStrokeLinecap) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) StrokeLinecap(a StrokeLinecap) *FeGaussianBlurElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeGaussianBlurStrokeLinecapCustom(s string) FeGaussianBlurStrokeLinecap {
-	return FeGaussianBlurStrokeLinecap(s)
-}
-
-func (e *FeGaussianBlurElement) StrokeLinejoin(a FeGaussianBlurStrokeLinejoin) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) StrokeLinejoin(a StrokeLinejoin) *FeGaussianBlurElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeGaussianBlurStrokeLinejoinCustom(s string) FeGaussianBlurStrokeLinejoin {
-	return FeGaussianBlurStrokeLinejoin(s)
 }
 
 func (e *FeGaussianBlurElement) StrokeMiterlimit(f float64) *FeGaussianBlurElement {
@@ -869,14 +596,10 @@ func (e *FeGaussianBlurElement) Tabindex(i int) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) TextAnchor(a FeGaussianBlurTextAnchor) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) TextAnchor(a TextAnchor) *FeGaussianBlurElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeGaussianBlurTextAnchorCustom(s string) FeGaussianBlurTextAnchor {
-	return FeGaussianBlurTextAnchor(s)
 }
 
 func (e *FeGaussianBlurElement) TextDecoration(s string) *FeGaussianBlurElement {
@@ -891,14 +614,10 @@ func (e *FeGaussianBlurElement) TextOverflow(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) TextRendering(a FeGaussianBlurTextRendering) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) TextRendering(a TextRendering) *FeGaussianBlurElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeGaussianBlurTextRenderingCustom(s string) FeGaussianBlurTextRendering {
-	return FeGaussianBlurTextRendering(s)
 }
 
 func (e *FeGaussianBlurElement) Transform(s string) *FeGaussianBlurElement {
@@ -907,14 +626,10 @@ func (e *FeGaussianBlurElement) Transform(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) TransformBox(a FeGaussianBlurTransformBox) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) TransformBox(a TransformBox) *FeGaussianBlurElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeGaussianBlurTransformBoxCustom(s string) FeGaussianBlurTransformBox {
-	return FeGaussianBlurTransformBox(s)
 }
 
 func (e *FeGaussianBlurElement) TransformOrigin(s string) *FeGaussianBlurElement {
@@ -929,24 +644,16 @@ func (e *FeGaussianBlurElement) UnicodeBidi(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) VectorEffect(a FeGaussianBlurVectorEffect) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) VectorEffect(a VectorEffect) *FeGaussianBlurElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeGaussianBlurVectorEffectCustom(s string) FeGaussianBlurVectorEffect {
-	return FeGaussianBlurVectorEffect(s)
-}
-
-func (e *FeGaussianBlurElement) Visibility(a FeGaussianBlurVisibility) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) Visibility(a Visibility) *FeGaussianBlurElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeGaussianBlurVisibilityCustom(s string) FeGaussianBlurVisibility {
-	return FeGaussianBlurVisibility(s)
 }
 
 func (e *FeGaussianBlurElement) WhiteSpace(s string) *FeGaussianBlurElement {
@@ -961,14 +668,10 @@ func (e *FeGaussianBlurElement) WordSpacing(s string) *FeGaussianBlurElement {
 	return e
 }
 
-func (e *FeGaussianBlurElement) WritingMode(a FeGaussianBlurWritingMode) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) WritingMode(a WritingMode) *FeGaussianBlurElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeGaussianBlurWritingModeCustom(s string) FeGaussianBlurWritingMode {
-	return FeGaussianBlurWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -983,7 +686,7 @@ func (e *FeGaussianBlurElement) XmlLang(s string) *FeGaussianBlurElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeGaussianBlurElement) XmlSpace(a FeGaussianBlurXmlSpace) *FeGaussianBlurElement {
+func (e *FeGaussianBlurElement) XmlSpace(a XmlSpace) *FeGaussianBlurElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

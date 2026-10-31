@@ -13,6 +13,9 @@ import (
 )
 
 type TemplateElement struct {
+	htemel.PhrasingMarker
+	htemel.MetadataMarker
+	htemel.ScriptSupportingMarker
 	attributes render.Attrs
 	children   []htemel.Node
 	skipRender bool
@@ -20,6 +23,8 @@ type TemplateElement struct {
 
 // Template creates a tag <template> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
+//
+// Children are not checked (htemel.Node): the content model cannot be expressed as a type.
 //
 // Spec Description: The template element is used to declare fragments of HTML that can be cloned and inserted in the document by script.
 func Template(children ...htemel.Node) *TemplateElement {
@@ -164,128 +169,8 @@ func (e *TemplateElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TemplateShadowrootmode string
-
-const (
-	TemplateShadowrootmodeClosed TemplateShadowrootmode = "closed"
-	TemplateShadowrootmodeOpen   TemplateShadowrootmode = "open"
-)
-
-type TemplateShadowrootslotassignment string
-
-const (
-	TemplateShadowrootslotassignmentManual TemplateShadowrootslotassignment = "manual"
-	TemplateShadowrootslotassignmentNamed  TemplateShadowrootslotassignment = "named"
-)
-
-type TemplateAutocapitalize string
-
-const (
-	TemplateAutocapitalizeCharacters TemplateAutocapitalize = "characters"
-	TemplateAutocapitalizeNone       TemplateAutocapitalize = "none"
-	TemplateAutocapitalizeOff        TemplateAutocapitalize = "off"
-	TemplateAutocapitalizeOn         TemplateAutocapitalize = "on"
-	TemplateAutocapitalizeSentences  TemplateAutocapitalize = "sentences"
-	TemplateAutocapitalizeWords      TemplateAutocapitalize = "words"
-)
-
-type TemplateAutocorrect string
-
-const (
-	TemplateAutocorrectOff   TemplateAutocorrect = "off"
-	TemplateAutocorrectOn    TemplateAutocorrect = "on"
-	TemplateAutocorrectEmpty TemplateAutocorrect = ""
-)
-
-type TemplateContenteditable string
-
-const (
-	TemplateContenteditableFalse         TemplateContenteditable = "false"
-	TemplateContenteditablePlaintextOnly TemplateContenteditable = "plaintext-only"
-	TemplateContenteditableTrue          TemplateContenteditable = "true"
-	TemplateContenteditableEmpty         TemplateContenteditable = ""
-)
-
-type TemplateDir string
-
-const (
-	TemplateDirAuto TemplateDir = "auto"
-	TemplateDirLtr  TemplateDir = "ltr"
-	TemplateDirRtl  TemplateDir = "rtl"
-)
-
-type TemplateDraggable string
-
-const (
-	TemplateDraggableFalse TemplateDraggable = "false"
-	TemplateDraggableTrue  TemplateDraggable = "true"
-)
-
-type TemplateEnterkeyhint string
-
-const (
-	TemplateEnterkeyhintDone     TemplateEnterkeyhint = "done"
-	TemplateEnterkeyhintEnter    TemplateEnterkeyhint = "enter"
-	TemplateEnterkeyhintGo       TemplateEnterkeyhint = "go"
-	TemplateEnterkeyhintNext     TemplateEnterkeyhint = "next"
-	TemplateEnterkeyhintPrevious TemplateEnterkeyhint = "previous"
-	TemplateEnterkeyhintSearch   TemplateEnterkeyhint = "search"
-	TemplateEnterkeyhintSend     TemplateEnterkeyhint = "send"
-)
-
-type TemplateHidden string
-
-const (
-	TemplateHiddenHidden     TemplateHidden = "hidden"
-	TemplateHiddenUntilFound TemplateHidden = "until-found"
-	TemplateHiddenEmpty      TemplateHidden = ""
-)
-
-type TemplateInputmode string
-
-const (
-	TemplateInputmodeDecimal TemplateInputmode = "decimal"
-	TemplateInputmodeEmail   TemplateInputmode = "email"
-	TemplateInputmodeNone    TemplateInputmode = "none"
-	TemplateInputmodeNumeric TemplateInputmode = "numeric"
-	TemplateInputmodeSearch  TemplateInputmode = "search"
-	TemplateInputmodeTel     TemplateInputmode = "tel"
-	TemplateInputmodeText    TemplateInputmode = "text"
-	TemplateInputmodeUrl     TemplateInputmode = "url"
-)
-
-type TemplatePopover string
-
-const (
-	TemplatePopoverAuto   TemplatePopover = "auto"
-	TemplatePopoverHint   TemplatePopover = "hint"
-	TemplatePopoverManual TemplatePopover = "manual"
-	TemplatePopoverEmpty  TemplatePopover = ""
-)
-
-type TemplateSpellcheck string
-
-const (
-	TemplateSpellcheckFalse TemplateSpellcheck = "false"
-	TemplateSpellcheckTrue  TemplateSpellcheck = "true"
-	TemplateSpellcheckEmpty TemplateSpellcheck = ""
-)
-
-type TemplateTranslate string
-
-const (
-	TemplateTranslateNo    TemplateTranslate = "no"
-	TemplateTranslateYes   TemplateTranslate = "yes"
-	TemplateTranslateEmpty TemplateTranslate = ""
-)
-
-type TemplateWritingsuggestions string
-
-const (
-	TemplateWritingsuggestionsFalse TemplateWritingsuggestions = "false"
-	TemplateWritingsuggestionsTrue  TemplateWritingsuggestions = "true"
-	TemplateWritingsuggestionsEmpty TemplateWritingsuggestions = ""
-)
+// HTMLColgroupChild marks <template> as a permitted child of <colgroup> (ColgroupChild).
+func (*TemplateElement) HTMLColgroupChild() {}
 
 func (e *TemplateElement) For(s string) *TemplateElement {
 	e.attributes.Set("for", s)
@@ -317,7 +202,7 @@ func (e *TemplateElement) Shadowrootdelegatesfocus(b bool) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Shadowrootmode(a TemplateShadowrootmode) *TemplateElement {
+func (e *TemplateElement) Shadowrootmode(a Shadowrootmode) *TemplateElement {
 	e.attributes.Set("shadowrootmode", string(a))
 
 	return e
@@ -331,7 +216,7 @@ func (e *TemplateElement) Shadowrootserializable(b bool) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Shadowrootslotassignment(a TemplateShadowrootslotassignment) *TemplateElement {
+func (e *TemplateElement) Shadowrootslotassignment(a Shadowrootslotassignment) *TemplateElement {
 	e.attributes.Set("shadowrootslotassignment", string(a))
 
 	return e
@@ -359,7 +244,7 @@ func (e *TemplateElement) Aria(name string, s string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Autocapitalize(a TemplateAutocapitalize) *TemplateElement {
+func (e *TemplateElement) Autocapitalize(a Autocapitalize) *TemplateElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -367,8 +252,8 @@ func (e *TemplateElement) Autocapitalize(a TemplateAutocapitalize) *TemplateElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Autocorrect(v ...TemplateAutocorrect) *TemplateElement {
-	var val TemplateAutocorrect
+func (e *TemplateElement) Autocorrect(v ...Autocorrect) *TemplateElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -393,8 +278,8 @@ func (e *TemplateElement) Class(s ...string) *TemplateElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Contenteditable(v ...TemplateContenteditable) *TemplateElement {
-	var val TemplateContenteditable
+func (e *TemplateElement) Contenteditable(v ...Contenteditable) *TemplateElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,19 +304,19 @@ func (e *TemplateElement) Data(name string, s string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Dir(a TemplateDir) *TemplateElement {
+func (e *TemplateElement) Dir(a Dir) *TemplateElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TemplateElement) Draggable(a TemplateDraggable) *TemplateElement {
+func (e *TemplateElement) Draggable(a Draggable) *TemplateElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TemplateElement) Enterkeyhint(a TemplateEnterkeyhint) *TemplateElement {
+func (e *TemplateElement) Enterkeyhint(a Enterkeyhint) *TemplateElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -459,8 +344,8 @@ func (e *TemplateElement) Headingreset(b bool) *TemplateElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Hidden(v ...TemplateHidden) *TemplateElement {
-	var val TemplateHidden
+func (e *TemplateElement) Hidden(v ...Hidden) *TemplateElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -483,7 +368,7 @@ func (e *TemplateElement) Inert(b bool) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Inputmode(a TemplateInputmode) *TemplateElement {
+func (e *TemplateElement) Inputmode(a Inputmode) *TemplateElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -549,8 +434,8 @@ func (e *TemplateElement) Part(s ...string) *TemplateElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Popover(v ...TemplatePopover) *TemplateElement {
-	var val TemplatePopover
+func (e *TemplateElement) Popover(v ...Popover) *TemplateElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -573,8 +458,8 @@ func (e *TemplateElement) Slot(s string) *TemplateElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Spellcheck(v ...TemplateSpellcheck) *TemplateElement {
-	var val TemplateSpellcheck
+func (e *TemplateElement) Spellcheck(v ...Spellcheck) *TemplateElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -603,8 +488,8 @@ func (e *TemplateElement) Title(s string) *TemplateElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Translate(v ...TemplateTranslate) *TemplateElement {
-	var val TemplateTranslate
+func (e *TemplateElement) Translate(v ...Translate) *TemplateElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -615,8 +500,8 @@ func (e *TemplateElement) Translate(v ...TemplateTranslate) *TemplateElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TemplateElement) Writingsuggestions(v ...TemplateWritingsuggestions) *TemplateElement {
-	var val TemplateWritingsuggestions
+func (e *TemplateElement) Writingsuggestions(v ...Writingsuggestions) *TemplateElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

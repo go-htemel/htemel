@@ -12,17 +12,35 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// RubyChild is a permitted child of <ruby>: <rp>, <rt>, phrasing content.
+//
+// It is implemented by <a>, <abbr>, <area>, <audio>, <b>, <bdi>, <bdo>, <br>, <button>, <canvas>,
+// <cite>, <code>, <data>, <datalist>, <del>, <dfn>, <em>, <embed>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <link>, <map>, <mark>, <meta>, <meter>, <noscript>, <object>, <output>,
+// <picture>, <progress>, <q>, <rp>, <rt>, <ruby>, <s>, <samp>, <script>, <select>, <slot>,
+// <small>, <span>, <strong>, <sub>, <sup>, <template>, <textarea>, <time>, <u>, <var>, <video>,
+// <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.PhrasingMarker and
+// by the unchecked nodes of package htemel (Group, Each, If, Unchecked, ...).
+type RubyChild interface {
+	htemel.Node
+	HTMLRubyChild()
+}
+
 type RubyElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []RubyChild
 	skipRender bool
 }
 
 // Ruby creates a tag <ruby> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <rp>, <rt>, phrasing content (RubyChild).
+//
 // Spec Description: The ruby element allows one or more spans of phrasing content to be marked with ruby annotations. Ruby annotations are short runs of text presented alongside base text, primarily used in East Asian typography as a guide for pronunciation or to include other annotations. In Japanese, this form of typography is also known as furigana.
-func Ruby(children ...htemel.Node) *RubyElement {
+func Ruby(children ...RubyChild) *RubyElement {
 	node := &RubyElement{
 		children: children,
 	}
@@ -31,7 +49,7 @@ func Ruby(children ...htemel.Node) *RubyElement {
 }
 
 // RubyIf creates a tag <ruby> instance that is only rendered when condition is true.
-func RubyIf(condition bool, children ...htemel.Node) *RubyElement {
+func RubyIf(condition bool, children ...RubyChild) *RubyElement {
 	if condition {
 		return Ruby(children...)
 	}
@@ -43,7 +61,7 @@ func RubyIf(condition bool, children ...htemel.Node) *RubyElement {
 }
 
 // RubyTernary creates a tag <ruby> containing then when condition is true, otherwise containing otherwise.
-func RubyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RubyElement {
+func RubyTernary(condition bool, then RubyChild, otherwise RubyChild) *RubyElement {
 	if condition {
 		return Ruby(then)
 	}
@@ -51,7 +69,7 @@ func RubyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RubyE
 }
 
 // Children appends children to this element.
-func (e *RubyElement) Children(children ...htemel.Node) *RubyElement {
+func (e *RubyElement) Children(children ...RubyChild) *RubyElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +92,7 @@ func (e *RubyElement) Textf(format string, args ...any) *RubyElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *RubyElement) If(cond bool, child htemel.Node) *RubyElement {
+func (e *RubyElement) If(cond bool, child RubyChild) *RubyElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +100,7 @@ func (e *RubyElement) If(cond bool, child htemel.Node) *RubyElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *RubyElement) IfElse(cond bool, then, els htemel.Node) *RubyElement {
+func (e *RubyElement) IfElse(cond bool, then, els RubyChild) *RubyElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +182,6 @@ func (e *RubyElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type RubyAutocapitalize string
-
-const (
-	RubyAutocapitalizeCharacters RubyAutocapitalize = "characters"
-	RubyAutocapitalizeNone       RubyAutocapitalize = "none"
-	RubyAutocapitalizeOff        RubyAutocapitalize = "off"
-	RubyAutocapitalizeOn         RubyAutocapitalize = "on"
-	RubyAutocapitalizeSentences  RubyAutocapitalize = "sentences"
-	RubyAutocapitalizeWords      RubyAutocapitalize = "words"
-)
-
-type RubyAutocorrect string
-
-const (
-	RubyAutocorrectOff   RubyAutocorrect = "off"
-	RubyAutocorrectOn    RubyAutocorrect = "on"
-	RubyAutocorrectEmpty RubyAutocorrect = ""
-)
-
-type RubyContenteditable string
-
-const (
-	RubyContenteditableFalse         RubyContenteditable = "false"
-	RubyContenteditablePlaintextOnly RubyContenteditable = "plaintext-only"
-	RubyContenteditableTrue          RubyContenteditable = "true"
-	RubyContenteditableEmpty         RubyContenteditable = ""
-)
-
-type RubyDir string
-
-const (
-	RubyDirAuto RubyDir = "auto"
-	RubyDirLtr  RubyDir = "ltr"
-	RubyDirRtl  RubyDir = "rtl"
-)
-
-type RubyDraggable string
-
-const (
-	RubyDraggableFalse RubyDraggable = "false"
-	RubyDraggableTrue  RubyDraggable = "true"
-)
-
-type RubyEnterkeyhint string
-
-const (
-	RubyEnterkeyhintDone     RubyEnterkeyhint = "done"
-	RubyEnterkeyhintEnter    RubyEnterkeyhint = "enter"
-	RubyEnterkeyhintGo       RubyEnterkeyhint = "go"
-	RubyEnterkeyhintNext     RubyEnterkeyhint = "next"
-	RubyEnterkeyhintPrevious RubyEnterkeyhint = "previous"
-	RubyEnterkeyhintSearch   RubyEnterkeyhint = "search"
-	RubyEnterkeyhintSend     RubyEnterkeyhint = "send"
-)
-
-type RubyHidden string
-
-const (
-	RubyHiddenHidden     RubyHidden = "hidden"
-	RubyHiddenUntilFound RubyHidden = "until-found"
-	RubyHiddenEmpty      RubyHidden = ""
-)
-
-type RubyInputmode string
-
-const (
-	RubyInputmodeDecimal RubyInputmode = "decimal"
-	RubyInputmodeEmail   RubyInputmode = "email"
-	RubyInputmodeNone    RubyInputmode = "none"
-	RubyInputmodeNumeric RubyInputmode = "numeric"
-	RubyInputmodeSearch  RubyInputmode = "search"
-	RubyInputmodeTel     RubyInputmode = "tel"
-	RubyInputmodeText    RubyInputmode = "text"
-	RubyInputmodeUrl     RubyInputmode = "url"
-)
-
-type RubyPopover string
-
-const (
-	RubyPopoverAuto   RubyPopover = "auto"
-	RubyPopoverHint   RubyPopover = "hint"
-	RubyPopoverManual RubyPopover = "manual"
-	RubyPopoverEmpty  RubyPopover = ""
-)
-
-type RubySpellcheck string
-
-const (
-	RubySpellcheckFalse RubySpellcheck = "false"
-	RubySpellcheckTrue  RubySpellcheck = "true"
-	RubySpellcheckEmpty RubySpellcheck = ""
-)
-
-type RubyTranslate string
-
-const (
-	RubyTranslateNo    RubyTranslate = "no"
-	RubyTranslateYes   RubyTranslate = "yes"
-	RubyTranslateEmpty RubyTranslate = ""
-)
-
-type RubyWritingsuggestions string
-
-const (
-	RubyWritingsuggestionsFalse RubyWritingsuggestions = "false"
-	RubyWritingsuggestionsTrue  RubyWritingsuggestions = "true"
-	RubyWritingsuggestionsEmpty RubyWritingsuggestions = ""
-)
-
 func (e *RubyElement) Accesskey(r rune) *RubyElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +204,7 @@ func (e *RubyElement) Aria(name string, s string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Autocapitalize(a RubyAutocapitalize) *RubyElement {
+func (e *RubyElement) Autocapitalize(a Autocapitalize) *RubyElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +212,8 @@ func (e *RubyElement) Autocapitalize(a RubyAutocapitalize) *RubyElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Autocorrect(v ...RubyAutocorrect) *RubyElement {
-	var val RubyAutocorrect
+func (e *RubyElement) Autocorrect(v ...Autocorrect) *RubyElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +238,8 @@ func (e *RubyElement) Class(s ...string) *RubyElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Contenteditable(v ...RubyContenteditable) *RubyElement {
-	var val RubyContenteditable
+func (e *RubyElement) Contenteditable(v ...Contenteditable) *RubyElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +264,19 @@ func (e *RubyElement) Data(name string, s string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Dir(a RubyDir) *RubyElement {
+func (e *RubyElement) Dir(a Dir) *RubyElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *RubyElement) Draggable(a RubyDraggable) *RubyElement {
+func (e *RubyElement) Draggable(a Draggable) *RubyElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *RubyElement) Enterkeyhint(a RubyEnterkeyhint) *RubyElement {
+func (e *RubyElement) Enterkeyhint(a Enterkeyhint) *RubyElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +304,8 @@ func (e *RubyElement) Headingreset(b bool) *RubyElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Hidden(v ...RubyHidden) *RubyElement {
-	var val RubyHidden
+func (e *RubyElement) Hidden(v ...Hidden) *RubyElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +328,7 @@ func (e *RubyElement) Inert(b bool) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Inputmode(a RubyInputmode) *RubyElement {
+func (e *RubyElement) Inputmode(a Inputmode) *RubyElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +394,8 @@ func (e *RubyElement) Part(s ...string) *RubyElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Popover(v ...RubyPopover) *RubyElement {
-	var val RubyPopover
+func (e *RubyElement) Popover(v ...Popover) *RubyElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +418,8 @@ func (e *RubyElement) Slot(s string) *RubyElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Spellcheck(v ...RubySpellcheck) *RubyElement {
-	var val RubySpellcheck
+func (e *RubyElement) Spellcheck(v ...Spellcheck) *RubyElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +448,8 @@ func (e *RubyElement) Title(s string) *RubyElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Translate(v ...RubyTranslate) *RubyElement {
-	var val RubyTranslate
+func (e *RubyElement) Translate(v ...Translate) *RubyElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +460,8 @@ func (e *RubyElement) Translate(v ...RubyTranslate) *RubyElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *RubyElement) Writingsuggestions(v ...RubyWritingsuggestions) *RubyElement {
-	var val RubyWritingsuggestions
+func (e *RubyElement) Writingsuggestions(v ...Writingsuggestions) *RubyElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

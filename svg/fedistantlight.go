@@ -14,15 +14,17 @@ import (
 
 type FeDistantLightElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeDistantLight creates a tag <feDistantLight> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feDistantLight filter primitive defines a distant light source for lighting filters.
-func FeDistantLight(children ...htemel.Node) *FeDistantLightElement {
+func FeDistantLight(children ...Content) *FeDistantLightElement {
 	node := &FeDistantLightElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeDistantLight(children ...htemel.Node) *FeDistantLightElement {
 }
 
 // FeDistantLightIf creates a tag <feDistantLight> instance that is only rendered when condition is true.
-func FeDistantLightIf(condition bool, children ...htemel.Node) *FeDistantLightElement {
+func FeDistantLightIf(condition bool, children ...Content) *FeDistantLightElement {
 	if condition {
 		return FeDistantLight(children...)
 	}
@@ -43,7 +45,7 @@ func FeDistantLightIf(condition bool, children ...htemel.Node) *FeDistantLightEl
 }
 
 // FeDistantLightTernary creates a tag <feDistantLight> containing then when condition is true, otherwise containing otherwise.
-func FeDistantLightTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeDistantLightElement {
+func FeDistantLightTernary(condition bool, then Content, otherwise Content) *FeDistantLightElement {
 	if condition {
 		return FeDistantLight(then)
 	}
@@ -51,7 +53,7 @@ func FeDistantLightTernary(condition bool, then htemel.Node, otherwise htemel.No
 }
 
 // Children appends children to this element.
-func (e *FeDistantLightElement) Children(children ...htemel.Node) *FeDistantLightElement {
+func (e *FeDistantLightElement) Children(children ...Content) *FeDistantLightElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeDistantLightElement) Textf(format string, args ...any) *FeDistantLigh
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeDistantLightElement) If(cond bool, child htemel.Node) *FeDistantLightElement {
+func (e *FeDistantLightElement) If(cond bool, child Content) *FeDistantLightElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeDistantLightElement) If(cond bool, child htemel.Node) *FeDistantLight
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeDistantLightElement) IfElse(cond bool, then, els htemel.Node) *FeDistantLightElement {
+func (e *FeDistantLightElement) IfElse(cond bool, then, els Content) *FeDistantLightElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeDistantLightElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeDistantLightAlignmentBaseline string
-
-const (
-	FeDistantLightAlignmentBaselineAfterEdge      FeDistantLightAlignmentBaseline = "after-edge"
-	FeDistantLightAlignmentBaselineAlphabetic     FeDistantLightAlignmentBaseline = "alphabetic"
-	FeDistantLightAlignmentBaselineAuto           FeDistantLightAlignmentBaseline = "auto"
-	FeDistantLightAlignmentBaselineBaseline       FeDistantLightAlignmentBaseline = "baseline"
-	FeDistantLightAlignmentBaselineBeforeEdge     FeDistantLightAlignmentBaseline = "before-edge"
-	FeDistantLightAlignmentBaselineBottom         FeDistantLightAlignmentBaseline = "bottom"
-	FeDistantLightAlignmentBaselineCenter         FeDistantLightAlignmentBaseline = "center"
-	FeDistantLightAlignmentBaselineCentral        FeDistantLightAlignmentBaseline = "central"
-	FeDistantLightAlignmentBaselineHanging        FeDistantLightAlignmentBaseline = "hanging"
-	FeDistantLightAlignmentBaselineIdeographic    FeDistantLightAlignmentBaseline = "ideographic"
-	FeDistantLightAlignmentBaselineMathematical   FeDistantLightAlignmentBaseline = "mathematical"
-	FeDistantLightAlignmentBaselineMiddle         FeDistantLightAlignmentBaseline = "middle"
-	FeDistantLightAlignmentBaselineTextAfterEdge  FeDistantLightAlignmentBaseline = "text-after-edge"
-	FeDistantLightAlignmentBaselineTextBeforeEdge FeDistantLightAlignmentBaseline = "text-before-edge"
-	FeDistantLightAlignmentBaselineTextBottom     FeDistantLightAlignmentBaseline = "text-bottom"
-	FeDistantLightAlignmentBaselineTextTop        FeDistantLightAlignmentBaseline = "text-top"
-	FeDistantLightAlignmentBaselineTop            FeDistantLightAlignmentBaseline = "top"
-)
-
-type FeDistantLightClipRule string
-
-const (
-	FeDistantLightClipRuleEvenodd FeDistantLightClipRule = "evenodd"
-	FeDistantLightClipRuleNonzero FeDistantLightClipRule = "nonzero"
-)
-
-type FeDistantLightColorInterpolation string
-
-const (
-	FeDistantLightColorInterpolationAuto      FeDistantLightColorInterpolation = "auto"
-	FeDistantLightColorInterpolationLinearRGB FeDistantLightColorInterpolation = "linearRGB"
-	FeDistantLightColorInterpolationSRGB      FeDistantLightColorInterpolation = "sRGB"
-)
-
-type FeDistantLightColorInterpolationFilters string
-
-const (
-	FeDistantLightColorInterpolationFiltersAuto      FeDistantLightColorInterpolationFilters = "auto"
-	FeDistantLightColorInterpolationFiltersLinearRGB FeDistantLightColorInterpolationFilters = "linearRGB"
-	FeDistantLightColorInterpolationFiltersSRGB      FeDistantLightColorInterpolationFilters = "sRGB"
-)
-
-type FeDistantLightDirection string
-
-const (
-	FeDistantLightDirectionLtr FeDistantLightDirection = "ltr"
-	FeDistantLightDirectionRtl FeDistantLightDirection = "rtl"
-)
-
-type FeDistantLightDominantBaseline string
-
-const (
-	FeDistantLightDominantBaselineAlphabetic   FeDistantLightDominantBaseline = "alphabetic"
-	FeDistantLightDominantBaselineAuto         FeDistantLightDominantBaseline = "auto"
-	FeDistantLightDominantBaselineCentral      FeDistantLightDominantBaseline = "central"
-	FeDistantLightDominantBaselineHanging      FeDistantLightDominantBaseline = "hanging"
-	FeDistantLightDominantBaselineIdeographic  FeDistantLightDominantBaseline = "ideographic"
-	FeDistantLightDominantBaselineMathematical FeDistantLightDominantBaseline = "mathematical"
-	FeDistantLightDominantBaselineMiddle       FeDistantLightDominantBaseline = "middle"
-	FeDistantLightDominantBaselineTextBottom   FeDistantLightDominantBaseline = "text-bottom"
-	FeDistantLightDominantBaselineTextTop      FeDistantLightDominantBaseline = "text-top"
-)
-
-type FeDistantLightFillRule string
-
-const (
-	FeDistantLightFillRuleEvenodd FeDistantLightFillRule = "evenodd"
-	FeDistantLightFillRuleNonzero FeDistantLightFillRule = "nonzero"
-)
-
-type FeDistantLightFontStyle string
-
-const (
-	FeDistantLightFontStyleItalic  FeDistantLightFontStyle = "italic"
-	FeDistantLightFontStyleNormal  FeDistantLightFontStyle = "normal"
-	FeDistantLightFontStyleOblique FeDistantLightFontStyle = "oblique"
-)
-
-type FeDistantLightImageRendering string
-
-const (
-	FeDistantLightImageRenderingAuto            FeDistantLightImageRendering = "auto"
-	FeDistantLightImageRenderingCrispEdges      FeDistantLightImageRendering = "crisp-edges"
-	FeDistantLightImageRenderingHighQuality     FeDistantLightImageRendering = "high-quality"
-	FeDistantLightImageRenderingOptimizeQuality FeDistantLightImageRendering = "optimizeQuality"
-	FeDistantLightImageRenderingOptimizeSpeed   FeDistantLightImageRendering = "optimizeSpeed"
-	FeDistantLightImageRenderingPixelated       FeDistantLightImageRendering = "pixelated"
-	FeDistantLightImageRenderingSmooth          FeDistantLightImageRendering = "smooth"
-)
-
-type FeDistantLightOverflow string
-
-const (
-	FeDistantLightOverflowAuto    FeDistantLightOverflow = "auto"
-	FeDistantLightOverflowClip    FeDistantLightOverflow = "clip"
-	FeDistantLightOverflowHidden  FeDistantLightOverflow = "hidden"
-	FeDistantLightOverflowScroll  FeDistantLightOverflow = "scroll"
-	FeDistantLightOverflowVisible FeDistantLightOverflow = "visible"
-)
-
-type FeDistantLightPointerEvents string
-
-const (
-	FeDistantLightPointerEventsAll            FeDistantLightPointerEvents = "all"
-	FeDistantLightPointerEventsAuto           FeDistantLightPointerEvents = "auto"
-	FeDistantLightPointerEventsBoundingBox    FeDistantLightPointerEvents = "bounding-box"
-	FeDistantLightPointerEventsFill           FeDistantLightPointerEvents = "fill"
-	FeDistantLightPointerEventsNone           FeDistantLightPointerEvents = "none"
-	FeDistantLightPointerEventsPainted        FeDistantLightPointerEvents = "painted"
-	FeDistantLightPointerEventsStroke         FeDistantLightPointerEvents = "stroke"
-	FeDistantLightPointerEventsVisible        FeDistantLightPointerEvents = "visible"
-	FeDistantLightPointerEventsVisibleFill    FeDistantLightPointerEvents = "visibleFill"
-	FeDistantLightPointerEventsVisiblePainted FeDistantLightPointerEvents = "visiblePainted"
-	FeDistantLightPointerEventsVisibleStroke  FeDistantLightPointerEvents = "visibleStroke"
-)
-
-type FeDistantLightShapeRendering string
-
-const (
-	FeDistantLightShapeRenderingAuto               FeDistantLightShapeRendering = "auto"
-	FeDistantLightShapeRenderingCrispEdges         FeDistantLightShapeRendering = "crispEdges"
-	FeDistantLightShapeRenderingGeometricPrecision FeDistantLightShapeRendering = "geometricPrecision"
-	FeDistantLightShapeRenderingOptimizeSpeed      FeDistantLightShapeRendering = "optimizeSpeed"
-)
-
-type FeDistantLightStrokeLinecap string
-
-const (
-	FeDistantLightStrokeLinecapButt   FeDistantLightStrokeLinecap = "butt"
-	FeDistantLightStrokeLinecapRound  FeDistantLightStrokeLinecap = "round"
-	FeDistantLightStrokeLinecapSquare FeDistantLightStrokeLinecap = "square"
-)
-
-type FeDistantLightStrokeLinejoin string
-
-const (
-	FeDistantLightStrokeLinejoinArcs      FeDistantLightStrokeLinejoin = "arcs"
-	FeDistantLightStrokeLinejoinBevel     FeDistantLightStrokeLinejoin = "bevel"
-	FeDistantLightStrokeLinejoinMiter     FeDistantLightStrokeLinejoin = "miter"
-	FeDistantLightStrokeLinejoinMiterClip FeDistantLightStrokeLinejoin = "miter-clip"
-	FeDistantLightStrokeLinejoinRound     FeDistantLightStrokeLinejoin = "round"
-)
-
-type FeDistantLightTextAnchor string
-
-const (
-	FeDistantLightTextAnchorEnd    FeDistantLightTextAnchor = "end"
-	FeDistantLightTextAnchorMiddle FeDistantLightTextAnchor = "middle"
-	FeDistantLightTextAnchorStart  FeDistantLightTextAnchor = "start"
-)
-
-type FeDistantLightTextRendering string
-
-const (
-	FeDistantLightTextRenderingAuto               FeDistantLightTextRendering = "auto"
-	FeDistantLightTextRenderingGeometricPrecision FeDistantLightTextRendering = "geometricPrecision"
-	FeDistantLightTextRenderingOptimizeLegibility FeDistantLightTextRendering = "optimizeLegibility"
-	FeDistantLightTextRenderingOptimizeSpeed      FeDistantLightTextRendering = "optimizeSpeed"
-)
-
-type FeDistantLightTransformBox string
-
-const (
-	FeDistantLightTransformBoxBorderBox  FeDistantLightTransformBox = "border-box"
-	FeDistantLightTransformBoxContentBox FeDistantLightTransformBox = "content-box"
-	FeDistantLightTransformBoxFillBox    FeDistantLightTransformBox = "fill-box"
-	FeDistantLightTransformBoxStrokeBox  FeDistantLightTransformBox = "stroke-box"
-	FeDistantLightTransformBoxViewBox    FeDistantLightTransformBox = "view-box"
-)
-
-type FeDistantLightVectorEffect string
-
-const (
-	FeDistantLightVectorEffectFixedPosition    FeDistantLightVectorEffect = "fixed-position"
-	FeDistantLightVectorEffectNonRotation      FeDistantLightVectorEffect = "non-rotation"
-	FeDistantLightVectorEffectNonScalingSize   FeDistantLightVectorEffect = "non-scaling-size"
-	FeDistantLightVectorEffectNonScalingStroke FeDistantLightVectorEffect = "non-scaling-stroke"
-	FeDistantLightVectorEffectNone             FeDistantLightVectorEffect = "none"
-)
-
-type FeDistantLightVisibility string
-
-const (
-	FeDistantLightVisibilityCollapse FeDistantLightVisibility = "collapse"
-	FeDistantLightVisibilityHidden   FeDistantLightVisibility = "hidden"
-	FeDistantLightVisibilityVisible  FeDistantLightVisibility = "visible"
-)
-
-type FeDistantLightWritingMode string
-
-const (
-	FeDistantLightWritingModeHorizontalTb FeDistantLightWritingMode = "horizontal-tb"
-	FeDistantLightWritingModeLr           FeDistantLightWritingMode = "lr"
-	FeDistantLightWritingModeLrTb         FeDistantLightWritingMode = "lr-tb"
-	FeDistantLightWritingModeRl           FeDistantLightWritingMode = "rl"
-	FeDistantLightWritingModeRlTb         FeDistantLightWritingMode = "rl-tb"
-	FeDistantLightWritingModeSidewaysLr   FeDistantLightWritingMode = "sideways-lr"
-	FeDistantLightWritingModeSidewaysRl   FeDistantLightWritingMode = "sideways-rl"
-	FeDistantLightWritingModeTb           FeDistantLightWritingMode = "tb"
-	FeDistantLightWritingModeTbRl         FeDistantLightWritingMode = "tb-rl"
-	FeDistantLightWritingModeVerticalLr   FeDistantLightWritingMode = "vertical-lr"
-	FeDistantLightWritingModeVerticalRl   FeDistantLightWritingMode = "vertical-rl"
-)
-
-type FeDistantLightXmlSpace string
-
-const (
-	FeDistantLightXmlSpaceDefault  FeDistantLightXmlSpace = "default"
-	FeDistantLightXmlSpacePreserve FeDistantLightXmlSpace = "preserve"
-)
+// SVGContent marks <feDistantLight> as a permitted child (Content).
+func (*FeDistantLightElement) SVGContent() {}
 
 func (e *FeDistantLightElement) Azimuth(f float64) *FeDistantLightElement {
 	e.attributes.Set("azimuth", strconv.FormatFloat(f, 'g', -1, 64))
@@ -390,14 +181,10 @@ func (e *FeDistantLightElement) Elevation(f float64) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) AlignmentBaseline(a FeDistantLightAlignmentBaseline) *FeDistantLightElement {
+func (e *FeDistantLightElement) AlignmentBaseline(a AlignmentBaseline) *FeDistantLightElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeDistantLightAlignmentBaselineCustom(s string) FeDistantLightAlignmentBaseline {
-	return FeDistantLightAlignmentBaseline(s)
 }
 
 func (e *FeDistantLightElement) AriaUnsafe(name string, s string) *FeDistantLightElement {
@@ -451,14 +238,10 @@ func (e *FeDistantLightElement) ClipPath(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) ClipRule(a FeDistantLightClipRule) *FeDistantLightElement {
+func (e *FeDistantLightElement) ClipRule(a ClipRule) *FeDistantLightElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeDistantLightClipRuleCustom(s string) FeDistantLightClipRule {
-	return FeDistantLightClipRule(s)
 }
 
 func (e *FeDistantLightElement) Color(s string) *FeDistantLightElement {
@@ -467,24 +250,16 @@ func (e *FeDistantLightElement) Color(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) ColorInterpolation(a FeDistantLightColorInterpolation) *FeDistantLightElement {
+func (e *FeDistantLightElement) ColorInterpolation(a ColorInterpolation) *FeDistantLightElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeDistantLightColorInterpolationCustom(s string) FeDistantLightColorInterpolation {
-	return FeDistantLightColorInterpolation(s)
-}
-
-func (e *FeDistantLightElement) ColorInterpolationFilters(a FeDistantLightColorInterpolationFilters) *FeDistantLightElement {
+func (e *FeDistantLightElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeDistantLightElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeDistantLightColorInterpolationFiltersCustom(s string) FeDistantLightColorInterpolationFilters {
-	return FeDistantLightColorInterpolationFilters(s)
 }
 
 func (e *FeDistantLightElement) Cursor(s string) *FeDistantLightElement {
@@ -509,14 +284,10 @@ func (e *FeDistantLightElement) Data(name string, s string) *FeDistantLightEleme
 	return e
 }
 
-func (e *FeDistantLightElement) Direction(a FeDistantLightDirection) *FeDistantLightElement {
+func (e *FeDistantLightElement) Direction(a Direction) *FeDistantLightElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeDistantLightDirectionCustom(s string) FeDistantLightDirection {
-	return FeDistantLightDirection(s)
 }
 
 func (e *FeDistantLightElement) Display(s string) *FeDistantLightElement {
@@ -525,14 +296,10 @@ func (e *FeDistantLightElement) Display(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) DominantBaseline(a FeDistantLightDominantBaseline) *FeDistantLightElement {
+func (e *FeDistantLightElement) DominantBaseline(a DominantBaseline) *FeDistantLightElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeDistantLightDominantBaselineCustom(s string) FeDistantLightDominantBaseline {
-	return FeDistantLightDominantBaseline(s)
 }
 
 func (e *FeDistantLightElement) Fill(s string) *FeDistantLightElement {
@@ -547,14 +314,10 @@ func (e *FeDistantLightElement) FillOpacity(f float64) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) FillRule(a FeDistantLightFillRule) *FeDistantLightElement {
+func (e *FeDistantLightElement) FillRule(a FillRule) *FeDistantLightElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeDistantLightFillRuleCustom(s string) FeDistantLightFillRule {
-	return FeDistantLightFillRule(s)
 }
 
 func (e *FeDistantLightElement) Filter(s string) *FeDistantLightElement {
@@ -599,14 +362,10 @@ func (e *FeDistantLightElement) FontStretch(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) FontStyle(a FeDistantLightFontStyle) *FeDistantLightElement {
+func (e *FeDistantLightElement) FontStyle(a FontStyle) *FeDistantLightElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeDistantLightFontStyleCustom(s string) FeDistantLightFontStyle {
-	return FeDistantLightFontStyle(s)
 }
 
 func (e *FeDistantLightElement) FontVariant(s string) *FeDistantLightElement {
@@ -645,14 +404,10 @@ func (e *FeDistantLightElement) Id(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) ImageRendering(a FeDistantLightImageRendering) *FeDistantLightElement {
+func (e *FeDistantLightElement) ImageRendering(a ImageRendering) *FeDistantLightElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeDistantLightImageRenderingCustom(s string) FeDistantLightImageRendering {
-	return FeDistantLightImageRendering(s)
 }
 
 func (e *FeDistantLightElement) Lang(s string) *FeDistantLightElement {
@@ -703,14 +458,10 @@ func (e *FeDistantLightElement) Opacity(f float64) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) Overflow(a FeDistantLightOverflow) *FeDistantLightElement {
+func (e *FeDistantLightElement) Overflow(a Overflow) *FeDistantLightElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeDistantLightOverflowCustom(s string) FeDistantLightOverflow {
-	return FeDistantLightOverflow(s)
 }
 
 func (e *FeDistantLightElement) PaintOrder(s string) *FeDistantLightElement {
@@ -719,14 +470,10 @@ func (e *FeDistantLightElement) PaintOrder(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) PointerEvents(a FeDistantLightPointerEvents) *FeDistantLightElement {
+func (e *FeDistantLightElement) PointerEvents(a PointerEvents) *FeDistantLightElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeDistantLightPointerEventsCustom(s string) FeDistantLightPointerEvents {
-	return FeDistantLightPointerEvents(s)
 }
 
 func (e *FeDistantLightElement) RequiredExtensions(s string) *FeDistantLightElement {
@@ -735,14 +482,10 @@ func (e *FeDistantLightElement) RequiredExtensions(s string) *FeDistantLightElem
 	return e
 }
 
-func (e *FeDistantLightElement) ShapeRendering(a FeDistantLightShapeRendering) *FeDistantLightElement {
+func (e *FeDistantLightElement) ShapeRendering(a ShapeRendering) *FeDistantLightElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeDistantLightShapeRenderingCustom(s string) FeDistantLightShapeRendering {
-	return FeDistantLightShapeRendering(s)
 }
 
 func (e *FeDistantLightElement) StopColor(s string) *FeDistantLightElement {
@@ -775,24 +518,16 @@ func (e *FeDistantLightElement) StrokeDashoffset(s string) *FeDistantLightElemen
 	return e
 }
 
-func (e *FeDistantLightElement) StrokeLinecap(a FeDistantLightStrokeLinecap) *FeDistantLightElement {
+func (e *FeDistantLightElement) StrokeLinecap(a StrokeLinecap) *FeDistantLightElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeDistantLightStrokeLinecapCustom(s string) FeDistantLightStrokeLinecap {
-	return FeDistantLightStrokeLinecap(s)
-}
-
-func (e *FeDistantLightElement) StrokeLinejoin(a FeDistantLightStrokeLinejoin) *FeDistantLightElement {
+func (e *FeDistantLightElement) StrokeLinejoin(a StrokeLinejoin) *FeDistantLightElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeDistantLightStrokeLinejoinCustom(s string) FeDistantLightStrokeLinejoin {
-	return FeDistantLightStrokeLinejoin(s)
 }
 
 func (e *FeDistantLightElement) StrokeMiterlimit(f float64) *FeDistantLightElement {
@@ -825,14 +560,10 @@ func (e *FeDistantLightElement) Tabindex(i int) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) TextAnchor(a FeDistantLightTextAnchor) *FeDistantLightElement {
+func (e *FeDistantLightElement) TextAnchor(a TextAnchor) *FeDistantLightElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeDistantLightTextAnchorCustom(s string) FeDistantLightTextAnchor {
-	return FeDistantLightTextAnchor(s)
 }
 
 func (e *FeDistantLightElement) TextDecoration(s string) *FeDistantLightElement {
@@ -847,14 +578,10 @@ func (e *FeDistantLightElement) TextOverflow(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) TextRendering(a FeDistantLightTextRendering) *FeDistantLightElement {
+func (e *FeDistantLightElement) TextRendering(a TextRendering) *FeDistantLightElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeDistantLightTextRenderingCustom(s string) FeDistantLightTextRendering {
-	return FeDistantLightTextRendering(s)
 }
 
 func (e *FeDistantLightElement) Transform(s string) *FeDistantLightElement {
@@ -863,14 +590,10 @@ func (e *FeDistantLightElement) Transform(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) TransformBox(a FeDistantLightTransformBox) *FeDistantLightElement {
+func (e *FeDistantLightElement) TransformBox(a TransformBox) *FeDistantLightElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeDistantLightTransformBoxCustom(s string) FeDistantLightTransformBox {
-	return FeDistantLightTransformBox(s)
 }
 
 func (e *FeDistantLightElement) TransformOrigin(s string) *FeDistantLightElement {
@@ -885,24 +608,16 @@ func (e *FeDistantLightElement) UnicodeBidi(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) VectorEffect(a FeDistantLightVectorEffect) *FeDistantLightElement {
+func (e *FeDistantLightElement) VectorEffect(a VectorEffect) *FeDistantLightElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeDistantLightVectorEffectCustom(s string) FeDistantLightVectorEffect {
-	return FeDistantLightVectorEffect(s)
-}
-
-func (e *FeDistantLightElement) Visibility(a FeDistantLightVisibility) *FeDistantLightElement {
+func (e *FeDistantLightElement) Visibility(a Visibility) *FeDistantLightElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeDistantLightVisibilityCustom(s string) FeDistantLightVisibility {
-	return FeDistantLightVisibility(s)
 }
 
 func (e *FeDistantLightElement) WhiteSpace(s string) *FeDistantLightElement {
@@ -917,14 +632,10 @@ func (e *FeDistantLightElement) WordSpacing(s string) *FeDistantLightElement {
 	return e
 }
 
-func (e *FeDistantLightElement) WritingMode(a FeDistantLightWritingMode) *FeDistantLightElement {
+func (e *FeDistantLightElement) WritingMode(a WritingMode) *FeDistantLightElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeDistantLightWritingModeCustom(s string) FeDistantLightWritingMode {
-	return FeDistantLightWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -939,7 +650,7 @@ func (e *FeDistantLightElement) XmlLang(s string) *FeDistantLightElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeDistantLightElement) XmlSpace(a FeDistantLightXmlSpace) *FeDistantLightElement {
+func (e *FeDistantLightElement) XmlSpace(a XmlSpace) *FeDistantLightElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

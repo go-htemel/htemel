@@ -59,15 +59,13 @@ func goIdent(s string) string {
 	return out
 }
 
-func SourceHeader(w io.Writer, pkg string, e *spec.Element, children ...TemplateFunc) error {
+func SourceHeader(w io.Writer, pkg string, e *ElementPlan, children ...TemplateFunc) error {
 	var (
 		colTmpls   []*template.Template
 		colImports = make(ImportSet)
 	)
 
-	if !e.Void {
-		colImports.Add("github.com/go-htemel/htemel")
-	}
+	colImports.Add("github.com/go-htemel/htemel")
 
 	for _, child := range children {
 		t, imps := child()
@@ -91,7 +89,7 @@ import (
 	if err := tmpl.Execute(w, struct {
 		PackageName string
 		Imports     ImportSet
-		Element     *spec.Element
+		Element     *ElementPlan
 	}{
 		PackageName: pkg,
 		Imports:     colImports,
@@ -109,6 +107,34 @@ import (
 	return nil
 }
 
+// SlotInterface declares the element's child interface, when its content model needs one.
+func SlotInterface() (*template.Template, ImportSet) {
+	tmpl := template.Must(template.New("SlotInterface").Parse(`
+{{ with .Slot }}
+{{ .Doc }}
+type {{ .Iface }} interface {
+	htemel.Node
+	{{ .Method }}()
+}
+{{ end }}
+`))
+
+	return tmpl, nil
+}
+
+// SlotMethods implements the child interfaces of other elements that this element may appear in.
+func SlotMethods() (*template.Template, ImportSet) {
+	tmpl := template.Must(template.New("SlotMethods").Funcs(template.FuncMap{"goIdent": goIdent}).Parse(`
+{{ $tag := .Tag }}
+{{- range .SlotMethods }}
+// {{ .Method }} marks <{{ $tag }}> as a permitted child{{ if .Owner }} of <{{ .Owner }}>{{ end }} ({{ .Iface }}).
+func (*{{ $tag | goIdent }}Element) {{ .Method }}() {}
+{{ end }}
+`))
+
+	return tmpl, nil
+}
+
 func BaseStruct() (*template.Template, ImportSet) {
 	tmpl := template.Must(template.New("Struct").
 		Funcs(template.FuncMap{
@@ -116,8 +142,11 @@ func BaseStruct() (*template.Template, ImportSet) {
 		}).
 		Parse(`
 type {{ .Tag | goIdent }}Element struct {
+	{{- range .Markers }}
+	{{ . }}
+	{{- end }}
 	attributes render.Attrs
-	{{ if not .Void }}children []htemel.Node{{ end }}
+	{{ if .HasChildren }}children []{{ .ChildType }}{{ end }}
 	skipRender bool
 }
 `))
@@ -131,17 +160,18 @@ func BaseFunc() (*template.Template, ImportSet) {
 			"goIdent": goIdent,
 		}).Parse(`
 // {{ .Tag | goIdent }} creates a tag <{{ .Tag }}> instance and returns it for further modification.
-{{ if not .Void }}// Any children passed will be nested within the tag.
+{{ if .HasChildren }}// Any children passed will be nested within the tag.
 {{ end -}}
+{{ .ModelDoc -}}
 //
 // Spec Description: {{ .Description }}
 {{ if .Deprecated -}}
 //
 // Deprecated: <{{ .Tag }}> is deprecated or obsolete in its source specification.
 {{ end -}}
-func {{ .Tag | goIdent }}({{ if not .Void }}children ...htemel.Node{{ end }}) *{{ .Tag | goIdent }}Element {
+func {{ .Tag | goIdent }}({{ if .HasChildren }}children ...{{ .ChildType }}{{ end }}) *{{ .Tag | goIdent }}Element {
 	node := &{{ .Tag | goIdent }}Element{
-		{{ if not .Void }}children: children,{{ end }}
+		{{ if .HasChildren }}children: children,{{ end }}
 	}
 
 	return node
@@ -157,13 +187,13 @@ func BaseCondFunc() (*template.Template, ImportSet) {
 			"goIdent": goIdent,
 		}).Parse(`
 // {{ .Tag | goIdent }}If creates a tag <{{ .Tag }}> instance that is only rendered when condition is true.
-func {{ .Tag | goIdent }}If(condition bool{{ if not .Void }}, children ...htemel.Node{{ end }}) *{{ .Tag | goIdent }}Element {
+func {{ .Tag | goIdent }}If(condition bool{{ if .HasChildren }}, children ...{{ .ChildType }}{{ end }}) *{{ .Tag | goIdent }}Element {
 	if condition {
-		return {{ .Tag | goIdent }}({{ if not .Void }}children...{{ end }})
+		return {{ .Tag | goIdent }}({{ if .HasChildren }}children...{{ end }})
 	}
 
 	return &{{ .Tag | goIdent }}Element{
-		{{ if not .Void }}children: children,{{ end }}
+		{{ if .HasChildren }}children: children,{{ end }}
 		skipRender: true,
 	}
 }
@@ -177,9 +207,9 @@ func BaseTernaryFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+{{ if .HasChildren }}
 // {{ .Tag | goIdent }}Ternary creates a tag <{{ .Tag }}> containing then when condition is true, otherwise containing otherwise.
-func {{ .Tag | goIdent }}Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *{{ .Tag | goIdent }}Element {
+func {{ .Tag | goIdent }}Ternary(condition bool, then {{ .ChildType }}, otherwise {{ .ChildType }}) *{{ .Tag | goIdent }}Element {
 	if condition {
 		return {{ .Tag | goIdent }}(then)
 	}
@@ -196,9 +226,9 @@ func ChildrenFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+{{ if .HasChildren }}
 // Children appends children to this element.
-func (e *{{ .Tag | goIdent }}Element) Children(children ...htemel.Node) *{{ .Tag | goIdent }}Element {
+func (e *{{ .Tag | goIdent }}Element) Children(children ...{{ .ChildType }}) *{{ .Tag | goIdent }}Element {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -239,8 +269,8 @@ func TextFunc() (*template.Template, ImportSet) {
 			"goIdent":   goIdent,
 			"isRawText": isRawText,
 		}).Parse(`
-{{ if not .Void }}
-{{ if isRawText . }}
+{{ if .Text }}
+{{ if isRawText .Element }}
 // Text adds a raw text node to the element. Because <{{ .Tag }}> is a raw text element, the
 // content is NOT HTML-escaped (so code like "a < b" is preserved). The only transformation is
 // that any case-insensitive "</{{ .Tag }}" sequence is rewritten as "<\/{{ .Tag }}" so the
@@ -267,7 +297,7 @@ func TextfFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+{{ if .Text }}
 // Textf adds a text node to the element with the given format string and arguments.
 // It follows the same escaping rules as Text.
 func (e *{{ .Tag | goIdent }}Element) Textf(format string, args ...any) *{{ .Tag | goIdent }}Element {
@@ -286,9 +316,9 @@ func IfFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+{{ if .HasChildren }}
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *{{ .Tag | goIdent }}Element) If(cond bool, child htemel.Node) *{{ .Tag | goIdent }}Element {
+func (e *{{ .Tag | goIdent }}Element) If(cond bool, child {{ .ChildType }}) *{{ .Tag | goIdent }}Element {
 	if cond {
 		return e.Children(child)
 	}
@@ -305,9 +335,9 @@ func IfElseFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+{{ if .HasChildren }}
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *{{ .Tag | goIdent }}Element) IfElse(cond bool, then, els htemel.Node) *{{ .Tag | goIdent }}Element {
+func (e *{{ .Tag | goIdent }}Element) IfElse(cond bool, then, els {{ .ChildType }}) *{{ .Tag | goIdent }}Element {
 	if cond {
 		e.Children(then)
 	} else {
@@ -326,7 +356,7 @@ func IfThenFunc() (*template.Template, ImportSet) {
 		Funcs(template.FuncMap{
 			"goIdent": goIdent,
 		}).Parse(`
-{{ if not .Void }}
+
 // IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
 func (e *{{ .Tag | goIdent }}Element) IfThen(cond bool, fn func(*{{ .Tag | goIdent }}Element)) *{{ .Tag | goIdent }}Element {
 	if cond {
@@ -334,7 +364,6 @@ func (e *{{ .Tag | goIdent }}Element) IfThen(cond bool, fn func(*{{ .Tag | goIde
 	}
 	return e
 }
-{{ end }}
 `))
 
 	return tmpl, nil
@@ -452,7 +481,7 @@ func RenderFunc() (*template.Template, ImportSet) {
 		}).
 		Parse(`
 // Render writes the opening tag and its attributes, then {{ if .Void }}returns: <{{ .Tag }}> is a void element,
-// so it is self closing and has no children.{{ else }}renders each child, then writes the closing tag.{{ end }}
+// so it is self closing and has no children.{{ else if .HasChildren }}renders each child, then writes the closing tag.{{ else }}writes the closing tag: <{{ .Tag }}> has no children.{{ end }}
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
 // Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
@@ -479,12 +508,13 @@ func (e *{{ .Tag | goIdent }}Element) Render(w io.Writer) error {
 {{ if .Void }}
 	return nil
 {{- else }}
+{{- if .HasChildren }}
 	for _, child := range e.children {
 		if err := child.Render(w); err != nil {
 			return err
 		}
 	}
-
+{{ end }}
 	_, err := io.WriteString(w, "</{{ .Tag }}>")
 	return err
 {{- end }}

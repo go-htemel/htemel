@@ -13,16 +13,20 @@ import (
 )
 
 type TimeElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Time creates a tag <time> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The time element represents its contents, along with a machine-readable form of those contents in the datetime attribute. The kind of content is limited to various kinds of dates, times, time-zone offsets, and durations, as described below.
-func Time(children ...htemel.Node) *TimeElement {
+func Time(children ...htemel.PhrasingContent) *TimeElement {
 	node := &TimeElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Time(children ...htemel.Node) *TimeElement {
 }
 
 // TimeIf creates a tag <time> instance that is only rendered when condition is true.
-func TimeIf(condition bool, children ...htemel.Node) *TimeElement {
+func TimeIf(condition bool, children ...htemel.PhrasingContent) *TimeElement {
 	if condition {
 		return Time(children...)
 	}
@@ -43,7 +47,7 @@ func TimeIf(condition bool, children ...htemel.Node) *TimeElement {
 }
 
 // TimeTernary creates a tag <time> containing then when condition is true, otherwise containing otherwise.
-func TimeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TimeElement {
+func TimeTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *TimeElement {
 	if condition {
 		return Time(then)
 	}
@@ -51,7 +55,7 @@ func TimeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TimeE
 }
 
 // Children appends children to this element.
-func (e *TimeElement) Children(children ...htemel.Node) *TimeElement {
+func (e *TimeElement) Children(children ...htemel.PhrasingContent) *TimeElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *TimeElement) Textf(format string, args ...any) *TimeElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TimeElement) If(cond bool, child htemel.Node) *TimeElement {
+func (e *TimeElement) If(cond bool, child htemel.PhrasingContent) *TimeElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *TimeElement) If(cond bool, child htemel.Node) *TimeElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TimeElement) IfElse(cond bool, then, els htemel.Node) *TimeElement {
+func (e *TimeElement) IfElse(cond bool, then, els htemel.PhrasingContent) *TimeElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *TimeElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TimeAutocapitalize string
-
-const (
-	TimeAutocapitalizeCharacters TimeAutocapitalize = "characters"
-	TimeAutocapitalizeNone       TimeAutocapitalize = "none"
-	TimeAutocapitalizeOff        TimeAutocapitalize = "off"
-	TimeAutocapitalizeOn         TimeAutocapitalize = "on"
-	TimeAutocapitalizeSentences  TimeAutocapitalize = "sentences"
-	TimeAutocapitalizeWords      TimeAutocapitalize = "words"
-)
-
-type TimeAutocorrect string
-
-const (
-	TimeAutocorrectOff   TimeAutocorrect = "off"
-	TimeAutocorrectOn    TimeAutocorrect = "on"
-	TimeAutocorrectEmpty TimeAutocorrect = ""
-)
-
-type TimeContenteditable string
-
-const (
-	TimeContenteditableFalse         TimeContenteditable = "false"
-	TimeContenteditablePlaintextOnly TimeContenteditable = "plaintext-only"
-	TimeContenteditableTrue          TimeContenteditable = "true"
-	TimeContenteditableEmpty         TimeContenteditable = ""
-)
-
-type TimeDir string
-
-const (
-	TimeDirAuto TimeDir = "auto"
-	TimeDirLtr  TimeDir = "ltr"
-	TimeDirRtl  TimeDir = "rtl"
-)
-
-type TimeDraggable string
-
-const (
-	TimeDraggableFalse TimeDraggable = "false"
-	TimeDraggableTrue  TimeDraggable = "true"
-)
-
-type TimeEnterkeyhint string
-
-const (
-	TimeEnterkeyhintDone     TimeEnterkeyhint = "done"
-	TimeEnterkeyhintEnter    TimeEnterkeyhint = "enter"
-	TimeEnterkeyhintGo       TimeEnterkeyhint = "go"
-	TimeEnterkeyhintNext     TimeEnterkeyhint = "next"
-	TimeEnterkeyhintPrevious TimeEnterkeyhint = "previous"
-	TimeEnterkeyhintSearch   TimeEnterkeyhint = "search"
-	TimeEnterkeyhintSend     TimeEnterkeyhint = "send"
-)
-
-type TimeHidden string
-
-const (
-	TimeHiddenHidden     TimeHidden = "hidden"
-	TimeHiddenUntilFound TimeHidden = "until-found"
-	TimeHiddenEmpty      TimeHidden = ""
-)
-
-type TimeInputmode string
-
-const (
-	TimeInputmodeDecimal TimeInputmode = "decimal"
-	TimeInputmodeEmail   TimeInputmode = "email"
-	TimeInputmodeNone    TimeInputmode = "none"
-	TimeInputmodeNumeric TimeInputmode = "numeric"
-	TimeInputmodeSearch  TimeInputmode = "search"
-	TimeInputmodeTel     TimeInputmode = "tel"
-	TimeInputmodeText    TimeInputmode = "text"
-	TimeInputmodeUrl     TimeInputmode = "url"
-)
-
-type TimePopover string
-
-const (
-	TimePopoverAuto   TimePopover = "auto"
-	TimePopoverHint   TimePopover = "hint"
-	TimePopoverManual TimePopover = "manual"
-	TimePopoverEmpty  TimePopover = ""
-)
-
-type TimeSpellcheck string
-
-const (
-	TimeSpellcheckFalse TimeSpellcheck = "false"
-	TimeSpellcheckTrue  TimeSpellcheck = "true"
-	TimeSpellcheckEmpty TimeSpellcheck = ""
-)
-
-type TimeTranslate string
-
-const (
-	TimeTranslateNo    TimeTranslate = "no"
-	TimeTranslateYes   TimeTranslate = "yes"
-	TimeTranslateEmpty TimeTranslate = ""
-)
-
-type TimeWritingsuggestions string
-
-const (
-	TimeWritingsuggestionsFalse TimeWritingsuggestions = "false"
-	TimeWritingsuggestionsTrue  TimeWritingsuggestions = "true"
-	TimeWritingsuggestionsEmpty TimeWritingsuggestions = ""
-)
-
 func (e *TimeElement) Datetime(s string) *TimeElement {
 	e.attributes.Set("datetime", s)
 
@@ -301,7 +196,7 @@ func (e *TimeElement) Aria(name string, s string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Autocapitalize(a TimeAutocapitalize) *TimeElement {
+func (e *TimeElement) Autocapitalize(a Autocapitalize) *TimeElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +204,8 @@ func (e *TimeElement) Autocapitalize(a TimeAutocapitalize) *TimeElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Autocorrect(v ...TimeAutocorrect) *TimeElement {
-	var val TimeAutocorrect
+func (e *TimeElement) Autocorrect(v ...Autocorrect) *TimeElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +230,8 @@ func (e *TimeElement) Class(s ...string) *TimeElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Contenteditable(v ...TimeContenteditable) *TimeElement {
-	var val TimeContenteditable
+func (e *TimeElement) Contenteditable(v ...Contenteditable) *TimeElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +256,19 @@ func (e *TimeElement) Data(name string, s string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Dir(a TimeDir) *TimeElement {
+func (e *TimeElement) Dir(a Dir) *TimeElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TimeElement) Draggable(a TimeDraggable) *TimeElement {
+func (e *TimeElement) Draggable(a Draggable) *TimeElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TimeElement) Enterkeyhint(a TimeEnterkeyhint) *TimeElement {
+func (e *TimeElement) Enterkeyhint(a Enterkeyhint) *TimeElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +296,8 @@ func (e *TimeElement) Headingreset(b bool) *TimeElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Hidden(v ...TimeHidden) *TimeElement {
-	var val TimeHidden
+func (e *TimeElement) Hidden(v ...Hidden) *TimeElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +320,7 @@ func (e *TimeElement) Inert(b bool) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Inputmode(a TimeInputmode) *TimeElement {
+func (e *TimeElement) Inputmode(a Inputmode) *TimeElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +386,8 @@ func (e *TimeElement) Part(s ...string) *TimeElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Popover(v ...TimePopover) *TimeElement {
-	var val TimePopover
+func (e *TimeElement) Popover(v ...Popover) *TimeElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +410,8 @@ func (e *TimeElement) Slot(s string) *TimeElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Spellcheck(v ...TimeSpellcheck) *TimeElement {
-	var val TimeSpellcheck
+func (e *TimeElement) Spellcheck(v ...Spellcheck) *TimeElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +440,8 @@ func (e *TimeElement) Title(s string) *TimeElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Translate(v ...TimeTranslate) *TimeElement {
-	var val TimeTranslate
+func (e *TimeElement) Translate(v ...Translate) *TimeElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +452,8 @@ func (e *TimeElement) Translate(v ...TimeTranslate) *TimeElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TimeElement) Writingsuggestions(v ...TimeWritingsuggestions) *TimeElement {
-	var val TimeWritingsuggestions
+func (e *TimeElement) Writingsuggestions(v ...Writingsuggestions) *TimeElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

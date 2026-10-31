@@ -14,15 +14,17 @@ import (
 
 type FeConvolveMatrixElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeConvolveMatrix creates a tag <feConvolveMatrix> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feConvolveMatrix filter primitive applies a matrix convolution to the input image.
-func FeConvolveMatrix(children ...htemel.Node) *FeConvolveMatrixElement {
+func FeConvolveMatrix(children ...Content) *FeConvolveMatrixElement {
 	node := &FeConvolveMatrixElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeConvolveMatrix(children ...htemel.Node) *FeConvolveMatrixElement {
 }
 
 // FeConvolveMatrixIf creates a tag <feConvolveMatrix> instance that is only rendered when condition is true.
-func FeConvolveMatrixIf(condition bool, children ...htemel.Node) *FeConvolveMatrixElement {
+func FeConvolveMatrixIf(condition bool, children ...Content) *FeConvolveMatrixElement {
 	if condition {
 		return FeConvolveMatrix(children...)
 	}
@@ -43,7 +45,7 @@ func FeConvolveMatrixIf(condition bool, children ...htemel.Node) *FeConvolveMatr
 }
 
 // FeConvolveMatrixTernary creates a tag <feConvolveMatrix> containing then when condition is true, otherwise containing otherwise.
-func FeConvolveMatrixTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeConvolveMatrixElement {
+func FeConvolveMatrixTernary(condition bool, then Content, otherwise Content) *FeConvolveMatrixElement {
 	if condition {
 		return FeConvolveMatrix(then)
 	}
@@ -51,7 +53,7 @@ func FeConvolveMatrixTernary(condition bool, then htemel.Node, otherwise htemel.
 }
 
 // Children appends children to this element.
-func (e *FeConvolveMatrixElement) Children(children ...htemel.Node) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) Children(children ...Content) *FeConvolveMatrixElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeConvolveMatrixElement) Textf(format string, args ...any) *FeConvolveM
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeConvolveMatrixElement) If(cond bool, child htemel.Node) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) If(cond bool, child Content) *FeConvolveMatrixElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeConvolveMatrixElement) If(cond bool, child htemel.Node) *FeConvolveMa
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeConvolveMatrixElement) IfElse(cond bool, then, els htemel.Node) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) IfElse(cond bool, then, els Content) *FeConvolveMatrixElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,234 +166,8 @@ func (e *FeConvolveMatrixElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeConvolveMatrixEdgeMode string
-
-const (
-	FeConvolveMatrixEdgeModeDuplicate FeConvolveMatrixEdgeMode = "duplicate"
-	FeConvolveMatrixEdgeModeNone      FeConvolveMatrixEdgeMode = "none"
-	FeConvolveMatrixEdgeModeWrap      FeConvolveMatrixEdgeMode = "wrap"
-)
-
-type FeConvolveMatrixPreserveAlpha string
-
-const (
-	FeConvolveMatrixPreserveAlphaFalse FeConvolveMatrixPreserveAlpha = "false"
-	FeConvolveMatrixPreserveAlphaTrue  FeConvolveMatrixPreserveAlpha = "true"
-)
-
-type FeConvolveMatrixAlignmentBaseline string
-
-const (
-	FeConvolveMatrixAlignmentBaselineAfterEdge      FeConvolveMatrixAlignmentBaseline = "after-edge"
-	FeConvolveMatrixAlignmentBaselineAlphabetic     FeConvolveMatrixAlignmentBaseline = "alphabetic"
-	FeConvolveMatrixAlignmentBaselineAuto           FeConvolveMatrixAlignmentBaseline = "auto"
-	FeConvolveMatrixAlignmentBaselineBaseline       FeConvolveMatrixAlignmentBaseline = "baseline"
-	FeConvolveMatrixAlignmentBaselineBeforeEdge     FeConvolveMatrixAlignmentBaseline = "before-edge"
-	FeConvolveMatrixAlignmentBaselineBottom         FeConvolveMatrixAlignmentBaseline = "bottom"
-	FeConvolveMatrixAlignmentBaselineCenter         FeConvolveMatrixAlignmentBaseline = "center"
-	FeConvolveMatrixAlignmentBaselineCentral        FeConvolveMatrixAlignmentBaseline = "central"
-	FeConvolveMatrixAlignmentBaselineHanging        FeConvolveMatrixAlignmentBaseline = "hanging"
-	FeConvolveMatrixAlignmentBaselineIdeographic    FeConvolveMatrixAlignmentBaseline = "ideographic"
-	FeConvolveMatrixAlignmentBaselineMathematical   FeConvolveMatrixAlignmentBaseline = "mathematical"
-	FeConvolveMatrixAlignmentBaselineMiddle         FeConvolveMatrixAlignmentBaseline = "middle"
-	FeConvolveMatrixAlignmentBaselineTextAfterEdge  FeConvolveMatrixAlignmentBaseline = "text-after-edge"
-	FeConvolveMatrixAlignmentBaselineTextBeforeEdge FeConvolveMatrixAlignmentBaseline = "text-before-edge"
-	FeConvolveMatrixAlignmentBaselineTextBottom     FeConvolveMatrixAlignmentBaseline = "text-bottom"
-	FeConvolveMatrixAlignmentBaselineTextTop        FeConvolveMatrixAlignmentBaseline = "text-top"
-	FeConvolveMatrixAlignmentBaselineTop            FeConvolveMatrixAlignmentBaseline = "top"
-)
-
-type FeConvolveMatrixClipRule string
-
-const (
-	FeConvolveMatrixClipRuleEvenodd FeConvolveMatrixClipRule = "evenodd"
-	FeConvolveMatrixClipRuleNonzero FeConvolveMatrixClipRule = "nonzero"
-)
-
-type FeConvolveMatrixColorInterpolation string
-
-const (
-	FeConvolveMatrixColorInterpolationAuto      FeConvolveMatrixColorInterpolation = "auto"
-	FeConvolveMatrixColorInterpolationLinearRGB FeConvolveMatrixColorInterpolation = "linearRGB"
-	FeConvolveMatrixColorInterpolationSRGB      FeConvolveMatrixColorInterpolation = "sRGB"
-)
-
-type FeConvolveMatrixColorInterpolationFilters string
-
-const (
-	FeConvolveMatrixColorInterpolationFiltersAuto      FeConvolveMatrixColorInterpolationFilters = "auto"
-	FeConvolveMatrixColorInterpolationFiltersLinearRGB FeConvolveMatrixColorInterpolationFilters = "linearRGB"
-	FeConvolveMatrixColorInterpolationFiltersSRGB      FeConvolveMatrixColorInterpolationFilters = "sRGB"
-)
-
-type FeConvolveMatrixDirection string
-
-const (
-	FeConvolveMatrixDirectionLtr FeConvolveMatrixDirection = "ltr"
-	FeConvolveMatrixDirectionRtl FeConvolveMatrixDirection = "rtl"
-)
-
-type FeConvolveMatrixDominantBaseline string
-
-const (
-	FeConvolveMatrixDominantBaselineAlphabetic   FeConvolveMatrixDominantBaseline = "alphabetic"
-	FeConvolveMatrixDominantBaselineAuto         FeConvolveMatrixDominantBaseline = "auto"
-	FeConvolveMatrixDominantBaselineCentral      FeConvolveMatrixDominantBaseline = "central"
-	FeConvolveMatrixDominantBaselineHanging      FeConvolveMatrixDominantBaseline = "hanging"
-	FeConvolveMatrixDominantBaselineIdeographic  FeConvolveMatrixDominantBaseline = "ideographic"
-	FeConvolveMatrixDominantBaselineMathematical FeConvolveMatrixDominantBaseline = "mathematical"
-	FeConvolveMatrixDominantBaselineMiddle       FeConvolveMatrixDominantBaseline = "middle"
-	FeConvolveMatrixDominantBaselineTextBottom   FeConvolveMatrixDominantBaseline = "text-bottom"
-	FeConvolveMatrixDominantBaselineTextTop      FeConvolveMatrixDominantBaseline = "text-top"
-)
-
-type FeConvolveMatrixFillRule string
-
-const (
-	FeConvolveMatrixFillRuleEvenodd FeConvolveMatrixFillRule = "evenodd"
-	FeConvolveMatrixFillRuleNonzero FeConvolveMatrixFillRule = "nonzero"
-)
-
-type FeConvolveMatrixFontStyle string
-
-const (
-	FeConvolveMatrixFontStyleItalic  FeConvolveMatrixFontStyle = "italic"
-	FeConvolveMatrixFontStyleNormal  FeConvolveMatrixFontStyle = "normal"
-	FeConvolveMatrixFontStyleOblique FeConvolveMatrixFontStyle = "oblique"
-)
-
-type FeConvolveMatrixImageRendering string
-
-const (
-	FeConvolveMatrixImageRenderingAuto            FeConvolveMatrixImageRendering = "auto"
-	FeConvolveMatrixImageRenderingCrispEdges      FeConvolveMatrixImageRendering = "crisp-edges"
-	FeConvolveMatrixImageRenderingHighQuality     FeConvolveMatrixImageRendering = "high-quality"
-	FeConvolveMatrixImageRenderingOptimizeQuality FeConvolveMatrixImageRendering = "optimizeQuality"
-	FeConvolveMatrixImageRenderingOptimizeSpeed   FeConvolveMatrixImageRendering = "optimizeSpeed"
-	FeConvolveMatrixImageRenderingPixelated       FeConvolveMatrixImageRendering = "pixelated"
-	FeConvolveMatrixImageRenderingSmooth          FeConvolveMatrixImageRendering = "smooth"
-)
-
-type FeConvolveMatrixOverflow string
-
-const (
-	FeConvolveMatrixOverflowAuto    FeConvolveMatrixOverflow = "auto"
-	FeConvolveMatrixOverflowClip    FeConvolveMatrixOverflow = "clip"
-	FeConvolveMatrixOverflowHidden  FeConvolveMatrixOverflow = "hidden"
-	FeConvolveMatrixOverflowScroll  FeConvolveMatrixOverflow = "scroll"
-	FeConvolveMatrixOverflowVisible FeConvolveMatrixOverflow = "visible"
-)
-
-type FeConvolveMatrixPointerEvents string
-
-const (
-	FeConvolveMatrixPointerEventsAll            FeConvolveMatrixPointerEvents = "all"
-	FeConvolveMatrixPointerEventsAuto           FeConvolveMatrixPointerEvents = "auto"
-	FeConvolveMatrixPointerEventsBoundingBox    FeConvolveMatrixPointerEvents = "bounding-box"
-	FeConvolveMatrixPointerEventsFill           FeConvolveMatrixPointerEvents = "fill"
-	FeConvolveMatrixPointerEventsNone           FeConvolveMatrixPointerEvents = "none"
-	FeConvolveMatrixPointerEventsPainted        FeConvolveMatrixPointerEvents = "painted"
-	FeConvolveMatrixPointerEventsStroke         FeConvolveMatrixPointerEvents = "stroke"
-	FeConvolveMatrixPointerEventsVisible        FeConvolveMatrixPointerEvents = "visible"
-	FeConvolveMatrixPointerEventsVisibleFill    FeConvolveMatrixPointerEvents = "visibleFill"
-	FeConvolveMatrixPointerEventsVisiblePainted FeConvolveMatrixPointerEvents = "visiblePainted"
-	FeConvolveMatrixPointerEventsVisibleStroke  FeConvolveMatrixPointerEvents = "visibleStroke"
-)
-
-type FeConvolveMatrixShapeRendering string
-
-const (
-	FeConvolveMatrixShapeRenderingAuto               FeConvolveMatrixShapeRendering = "auto"
-	FeConvolveMatrixShapeRenderingCrispEdges         FeConvolveMatrixShapeRendering = "crispEdges"
-	FeConvolveMatrixShapeRenderingGeometricPrecision FeConvolveMatrixShapeRendering = "geometricPrecision"
-	FeConvolveMatrixShapeRenderingOptimizeSpeed      FeConvolveMatrixShapeRendering = "optimizeSpeed"
-)
-
-type FeConvolveMatrixStrokeLinecap string
-
-const (
-	FeConvolveMatrixStrokeLinecapButt   FeConvolveMatrixStrokeLinecap = "butt"
-	FeConvolveMatrixStrokeLinecapRound  FeConvolveMatrixStrokeLinecap = "round"
-	FeConvolveMatrixStrokeLinecapSquare FeConvolveMatrixStrokeLinecap = "square"
-)
-
-type FeConvolveMatrixStrokeLinejoin string
-
-const (
-	FeConvolveMatrixStrokeLinejoinArcs      FeConvolveMatrixStrokeLinejoin = "arcs"
-	FeConvolveMatrixStrokeLinejoinBevel     FeConvolveMatrixStrokeLinejoin = "bevel"
-	FeConvolveMatrixStrokeLinejoinMiter     FeConvolveMatrixStrokeLinejoin = "miter"
-	FeConvolveMatrixStrokeLinejoinMiterClip FeConvolveMatrixStrokeLinejoin = "miter-clip"
-	FeConvolveMatrixStrokeLinejoinRound     FeConvolveMatrixStrokeLinejoin = "round"
-)
-
-type FeConvolveMatrixTextAnchor string
-
-const (
-	FeConvolveMatrixTextAnchorEnd    FeConvolveMatrixTextAnchor = "end"
-	FeConvolveMatrixTextAnchorMiddle FeConvolveMatrixTextAnchor = "middle"
-	FeConvolveMatrixTextAnchorStart  FeConvolveMatrixTextAnchor = "start"
-)
-
-type FeConvolveMatrixTextRendering string
-
-const (
-	FeConvolveMatrixTextRenderingAuto               FeConvolveMatrixTextRendering = "auto"
-	FeConvolveMatrixTextRenderingGeometricPrecision FeConvolveMatrixTextRendering = "geometricPrecision"
-	FeConvolveMatrixTextRenderingOptimizeLegibility FeConvolveMatrixTextRendering = "optimizeLegibility"
-	FeConvolveMatrixTextRenderingOptimizeSpeed      FeConvolveMatrixTextRendering = "optimizeSpeed"
-)
-
-type FeConvolveMatrixTransformBox string
-
-const (
-	FeConvolveMatrixTransformBoxBorderBox  FeConvolveMatrixTransformBox = "border-box"
-	FeConvolveMatrixTransformBoxContentBox FeConvolveMatrixTransformBox = "content-box"
-	FeConvolveMatrixTransformBoxFillBox    FeConvolveMatrixTransformBox = "fill-box"
-	FeConvolveMatrixTransformBoxStrokeBox  FeConvolveMatrixTransformBox = "stroke-box"
-	FeConvolveMatrixTransformBoxViewBox    FeConvolveMatrixTransformBox = "view-box"
-)
-
-type FeConvolveMatrixVectorEffect string
-
-const (
-	FeConvolveMatrixVectorEffectFixedPosition    FeConvolveMatrixVectorEffect = "fixed-position"
-	FeConvolveMatrixVectorEffectNonRotation      FeConvolveMatrixVectorEffect = "non-rotation"
-	FeConvolveMatrixVectorEffectNonScalingSize   FeConvolveMatrixVectorEffect = "non-scaling-size"
-	FeConvolveMatrixVectorEffectNonScalingStroke FeConvolveMatrixVectorEffect = "non-scaling-stroke"
-	FeConvolveMatrixVectorEffectNone             FeConvolveMatrixVectorEffect = "none"
-)
-
-type FeConvolveMatrixVisibility string
-
-const (
-	FeConvolveMatrixVisibilityCollapse FeConvolveMatrixVisibility = "collapse"
-	FeConvolveMatrixVisibilityHidden   FeConvolveMatrixVisibility = "hidden"
-	FeConvolveMatrixVisibilityVisible  FeConvolveMatrixVisibility = "visible"
-)
-
-type FeConvolveMatrixWritingMode string
-
-const (
-	FeConvolveMatrixWritingModeHorizontalTb FeConvolveMatrixWritingMode = "horizontal-tb"
-	FeConvolveMatrixWritingModeLr           FeConvolveMatrixWritingMode = "lr"
-	FeConvolveMatrixWritingModeLrTb         FeConvolveMatrixWritingMode = "lr-tb"
-	FeConvolveMatrixWritingModeRl           FeConvolveMatrixWritingMode = "rl"
-	FeConvolveMatrixWritingModeRlTb         FeConvolveMatrixWritingMode = "rl-tb"
-	FeConvolveMatrixWritingModeSidewaysLr   FeConvolveMatrixWritingMode = "sideways-lr"
-	FeConvolveMatrixWritingModeSidewaysRl   FeConvolveMatrixWritingMode = "sideways-rl"
-	FeConvolveMatrixWritingModeTb           FeConvolveMatrixWritingMode = "tb"
-	FeConvolveMatrixWritingModeTbRl         FeConvolveMatrixWritingMode = "tb-rl"
-	FeConvolveMatrixWritingModeVerticalLr   FeConvolveMatrixWritingMode = "vertical-lr"
-	FeConvolveMatrixWritingModeVerticalRl   FeConvolveMatrixWritingMode = "vertical-rl"
-)
-
-type FeConvolveMatrixXmlSpace string
-
-const (
-	FeConvolveMatrixXmlSpaceDefault  FeConvolveMatrixXmlSpace = "default"
-	FeConvolveMatrixXmlSpacePreserve FeConvolveMatrixXmlSpace = "preserve"
-)
+// SVGContent marks <feConvolveMatrix> as a permitted child (Content).
+func (*FeConvolveMatrixElement) SVGContent() {}
 
 func (e *FeConvolveMatrixElement) Bias(f float64) *FeConvolveMatrixElement {
 	e.attributes.Set("bias", strconv.FormatFloat(f, 'g', -1, 64))
@@ -405,7 +181,7 @@ func (e *FeConvolveMatrixElement) Divisor(f float64) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) EdgeMode(a FeConvolveMatrixEdgeMode) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) EdgeMode(a EdgeMode) *FeConvolveMatrixElement {
 	e.attributes.Set("edgeMode", string(a))
 
 	return e
@@ -441,7 +217,7 @@ func (e *FeConvolveMatrixElement) Order(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) PreserveAlpha(a FeConvolveMatrixPreserveAlpha) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) PreserveAlpha(a PreserveAlpha) *FeConvolveMatrixElement {
 	e.attributes.Set("preserveAlpha", string(a))
 
 	return e
@@ -483,14 +259,10 @@ func (e *FeConvolveMatrixElement) Y(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) AlignmentBaseline(a FeConvolveMatrixAlignmentBaseline) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) AlignmentBaseline(a AlignmentBaseline) *FeConvolveMatrixElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixAlignmentBaselineCustom(s string) FeConvolveMatrixAlignmentBaseline {
-	return FeConvolveMatrixAlignmentBaseline(s)
 }
 
 func (e *FeConvolveMatrixElement) AriaUnsafe(name string, s string) *FeConvolveMatrixElement {
@@ -544,14 +316,10 @@ func (e *FeConvolveMatrixElement) ClipPath(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) ClipRule(a FeConvolveMatrixClipRule) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) ClipRule(a ClipRule) *FeConvolveMatrixElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixClipRuleCustom(s string) FeConvolveMatrixClipRule {
-	return FeConvolveMatrixClipRule(s)
 }
 
 func (e *FeConvolveMatrixElement) Color(s string) *FeConvolveMatrixElement {
@@ -560,24 +328,16 @@ func (e *FeConvolveMatrixElement) Color(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) ColorInterpolation(a FeConvolveMatrixColorInterpolation) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) ColorInterpolation(a ColorInterpolation) *FeConvolveMatrixElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeConvolveMatrixColorInterpolationCustom(s string) FeConvolveMatrixColorInterpolation {
-	return FeConvolveMatrixColorInterpolation(s)
-}
-
-func (e *FeConvolveMatrixElement) ColorInterpolationFilters(a FeConvolveMatrixColorInterpolationFilters) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeConvolveMatrixElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixColorInterpolationFiltersCustom(s string) FeConvolveMatrixColorInterpolationFilters {
-	return FeConvolveMatrixColorInterpolationFilters(s)
 }
 
 func (e *FeConvolveMatrixElement) Cursor(s string) *FeConvolveMatrixElement {
@@ -602,14 +362,10 @@ func (e *FeConvolveMatrixElement) Data(name string, s string) *FeConvolveMatrixE
 	return e
 }
 
-func (e *FeConvolveMatrixElement) Direction(a FeConvolveMatrixDirection) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) Direction(a Direction) *FeConvolveMatrixElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixDirectionCustom(s string) FeConvolveMatrixDirection {
-	return FeConvolveMatrixDirection(s)
 }
 
 func (e *FeConvolveMatrixElement) Display(s string) *FeConvolveMatrixElement {
@@ -618,14 +374,10 @@ func (e *FeConvolveMatrixElement) Display(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) DominantBaseline(a FeConvolveMatrixDominantBaseline) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) DominantBaseline(a DominantBaseline) *FeConvolveMatrixElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixDominantBaselineCustom(s string) FeConvolveMatrixDominantBaseline {
-	return FeConvolveMatrixDominantBaseline(s)
 }
 
 func (e *FeConvolveMatrixElement) Fill(s string) *FeConvolveMatrixElement {
@@ -640,14 +392,10 @@ func (e *FeConvolveMatrixElement) FillOpacity(f float64) *FeConvolveMatrixElemen
 	return e
 }
 
-func (e *FeConvolveMatrixElement) FillRule(a FeConvolveMatrixFillRule) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) FillRule(a FillRule) *FeConvolveMatrixElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixFillRuleCustom(s string) FeConvolveMatrixFillRule {
-	return FeConvolveMatrixFillRule(s)
 }
 
 func (e *FeConvolveMatrixElement) Filter(s string) *FeConvolveMatrixElement {
@@ -692,14 +440,10 @@ func (e *FeConvolveMatrixElement) FontStretch(s string) *FeConvolveMatrixElement
 	return e
 }
 
-func (e *FeConvolveMatrixElement) FontStyle(a FeConvolveMatrixFontStyle) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) FontStyle(a FontStyle) *FeConvolveMatrixElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixFontStyleCustom(s string) FeConvolveMatrixFontStyle {
-	return FeConvolveMatrixFontStyle(s)
 }
 
 func (e *FeConvolveMatrixElement) FontVariant(s string) *FeConvolveMatrixElement {
@@ -738,14 +482,10 @@ func (e *FeConvolveMatrixElement) Id(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) ImageRendering(a FeConvolveMatrixImageRendering) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) ImageRendering(a ImageRendering) *FeConvolveMatrixElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixImageRenderingCustom(s string) FeConvolveMatrixImageRendering {
-	return FeConvolveMatrixImageRendering(s)
 }
 
 func (e *FeConvolveMatrixElement) Lang(s string) *FeConvolveMatrixElement {
@@ -796,14 +536,10 @@ func (e *FeConvolveMatrixElement) Opacity(f float64) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) Overflow(a FeConvolveMatrixOverflow) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) Overflow(a Overflow) *FeConvolveMatrixElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixOverflowCustom(s string) FeConvolveMatrixOverflow {
-	return FeConvolveMatrixOverflow(s)
 }
 
 func (e *FeConvolveMatrixElement) PaintOrder(s string) *FeConvolveMatrixElement {
@@ -812,14 +548,10 @@ func (e *FeConvolveMatrixElement) PaintOrder(s string) *FeConvolveMatrixElement 
 	return e
 }
 
-func (e *FeConvolveMatrixElement) PointerEvents(a FeConvolveMatrixPointerEvents) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) PointerEvents(a PointerEvents) *FeConvolveMatrixElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixPointerEventsCustom(s string) FeConvolveMatrixPointerEvents {
-	return FeConvolveMatrixPointerEvents(s)
 }
 
 func (e *FeConvolveMatrixElement) RequiredExtensions(s string) *FeConvolveMatrixElement {
@@ -828,14 +560,10 @@ func (e *FeConvolveMatrixElement) RequiredExtensions(s string) *FeConvolveMatrix
 	return e
 }
 
-func (e *FeConvolveMatrixElement) ShapeRendering(a FeConvolveMatrixShapeRendering) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) ShapeRendering(a ShapeRendering) *FeConvolveMatrixElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixShapeRenderingCustom(s string) FeConvolveMatrixShapeRendering {
-	return FeConvolveMatrixShapeRendering(s)
 }
 
 func (e *FeConvolveMatrixElement) StopColor(s string) *FeConvolveMatrixElement {
@@ -868,24 +596,16 @@ func (e *FeConvolveMatrixElement) StrokeDashoffset(s string) *FeConvolveMatrixEl
 	return e
 }
 
-func (e *FeConvolveMatrixElement) StrokeLinecap(a FeConvolveMatrixStrokeLinecap) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) StrokeLinecap(a StrokeLinecap) *FeConvolveMatrixElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeConvolveMatrixStrokeLinecapCustom(s string) FeConvolveMatrixStrokeLinecap {
-	return FeConvolveMatrixStrokeLinecap(s)
-}
-
-func (e *FeConvolveMatrixElement) StrokeLinejoin(a FeConvolveMatrixStrokeLinejoin) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) StrokeLinejoin(a StrokeLinejoin) *FeConvolveMatrixElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixStrokeLinejoinCustom(s string) FeConvolveMatrixStrokeLinejoin {
-	return FeConvolveMatrixStrokeLinejoin(s)
 }
 
 func (e *FeConvolveMatrixElement) StrokeMiterlimit(f float64) *FeConvolveMatrixElement {
@@ -918,14 +638,10 @@ func (e *FeConvolveMatrixElement) Tabindex(i int) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) TextAnchor(a FeConvolveMatrixTextAnchor) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) TextAnchor(a TextAnchor) *FeConvolveMatrixElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixTextAnchorCustom(s string) FeConvolveMatrixTextAnchor {
-	return FeConvolveMatrixTextAnchor(s)
 }
 
 func (e *FeConvolveMatrixElement) TextDecoration(s string) *FeConvolveMatrixElement {
@@ -940,14 +656,10 @@ func (e *FeConvolveMatrixElement) TextOverflow(s string) *FeConvolveMatrixElemen
 	return e
 }
 
-func (e *FeConvolveMatrixElement) TextRendering(a FeConvolveMatrixTextRendering) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) TextRendering(a TextRendering) *FeConvolveMatrixElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixTextRenderingCustom(s string) FeConvolveMatrixTextRendering {
-	return FeConvolveMatrixTextRendering(s)
 }
 
 func (e *FeConvolveMatrixElement) Transform(s string) *FeConvolveMatrixElement {
@@ -956,14 +668,10 @@ func (e *FeConvolveMatrixElement) Transform(s string) *FeConvolveMatrixElement {
 	return e
 }
 
-func (e *FeConvolveMatrixElement) TransformBox(a FeConvolveMatrixTransformBox) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) TransformBox(a TransformBox) *FeConvolveMatrixElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixTransformBoxCustom(s string) FeConvolveMatrixTransformBox {
-	return FeConvolveMatrixTransformBox(s)
 }
 
 func (e *FeConvolveMatrixElement) TransformOrigin(s string) *FeConvolveMatrixElement {
@@ -978,24 +686,16 @@ func (e *FeConvolveMatrixElement) UnicodeBidi(s string) *FeConvolveMatrixElement
 	return e
 }
 
-func (e *FeConvolveMatrixElement) VectorEffect(a FeConvolveMatrixVectorEffect) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) VectorEffect(a VectorEffect) *FeConvolveMatrixElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeConvolveMatrixVectorEffectCustom(s string) FeConvolveMatrixVectorEffect {
-	return FeConvolveMatrixVectorEffect(s)
-}
-
-func (e *FeConvolveMatrixElement) Visibility(a FeConvolveMatrixVisibility) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) Visibility(a Visibility) *FeConvolveMatrixElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixVisibilityCustom(s string) FeConvolveMatrixVisibility {
-	return FeConvolveMatrixVisibility(s)
 }
 
 func (e *FeConvolveMatrixElement) WhiteSpace(s string) *FeConvolveMatrixElement {
@@ -1010,14 +710,10 @@ func (e *FeConvolveMatrixElement) WordSpacing(s string) *FeConvolveMatrixElement
 	return e
 }
 
-func (e *FeConvolveMatrixElement) WritingMode(a FeConvolveMatrixWritingMode) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) WritingMode(a WritingMode) *FeConvolveMatrixElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeConvolveMatrixWritingModeCustom(s string) FeConvolveMatrixWritingMode {
-	return FeConvolveMatrixWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1032,7 +728,7 @@ func (e *FeConvolveMatrixElement) XmlLang(s string) *FeConvolveMatrixElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeConvolveMatrixElement) XmlSpace(a FeConvolveMatrixXmlSpace) *FeConvolveMatrixElement {
+func (e *FeConvolveMatrixElement) XmlSpace(a XmlSpace) *FeConvolveMatrixElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

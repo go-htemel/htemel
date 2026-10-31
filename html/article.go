@@ -13,16 +13,21 @@ import (
 )
 
 type ArticleElement struct {
+	htemel.FlowMarker
+	htemel.SectioningMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Article creates a tag <article> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The article element represents a complete, or self-contained, composition in a document, page, application, or site and that is, in principle, independently distributable or reusable, e.g. in syndication. This could be a forum post, a magazine or newspaper article, a blog entry, a user-submitted comment, an interactive widget or gadget, or any other independent item of content.
-func Article(children ...htemel.Node) *ArticleElement {
+func Article(children ...htemel.FlowContent) *ArticleElement {
 	node := &ArticleElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Article(children ...htemel.Node) *ArticleElement {
 }
 
 // ArticleIf creates a tag <article> instance that is only rendered when condition is true.
-func ArticleIf(condition bool, children ...htemel.Node) *ArticleElement {
+func ArticleIf(condition bool, children ...htemel.FlowContent) *ArticleElement {
 	if condition {
 		return Article(children...)
 	}
@@ -43,7 +48,7 @@ func ArticleIf(condition bool, children ...htemel.Node) *ArticleElement {
 }
 
 // ArticleTernary creates a tag <article> containing then when condition is true, otherwise containing otherwise.
-func ArticleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ArticleElement {
+func ArticleTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *ArticleElement {
 	if condition {
 		return Article(then)
 	}
@@ -51,7 +56,7 @@ func ArticleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Ar
 }
 
 // Children appends children to this element.
-func (e *ArticleElement) Children(children ...htemel.Node) *ArticleElement {
+func (e *ArticleElement) Children(children ...htemel.FlowContent) *ArticleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *ArticleElement) Textf(format string, args ...any) *ArticleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ArticleElement) If(cond bool, child htemel.Node) *ArticleElement {
+func (e *ArticleElement) If(cond bool, child htemel.FlowContent) *ArticleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *ArticleElement) If(cond bool, child htemel.Node) *ArticleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ArticleElement) IfElse(cond bool, then, els htemel.Node) *ArticleElement {
+func (e *ArticleElement) IfElse(cond bool, then, els htemel.FlowContent) *ArticleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *ArticleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ArticleAutocapitalize string
-
-const (
-	ArticleAutocapitalizeCharacters ArticleAutocapitalize = "characters"
-	ArticleAutocapitalizeNone       ArticleAutocapitalize = "none"
-	ArticleAutocapitalizeOff        ArticleAutocapitalize = "off"
-	ArticleAutocapitalizeOn         ArticleAutocapitalize = "on"
-	ArticleAutocapitalizeSentences  ArticleAutocapitalize = "sentences"
-	ArticleAutocapitalizeWords      ArticleAutocapitalize = "words"
-)
-
-type ArticleAutocorrect string
-
-const (
-	ArticleAutocorrectOff   ArticleAutocorrect = "off"
-	ArticleAutocorrectOn    ArticleAutocorrect = "on"
-	ArticleAutocorrectEmpty ArticleAutocorrect = ""
-)
-
-type ArticleContenteditable string
-
-const (
-	ArticleContenteditableFalse         ArticleContenteditable = "false"
-	ArticleContenteditablePlaintextOnly ArticleContenteditable = "plaintext-only"
-	ArticleContenteditableTrue          ArticleContenteditable = "true"
-	ArticleContenteditableEmpty         ArticleContenteditable = ""
-)
-
-type ArticleDir string
-
-const (
-	ArticleDirAuto ArticleDir = "auto"
-	ArticleDirLtr  ArticleDir = "ltr"
-	ArticleDirRtl  ArticleDir = "rtl"
-)
-
-type ArticleDraggable string
-
-const (
-	ArticleDraggableFalse ArticleDraggable = "false"
-	ArticleDraggableTrue  ArticleDraggable = "true"
-)
-
-type ArticleEnterkeyhint string
-
-const (
-	ArticleEnterkeyhintDone     ArticleEnterkeyhint = "done"
-	ArticleEnterkeyhintEnter    ArticleEnterkeyhint = "enter"
-	ArticleEnterkeyhintGo       ArticleEnterkeyhint = "go"
-	ArticleEnterkeyhintNext     ArticleEnterkeyhint = "next"
-	ArticleEnterkeyhintPrevious ArticleEnterkeyhint = "previous"
-	ArticleEnterkeyhintSearch   ArticleEnterkeyhint = "search"
-	ArticleEnterkeyhintSend     ArticleEnterkeyhint = "send"
-)
-
-type ArticleHidden string
-
-const (
-	ArticleHiddenHidden     ArticleHidden = "hidden"
-	ArticleHiddenUntilFound ArticleHidden = "until-found"
-	ArticleHiddenEmpty      ArticleHidden = ""
-)
-
-type ArticleInputmode string
-
-const (
-	ArticleInputmodeDecimal ArticleInputmode = "decimal"
-	ArticleInputmodeEmail   ArticleInputmode = "email"
-	ArticleInputmodeNone    ArticleInputmode = "none"
-	ArticleInputmodeNumeric ArticleInputmode = "numeric"
-	ArticleInputmodeSearch  ArticleInputmode = "search"
-	ArticleInputmodeTel     ArticleInputmode = "tel"
-	ArticleInputmodeText    ArticleInputmode = "text"
-	ArticleInputmodeUrl     ArticleInputmode = "url"
-)
-
-type ArticlePopover string
-
-const (
-	ArticlePopoverAuto   ArticlePopover = "auto"
-	ArticlePopoverHint   ArticlePopover = "hint"
-	ArticlePopoverManual ArticlePopover = "manual"
-	ArticlePopoverEmpty  ArticlePopover = ""
-)
-
-type ArticleSpellcheck string
-
-const (
-	ArticleSpellcheckFalse ArticleSpellcheck = "false"
-	ArticleSpellcheckTrue  ArticleSpellcheck = "true"
-	ArticleSpellcheckEmpty ArticleSpellcheck = ""
-)
-
-type ArticleTranslate string
-
-const (
-	ArticleTranslateNo    ArticleTranslate = "no"
-	ArticleTranslateYes   ArticleTranslate = "yes"
-	ArticleTranslateEmpty ArticleTranslate = ""
-)
-
-type ArticleWritingsuggestions string
-
-const (
-	ArticleWritingsuggestionsFalse ArticleWritingsuggestions = "false"
-	ArticleWritingsuggestionsTrue  ArticleWritingsuggestions = "true"
-	ArticleWritingsuggestionsEmpty ArticleWritingsuggestions = ""
-)
-
 func (e *ArticleElement) Accesskey(r rune) *ArticleElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +191,7 @@ func (e *ArticleElement) Aria(name string, s string) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Autocapitalize(a ArticleAutocapitalize) *ArticleElement {
+func (e *ArticleElement) Autocapitalize(a Autocapitalize) *ArticleElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *ArticleElement) Autocapitalize(a ArticleAutocapitalize) *ArticleElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Autocorrect(v ...ArticleAutocorrect) *ArticleElement {
-	var val ArticleAutocorrect
+func (e *ArticleElement) Autocorrect(v ...Autocorrect) *ArticleElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *ArticleElement) Class(s ...string) *ArticleElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Contenteditable(v ...ArticleContenteditable) *ArticleElement {
-	var val ArticleContenteditable
+func (e *ArticleElement) Contenteditable(v ...Contenteditable) *ArticleElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *ArticleElement) Data(name string, s string) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Dir(a ArticleDir) *ArticleElement {
+func (e *ArticleElement) Dir(a Dir) *ArticleElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ArticleElement) Draggable(a ArticleDraggable) *ArticleElement {
+func (e *ArticleElement) Draggable(a Draggable) *ArticleElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ArticleElement) Enterkeyhint(a ArticleEnterkeyhint) *ArticleElement {
+func (e *ArticleElement) Enterkeyhint(a Enterkeyhint) *ArticleElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *ArticleElement) Headingreset(b bool) *ArticleElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Hidden(v ...ArticleHidden) *ArticleElement {
-	var val ArticleHidden
+func (e *ArticleElement) Hidden(v ...Hidden) *ArticleElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *ArticleElement) Inert(b bool) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Inputmode(a ArticleInputmode) *ArticleElement {
+func (e *ArticleElement) Inputmode(a Inputmode) *ArticleElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *ArticleElement) Part(s ...string) *ArticleElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Popover(v ...ArticlePopover) *ArticleElement {
-	var val ArticlePopover
+func (e *ArticleElement) Popover(v ...Popover) *ArticleElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *ArticleElement) Slot(s string) *ArticleElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Spellcheck(v ...ArticleSpellcheck) *ArticleElement {
-	var val ArticleSpellcheck
+func (e *ArticleElement) Spellcheck(v ...Spellcheck) *ArticleElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *ArticleElement) Title(s string) *ArticleElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Translate(v ...ArticleTranslate) *ArticleElement {
-	var val ArticleTranslate
+func (e *ArticleElement) Translate(v ...Translate) *ArticleElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *ArticleElement) Translate(v ...ArticleTranslate) *ArticleElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ArticleElement) Writingsuggestions(v ...ArticleWritingsuggestions) *ArticleElement {
-	var val ArticleWritingsuggestions
+func (e *ArticleElement) Writingsuggestions(v ...Writingsuggestions) *ArticleElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

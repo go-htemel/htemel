@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,31 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// MenuChild is a permitted child of <menu>: <li>, script-supporting elements.
+//
+// It is implemented by <li>, <script>, <template>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type MenuChild interface {
+	htemel.Node
+	HTMLMenuChild()
+}
+
 type MenuElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []MenuChild
 	skipRender bool
 }
 
 // Menu creates a tag <menu> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <li>, script-supporting elements (MenuChild).
+//
 // Spec Description: The menu element represents a toolbar consisting of its contents, in the form of an unordered list of items (represented by li elements), each of which represents a command that the user can perform or activate.
-func Menu(children ...htemel.Node) *MenuElement {
+func Menu(children ...MenuChild) *MenuElement {
 	node := &MenuElement{
 		children: children,
 	}
@@ -31,7 +44,7 @@ func Menu(children ...htemel.Node) *MenuElement {
 }
 
 // MenuIf creates a tag <menu> instance that is only rendered when condition is true.
-func MenuIf(condition bool, children ...htemel.Node) *MenuElement {
+func MenuIf(condition bool, children ...MenuChild) *MenuElement {
 	if condition {
 		return Menu(children...)
 	}
@@ -43,7 +56,7 @@ func MenuIf(condition bool, children ...htemel.Node) *MenuElement {
 }
 
 // MenuTernary creates a tag <menu> containing then when condition is true, otherwise containing otherwise.
-func MenuTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MenuElement {
+func MenuTernary(condition bool, then MenuChild, otherwise MenuChild) *MenuElement {
 	if condition {
 		return Menu(then)
 	}
@@ -51,7 +64,7 @@ func MenuTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MenuE
 }
 
 // Children appends children to this element.
-func (e *MenuElement) Children(children ...htemel.Node) *MenuElement {
+func (e *MenuElement) Children(children ...MenuChild) *MenuElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +75,8 @@ func (e *MenuElement) With(fn func(*MenuElement)) *MenuElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *MenuElement) Text(text string) *MenuElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *MenuElement) Textf(format string, args ...any) *MenuElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MenuElement) If(cond bool, child htemel.Node) *MenuElement {
+func (e *MenuElement) If(cond bool, child MenuChild) *MenuElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MenuElement) If(cond bool, child htemel.Node) *MenuElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MenuElement) IfElse(cond bool, then, els htemel.Node) *MenuElement {
+func (e *MenuElement) IfElse(cond bool, then, els MenuChild) *MenuElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +166,6 @@ func (e *MenuElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MenuAutocapitalize string
-
-const (
-	MenuAutocapitalizeCharacters MenuAutocapitalize = "characters"
-	MenuAutocapitalizeNone       MenuAutocapitalize = "none"
-	MenuAutocapitalizeOff        MenuAutocapitalize = "off"
-	MenuAutocapitalizeOn         MenuAutocapitalize = "on"
-	MenuAutocapitalizeSentences  MenuAutocapitalize = "sentences"
-	MenuAutocapitalizeWords      MenuAutocapitalize = "words"
-)
-
-type MenuAutocorrect string
-
-const (
-	MenuAutocorrectOff   MenuAutocorrect = "off"
-	MenuAutocorrectOn    MenuAutocorrect = "on"
-	MenuAutocorrectEmpty MenuAutocorrect = ""
-)
-
-type MenuContenteditable string
-
-const (
-	MenuContenteditableFalse         MenuContenteditable = "false"
-	MenuContenteditablePlaintextOnly MenuContenteditable = "plaintext-only"
-	MenuContenteditableTrue          MenuContenteditable = "true"
-	MenuContenteditableEmpty         MenuContenteditable = ""
-)
-
-type MenuDir string
-
-const (
-	MenuDirAuto MenuDir = "auto"
-	MenuDirLtr  MenuDir = "ltr"
-	MenuDirRtl  MenuDir = "rtl"
-)
-
-type MenuDraggable string
-
-const (
-	MenuDraggableFalse MenuDraggable = "false"
-	MenuDraggableTrue  MenuDraggable = "true"
-)
-
-type MenuEnterkeyhint string
-
-const (
-	MenuEnterkeyhintDone     MenuEnterkeyhint = "done"
-	MenuEnterkeyhintEnter    MenuEnterkeyhint = "enter"
-	MenuEnterkeyhintGo       MenuEnterkeyhint = "go"
-	MenuEnterkeyhintNext     MenuEnterkeyhint = "next"
-	MenuEnterkeyhintPrevious MenuEnterkeyhint = "previous"
-	MenuEnterkeyhintSearch   MenuEnterkeyhint = "search"
-	MenuEnterkeyhintSend     MenuEnterkeyhint = "send"
-)
-
-type MenuHidden string
-
-const (
-	MenuHiddenHidden     MenuHidden = "hidden"
-	MenuHiddenUntilFound MenuHidden = "until-found"
-	MenuHiddenEmpty      MenuHidden = ""
-)
-
-type MenuInputmode string
-
-const (
-	MenuInputmodeDecimal MenuInputmode = "decimal"
-	MenuInputmodeEmail   MenuInputmode = "email"
-	MenuInputmodeNone    MenuInputmode = "none"
-	MenuInputmodeNumeric MenuInputmode = "numeric"
-	MenuInputmodeSearch  MenuInputmode = "search"
-	MenuInputmodeTel     MenuInputmode = "tel"
-	MenuInputmodeText    MenuInputmode = "text"
-	MenuInputmodeUrl     MenuInputmode = "url"
-)
-
-type MenuPopover string
-
-const (
-	MenuPopoverAuto   MenuPopover = "auto"
-	MenuPopoverHint   MenuPopover = "hint"
-	MenuPopoverManual MenuPopover = "manual"
-	MenuPopoverEmpty  MenuPopover = ""
-)
-
-type MenuSpellcheck string
-
-const (
-	MenuSpellcheckFalse MenuSpellcheck = "false"
-	MenuSpellcheckTrue  MenuSpellcheck = "true"
-	MenuSpellcheckEmpty MenuSpellcheck = ""
-)
-
-type MenuTranslate string
-
-const (
-	MenuTranslateNo    MenuTranslate = "no"
-	MenuTranslateYes   MenuTranslate = "yes"
-	MenuTranslateEmpty MenuTranslate = ""
-)
-
-type MenuWritingsuggestions string
-
-const (
-	MenuWritingsuggestionsFalse MenuWritingsuggestions = "false"
-	MenuWritingsuggestionsTrue  MenuWritingsuggestions = "true"
-	MenuWritingsuggestionsEmpty MenuWritingsuggestions = ""
-)
-
 func (e *MenuElement) Accesskey(r rune) *MenuElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +188,7 @@ func (e *MenuElement) Aria(name string, s string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Autocapitalize(a MenuAutocapitalize) *MenuElement {
+func (e *MenuElement) Autocapitalize(a Autocapitalize) *MenuElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +196,8 @@ func (e *MenuElement) Autocapitalize(a MenuAutocapitalize) *MenuElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Autocorrect(v ...MenuAutocorrect) *MenuElement {
-	var val MenuAutocorrect
+func (e *MenuElement) Autocorrect(v ...Autocorrect) *MenuElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +222,8 @@ func (e *MenuElement) Class(s ...string) *MenuElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Contenteditable(v ...MenuContenteditable) *MenuElement {
-	var val MenuContenteditable
+func (e *MenuElement) Contenteditable(v ...Contenteditable) *MenuElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +248,19 @@ func (e *MenuElement) Data(name string, s string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Dir(a MenuDir) *MenuElement {
+func (e *MenuElement) Dir(a Dir) *MenuElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MenuElement) Draggable(a MenuDraggable) *MenuElement {
+func (e *MenuElement) Draggable(a Draggable) *MenuElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MenuElement) Enterkeyhint(a MenuEnterkeyhint) *MenuElement {
+func (e *MenuElement) Enterkeyhint(a Enterkeyhint) *MenuElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +288,8 @@ func (e *MenuElement) Headingreset(b bool) *MenuElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Hidden(v ...MenuHidden) *MenuElement {
-	var val MenuHidden
+func (e *MenuElement) Hidden(v ...Hidden) *MenuElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +312,7 @@ func (e *MenuElement) Inert(b bool) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Inputmode(a MenuInputmode) *MenuElement {
+func (e *MenuElement) Inputmode(a Inputmode) *MenuElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +378,8 @@ func (e *MenuElement) Part(s ...string) *MenuElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Popover(v ...MenuPopover) *MenuElement {
-	var val MenuPopover
+func (e *MenuElement) Popover(v ...Popover) *MenuElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +402,8 @@ func (e *MenuElement) Slot(s string) *MenuElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Spellcheck(v ...MenuSpellcheck) *MenuElement {
-	var val MenuSpellcheck
+func (e *MenuElement) Spellcheck(v ...Spellcheck) *MenuElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +432,8 @@ func (e *MenuElement) Title(s string) *MenuElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Translate(v ...MenuTranslate) *MenuElement {
-	var val MenuTranslate
+func (e *MenuElement) Translate(v ...Translate) *MenuElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +444,8 @@ func (e *MenuElement) Translate(v ...MenuTranslate) *MenuElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MenuElement) Writingsuggestions(v ...MenuWritingsuggestions) *MenuElement {
-	var val MenuWritingsuggestions
+func (e *MenuElement) Writingsuggestions(v ...Writingsuggestions) *MenuElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

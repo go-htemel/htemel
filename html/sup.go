@@ -13,16 +13,20 @@ import (
 )
 
 type SupElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Sup creates a tag <sup> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: Superscript
-func Sup(children ...htemel.Node) *SupElement {
+func Sup(children ...htemel.PhrasingContent) *SupElement {
 	node := &SupElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Sup(children ...htemel.Node) *SupElement {
 }
 
 // SupIf creates a tag <sup> instance that is only rendered when condition is true.
-func SupIf(condition bool, children ...htemel.Node) *SupElement {
+func SupIf(condition bool, children ...htemel.PhrasingContent) *SupElement {
 	if condition {
 		return Sup(children...)
 	}
@@ -43,7 +47,7 @@ func SupIf(condition bool, children ...htemel.Node) *SupElement {
 }
 
 // SupTernary creates a tag <sup> containing then when condition is true, otherwise containing otherwise.
-func SupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SupElement {
+func SupTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SupElement {
 	if condition {
 		return Sup(then)
 	}
@@ -51,7 +55,7 @@ func SupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SupEle
 }
 
 // Children appends children to this element.
-func (e *SupElement) Children(children ...htemel.Node) *SupElement {
+func (e *SupElement) Children(children ...htemel.PhrasingContent) *SupElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SupElement) Textf(format string, args ...any) *SupElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SupElement) If(cond bool, child htemel.Node) *SupElement {
+func (e *SupElement) If(cond bool, child htemel.PhrasingContent) *SupElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SupElement) If(cond bool, child htemel.Node) *SupElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SupElement) IfElse(cond bool, then, els htemel.Node) *SupElement {
+func (e *SupElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SupElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SupAutocapitalize string
-
-const (
-	SupAutocapitalizeCharacters SupAutocapitalize = "characters"
-	SupAutocapitalizeNone       SupAutocapitalize = "none"
-	SupAutocapitalizeOff        SupAutocapitalize = "off"
-	SupAutocapitalizeOn         SupAutocapitalize = "on"
-	SupAutocapitalizeSentences  SupAutocapitalize = "sentences"
-	SupAutocapitalizeWords      SupAutocapitalize = "words"
-)
-
-type SupAutocorrect string
-
-const (
-	SupAutocorrectOff   SupAutocorrect = "off"
-	SupAutocorrectOn    SupAutocorrect = "on"
-	SupAutocorrectEmpty SupAutocorrect = ""
-)
-
-type SupContenteditable string
-
-const (
-	SupContenteditableFalse         SupContenteditable = "false"
-	SupContenteditablePlaintextOnly SupContenteditable = "plaintext-only"
-	SupContenteditableTrue          SupContenteditable = "true"
-	SupContenteditableEmpty         SupContenteditable = ""
-)
-
-type SupDir string
-
-const (
-	SupDirAuto SupDir = "auto"
-	SupDirLtr  SupDir = "ltr"
-	SupDirRtl  SupDir = "rtl"
-)
-
-type SupDraggable string
-
-const (
-	SupDraggableFalse SupDraggable = "false"
-	SupDraggableTrue  SupDraggable = "true"
-)
-
-type SupEnterkeyhint string
-
-const (
-	SupEnterkeyhintDone     SupEnterkeyhint = "done"
-	SupEnterkeyhintEnter    SupEnterkeyhint = "enter"
-	SupEnterkeyhintGo       SupEnterkeyhint = "go"
-	SupEnterkeyhintNext     SupEnterkeyhint = "next"
-	SupEnterkeyhintPrevious SupEnterkeyhint = "previous"
-	SupEnterkeyhintSearch   SupEnterkeyhint = "search"
-	SupEnterkeyhintSend     SupEnterkeyhint = "send"
-)
-
-type SupHidden string
-
-const (
-	SupHiddenHidden     SupHidden = "hidden"
-	SupHiddenUntilFound SupHidden = "until-found"
-	SupHiddenEmpty      SupHidden = ""
-)
-
-type SupInputmode string
-
-const (
-	SupInputmodeDecimal SupInputmode = "decimal"
-	SupInputmodeEmail   SupInputmode = "email"
-	SupInputmodeNone    SupInputmode = "none"
-	SupInputmodeNumeric SupInputmode = "numeric"
-	SupInputmodeSearch  SupInputmode = "search"
-	SupInputmodeTel     SupInputmode = "tel"
-	SupInputmodeText    SupInputmode = "text"
-	SupInputmodeUrl     SupInputmode = "url"
-)
-
-type SupPopover string
-
-const (
-	SupPopoverAuto   SupPopover = "auto"
-	SupPopoverHint   SupPopover = "hint"
-	SupPopoverManual SupPopover = "manual"
-	SupPopoverEmpty  SupPopover = ""
-)
-
-type SupSpellcheck string
-
-const (
-	SupSpellcheckFalse SupSpellcheck = "false"
-	SupSpellcheckTrue  SupSpellcheck = "true"
-	SupSpellcheckEmpty SupSpellcheck = ""
-)
-
-type SupTranslate string
-
-const (
-	SupTranslateNo    SupTranslate = "no"
-	SupTranslateYes   SupTranslate = "yes"
-	SupTranslateEmpty SupTranslate = ""
-)
-
-type SupWritingsuggestions string
-
-const (
-	SupWritingsuggestionsFalse SupWritingsuggestions = "false"
-	SupWritingsuggestionsTrue  SupWritingsuggestions = "true"
-	SupWritingsuggestionsEmpty SupWritingsuggestions = ""
-)
-
 func (e *SupElement) Accesskey(r rune) *SupElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SupElement) Aria(name string, s string) *SupElement {
 	return e
 }
 
-func (e *SupElement) Autocapitalize(a SupAutocapitalize) *SupElement {
+func (e *SupElement) Autocapitalize(a Autocapitalize) *SupElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SupElement) Autocapitalize(a SupAutocapitalize) *SupElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Autocorrect(v ...SupAutocorrect) *SupElement {
-	var val SupAutocorrect
+func (e *SupElement) Autocorrect(v ...Autocorrect) *SupElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SupElement) Class(s ...string) *SupElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Contenteditable(v ...SupContenteditable) *SupElement {
-	var val SupContenteditable
+func (e *SupElement) Contenteditable(v ...Contenteditable) *SupElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SupElement) Data(name string, s string) *SupElement {
 	return e
 }
 
-func (e *SupElement) Dir(a SupDir) *SupElement {
+func (e *SupElement) Dir(a Dir) *SupElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SupElement) Draggable(a SupDraggable) *SupElement {
+func (e *SupElement) Draggable(a Draggable) *SupElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SupElement) Enterkeyhint(a SupEnterkeyhint) *SupElement {
+func (e *SupElement) Enterkeyhint(a Enterkeyhint) *SupElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SupElement) Headingreset(b bool) *SupElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Hidden(v ...SupHidden) *SupElement {
-	var val SupHidden
+func (e *SupElement) Hidden(v ...Hidden) *SupElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SupElement) Inert(b bool) *SupElement {
 	return e
 }
 
-func (e *SupElement) Inputmode(a SupInputmode) *SupElement {
+func (e *SupElement) Inputmode(a Inputmode) *SupElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SupElement) Part(s ...string) *SupElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Popover(v ...SupPopover) *SupElement {
-	var val SupPopover
+func (e *SupElement) Popover(v ...Popover) *SupElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SupElement) Slot(s string) *SupElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Spellcheck(v ...SupSpellcheck) *SupElement {
-	var val SupSpellcheck
+func (e *SupElement) Spellcheck(v ...Spellcheck) *SupElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SupElement) Title(s string) *SupElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Translate(v ...SupTranslate) *SupElement {
-	var val SupTranslate
+func (e *SupElement) Translate(v ...Translate) *SupElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SupElement) Translate(v ...SupTranslate) *SupElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SupElement) Writingsuggestions(v ...SupWritingsuggestions) *SupElement {
-	var val SupWritingsuggestions
+func (e *SupElement) Writingsuggestions(v ...Writingsuggestions) *SupElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

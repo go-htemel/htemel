@@ -14,15 +14,17 @@ import (
 
 type MtableElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mtable creates a tag <mtable> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mtable(children ...htemel.Node) *MtableElement {
+func Mtable(children ...Content) *MtableElement {
 	node := &MtableElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mtable(children ...htemel.Node) *MtableElement {
 }
 
 // MtableIf creates a tag <mtable> instance that is only rendered when condition is true.
-func MtableIf(condition bool, children ...htemel.Node) *MtableElement {
+func MtableIf(condition bool, children ...Content) *MtableElement {
 	if condition {
 		return Mtable(children...)
 	}
@@ -43,7 +45,7 @@ func MtableIf(condition bool, children ...htemel.Node) *MtableElement {
 }
 
 // MtableTernary creates a tag <mtable> containing then when condition is true, otherwise containing otherwise.
-func MtableTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MtableElement {
+func MtableTernary(condition bool, then Content, otherwise Content) *MtableElement {
 	if condition {
 		return Mtable(then)
 	}
@@ -51,7 +53,7 @@ func MtableTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mta
 }
 
 // Children appends children to this element.
-func (e *MtableElement) Children(children ...htemel.Node) *MtableElement {
+func (e *MtableElement) Children(children ...Content) *MtableElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MtableElement) Textf(format string, args ...any) *MtableElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MtableElement) If(cond bool, child htemel.Node) *MtableElement {
+func (e *MtableElement) If(cond bool, child Content) *MtableElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MtableElement) If(cond bool, child htemel.Node) *MtableElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MtableElement) IfElse(cond bool, then, els htemel.Node) *MtableElement {
+func (e *MtableElement) IfElse(cond bool, then, els Content) *MtableElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MtableElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MtableDir string
-
-const (
-	MtableDirLtr MtableDir = "ltr"
-	MtableDirRtl MtableDir = "rtl"
-)
-
-type MtableDisplaystyle string
-
-const (
-	MtableDisplaystyleFalse MtableDisplaystyle = "false"
-	MtableDisplaystyleTrue  MtableDisplaystyle = "true"
-)
+// MathMLContent marks <mtable> as a permitted child (Content).
+func (*MtableElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MtableElement) Data(name string, s string) *MtableElement {
 	return e
 }
 
-func (e *MtableElement) Dir(a MtableDir) *MtableElement {
+func (e *MtableElement) Dir(a Dir) *MtableElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MtableElement) Displaystyle(a MtableDisplaystyle) *MtableElement {
+func (e *MtableElement) Displaystyle(a Displaystyle) *MtableElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

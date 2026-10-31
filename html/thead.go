@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,29 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// TheadChild is a permitted child of <thead>: <tr>, script-supporting elements.
+//
+// It is implemented by <script>, <template>, <tr>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type TheadChild interface {
+	htemel.Node
+	HTMLTheadChild()
+}
+
 type TheadElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []TheadChild
 	skipRender bool
 }
 
 // Thead creates a tag <thead> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <tr>, script-supporting elements (TheadChild).
+//
 // Spec Description: The thead element represents the block of rows that consist of the column labels (headers) and any ancillary non-header cells for the parent table element, if the thead element has a parent and it is a table.
-func Thead(children ...htemel.Node) *TheadElement {
+func Thead(children ...TheadChild) *TheadElement {
 	node := &TheadElement{
 		children: children,
 	}
@@ -31,7 +42,7 @@ func Thead(children ...htemel.Node) *TheadElement {
 }
 
 // TheadIf creates a tag <thead> instance that is only rendered when condition is true.
-func TheadIf(condition bool, children ...htemel.Node) *TheadElement {
+func TheadIf(condition bool, children ...TheadChild) *TheadElement {
 	if condition {
 		return Thead(children...)
 	}
@@ -43,7 +54,7 @@ func TheadIf(condition bool, children ...htemel.Node) *TheadElement {
 }
 
 // TheadTernary creates a tag <thead> containing then when condition is true, otherwise containing otherwise.
-func TheadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TheadElement {
+func TheadTernary(condition bool, then TheadChild, otherwise TheadChild) *TheadElement {
 	if condition {
 		return Thead(then)
 	}
@@ -51,7 +62,7 @@ func TheadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Thea
 }
 
 // Children appends children to this element.
-func (e *TheadElement) Children(children ...htemel.Node) *TheadElement {
+func (e *TheadElement) Children(children ...TheadChild) *TheadElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +73,8 @@ func (e *TheadElement) With(fn func(*TheadElement)) *TheadElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *TheadElement) Text(text string) *TheadElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *TheadElement) Textf(format string, args ...any) *TheadElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TheadElement) If(cond bool, child htemel.Node) *TheadElement {
+func (e *TheadElement) If(cond bool, child TheadChild) *TheadElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +82,7 @@ func (e *TheadElement) If(cond bool, child htemel.Node) *TheadElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TheadElement) IfElse(cond bool, then, els htemel.Node) *TheadElement {
+func (e *TheadElement) IfElse(cond bool, then, els TheadChild) *TheadElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +164,8 @@ func (e *TheadElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TheadAutocapitalize string
-
-const (
-	TheadAutocapitalizeCharacters TheadAutocapitalize = "characters"
-	TheadAutocapitalizeNone       TheadAutocapitalize = "none"
-	TheadAutocapitalizeOff        TheadAutocapitalize = "off"
-	TheadAutocapitalizeOn         TheadAutocapitalize = "on"
-	TheadAutocapitalizeSentences  TheadAutocapitalize = "sentences"
-	TheadAutocapitalizeWords      TheadAutocapitalize = "words"
-)
-
-type TheadAutocorrect string
-
-const (
-	TheadAutocorrectOff   TheadAutocorrect = "off"
-	TheadAutocorrectOn    TheadAutocorrect = "on"
-	TheadAutocorrectEmpty TheadAutocorrect = ""
-)
-
-type TheadContenteditable string
-
-const (
-	TheadContenteditableFalse         TheadContenteditable = "false"
-	TheadContenteditablePlaintextOnly TheadContenteditable = "plaintext-only"
-	TheadContenteditableTrue          TheadContenteditable = "true"
-	TheadContenteditableEmpty         TheadContenteditable = ""
-)
-
-type TheadDir string
-
-const (
-	TheadDirAuto TheadDir = "auto"
-	TheadDirLtr  TheadDir = "ltr"
-	TheadDirRtl  TheadDir = "rtl"
-)
-
-type TheadDraggable string
-
-const (
-	TheadDraggableFalse TheadDraggable = "false"
-	TheadDraggableTrue  TheadDraggable = "true"
-)
-
-type TheadEnterkeyhint string
-
-const (
-	TheadEnterkeyhintDone     TheadEnterkeyhint = "done"
-	TheadEnterkeyhintEnter    TheadEnterkeyhint = "enter"
-	TheadEnterkeyhintGo       TheadEnterkeyhint = "go"
-	TheadEnterkeyhintNext     TheadEnterkeyhint = "next"
-	TheadEnterkeyhintPrevious TheadEnterkeyhint = "previous"
-	TheadEnterkeyhintSearch   TheadEnterkeyhint = "search"
-	TheadEnterkeyhintSend     TheadEnterkeyhint = "send"
-)
-
-type TheadHidden string
-
-const (
-	TheadHiddenHidden     TheadHidden = "hidden"
-	TheadHiddenUntilFound TheadHidden = "until-found"
-	TheadHiddenEmpty      TheadHidden = ""
-)
-
-type TheadInputmode string
-
-const (
-	TheadInputmodeDecimal TheadInputmode = "decimal"
-	TheadInputmodeEmail   TheadInputmode = "email"
-	TheadInputmodeNone    TheadInputmode = "none"
-	TheadInputmodeNumeric TheadInputmode = "numeric"
-	TheadInputmodeSearch  TheadInputmode = "search"
-	TheadInputmodeTel     TheadInputmode = "tel"
-	TheadInputmodeText    TheadInputmode = "text"
-	TheadInputmodeUrl     TheadInputmode = "url"
-)
-
-type TheadPopover string
-
-const (
-	TheadPopoverAuto   TheadPopover = "auto"
-	TheadPopoverHint   TheadPopover = "hint"
-	TheadPopoverManual TheadPopover = "manual"
-	TheadPopoverEmpty  TheadPopover = ""
-)
-
-type TheadSpellcheck string
-
-const (
-	TheadSpellcheckFalse TheadSpellcheck = "false"
-	TheadSpellcheckTrue  TheadSpellcheck = "true"
-	TheadSpellcheckEmpty TheadSpellcheck = ""
-)
-
-type TheadTranslate string
-
-const (
-	TheadTranslateNo    TheadTranslate = "no"
-	TheadTranslateYes   TheadTranslate = "yes"
-	TheadTranslateEmpty TheadTranslate = ""
-)
-
-type TheadWritingsuggestions string
-
-const (
-	TheadWritingsuggestionsFalse TheadWritingsuggestions = "false"
-	TheadWritingsuggestionsTrue  TheadWritingsuggestions = "true"
-	TheadWritingsuggestionsEmpty TheadWritingsuggestions = ""
-)
+// HTMLTableChild marks <thead> as a permitted child of <table> (TableChild).
+func (*TheadElement) HTMLTableChild() {}
 
 func (e *TheadElement) Accesskey(r rune) *TheadElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +189,7 @@ func (e *TheadElement) Aria(name string, s string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Autocapitalize(a TheadAutocapitalize) *TheadElement {
+func (e *TheadElement) Autocapitalize(a Autocapitalize) *TheadElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *TheadElement) Autocapitalize(a TheadAutocapitalize) *TheadElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Autocorrect(v ...TheadAutocorrect) *TheadElement {
-	var val TheadAutocorrect
+func (e *TheadElement) Autocorrect(v ...Autocorrect) *TheadElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *TheadElement) Class(s ...string) *TheadElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Contenteditable(v ...TheadContenteditable) *TheadElement {
-	var val TheadContenteditable
+func (e *TheadElement) Contenteditable(v ...Contenteditable) *TheadElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *TheadElement) Data(name string, s string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Dir(a TheadDir) *TheadElement {
+func (e *TheadElement) Dir(a Dir) *TheadElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TheadElement) Draggable(a TheadDraggable) *TheadElement {
+func (e *TheadElement) Draggable(a Draggable) *TheadElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TheadElement) Enterkeyhint(a TheadEnterkeyhint) *TheadElement {
+func (e *TheadElement) Enterkeyhint(a Enterkeyhint) *TheadElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *TheadElement) Headingreset(b bool) *TheadElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Hidden(v ...TheadHidden) *TheadElement {
-	var val TheadHidden
+func (e *TheadElement) Hidden(v ...Hidden) *TheadElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *TheadElement) Inert(b bool) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Inputmode(a TheadInputmode) *TheadElement {
+func (e *TheadElement) Inputmode(a Inputmode) *TheadElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *TheadElement) Part(s ...string) *TheadElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Popover(v ...TheadPopover) *TheadElement {
-	var val TheadPopover
+func (e *TheadElement) Popover(v ...Popover) *TheadElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *TheadElement) Slot(s string) *TheadElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Spellcheck(v ...TheadSpellcheck) *TheadElement {
-	var val TheadSpellcheck
+func (e *TheadElement) Spellcheck(v ...Spellcheck) *TheadElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *TheadElement) Title(s string) *TheadElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Translate(v ...TheadTranslate) *TheadElement {
-	var val TheadTranslate
+func (e *TheadElement) Translate(v ...Translate) *TheadElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *TheadElement) Translate(v ...TheadTranslate) *TheadElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TheadElement) Writingsuggestions(v ...TheadWritingsuggestions) *TheadElement {
-	var val TheadWritingsuggestions
+func (e *TheadElement) Writingsuggestions(v ...Writingsuggestions) *TheadElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

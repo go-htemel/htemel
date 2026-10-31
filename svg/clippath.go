@@ -14,15 +14,17 @@ import (
 
 type ClipPathElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // ClipPath creates a tag <clipPath> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The clipPath element defines a clipping region used with the clip-path property.
-func ClipPath(children ...htemel.Node) *ClipPathElement {
+func ClipPath(children ...Content) *ClipPathElement {
 	node := &ClipPathElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func ClipPath(children ...htemel.Node) *ClipPathElement {
 }
 
 // ClipPathIf creates a tag <clipPath> instance that is only rendered when condition is true.
-func ClipPathIf(condition bool, children ...htemel.Node) *ClipPathElement {
+func ClipPathIf(condition bool, children ...Content) *ClipPathElement {
 	if condition {
 		return ClipPath(children...)
 	}
@@ -43,7 +45,7 @@ func ClipPathIf(condition bool, children ...htemel.Node) *ClipPathElement {
 }
 
 // ClipPathTernary creates a tag <clipPath> containing then when condition is true, otherwise containing otherwise.
-func ClipPathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ClipPathElement {
+func ClipPathTernary(condition bool, then Content, otherwise Content) *ClipPathElement {
 	if condition {
 		return ClipPath(then)
 	}
@@ -51,7 +53,7 @@ func ClipPathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *C
 }
 
 // Children appends children to this element.
-func (e *ClipPathElement) Children(children ...htemel.Node) *ClipPathElement {
+func (e *ClipPathElement) Children(children ...Content) *ClipPathElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *ClipPathElement) Textf(format string, args ...any) *ClipPathElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ClipPathElement) If(cond bool, child htemel.Node) *ClipPathElement {
+func (e *ClipPathElement) If(cond bool, child Content) *ClipPathElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *ClipPathElement) If(cond bool, child htemel.Node) *ClipPathElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ClipPathElement) IfElse(cond bool, then, els htemel.Node) *ClipPathElement {
+func (e *ClipPathElement) IfElse(cond bool, then, els Content) *ClipPathElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,228 +166,10 @@ func (e *ClipPathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ClipPathClipPathUnits string
+// SVGContent marks <clipPath> as a permitted child (Content).
+func (*ClipPathElement) SVGContent() {}
 
-const (
-	ClipPathClipPathUnitsObjectBoundingBox ClipPathClipPathUnits = "objectBoundingBox"
-	ClipPathClipPathUnitsUserSpaceOnUse    ClipPathClipPathUnits = "userSpaceOnUse"
-)
-
-type ClipPathAlignmentBaseline string
-
-const (
-	ClipPathAlignmentBaselineAfterEdge      ClipPathAlignmentBaseline = "after-edge"
-	ClipPathAlignmentBaselineAlphabetic     ClipPathAlignmentBaseline = "alphabetic"
-	ClipPathAlignmentBaselineAuto           ClipPathAlignmentBaseline = "auto"
-	ClipPathAlignmentBaselineBaseline       ClipPathAlignmentBaseline = "baseline"
-	ClipPathAlignmentBaselineBeforeEdge     ClipPathAlignmentBaseline = "before-edge"
-	ClipPathAlignmentBaselineBottom         ClipPathAlignmentBaseline = "bottom"
-	ClipPathAlignmentBaselineCenter         ClipPathAlignmentBaseline = "center"
-	ClipPathAlignmentBaselineCentral        ClipPathAlignmentBaseline = "central"
-	ClipPathAlignmentBaselineHanging        ClipPathAlignmentBaseline = "hanging"
-	ClipPathAlignmentBaselineIdeographic    ClipPathAlignmentBaseline = "ideographic"
-	ClipPathAlignmentBaselineMathematical   ClipPathAlignmentBaseline = "mathematical"
-	ClipPathAlignmentBaselineMiddle         ClipPathAlignmentBaseline = "middle"
-	ClipPathAlignmentBaselineTextAfterEdge  ClipPathAlignmentBaseline = "text-after-edge"
-	ClipPathAlignmentBaselineTextBeforeEdge ClipPathAlignmentBaseline = "text-before-edge"
-	ClipPathAlignmentBaselineTextBottom     ClipPathAlignmentBaseline = "text-bottom"
-	ClipPathAlignmentBaselineTextTop        ClipPathAlignmentBaseline = "text-top"
-	ClipPathAlignmentBaselineTop            ClipPathAlignmentBaseline = "top"
-)
-
-type ClipPathClipRule string
-
-const (
-	ClipPathClipRuleEvenodd ClipPathClipRule = "evenodd"
-	ClipPathClipRuleNonzero ClipPathClipRule = "nonzero"
-)
-
-type ClipPathColorInterpolation string
-
-const (
-	ClipPathColorInterpolationAuto      ClipPathColorInterpolation = "auto"
-	ClipPathColorInterpolationLinearRGB ClipPathColorInterpolation = "linearRGB"
-	ClipPathColorInterpolationSRGB      ClipPathColorInterpolation = "sRGB"
-)
-
-type ClipPathColorInterpolationFilters string
-
-const (
-	ClipPathColorInterpolationFiltersAuto      ClipPathColorInterpolationFilters = "auto"
-	ClipPathColorInterpolationFiltersLinearRGB ClipPathColorInterpolationFilters = "linearRGB"
-	ClipPathColorInterpolationFiltersSRGB      ClipPathColorInterpolationFilters = "sRGB"
-)
-
-type ClipPathDirection string
-
-const (
-	ClipPathDirectionLtr ClipPathDirection = "ltr"
-	ClipPathDirectionRtl ClipPathDirection = "rtl"
-)
-
-type ClipPathDominantBaseline string
-
-const (
-	ClipPathDominantBaselineAlphabetic   ClipPathDominantBaseline = "alphabetic"
-	ClipPathDominantBaselineAuto         ClipPathDominantBaseline = "auto"
-	ClipPathDominantBaselineCentral      ClipPathDominantBaseline = "central"
-	ClipPathDominantBaselineHanging      ClipPathDominantBaseline = "hanging"
-	ClipPathDominantBaselineIdeographic  ClipPathDominantBaseline = "ideographic"
-	ClipPathDominantBaselineMathematical ClipPathDominantBaseline = "mathematical"
-	ClipPathDominantBaselineMiddle       ClipPathDominantBaseline = "middle"
-	ClipPathDominantBaselineTextBottom   ClipPathDominantBaseline = "text-bottom"
-	ClipPathDominantBaselineTextTop      ClipPathDominantBaseline = "text-top"
-)
-
-type ClipPathFillRule string
-
-const (
-	ClipPathFillRuleEvenodd ClipPathFillRule = "evenodd"
-	ClipPathFillRuleNonzero ClipPathFillRule = "nonzero"
-)
-
-type ClipPathFontStyle string
-
-const (
-	ClipPathFontStyleItalic  ClipPathFontStyle = "italic"
-	ClipPathFontStyleNormal  ClipPathFontStyle = "normal"
-	ClipPathFontStyleOblique ClipPathFontStyle = "oblique"
-)
-
-type ClipPathImageRendering string
-
-const (
-	ClipPathImageRenderingAuto            ClipPathImageRendering = "auto"
-	ClipPathImageRenderingCrispEdges      ClipPathImageRendering = "crisp-edges"
-	ClipPathImageRenderingHighQuality     ClipPathImageRendering = "high-quality"
-	ClipPathImageRenderingOptimizeQuality ClipPathImageRendering = "optimizeQuality"
-	ClipPathImageRenderingOptimizeSpeed   ClipPathImageRendering = "optimizeSpeed"
-	ClipPathImageRenderingPixelated       ClipPathImageRendering = "pixelated"
-	ClipPathImageRenderingSmooth          ClipPathImageRendering = "smooth"
-)
-
-type ClipPathOverflow string
-
-const (
-	ClipPathOverflowAuto    ClipPathOverflow = "auto"
-	ClipPathOverflowClip    ClipPathOverflow = "clip"
-	ClipPathOverflowHidden  ClipPathOverflow = "hidden"
-	ClipPathOverflowScroll  ClipPathOverflow = "scroll"
-	ClipPathOverflowVisible ClipPathOverflow = "visible"
-)
-
-type ClipPathPointerEvents string
-
-const (
-	ClipPathPointerEventsAll            ClipPathPointerEvents = "all"
-	ClipPathPointerEventsAuto           ClipPathPointerEvents = "auto"
-	ClipPathPointerEventsBoundingBox    ClipPathPointerEvents = "bounding-box"
-	ClipPathPointerEventsFill           ClipPathPointerEvents = "fill"
-	ClipPathPointerEventsNone           ClipPathPointerEvents = "none"
-	ClipPathPointerEventsPainted        ClipPathPointerEvents = "painted"
-	ClipPathPointerEventsStroke         ClipPathPointerEvents = "stroke"
-	ClipPathPointerEventsVisible        ClipPathPointerEvents = "visible"
-	ClipPathPointerEventsVisibleFill    ClipPathPointerEvents = "visibleFill"
-	ClipPathPointerEventsVisiblePainted ClipPathPointerEvents = "visiblePainted"
-	ClipPathPointerEventsVisibleStroke  ClipPathPointerEvents = "visibleStroke"
-)
-
-type ClipPathShapeRendering string
-
-const (
-	ClipPathShapeRenderingAuto               ClipPathShapeRendering = "auto"
-	ClipPathShapeRenderingCrispEdges         ClipPathShapeRendering = "crispEdges"
-	ClipPathShapeRenderingGeometricPrecision ClipPathShapeRendering = "geometricPrecision"
-	ClipPathShapeRenderingOptimizeSpeed      ClipPathShapeRendering = "optimizeSpeed"
-)
-
-type ClipPathStrokeLinecap string
-
-const (
-	ClipPathStrokeLinecapButt   ClipPathStrokeLinecap = "butt"
-	ClipPathStrokeLinecapRound  ClipPathStrokeLinecap = "round"
-	ClipPathStrokeLinecapSquare ClipPathStrokeLinecap = "square"
-)
-
-type ClipPathStrokeLinejoin string
-
-const (
-	ClipPathStrokeLinejoinArcs      ClipPathStrokeLinejoin = "arcs"
-	ClipPathStrokeLinejoinBevel     ClipPathStrokeLinejoin = "bevel"
-	ClipPathStrokeLinejoinMiter     ClipPathStrokeLinejoin = "miter"
-	ClipPathStrokeLinejoinMiterClip ClipPathStrokeLinejoin = "miter-clip"
-	ClipPathStrokeLinejoinRound     ClipPathStrokeLinejoin = "round"
-)
-
-type ClipPathTextAnchor string
-
-const (
-	ClipPathTextAnchorEnd    ClipPathTextAnchor = "end"
-	ClipPathTextAnchorMiddle ClipPathTextAnchor = "middle"
-	ClipPathTextAnchorStart  ClipPathTextAnchor = "start"
-)
-
-type ClipPathTextRendering string
-
-const (
-	ClipPathTextRenderingAuto               ClipPathTextRendering = "auto"
-	ClipPathTextRenderingGeometricPrecision ClipPathTextRendering = "geometricPrecision"
-	ClipPathTextRenderingOptimizeLegibility ClipPathTextRendering = "optimizeLegibility"
-	ClipPathTextRenderingOptimizeSpeed      ClipPathTextRendering = "optimizeSpeed"
-)
-
-type ClipPathTransformBox string
-
-const (
-	ClipPathTransformBoxBorderBox  ClipPathTransformBox = "border-box"
-	ClipPathTransformBoxContentBox ClipPathTransformBox = "content-box"
-	ClipPathTransformBoxFillBox    ClipPathTransformBox = "fill-box"
-	ClipPathTransformBoxStrokeBox  ClipPathTransformBox = "stroke-box"
-	ClipPathTransformBoxViewBox    ClipPathTransformBox = "view-box"
-)
-
-type ClipPathVectorEffect string
-
-const (
-	ClipPathVectorEffectFixedPosition    ClipPathVectorEffect = "fixed-position"
-	ClipPathVectorEffectNonRotation      ClipPathVectorEffect = "non-rotation"
-	ClipPathVectorEffectNonScalingSize   ClipPathVectorEffect = "non-scaling-size"
-	ClipPathVectorEffectNonScalingStroke ClipPathVectorEffect = "non-scaling-stroke"
-	ClipPathVectorEffectNone             ClipPathVectorEffect = "none"
-)
-
-type ClipPathVisibility string
-
-const (
-	ClipPathVisibilityCollapse ClipPathVisibility = "collapse"
-	ClipPathVisibilityHidden   ClipPathVisibility = "hidden"
-	ClipPathVisibilityVisible  ClipPathVisibility = "visible"
-)
-
-type ClipPathWritingMode string
-
-const (
-	ClipPathWritingModeHorizontalTb ClipPathWritingMode = "horizontal-tb"
-	ClipPathWritingModeLr           ClipPathWritingMode = "lr"
-	ClipPathWritingModeLrTb         ClipPathWritingMode = "lr-tb"
-	ClipPathWritingModeRl           ClipPathWritingMode = "rl"
-	ClipPathWritingModeRlTb         ClipPathWritingMode = "rl-tb"
-	ClipPathWritingModeSidewaysLr   ClipPathWritingMode = "sideways-lr"
-	ClipPathWritingModeSidewaysRl   ClipPathWritingMode = "sideways-rl"
-	ClipPathWritingModeTb           ClipPathWritingMode = "tb"
-	ClipPathWritingModeTbRl         ClipPathWritingMode = "tb-rl"
-	ClipPathWritingModeVerticalLr   ClipPathWritingMode = "vertical-lr"
-	ClipPathWritingModeVerticalRl   ClipPathWritingMode = "vertical-rl"
-)
-
-type ClipPathXmlSpace string
-
-const (
-	ClipPathXmlSpaceDefault  ClipPathXmlSpace = "default"
-	ClipPathXmlSpacePreserve ClipPathXmlSpace = "preserve"
-)
-
-func (e *ClipPathElement) ClipPathUnits(a ClipPathClipPathUnits) *ClipPathElement {
+func (e *ClipPathElement) ClipPathUnits(a ClipPathUnits) *ClipPathElement {
 	e.attributes.Set("clipPathUnits", string(a))
 
 	return e
@@ -397,14 +181,10 @@ func (e *ClipPathElement) SystemLanguage(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) AlignmentBaseline(a ClipPathAlignmentBaseline) *ClipPathElement {
+func (e *ClipPathElement) AlignmentBaseline(a AlignmentBaseline) *ClipPathElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func ClipPathAlignmentBaselineCustom(s string) ClipPathAlignmentBaseline {
-	return ClipPathAlignmentBaseline(s)
 }
 
 func (e *ClipPathElement) AriaUnsafe(name string, s string) *ClipPathElement {
@@ -458,14 +238,10 @@ func (e *ClipPathElement) ClipPath(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) ClipRule(a ClipPathClipRule) *ClipPathElement {
+func (e *ClipPathElement) ClipRule(a ClipRule) *ClipPathElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func ClipPathClipRuleCustom(s string) ClipPathClipRule {
-	return ClipPathClipRule(s)
 }
 
 func (e *ClipPathElement) Color(s string) *ClipPathElement {
@@ -474,24 +250,16 @@ func (e *ClipPathElement) Color(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) ColorInterpolation(a ClipPathColorInterpolation) *ClipPathElement {
+func (e *ClipPathElement) ColorInterpolation(a ColorInterpolation) *ClipPathElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func ClipPathColorInterpolationCustom(s string) ClipPathColorInterpolation {
-	return ClipPathColorInterpolation(s)
-}
-
-func (e *ClipPathElement) ColorInterpolationFilters(a ClipPathColorInterpolationFilters) *ClipPathElement {
+func (e *ClipPathElement) ColorInterpolationFilters(a ColorInterpolationFilters) *ClipPathElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func ClipPathColorInterpolationFiltersCustom(s string) ClipPathColorInterpolationFilters {
-	return ClipPathColorInterpolationFilters(s)
 }
 
 func (e *ClipPathElement) Cursor(s string) *ClipPathElement {
@@ -516,14 +284,10 @@ func (e *ClipPathElement) Data(name string, s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) Direction(a ClipPathDirection) *ClipPathElement {
+func (e *ClipPathElement) Direction(a Direction) *ClipPathElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func ClipPathDirectionCustom(s string) ClipPathDirection {
-	return ClipPathDirection(s)
 }
 
 func (e *ClipPathElement) Display(s string) *ClipPathElement {
@@ -532,14 +296,10 @@ func (e *ClipPathElement) Display(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) DominantBaseline(a ClipPathDominantBaseline) *ClipPathElement {
+func (e *ClipPathElement) DominantBaseline(a DominantBaseline) *ClipPathElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func ClipPathDominantBaselineCustom(s string) ClipPathDominantBaseline {
-	return ClipPathDominantBaseline(s)
 }
 
 func (e *ClipPathElement) Fill(s string) *ClipPathElement {
@@ -554,14 +314,10 @@ func (e *ClipPathElement) FillOpacity(f float64) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) FillRule(a ClipPathFillRule) *ClipPathElement {
+func (e *ClipPathElement) FillRule(a FillRule) *ClipPathElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func ClipPathFillRuleCustom(s string) ClipPathFillRule {
-	return ClipPathFillRule(s)
 }
 
 func (e *ClipPathElement) Filter(s string) *ClipPathElement {
@@ -606,14 +362,10 @@ func (e *ClipPathElement) FontStretch(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) FontStyle(a ClipPathFontStyle) *ClipPathElement {
+func (e *ClipPathElement) FontStyle(a FontStyle) *ClipPathElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func ClipPathFontStyleCustom(s string) ClipPathFontStyle {
-	return ClipPathFontStyle(s)
 }
 
 func (e *ClipPathElement) FontVariant(s string) *ClipPathElement {
@@ -652,14 +404,10 @@ func (e *ClipPathElement) Id(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) ImageRendering(a ClipPathImageRendering) *ClipPathElement {
+func (e *ClipPathElement) ImageRendering(a ImageRendering) *ClipPathElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func ClipPathImageRenderingCustom(s string) ClipPathImageRendering {
-	return ClipPathImageRendering(s)
 }
 
 func (e *ClipPathElement) Lang(s string) *ClipPathElement {
@@ -710,14 +458,10 @@ func (e *ClipPathElement) Opacity(f float64) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) Overflow(a ClipPathOverflow) *ClipPathElement {
+func (e *ClipPathElement) Overflow(a Overflow) *ClipPathElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func ClipPathOverflowCustom(s string) ClipPathOverflow {
-	return ClipPathOverflow(s)
 }
 
 func (e *ClipPathElement) PaintOrder(s string) *ClipPathElement {
@@ -726,14 +470,10 @@ func (e *ClipPathElement) PaintOrder(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) PointerEvents(a ClipPathPointerEvents) *ClipPathElement {
+func (e *ClipPathElement) PointerEvents(a PointerEvents) *ClipPathElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func ClipPathPointerEventsCustom(s string) ClipPathPointerEvents {
-	return ClipPathPointerEvents(s)
 }
 
 func (e *ClipPathElement) RequiredExtensions(s string) *ClipPathElement {
@@ -742,14 +482,10 @@ func (e *ClipPathElement) RequiredExtensions(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) ShapeRendering(a ClipPathShapeRendering) *ClipPathElement {
+func (e *ClipPathElement) ShapeRendering(a ShapeRendering) *ClipPathElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func ClipPathShapeRenderingCustom(s string) ClipPathShapeRendering {
-	return ClipPathShapeRendering(s)
 }
 
 func (e *ClipPathElement) StopColor(s string) *ClipPathElement {
@@ -782,24 +518,16 @@ func (e *ClipPathElement) StrokeDashoffset(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) StrokeLinecap(a ClipPathStrokeLinecap) *ClipPathElement {
+func (e *ClipPathElement) StrokeLinecap(a StrokeLinecap) *ClipPathElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func ClipPathStrokeLinecapCustom(s string) ClipPathStrokeLinecap {
-	return ClipPathStrokeLinecap(s)
-}
-
-func (e *ClipPathElement) StrokeLinejoin(a ClipPathStrokeLinejoin) *ClipPathElement {
+func (e *ClipPathElement) StrokeLinejoin(a StrokeLinejoin) *ClipPathElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func ClipPathStrokeLinejoinCustom(s string) ClipPathStrokeLinejoin {
-	return ClipPathStrokeLinejoin(s)
 }
 
 func (e *ClipPathElement) StrokeMiterlimit(f float64) *ClipPathElement {
@@ -832,14 +560,10 @@ func (e *ClipPathElement) Tabindex(i int) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) TextAnchor(a ClipPathTextAnchor) *ClipPathElement {
+func (e *ClipPathElement) TextAnchor(a TextAnchor) *ClipPathElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func ClipPathTextAnchorCustom(s string) ClipPathTextAnchor {
-	return ClipPathTextAnchor(s)
 }
 
 func (e *ClipPathElement) TextDecoration(s string) *ClipPathElement {
@@ -854,14 +578,10 @@ func (e *ClipPathElement) TextOverflow(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) TextRendering(a ClipPathTextRendering) *ClipPathElement {
+func (e *ClipPathElement) TextRendering(a TextRendering) *ClipPathElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func ClipPathTextRenderingCustom(s string) ClipPathTextRendering {
-	return ClipPathTextRendering(s)
 }
 
 func (e *ClipPathElement) Transform(s string) *ClipPathElement {
@@ -870,14 +590,10 @@ func (e *ClipPathElement) Transform(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) TransformBox(a ClipPathTransformBox) *ClipPathElement {
+func (e *ClipPathElement) TransformBox(a TransformBox) *ClipPathElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func ClipPathTransformBoxCustom(s string) ClipPathTransformBox {
-	return ClipPathTransformBox(s)
 }
 
 func (e *ClipPathElement) TransformOrigin(s string) *ClipPathElement {
@@ -892,24 +608,16 @@ func (e *ClipPathElement) UnicodeBidi(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) VectorEffect(a ClipPathVectorEffect) *ClipPathElement {
+func (e *ClipPathElement) VectorEffect(a VectorEffect) *ClipPathElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func ClipPathVectorEffectCustom(s string) ClipPathVectorEffect {
-	return ClipPathVectorEffect(s)
-}
-
-func (e *ClipPathElement) Visibility(a ClipPathVisibility) *ClipPathElement {
+func (e *ClipPathElement) Visibility(a Visibility) *ClipPathElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func ClipPathVisibilityCustom(s string) ClipPathVisibility {
-	return ClipPathVisibility(s)
 }
 
 func (e *ClipPathElement) WhiteSpace(s string) *ClipPathElement {
@@ -924,14 +632,10 @@ func (e *ClipPathElement) WordSpacing(s string) *ClipPathElement {
 	return e
 }
 
-func (e *ClipPathElement) WritingMode(a ClipPathWritingMode) *ClipPathElement {
+func (e *ClipPathElement) WritingMode(a WritingMode) *ClipPathElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func ClipPathWritingModeCustom(s string) ClipPathWritingMode {
-	return ClipPathWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -946,7 +650,7 @@ func (e *ClipPathElement) XmlLang(s string) *ClipPathElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *ClipPathElement) XmlSpace(a ClipPathXmlSpace) *ClipPathElement {
+func (e *ClipPathElement) XmlSpace(a XmlSpace) *ClipPathElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

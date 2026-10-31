@@ -12,17 +12,34 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// SummaryChild is a permitted child of <summary>: phrasing content, heading content.
+//
+// It is implemented by <a>, <abbr>, <area>, <audio>, <b>, <bdi>, <bdo>, <br>, <button>, <canvas>,
+// <cite>, <code>, <data>, <datalist>, <del>, <dfn>, <em>, <embed>, <h1>, <h2>, <h3>, <h4>, <h5>,
+// <h6>, <i>, <iframe>, <img>, <input>, <ins>, <kbd>, <label>, <link>, <map>, <mark>, <meta>,
+// <meter>, <noscript>, <object>, <output>, <picture>, <progress>, <q>, <ruby>, <s>, <samp>,
+// <script>, <select>, <slot>, <small>, <span>, <strong>, <sub>, <sup>, <template>, <textarea>,
+// <time>, <u>, <var>, <video>, <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type
+// embedding htemel.PhrasingMarker or htemel.HeadingMarker and by the unchecked nodes of package
+// htemel (Group, Each, If, Unchecked, ...).
+type SummaryChild interface {
+	htemel.Node
+	HTMLSummaryChild()
+}
+
 type SummaryElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []SummaryChild
 	skipRender bool
 }
 
 // Summary creates a tag <summary> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content, heading content (SummaryChild).
+//
 // Spec Description: The summary element represents a summary, caption, or legend for the rest of the contents of the summary element's parent details element, if any.
-func Summary(children ...htemel.Node) *SummaryElement {
+func Summary(children ...SummaryChild) *SummaryElement {
 	node := &SummaryElement{
 		children: children,
 	}
@@ -31,7 +48,7 @@ func Summary(children ...htemel.Node) *SummaryElement {
 }
 
 // SummaryIf creates a tag <summary> instance that is only rendered when condition is true.
-func SummaryIf(condition bool, children ...htemel.Node) *SummaryElement {
+func SummaryIf(condition bool, children ...SummaryChild) *SummaryElement {
 	if condition {
 		return Summary(children...)
 	}
@@ -43,7 +60,7 @@ func SummaryIf(condition bool, children ...htemel.Node) *SummaryElement {
 }
 
 // SummaryTernary creates a tag <summary> containing then when condition is true, otherwise containing otherwise.
-func SummaryTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SummaryElement {
+func SummaryTernary(condition bool, then SummaryChild, otherwise SummaryChild) *SummaryElement {
 	if condition {
 		return Summary(then)
 	}
@@ -51,7 +68,7 @@ func SummaryTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Su
 }
 
 // Children appends children to this element.
-func (e *SummaryElement) Children(children ...htemel.Node) *SummaryElement {
+func (e *SummaryElement) Children(children ...SummaryChild) *SummaryElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +91,7 @@ func (e *SummaryElement) Textf(format string, args ...any) *SummaryElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SummaryElement) If(cond bool, child htemel.Node) *SummaryElement {
+func (e *SummaryElement) If(cond bool, child SummaryChild) *SummaryElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +99,7 @@ func (e *SummaryElement) If(cond bool, child htemel.Node) *SummaryElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SummaryElement) IfElse(cond bool, then, els htemel.Node) *SummaryElement {
+func (e *SummaryElement) IfElse(cond bool, then, els SummaryChild) *SummaryElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +181,8 @@ func (e *SummaryElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SummaryAutocapitalize string
-
-const (
-	SummaryAutocapitalizeCharacters SummaryAutocapitalize = "characters"
-	SummaryAutocapitalizeNone       SummaryAutocapitalize = "none"
-	SummaryAutocapitalizeOff        SummaryAutocapitalize = "off"
-	SummaryAutocapitalizeOn         SummaryAutocapitalize = "on"
-	SummaryAutocapitalizeSentences  SummaryAutocapitalize = "sentences"
-	SummaryAutocapitalizeWords      SummaryAutocapitalize = "words"
-)
-
-type SummaryAutocorrect string
-
-const (
-	SummaryAutocorrectOff   SummaryAutocorrect = "off"
-	SummaryAutocorrectOn    SummaryAutocorrect = "on"
-	SummaryAutocorrectEmpty SummaryAutocorrect = ""
-)
-
-type SummaryContenteditable string
-
-const (
-	SummaryContenteditableFalse         SummaryContenteditable = "false"
-	SummaryContenteditablePlaintextOnly SummaryContenteditable = "plaintext-only"
-	SummaryContenteditableTrue          SummaryContenteditable = "true"
-	SummaryContenteditableEmpty         SummaryContenteditable = ""
-)
-
-type SummaryDir string
-
-const (
-	SummaryDirAuto SummaryDir = "auto"
-	SummaryDirLtr  SummaryDir = "ltr"
-	SummaryDirRtl  SummaryDir = "rtl"
-)
-
-type SummaryDraggable string
-
-const (
-	SummaryDraggableFalse SummaryDraggable = "false"
-	SummaryDraggableTrue  SummaryDraggable = "true"
-)
-
-type SummaryEnterkeyhint string
-
-const (
-	SummaryEnterkeyhintDone     SummaryEnterkeyhint = "done"
-	SummaryEnterkeyhintEnter    SummaryEnterkeyhint = "enter"
-	SummaryEnterkeyhintGo       SummaryEnterkeyhint = "go"
-	SummaryEnterkeyhintNext     SummaryEnterkeyhint = "next"
-	SummaryEnterkeyhintPrevious SummaryEnterkeyhint = "previous"
-	SummaryEnterkeyhintSearch   SummaryEnterkeyhint = "search"
-	SummaryEnterkeyhintSend     SummaryEnterkeyhint = "send"
-)
-
-type SummaryHidden string
-
-const (
-	SummaryHiddenHidden     SummaryHidden = "hidden"
-	SummaryHiddenUntilFound SummaryHidden = "until-found"
-	SummaryHiddenEmpty      SummaryHidden = ""
-)
-
-type SummaryInputmode string
-
-const (
-	SummaryInputmodeDecimal SummaryInputmode = "decimal"
-	SummaryInputmodeEmail   SummaryInputmode = "email"
-	SummaryInputmodeNone    SummaryInputmode = "none"
-	SummaryInputmodeNumeric SummaryInputmode = "numeric"
-	SummaryInputmodeSearch  SummaryInputmode = "search"
-	SummaryInputmodeTel     SummaryInputmode = "tel"
-	SummaryInputmodeText    SummaryInputmode = "text"
-	SummaryInputmodeUrl     SummaryInputmode = "url"
-)
-
-type SummaryPopover string
-
-const (
-	SummaryPopoverAuto   SummaryPopover = "auto"
-	SummaryPopoverHint   SummaryPopover = "hint"
-	SummaryPopoverManual SummaryPopover = "manual"
-	SummaryPopoverEmpty  SummaryPopover = ""
-)
-
-type SummarySpellcheck string
-
-const (
-	SummarySpellcheckFalse SummarySpellcheck = "false"
-	SummarySpellcheckTrue  SummarySpellcheck = "true"
-	SummarySpellcheckEmpty SummarySpellcheck = ""
-)
-
-type SummaryTranslate string
-
-const (
-	SummaryTranslateNo    SummaryTranslate = "no"
-	SummaryTranslateYes   SummaryTranslate = "yes"
-	SummaryTranslateEmpty SummaryTranslate = ""
-)
-
-type SummaryWritingsuggestions string
-
-const (
-	SummaryWritingsuggestionsFalse SummaryWritingsuggestions = "false"
-	SummaryWritingsuggestionsTrue  SummaryWritingsuggestions = "true"
-	SummaryWritingsuggestionsEmpty SummaryWritingsuggestions = ""
-)
+// HTMLDetailsChild marks <summary> as a permitted child of <details> (DetailsChild).
+func (*SummaryElement) HTMLDetailsChild() {}
 
 func (e *SummaryElement) Accesskey(r rune) *SummaryElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +206,7 @@ func (e *SummaryElement) Aria(name string, s string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Autocapitalize(a SummaryAutocapitalize) *SummaryElement {
+func (e *SummaryElement) Autocapitalize(a Autocapitalize) *SummaryElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +214,8 @@ func (e *SummaryElement) Autocapitalize(a SummaryAutocapitalize) *SummaryElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Autocorrect(v ...SummaryAutocorrect) *SummaryElement {
-	var val SummaryAutocorrect
+func (e *SummaryElement) Autocorrect(v ...Autocorrect) *SummaryElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +240,8 @@ func (e *SummaryElement) Class(s ...string) *SummaryElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Contenteditable(v ...SummaryContenteditable) *SummaryElement {
-	var val SummaryContenteditable
+func (e *SummaryElement) Contenteditable(v ...Contenteditable) *SummaryElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +266,19 @@ func (e *SummaryElement) Data(name string, s string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Dir(a SummaryDir) *SummaryElement {
+func (e *SummaryElement) Dir(a Dir) *SummaryElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SummaryElement) Draggable(a SummaryDraggable) *SummaryElement {
+func (e *SummaryElement) Draggable(a Draggable) *SummaryElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SummaryElement) Enterkeyhint(a SummaryEnterkeyhint) *SummaryElement {
+func (e *SummaryElement) Enterkeyhint(a Enterkeyhint) *SummaryElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +306,8 @@ func (e *SummaryElement) Headingreset(b bool) *SummaryElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Hidden(v ...SummaryHidden) *SummaryElement {
-	var val SummaryHidden
+func (e *SummaryElement) Hidden(v ...Hidden) *SummaryElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +330,7 @@ func (e *SummaryElement) Inert(b bool) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Inputmode(a SummaryInputmode) *SummaryElement {
+func (e *SummaryElement) Inputmode(a Inputmode) *SummaryElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +396,8 @@ func (e *SummaryElement) Part(s ...string) *SummaryElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Popover(v ...SummaryPopover) *SummaryElement {
-	var val SummaryPopover
+func (e *SummaryElement) Popover(v ...Popover) *SummaryElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +420,8 @@ func (e *SummaryElement) Slot(s string) *SummaryElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Spellcheck(v ...SummarySpellcheck) *SummaryElement {
-	var val SummarySpellcheck
+func (e *SummaryElement) Spellcheck(v ...Spellcheck) *SummaryElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +450,8 @@ func (e *SummaryElement) Title(s string) *SummaryElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Translate(v ...SummaryTranslate) *SummaryElement {
-	var val SummaryTranslate
+func (e *SummaryElement) Translate(v ...Translate) *SummaryElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +462,8 @@ func (e *SummaryElement) Translate(v ...SummaryTranslate) *SummaryElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SummaryElement) Writingsuggestions(v ...SummaryWritingsuggestions) *SummaryElement {
-	var val SummaryWritingsuggestions
+func (e *SummaryElement) Writingsuggestions(v ...Writingsuggestions) *SummaryElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

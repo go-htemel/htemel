@@ -14,15 +14,17 @@ import (
 
 type SetElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Set creates a tag <set> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The set element sets an attribute to a given value for a specified duration.
-func Set(children ...htemel.Node) *SetElement {
+func Set(children ...Content) *SetElement {
 	node := &SetElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Set(children ...htemel.Node) *SetElement {
 }
 
 // SetIf creates a tag <set> instance that is only rendered when condition is true.
-func SetIf(condition bool, children ...htemel.Node) *SetElement {
+func SetIf(condition bool, children ...Content) *SetElement {
 	if condition {
 		return Set(children...)
 	}
@@ -43,7 +45,7 @@ func SetIf(condition bool, children ...htemel.Node) *SetElement {
 }
 
 // SetTernary creates a tag <set> containing then when condition is true, otherwise containing otherwise.
-func SetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SetElement {
+func SetTernary(condition bool, then Content, otherwise Content) *SetElement {
 	if condition {
 		return Set(then)
 	}
@@ -51,7 +53,7 @@ func SetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SetEle
 }
 
 // Children appends children to this element.
-func (e *SetElement) Children(children ...htemel.Node) *SetElement {
+func (e *SetElement) Children(children ...Content) *SetElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *SetElement) Textf(format string, args ...any) *SetElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SetElement) If(cond bool, child htemel.Node) *SetElement {
+func (e *SetElement) If(cond bool, child Content) *SetElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *SetElement) If(cond bool, child htemel.Node) *SetElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SetElement) IfElse(cond bool, then, els htemel.Node) *SetElement {
+func (e *SetElement) IfElse(cond bool, then, els Content) *SetElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,242 +166,8 @@ func (e *SetElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SetAttributeType string
-
-const (
-	SetAttributeTypeCSS  SetAttributeType = "CSS"
-	SetAttributeTypeXML  SetAttributeType = "XML"
-	SetAttributeTypeAuto SetAttributeType = "auto"
-)
-
-type SetFill string
-
-const (
-	SetFillFreeze SetFill = "freeze"
-	SetFillRemove SetFill = "remove"
-)
-
-type SetRestart string
-
-const (
-	SetRestartAlways        SetRestart = "always"
-	SetRestartNever         SetRestart = "never"
-	SetRestartWhenNotActive SetRestart = "whenNotActive"
-)
-
-type SetAlignmentBaseline string
-
-const (
-	SetAlignmentBaselineAfterEdge      SetAlignmentBaseline = "after-edge"
-	SetAlignmentBaselineAlphabetic     SetAlignmentBaseline = "alphabetic"
-	SetAlignmentBaselineAuto           SetAlignmentBaseline = "auto"
-	SetAlignmentBaselineBaseline       SetAlignmentBaseline = "baseline"
-	SetAlignmentBaselineBeforeEdge     SetAlignmentBaseline = "before-edge"
-	SetAlignmentBaselineBottom         SetAlignmentBaseline = "bottom"
-	SetAlignmentBaselineCenter         SetAlignmentBaseline = "center"
-	SetAlignmentBaselineCentral        SetAlignmentBaseline = "central"
-	SetAlignmentBaselineHanging        SetAlignmentBaseline = "hanging"
-	SetAlignmentBaselineIdeographic    SetAlignmentBaseline = "ideographic"
-	SetAlignmentBaselineMathematical   SetAlignmentBaseline = "mathematical"
-	SetAlignmentBaselineMiddle         SetAlignmentBaseline = "middle"
-	SetAlignmentBaselineTextAfterEdge  SetAlignmentBaseline = "text-after-edge"
-	SetAlignmentBaselineTextBeforeEdge SetAlignmentBaseline = "text-before-edge"
-	SetAlignmentBaselineTextBottom     SetAlignmentBaseline = "text-bottom"
-	SetAlignmentBaselineTextTop        SetAlignmentBaseline = "text-top"
-	SetAlignmentBaselineTop            SetAlignmentBaseline = "top"
-)
-
-type SetClipRule string
-
-const (
-	SetClipRuleEvenodd SetClipRule = "evenodd"
-	SetClipRuleNonzero SetClipRule = "nonzero"
-)
-
-type SetColorInterpolation string
-
-const (
-	SetColorInterpolationAuto      SetColorInterpolation = "auto"
-	SetColorInterpolationLinearRGB SetColorInterpolation = "linearRGB"
-	SetColorInterpolationSRGB      SetColorInterpolation = "sRGB"
-)
-
-type SetColorInterpolationFilters string
-
-const (
-	SetColorInterpolationFiltersAuto      SetColorInterpolationFilters = "auto"
-	SetColorInterpolationFiltersLinearRGB SetColorInterpolationFilters = "linearRGB"
-	SetColorInterpolationFiltersSRGB      SetColorInterpolationFilters = "sRGB"
-)
-
-type SetDirection string
-
-const (
-	SetDirectionLtr SetDirection = "ltr"
-	SetDirectionRtl SetDirection = "rtl"
-)
-
-type SetDominantBaseline string
-
-const (
-	SetDominantBaselineAlphabetic   SetDominantBaseline = "alphabetic"
-	SetDominantBaselineAuto         SetDominantBaseline = "auto"
-	SetDominantBaselineCentral      SetDominantBaseline = "central"
-	SetDominantBaselineHanging      SetDominantBaseline = "hanging"
-	SetDominantBaselineIdeographic  SetDominantBaseline = "ideographic"
-	SetDominantBaselineMathematical SetDominantBaseline = "mathematical"
-	SetDominantBaselineMiddle       SetDominantBaseline = "middle"
-	SetDominantBaselineTextBottom   SetDominantBaseline = "text-bottom"
-	SetDominantBaselineTextTop      SetDominantBaseline = "text-top"
-)
-
-type SetFillRule string
-
-const (
-	SetFillRuleEvenodd SetFillRule = "evenodd"
-	SetFillRuleNonzero SetFillRule = "nonzero"
-)
-
-type SetFontStyle string
-
-const (
-	SetFontStyleItalic  SetFontStyle = "italic"
-	SetFontStyleNormal  SetFontStyle = "normal"
-	SetFontStyleOblique SetFontStyle = "oblique"
-)
-
-type SetImageRendering string
-
-const (
-	SetImageRenderingAuto            SetImageRendering = "auto"
-	SetImageRenderingCrispEdges      SetImageRendering = "crisp-edges"
-	SetImageRenderingHighQuality     SetImageRendering = "high-quality"
-	SetImageRenderingOptimizeQuality SetImageRendering = "optimizeQuality"
-	SetImageRenderingOptimizeSpeed   SetImageRendering = "optimizeSpeed"
-	SetImageRenderingPixelated       SetImageRendering = "pixelated"
-	SetImageRenderingSmooth          SetImageRendering = "smooth"
-)
-
-type SetOverflow string
-
-const (
-	SetOverflowAuto    SetOverflow = "auto"
-	SetOverflowClip    SetOverflow = "clip"
-	SetOverflowHidden  SetOverflow = "hidden"
-	SetOverflowScroll  SetOverflow = "scroll"
-	SetOverflowVisible SetOverflow = "visible"
-)
-
-type SetPointerEvents string
-
-const (
-	SetPointerEventsAll            SetPointerEvents = "all"
-	SetPointerEventsAuto           SetPointerEvents = "auto"
-	SetPointerEventsBoundingBox    SetPointerEvents = "bounding-box"
-	SetPointerEventsFill           SetPointerEvents = "fill"
-	SetPointerEventsNone           SetPointerEvents = "none"
-	SetPointerEventsPainted        SetPointerEvents = "painted"
-	SetPointerEventsStroke         SetPointerEvents = "stroke"
-	SetPointerEventsVisible        SetPointerEvents = "visible"
-	SetPointerEventsVisibleFill    SetPointerEvents = "visibleFill"
-	SetPointerEventsVisiblePainted SetPointerEvents = "visiblePainted"
-	SetPointerEventsVisibleStroke  SetPointerEvents = "visibleStroke"
-)
-
-type SetShapeRendering string
-
-const (
-	SetShapeRenderingAuto               SetShapeRendering = "auto"
-	SetShapeRenderingCrispEdges         SetShapeRendering = "crispEdges"
-	SetShapeRenderingGeometricPrecision SetShapeRendering = "geometricPrecision"
-	SetShapeRenderingOptimizeSpeed      SetShapeRendering = "optimizeSpeed"
-)
-
-type SetStrokeLinecap string
-
-const (
-	SetStrokeLinecapButt   SetStrokeLinecap = "butt"
-	SetStrokeLinecapRound  SetStrokeLinecap = "round"
-	SetStrokeLinecapSquare SetStrokeLinecap = "square"
-)
-
-type SetStrokeLinejoin string
-
-const (
-	SetStrokeLinejoinArcs      SetStrokeLinejoin = "arcs"
-	SetStrokeLinejoinBevel     SetStrokeLinejoin = "bevel"
-	SetStrokeLinejoinMiter     SetStrokeLinejoin = "miter"
-	SetStrokeLinejoinMiterClip SetStrokeLinejoin = "miter-clip"
-	SetStrokeLinejoinRound     SetStrokeLinejoin = "round"
-)
-
-type SetTextAnchor string
-
-const (
-	SetTextAnchorEnd    SetTextAnchor = "end"
-	SetTextAnchorMiddle SetTextAnchor = "middle"
-	SetTextAnchorStart  SetTextAnchor = "start"
-)
-
-type SetTextRendering string
-
-const (
-	SetTextRenderingAuto               SetTextRendering = "auto"
-	SetTextRenderingGeometricPrecision SetTextRendering = "geometricPrecision"
-	SetTextRenderingOptimizeLegibility SetTextRendering = "optimizeLegibility"
-	SetTextRenderingOptimizeSpeed      SetTextRendering = "optimizeSpeed"
-)
-
-type SetTransformBox string
-
-const (
-	SetTransformBoxBorderBox  SetTransformBox = "border-box"
-	SetTransformBoxContentBox SetTransformBox = "content-box"
-	SetTransformBoxFillBox    SetTransformBox = "fill-box"
-	SetTransformBoxStrokeBox  SetTransformBox = "stroke-box"
-	SetTransformBoxViewBox    SetTransformBox = "view-box"
-)
-
-type SetVectorEffect string
-
-const (
-	SetVectorEffectFixedPosition    SetVectorEffect = "fixed-position"
-	SetVectorEffectNonRotation      SetVectorEffect = "non-rotation"
-	SetVectorEffectNonScalingSize   SetVectorEffect = "non-scaling-size"
-	SetVectorEffectNonScalingStroke SetVectorEffect = "non-scaling-stroke"
-	SetVectorEffectNone             SetVectorEffect = "none"
-)
-
-type SetVisibility string
-
-const (
-	SetVisibilityCollapse SetVisibility = "collapse"
-	SetVisibilityHidden   SetVisibility = "hidden"
-	SetVisibilityVisible  SetVisibility = "visible"
-)
-
-type SetWritingMode string
-
-const (
-	SetWritingModeHorizontalTb SetWritingMode = "horizontal-tb"
-	SetWritingModeLr           SetWritingMode = "lr"
-	SetWritingModeLrTb         SetWritingMode = "lr-tb"
-	SetWritingModeRl           SetWritingMode = "rl"
-	SetWritingModeRlTb         SetWritingMode = "rl-tb"
-	SetWritingModeSidewaysLr   SetWritingMode = "sideways-lr"
-	SetWritingModeSidewaysRl   SetWritingMode = "sideways-rl"
-	SetWritingModeTb           SetWritingMode = "tb"
-	SetWritingModeTbRl         SetWritingMode = "tb-rl"
-	SetWritingModeVerticalLr   SetWritingMode = "vertical-lr"
-	SetWritingModeVerticalRl   SetWritingMode = "vertical-rl"
-)
-
-type SetXmlSpace string
-
-const (
-	SetXmlSpaceDefault  SetXmlSpace = "default"
-	SetXmlSpacePreserve SetXmlSpace = "preserve"
-)
+// SVGContent marks <set> as a permitted child (Content).
+func (*SetElement) SVGContent() {}
 
 func (e *SetElement) AttributeName(s string) *SetElement {
 	e.attributes.Set("attributeName", s)
@@ -407,7 +175,7 @@ func (e *SetElement) AttributeName(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) AttributeType(a SetAttributeType) *SetElement {
+func (e *SetElement) AttributeType(a AttributeType) *SetElement {
 	e.attributes.Set("attributeType", string(a))
 
 	return e
@@ -431,7 +199,7 @@ func (e *SetElement) End(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) Fill(a SetFill) *SetElement {
+func (e *SetElement) Fill(a Fill) *SetElement {
 	e.attributes.Set("fill", string(a))
 
 	return e
@@ -469,7 +237,7 @@ func (e *SetElement) RepeatDur(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) Restart(a SetRestart) *SetElement {
+func (e *SetElement) Restart(a Restart) *SetElement {
 	e.attributes.Set("restart", string(a))
 
 	return e
@@ -487,14 +255,10 @@ func (e *SetElement) To(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) AlignmentBaseline(a SetAlignmentBaseline) *SetElement {
+func (e *SetElement) AlignmentBaseline(a AlignmentBaseline) *SetElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func SetAlignmentBaselineCustom(s string) SetAlignmentBaseline {
-	return SetAlignmentBaseline(s)
 }
 
 func (e *SetElement) AriaUnsafe(name string, s string) *SetElement {
@@ -548,14 +312,10 @@ func (e *SetElement) ClipPath(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) ClipRule(a SetClipRule) *SetElement {
+func (e *SetElement) ClipRule(a ClipRule) *SetElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func SetClipRuleCustom(s string) SetClipRule {
-	return SetClipRule(s)
 }
 
 func (e *SetElement) Color(s string) *SetElement {
@@ -564,24 +324,16 @@ func (e *SetElement) Color(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) ColorInterpolation(a SetColorInterpolation) *SetElement {
+func (e *SetElement) ColorInterpolation(a ColorInterpolation) *SetElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func SetColorInterpolationCustom(s string) SetColorInterpolation {
-	return SetColorInterpolation(s)
-}
-
-func (e *SetElement) ColorInterpolationFilters(a SetColorInterpolationFilters) *SetElement {
+func (e *SetElement) ColorInterpolationFilters(a ColorInterpolationFilters) *SetElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func SetColorInterpolationFiltersCustom(s string) SetColorInterpolationFilters {
-	return SetColorInterpolationFilters(s)
 }
 
 func (e *SetElement) Cursor(s string) *SetElement {
@@ -606,14 +358,10 @@ func (e *SetElement) Data(name string, s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) Direction(a SetDirection) *SetElement {
+func (e *SetElement) Direction(a Direction) *SetElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func SetDirectionCustom(s string) SetDirection {
-	return SetDirection(s)
 }
 
 func (e *SetElement) Display(s string) *SetElement {
@@ -622,14 +370,10 @@ func (e *SetElement) Display(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) DominantBaseline(a SetDominantBaseline) *SetElement {
+func (e *SetElement) DominantBaseline(a DominantBaseline) *SetElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func SetDominantBaselineCustom(s string) SetDominantBaseline {
-	return SetDominantBaseline(s)
 }
 
 func (e *SetElement) FillOpacity(f float64) *SetElement {
@@ -638,14 +382,10 @@ func (e *SetElement) FillOpacity(f float64) *SetElement {
 	return e
 }
 
-func (e *SetElement) FillRule(a SetFillRule) *SetElement {
+func (e *SetElement) FillRule(a FillRule) *SetElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func SetFillRuleCustom(s string) SetFillRule {
-	return SetFillRule(s)
 }
 
 func (e *SetElement) Filter(s string) *SetElement {
@@ -690,14 +430,10 @@ func (e *SetElement) FontStretch(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) FontStyle(a SetFontStyle) *SetElement {
+func (e *SetElement) FontStyle(a FontStyle) *SetElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func SetFontStyleCustom(s string) SetFontStyle {
-	return SetFontStyle(s)
 }
 
 func (e *SetElement) FontVariant(s string) *SetElement {
@@ -736,14 +472,10 @@ func (e *SetElement) Id(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) ImageRendering(a SetImageRendering) *SetElement {
+func (e *SetElement) ImageRendering(a ImageRendering) *SetElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func SetImageRenderingCustom(s string) SetImageRendering {
-	return SetImageRendering(s)
 }
 
 func (e *SetElement) Lang(s string) *SetElement {
@@ -794,14 +526,10 @@ func (e *SetElement) Opacity(f float64) *SetElement {
 	return e
 }
 
-func (e *SetElement) Overflow(a SetOverflow) *SetElement {
+func (e *SetElement) Overflow(a Overflow) *SetElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func SetOverflowCustom(s string) SetOverflow {
-	return SetOverflow(s)
 }
 
 func (e *SetElement) PaintOrder(s string) *SetElement {
@@ -810,14 +538,10 @@ func (e *SetElement) PaintOrder(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) PointerEvents(a SetPointerEvents) *SetElement {
+func (e *SetElement) PointerEvents(a PointerEvents) *SetElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func SetPointerEventsCustom(s string) SetPointerEvents {
-	return SetPointerEvents(s)
 }
 
 func (e *SetElement) RequiredExtensions(s string) *SetElement {
@@ -826,14 +550,10 @@ func (e *SetElement) RequiredExtensions(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) ShapeRendering(a SetShapeRendering) *SetElement {
+func (e *SetElement) ShapeRendering(a ShapeRendering) *SetElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func SetShapeRenderingCustom(s string) SetShapeRendering {
-	return SetShapeRendering(s)
 }
 
 func (e *SetElement) StopColor(s string) *SetElement {
@@ -866,24 +586,16 @@ func (e *SetElement) StrokeDashoffset(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) StrokeLinecap(a SetStrokeLinecap) *SetElement {
+func (e *SetElement) StrokeLinecap(a StrokeLinecap) *SetElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func SetStrokeLinecapCustom(s string) SetStrokeLinecap {
-	return SetStrokeLinecap(s)
-}
-
-func (e *SetElement) StrokeLinejoin(a SetStrokeLinejoin) *SetElement {
+func (e *SetElement) StrokeLinejoin(a StrokeLinejoin) *SetElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func SetStrokeLinejoinCustom(s string) SetStrokeLinejoin {
-	return SetStrokeLinejoin(s)
 }
 
 func (e *SetElement) StrokeMiterlimit(f float64) *SetElement {
@@ -916,14 +628,10 @@ func (e *SetElement) Tabindex(i int) *SetElement {
 	return e
 }
 
-func (e *SetElement) TextAnchor(a SetTextAnchor) *SetElement {
+func (e *SetElement) TextAnchor(a TextAnchor) *SetElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func SetTextAnchorCustom(s string) SetTextAnchor {
-	return SetTextAnchor(s)
 }
 
 func (e *SetElement) TextDecoration(s string) *SetElement {
@@ -938,14 +646,10 @@ func (e *SetElement) TextOverflow(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) TextRendering(a SetTextRendering) *SetElement {
+func (e *SetElement) TextRendering(a TextRendering) *SetElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func SetTextRenderingCustom(s string) SetTextRendering {
-	return SetTextRendering(s)
 }
 
 func (e *SetElement) Transform(s string) *SetElement {
@@ -954,14 +658,10 @@ func (e *SetElement) Transform(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) TransformBox(a SetTransformBox) *SetElement {
+func (e *SetElement) TransformBox(a TransformBox) *SetElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func SetTransformBoxCustom(s string) SetTransformBox {
-	return SetTransformBox(s)
 }
 
 func (e *SetElement) TransformOrigin(s string) *SetElement {
@@ -976,24 +676,16 @@ func (e *SetElement) UnicodeBidi(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) VectorEffect(a SetVectorEffect) *SetElement {
+func (e *SetElement) VectorEffect(a VectorEffect) *SetElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func SetVectorEffectCustom(s string) SetVectorEffect {
-	return SetVectorEffect(s)
-}
-
-func (e *SetElement) Visibility(a SetVisibility) *SetElement {
+func (e *SetElement) Visibility(a Visibility) *SetElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func SetVisibilityCustom(s string) SetVisibility {
-	return SetVisibility(s)
 }
 
 func (e *SetElement) WhiteSpace(s string) *SetElement {
@@ -1008,14 +700,10 @@ func (e *SetElement) WordSpacing(s string) *SetElement {
 	return e
 }
 
-func (e *SetElement) WritingMode(a SetWritingMode) *SetElement {
+func (e *SetElement) WritingMode(a WritingMode) *SetElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func SetWritingModeCustom(s string) SetWritingMode {
-	return SetWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1030,7 +718,7 @@ func (e *SetElement) XmlLang(s string) *SetElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *SetElement) XmlSpace(a SetXmlSpace) *SetElement {
+func (e *SetElement) XmlSpace(a XmlSpace) *SetElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

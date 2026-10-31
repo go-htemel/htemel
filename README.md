@@ -31,7 +31,7 @@ import (
     . "github.com/go-htemel/htemel/html"
 )
 
-func MainLayout(children ...Node) Node {
+func MainLayout(children ...FlowContent) Node {
     return Group(
         Doctype(),
         Html().Class("h-dvh bg-gray-200").Lang("en").Children(
@@ -46,12 +46,10 @@ func MainLayout(children ...Node) Node {
     )
 }
 
-func Navigation(menuItems ...Node) Node {
+func Navigation(menuItems ...UlChild) FlowContent {
     return Nav(
         // Child elements can be added using the Children method
-        Ul().Class("flex list-none").Children(
-            Group(menuItems...),
-        ),
+        Ul().Class("flex list-none").Children(menuItems...),
     ).Id("main-navigation")
 }
 
@@ -121,23 +119,98 @@ func main() {
 <div><p>Start Text<span>Spanned Text</span>End Text</p></div>
 ```
 
-### Writing Components
+### Content Models
 
-A component is a plain Go function that returns a `Node`. Arguments are ordinary Go values, and children are passed as `...Node`:
+Every element only accepts the children its specification permits, and the compiler enforces it.
+`Div` takes flow content, `P` and `Span` take phrasing content, `Ul` takes `<li>` and
+script-supporting elements, `Title` and `Script` take text, and void elements such as `Img` have
+no `Children` method at all:
 
 ```go
-func Card(title string, children ...Node) Node {
+P(Span().Text("ok"))       // compiles: span is phrasing content
+P(Div())                   // does not compile: *DivElement does not implement htemel.PhrasingContent
+Ul(Li().Text("ok"))        // compiles
+Ul(Div())                  // does not compile: missing method HTMLUlChild
+Img().Children(Span())     // does not compile: Children undefined
+Ul().Text("x")             // does not compile: text is not permitted in <ul>
+```
+
+How the checks are expressed:
+
+- **Categories.** Package `htemel` has an interface per content category used by the content
+  models: `FlowContent`, `PhrasingContent`, `MetadataContent`, `SectioningContent`,
+  `HeadingContent`, `EmbeddedContent`, `InteractiveContent`, `PalpableContent` and
+  `ScriptSupportingContent`, plus `TextContent` for text nodes. Elements implement the interfaces
+  of their categories (`Span()` is phrasing and flow content, `Div()` only flow content), and a
+  `PhrasingContent` is always a `FlowContent`. Elements whose model is a single category take it
+  directly: `Div(children ...htemel.FlowContent)`, `Head(children ...htemel.MetadataContent)`.
+- **Element-specific children.** Where a model lists tags, the element package declares a child
+  interface implemented by those tags and by the members of any listed category: `UlChild`
+  (`<li>`, `<script>`, `<template>`), `HtmlChild` (`<head>`, `<body>`), `TableChild`, `TrChild`,
+  `SelectChild`, `FigureChild` (`<figcaption>` and flow content), and so on.
+- **Text.** `Text`, `Textf` and `htemel.Text(...)` are accepted wherever text is permitted.
+  `Title`, `Script`, `Style`, `Textarea` and `Rp` take only text (`htemel.TextContent`).
+- **No children.** Void elements, and `Iframe` and `Selectedcontent` (which have an end tag but
+  no content), have no children parameter and no `Children`, `If`, `IfElse` or `Text` methods.
+
+What is not checked:
+
+- **Transparent elements** (`A`, `Ins`, `Del`, `Map`, `Object`, `Canvas`, `Slot`, `Noscript`,
+  `Audio`, `Video`) take their parent's content model, which a Go type cannot follow. They accept
+  any flow content and keep their own categories, so `A` is phrasing content and fits in a `P`,
+  but `P(A(Div()))` compiles although the result is invalid. Check those yourself.
+- **Descendant rules**, ordering and cardinality: no interactive content inside `<a>` or
+  `<button>`, no `<form>` inside `<form>`, one `<title>` in `<head>`, `<summary>` first in
+  `<details>`, attribute-dependent categories, and the like.
+- **`Template`** accepts any `htemel.Node`: its contents are a separate document fragment that may
+  hold anything, including `<tr>` or `<li>`.
+- **Dynamic content.** `Group`, `Each`, `EachIndex`, `ForEach`, `ForEach2`, `If`, `IfElse`,
+  `Generic`, `GenericVoid` and `Doctype` return nodes that are accepted as a child of any element
+  (they embed `htemel.Wildcard` or are a `htemel.NodeFunc`), and the nodes inside them are not
+  checked against the parent. Wrap a plain `Node` from elsewhere with `htemel.Unchecked(n)` to
+  place it anywhere.
+- **SVG and MathML** use a closed but loose model: every `svg` element accepts `...svg.Content`,
+  implemented by every `svg` element and by text, and likewise for `mathml.Content`. The root
+  `svg.Svg()` and `mathml.Math()` are embedded, phrasing and flow content, so they go wherever
+  HTML permits them; other SVG and MathML elements cannot be placed in HTML directly.
+  `svg.ForeignObject` and `mathml.AnnotationXml` accept any `htemel.Node`.
+
+The categories and models come from the WHATWG element index, via
+[go-htemel/spec](https://github.com/go-htemel/spec). The marker methods are compile-time only:
+they have no fields and no effect on rendering speed.
+
+### Writing Components
+
+A component is a plain Go function. Arguments are ordinary Go values. Declare children and the
+result with the content type they really are, so the compiler can check how the component is
+used:
+
+```go
+func Card(title string, children ...FlowContent) FlowContent {
     return Div().Class("card").Children(
         H2().Text(title),
         Div().Class("card-body").Children(children...),
     )
 }
+
+func Badge(label string) PhrasingContent {
+    return Span().Class("badge").Text(label)
+}
+
+P(Text("Status: "), Badge("new"))  // compiles: Badge is phrasing content
+P(Card("Oops"))                    // does not compile: Card is flow content, not phrasing
 ```
+
+Returning a plain `Node` still works, but such a value can only be passed where any node is
+accepted (`Group`, `Render`, `Template`) unless you wrap it with `Unchecked`. A component type of
+your own (a struct with a `Render` method) joins a category by embedding the marker struct, such
+as `htemel.PhrasingMarker` or `htemel.FlowMarker`; embedding `htemel.Wildcard` opts it out of
+checking.
 
 - Use `Each` to build repeated content. It renders a function for each item at render time, so no intermediate slice of nodes is built:
 
   ```go
-  func ItemList(items []string) Node {
+  func ItemList(items []string) FlowContent {
       return Ul().Class("list").Children(
           Each(items, func(item string) Node {
               return Li().Text(item)
@@ -146,9 +219,11 @@ func Card(title string, children ...Node) Node {
   }
   ```
 
-  `EachIndex` also passes the index, `ForEach` and `ForEach2` range over an `iter.Seq` or `iter.Seq2` such as `slices.Values` or `maps.All`, and `If` and `IfElse` choose between nodes without a separate `if` block.
+  `EachIndex` also passes the index, `ForEach` and `ForEach2` range over an `iter.Seq` or `iter.Seq2` such as `slices.Values` or `maps.All`, and `If` and `IfElse` choose between nodes without a separate `if` block. Their results are accepted anywhere, so what `fn` returns is not checked against the parent (here, nothing stops `fn` from returning a `Div` inside the `Ul`).
 
-- Use `Group` to return several sibling nodes without a wrapping element.
+- Use `Group` to return several sibling nodes without a wrapping element. A `Group` is also accepted anywhere and its children are not checked.
+
+- The element-level `If`, `IfElse` and `<Tag>If`/`<Tag>Ternary` constructors are checked: `Ul().If(cond, Li())` compiles, `Ul().If(cond, Div())` does not.
 
 `With` is still available when you need the typed element itself inside a function. The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `Each`, an inline SVG icon, and a page wrapper that accepts children.
 
@@ -157,7 +232,7 @@ func Card(title string, children ...Node) Node {
 Every generated element has an `Attrs` method that takes `htemel.Attribute` values, so a component can accept attributes from its caller and pass them on. `Attr` and `AttrUnsafe` build an attribute, and `If` returns the attribute only when the condition holds:
 
 ```go
-func Button(label string, attrs ...htemel.Attribute) htemel.Node {
+func Button(label string, attrs ...htemel.Attribute) htemel.PhrasingContent {
     return html.Button().Attrs(attrs...).Text(label)
 }
 
@@ -178,14 +253,30 @@ htemel.RenderString(Button("Save",
 
 An empty value renders a bare attribute, and the zero attribute that `If(false)` returns is skipped.
 
+### Enumerated Attributes
+
+Attributes with a fixed set of values take a typed string. There is one type per attribute, named
+after it and shared by every element that has it, with a constant per value:
+
+```go
+Div().Popover(PopoverManual).Dir(DirRtl)
+Span().Popover()                  // AllowEmpty attributes are variadic: no argument renders the bare attribute
+Img().Loading(LoadingLazy).Crossorigin(CrossoriginAnonymous)
+A().Download(DownloadCustom("report.pdf")) // attributes that also take free-form values have a Custom constructor
+```
+
+When the allowed values of an attribute differ between elements, each element keeps its own type,
+named `<Element><Attribute>`: `ButtonTypeSubmit`, `InputTypeEmail`, `ScriptTypeModule`. The list
+is at the top of the generated `html/enums.go` (and `svg/enums.go`).
+
 ## SVG
 
-The `svg` package generates the SVG elements, with tag and attribute names kept in their SVG case (`viewBox`, `linearGradient`, `feGaussianBlur`). SVG nodes are plain `Node` values, so they nest directly inside HTML elements.
+The `svg` package generates the SVG elements, with tag and attribute names kept in their SVG case (`viewBox`, `linearGradient`, `feGaussianBlur`). The root `svg.Svg()` is embedded and phrasing content, so it nests directly inside HTML elements such as `Div`, `Button` or `Span`; inside it, every SVG element accepts any other (`...svg.Content`), and text.
 
 Import `svg` under its package name rather than with a `.` import. It shares names with both `htemel` (`Text`) and `html` (`A`, `Title`, `Style`, `Script`, `Image`), so a dot import would conflict.
 
 ```go
-func PlusIcon() Node {
+func PlusIcon() htemel.PhrasingContent {
     return svg.Svg().
         ViewBox("0 0 24 24").
         Attr("width", "24").Attr("height", "24").
@@ -195,7 +286,7 @@ func PlusIcon() Node {
                 Fill("none").
                 Stroke("currentColor").
                 StrokeWidth("2").
-                StrokeLinecap(svg.PathStrokeLinecapRound),
+                StrokeLinecap(svg.StrokeLinecapRound),
         )
 }
 

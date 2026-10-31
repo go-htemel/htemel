@@ -13,16 +13,20 @@ import (
 )
 
 type IElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // I creates a tag <i> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The i element represents a span of text in an alternate voice or mood, or otherwise offset from the normal prose in a manner indicating a different quality of text, such as a taxonomic designation, a technical term, an idiomatic phrase from another language, transliteration, a thought, or a ship name in Western texts.
-func I(children ...htemel.Node) *IElement {
+func I(children ...htemel.PhrasingContent) *IElement {
 	node := &IElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func I(children ...htemel.Node) *IElement {
 }
 
 // IIf creates a tag <i> instance that is only rendered when condition is true.
-func IIf(condition bool, children ...htemel.Node) *IElement {
+func IIf(condition bool, children ...htemel.PhrasingContent) *IElement {
 	if condition {
 		return I(children...)
 	}
@@ -43,7 +47,7 @@ func IIf(condition bool, children ...htemel.Node) *IElement {
 }
 
 // ITernary creates a tag <i> containing then when condition is true, otherwise containing otherwise.
-func ITernary(condition bool, then htemel.Node, otherwise htemel.Node) *IElement {
+func ITernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *IElement {
 	if condition {
 		return I(then)
 	}
@@ -51,7 +55,7 @@ func ITernary(condition bool, then htemel.Node, otherwise htemel.Node) *IElement
 }
 
 // Children appends children to this element.
-func (e *IElement) Children(children ...htemel.Node) *IElement {
+func (e *IElement) Children(children ...htemel.PhrasingContent) *IElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *IElement) Textf(format string, args ...any) *IElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *IElement) If(cond bool, child htemel.Node) *IElement {
+func (e *IElement) If(cond bool, child htemel.PhrasingContent) *IElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *IElement) If(cond bool, child htemel.Node) *IElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *IElement) IfElse(cond bool, then, els htemel.Node) *IElement {
+func (e *IElement) IfElse(cond bool, then, els htemel.PhrasingContent) *IElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *IElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type IAutocapitalize string
-
-const (
-	IAutocapitalizeCharacters IAutocapitalize = "characters"
-	IAutocapitalizeNone       IAutocapitalize = "none"
-	IAutocapitalizeOff        IAutocapitalize = "off"
-	IAutocapitalizeOn         IAutocapitalize = "on"
-	IAutocapitalizeSentences  IAutocapitalize = "sentences"
-	IAutocapitalizeWords      IAutocapitalize = "words"
-)
-
-type IAutocorrect string
-
-const (
-	IAutocorrectOff   IAutocorrect = "off"
-	IAutocorrectOn    IAutocorrect = "on"
-	IAutocorrectEmpty IAutocorrect = ""
-)
-
-type IContenteditable string
-
-const (
-	IContenteditableFalse         IContenteditable = "false"
-	IContenteditablePlaintextOnly IContenteditable = "plaintext-only"
-	IContenteditableTrue          IContenteditable = "true"
-	IContenteditableEmpty         IContenteditable = ""
-)
-
-type IDir string
-
-const (
-	IDirAuto IDir = "auto"
-	IDirLtr  IDir = "ltr"
-	IDirRtl  IDir = "rtl"
-)
-
-type IDraggable string
-
-const (
-	IDraggableFalse IDraggable = "false"
-	IDraggableTrue  IDraggable = "true"
-)
-
-type IEnterkeyhint string
-
-const (
-	IEnterkeyhintDone     IEnterkeyhint = "done"
-	IEnterkeyhintEnter    IEnterkeyhint = "enter"
-	IEnterkeyhintGo       IEnterkeyhint = "go"
-	IEnterkeyhintNext     IEnterkeyhint = "next"
-	IEnterkeyhintPrevious IEnterkeyhint = "previous"
-	IEnterkeyhintSearch   IEnterkeyhint = "search"
-	IEnterkeyhintSend     IEnterkeyhint = "send"
-)
-
-type IHidden string
-
-const (
-	IHiddenHidden     IHidden = "hidden"
-	IHiddenUntilFound IHidden = "until-found"
-	IHiddenEmpty      IHidden = ""
-)
-
-type IInputmode string
-
-const (
-	IInputmodeDecimal IInputmode = "decimal"
-	IInputmodeEmail   IInputmode = "email"
-	IInputmodeNone    IInputmode = "none"
-	IInputmodeNumeric IInputmode = "numeric"
-	IInputmodeSearch  IInputmode = "search"
-	IInputmodeTel     IInputmode = "tel"
-	IInputmodeText    IInputmode = "text"
-	IInputmodeUrl     IInputmode = "url"
-)
-
-type IPopover string
-
-const (
-	IPopoverAuto   IPopover = "auto"
-	IPopoverHint   IPopover = "hint"
-	IPopoverManual IPopover = "manual"
-	IPopoverEmpty  IPopover = ""
-)
-
-type ISpellcheck string
-
-const (
-	ISpellcheckFalse ISpellcheck = "false"
-	ISpellcheckTrue  ISpellcheck = "true"
-	ISpellcheckEmpty ISpellcheck = ""
-)
-
-type ITranslate string
-
-const (
-	ITranslateNo    ITranslate = "no"
-	ITranslateYes   ITranslate = "yes"
-	ITranslateEmpty ITranslate = ""
-)
-
-type IWritingsuggestions string
-
-const (
-	IWritingsuggestionsFalse IWritingsuggestions = "false"
-	IWritingsuggestionsTrue  IWritingsuggestions = "true"
-	IWritingsuggestionsEmpty IWritingsuggestions = ""
-)
-
 func (e *IElement) Accesskey(r rune) *IElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *IElement) Aria(name string, s string) *IElement {
 	return e
 }
 
-func (e *IElement) Autocapitalize(a IAutocapitalize) *IElement {
+func (e *IElement) Autocapitalize(a Autocapitalize) *IElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *IElement) Autocapitalize(a IAutocapitalize) *IElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Autocorrect(v ...IAutocorrect) *IElement {
-	var val IAutocorrect
+func (e *IElement) Autocorrect(v ...Autocorrect) *IElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *IElement) Class(s ...string) *IElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Contenteditable(v ...IContenteditable) *IElement {
-	var val IContenteditable
+func (e *IElement) Contenteditable(v ...Contenteditable) *IElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *IElement) Data(name string, s string) *IElement {
 	return e
 }
 
-func (e *IElement) Dir(a IDir) *IElement {
+func (e *IElement) Dir(a Dir) *IElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *IElement) Draggable(a IDraggable) *IElement {
+func (e *IElement) Draggable(a Draggable) *IElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *IElement) Enterkeyhint(a IEnterkeyhint) *IElement {
+func (e *IElement) Enterkeyhint(a Enterkeyhint) *IElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *IElement) Headingreset(b bool) *IElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Hidden(v ...IHidden) *IElement {
-	var val IHidden
+func (e *IElement) Hidden(v ...Hidden) *IElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *IElement) Inert(b bool) *IElement {
 	return e
 }
 
-func (e *IElement) Inputmode(a IInputmode) *IElement {
+func (e *IElement) Inputmode(a Inputmode) *IElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *IElement) Part(s ...string) *IElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Popover(v ...IPopover) *IElement {
-	var val IPopover
+func (e *IElement) Popover(v ...Popover) *IElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *IElement) Slot(s string) *IElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Spellcheck(v ...ISpellcheck) *IElement {
-	var val ISpellcheck
+func (e *IElement) Spellcheck(v ...Spellcheck) *IElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *IElement) Title(s string) *IElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Translate(v ...ITranslate) *IElement {
-	var val ITranslate
+func (e *IElement) Translate(v ...Translate) *IElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *IElement) Translate(v ...ITranslate) *IElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IElement) Writingsuggestions(v ...IWritingsuggestions) *IElement {
-	var val IWritingsuggestions
+func (e *IElement) Writingsuggestions(v ...Writingsuggestions) *IElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type UseElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Use creates a tag <use> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The use element duplicates nodes from elsewhere in the document and renders them at a given position.
-func Use(children ...htemel.Node) *UseElement {
+func Use(children ...Content) *UseElement {
 	node := &UseElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Use(children ...htemel.Node) *UseElement {
 }
 
 // UseIf creates a tag <use> instance that is only rendered when condition is true.
-func UseIf(condition bool, children ...htemel.Node) *UseElement {
+func UseIf(condition bool, children ...Content) *UseElement {
 	if condition {
 		return Use(children...)
 	}
@@ -43,7 +45,7 @@ func UseIf(condition bool, children ...htemel.Node) *UseElement {
 }
 
 // UseTernary creates a tag <use> containing then when condition is true, otherwise containing otherwise.
-func UseTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UseElement {
+func UseTernary(condition bool, then Content, otherwise Content) *UseElement {
 	if condition {
 		return Use(then)
 	}
@@ -51,7 +53,7 @@ func UseTernary(condition bool, then htemel.Node, otherwise htemel.Node) *UseEle
 }
 
 // Children appends children to this element.
-func (e *UseElement) Children(children ...htemel.Node) *UseElement {
+func (e *UseElement) Children(children ...Content) *UseElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *UseElement) Textf(format string, args ...any) *UseElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *UseElement) If(cond bool, child htemel.Node) *UseElement {
+func (e *UseElement) If(cond bool, child Content) *UseElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *UseElement) If(cond bool, child htemel.Node) *UseElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *UseElement) IfElse(cond bool, then, els htemel.Node) *UseElement {
+func (e *UseElement) IfElse(cond bool, then, els Content) *UseElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *UseElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type UseAlignmentBaseline string
-
-const (
-	UseAlignmentBaselineAfterEdge      UseAlignmentBaseline = "after-edge"
-	UseAlignmentBaselineAlphabetic     UseAlignmentBaseline = "alphabetic"
-	UseAlignmentBaselineAuto           UseAlignmentBaseline = "auto"
-	UseAlignmentBaselineBaseline       UseAlignmentBaseline = "baseline"
-	UseAlignmentBaselineBeforeEdge     UseAlignmentBaseline = "before-edge"
-	UseAlignmentBaselineBottom         UseAlignmentBaseline = "bottom"
-	UseAlignmentBaselineCenter         UseAlignmentBaseline = "center"
-	UseAlignmentBaselineCentral        UseAlignmentBaseline = "central"
-	UseAlignmentBaselineHanging        UseAlignmentBaseline = "hanging"
-	UseAlignmentBaselineIdeographic    UseAlignmentBaseline = "ideographic"
-	UseAlignmentBaselineMathematical   UseAlignmentBaseline = "mathematical"
-	UseAlignmentBaselineMiddle         UseAlignmentBaseline = "middle"
-	UseAlignmentBaselineTextAfterEdge  UseAlignmentBaseline = "text-after-edge"
-	UseAlignmentBaselineTextBeforeEdge UseAlignmentBaseline = "text-before-edge"
-	UseAlignmentBaselineTextBottom     UseAlignmentBaseline = "text-bottom"
-	UseAlignmentBaselineTextTop        UseAlignmentBaseline = "text-top"
-	UseAlignmentBaselineTop            UseAlignmentBaseline = "top"
-)
-
-type UseClipRule string
-
-const (
-	UseClipRuleEvenodd UseClipRule = "evenodd"
-	UseClipRuleNonzero UseClipRule = "nonzero"
-)
-
-type UseColorInterpolation string
-
-const (
-	UseColorInterpolationAuto      UseColorInterpolation = "auto"
-	UseColorInterpolationLinearRGB UseColorInterpolation = "linearRGB"
-	UseColorInterpolationSRGB      UseColorInterpolation = "sRGB"
-)
-
-type UseColorInterpolationFilters string
-
-const (
-	UseColorInterpolationFiltersAuto      UseColorInterpolationFilters = "auto"
-	UseColorInterpolationFiltersLinearRGB UseColorInterpolationFilters = "linearRGB"
-	UseColorInterpolationFiltersSRGB      UseColorInterpolationFilters = "sRGB"
-)
-
-type UseDirection string
-
-const (
-	UseDirectionLtr UseDirection = "ltr"
-	UseDirectionRtl UseDirection = "rtl"
-)
-
-type UseDominantBaseline string
-
-const (
-	UseDominantBaselineAlphabetic   UseDominantBaseline = "alphabetic"
-	UseDominantBaselineAuto         UseDominantBaseline = "auto"
-	UseDominantBaselineCentral      UseDominantBaseline = "central"
-	UseDominantBaselineHanging      UseDominantBaseline = "hanging"
-	UseDominantBaselineIdeographic  UseDominantBaseline = "ideographic"
-	UseDominantBaselineMathematical UseDominantBaseline = "mathematical"
-	UseDominantBaselineMiddle       UseDominantBaseline = "middle"
-	UseDominantBaselineTextBottom   UseDominantBaseline = "text-bottom"
-	UseDominantBaselineTextTop      UseDominantBaseline = "text-top"
-)
-
-type UseFillRule string
-
-const (
-	UseFillRuleEvenodd UseFillRule = "evenodd"
-	UseFillRuleNonzero UseFillRule = "nonzero"
-)
-
-type UseFontStyle string
-
-const (
-	UseFontStyleItalic  UseFontStyle = "italic"
-	UseFontStyleNormal  UseFontStyle = "normal"
-	UseFontStyleOblique UseFontStyle = "oblique"
-)
-
-type UseImageRendering string
-
-const (
-	UseImageRenderingAuto            UseImageRendering = "auto"
-	UseImageRenderingCrispEdges      UseImageRendering = "crisp-edges"
-	UseImageRenderingHighQuality     UseImageRendering = "high-quality"
-	UseImageRenderingOptimizeQuality UseImageRendering = "optimizeQuality"
-	UseImageRenderingOptimizeSpeed   UseImageRendering = "optimizeSpeed"
-	UseImageRenderingPixelated       UseImageRendering = "pixelated"
-	UseImageRenderingSmooth          UseImageRendering = "smooth"
-)
-
-type UseOverflow string
-
-const (
-	UseOverflowAuto    UseOverflow = "auto"
-	UseOverflowClip    UseOverflow = "clip"
-	UseOverflowHidden  UseOverflow = "hidden"
-	UseOverflowScroll  UseOverflow = "scroll"
-	UseOverflowVisible UseOverflow = "visible"
-)
-
-type UsePointerEvents string
-
-const (
-	UsePointerEventsAll            UsePointerEvents = "all"
-	UsePointerEventsAuto           UsePointerEvents = "auto"
-	UsePointerEventsBoundingBox    UsePointerEvents = "bounding-box"
-	UsePointerEventsFill           UsePointerEvents = "fill"
-	UsePointerEventsNone           UsePointerEvents = "none"
-	UsePointerEventsPainted        UsePointerEvents = "painted"
-	UsePointerEventsStroke         UsePointerEvents = "stroke"
-	UsePointerEventsVisible        UsePointerEvents = "visible"
-	UsePointerEventsVisibleFill    UsePointerEvents = "visibleFill"
-	UsePointerEventsVisiblePainted UsePointerEvents = "visiblePainted"
-	UsePointerEventsVisibleStroke  UsePointerEvents = "visibleStroke"
-)
-
-type UseShapeRendering string
-
-const (
-	UseShapeRenderingAuto               UseShapeRendering = "auto"
-	UseShapeRenderingCrispEdges         UseShapeRendering = "crispEdges"
-	UseShapeRenderingGeometricPrecision UseShapeRendering = "geometricPrecision"
-	UseShapeRenderingOptimizeSpeed      UseShapeRendering = "optimizeSpeed"
-)
-
-type UseStrokeLinecap string
-
-const (
-	UseStrokeLinecapButt   UseStrokeLinecap = "butt"
-	UseStrokeLinecapRound  UseStrokeLinecap = "round"
-	UseStrokeLinecapSquare UseStrokeLinecap = "square"
-)
-
-type UseStrokeLinejoin string
-
-const (
-	UseStrokeLinejoinArcs      UseStrokeLinejoin = "arcs"
-	UseStrokeLinejoinBevel     UseStrokeLinejoin = "bevel"
-	UseStrokeLinejoinMiter     UseStrokeLinejoin = "miter"
-	UseStrokeLinejoinMiterClip UseStrokeLinejoin = "miter-clip"
-	UseStrokeLinejoinRound     UseStrokeLinejoin = "round"
-)
-
-type UseTextAnchor string
-
-const (
-	UseTextAnchorEnd    UseTextAnchor = "end"
-	UseTextAnchorMiddle UseTextAnchor = "middle"
-	UseTextAnchorStart  UseTextAnchor = "start"
-)
-
-type UseTextRendering string
-
-const (
-	UseTextRenderingAuto               UseTextRendering = "auto"
-	UseTextRenderingGeometricPrecision UseTextRendering = "geometricPrecision"
-	UseTextRenderingOptimizeLegibility UseTextRendering = "optimizeLegibility"
-	UseTextRenderingOptimizeSpeed      UseTextRendering = "optimizeSpeed"
-)
-
-type UseTransformBox string
-
-const (
-	UseTransformBoxBorderBox  UseTransformBox = "border-box"
-	UseTransformBoxContentBox UseTransformBox = "content-box"
-	UseTransformBoxFillBox    UseTransformBox = "fill-box"
-	UseTransformBoxStrokeBox  UseTransformBox = "stroke-box"
-	UseTransformBoxViewBox    UseTransformBox = "view-box"
-)
-
-type UseVectorEffect string
-
-const (
-	UseVectorEffectFixedPosition    UseVectorEffect = "fixed-position"
-	UseVectorEffectNonRotation      UseVectorEffect = "non-rotation"
-	UseVectorEffectNonScalingSize   UseVectorEffect = "non-scaling-size"
-	UseVectorEffectNonScalingStroke UseVectorEffect = "non-scaling-stroke"
-	UseVectorEffectNone             UseVectorEffect = "none"
-)
-
-type UseVisibility string
-
-const (
-	UseVisibilityCollapse UseVisibility = "collapse"
-	UseVisibilityHidden   UseVisibility = "hidden"
-	UseVisibilityVisible  UseVisibility = "visible"
-)
-
-type UseWritingMode string
-
-const (
-	UseWritingModeHorizontalTb UseWritingMode = "horizontal-tb"
-	UseWritingModeLr           UseWritingMode = "lr"
-	UseWritingModeLrTb         UseWritingMode = "lr-tb"
-	UseWritingModeRl           UseWritingMode = "rl"
-	UseWritingModeRlTb         UseWritingMode = "rl-tb"
-	UseWritingModeSidewaysLr   UseWritingMode = "sideways-lr"
-	UseWritingModeSidewaysRl   UseWritingMode = "sideways-rl"
-	UseWritingModeTb           UseWritingMode = "tb"
-	UseWritingModeTbRl         UseWritingMode = "tb-rl"
-	UseWritingModeVerticalLr   UseWritingMode = "vertical-lr"
-	UseWritingModeVerticalRl   UseWritingMode = "vertical-rl"
-)
-
-type UseXmlSpace string
-
-const (
-	UseXmlSpaceDefault  UseXmlSpace = "default"
-	UseXmlSpacePreserve UseXmlSpace = "preserve"
-)
+// SVGContent marks <use> as a permitted child (Content).
+func (*UseElement) SVGContent() {}
 
 func (e *UseElement) Height(s string) *UseElement {
 	e.attributes.Set("height", s)
@@ -426,14 +217,10 @@ func (e *UseElement) Y(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) AlignmentBaseline(a UseAlignmentBaseline) *UseElement {
+func (e *UseElement) AlignmentBaseline(a AlignmentBaseline) *UseElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func UseAlignmentBaselineCustom(s string) UseAlignmentBaseline {
-	return UseAlignmentBaseline(s)
 }
 
 func (e *UseElement) AriaUnsafe(name string, s string) *UseElement {
@@ -487,14 +274,10 @@ func (e *UseElement) ClipPath(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) ClipRule(a UseClipRule) *UseElement {
+func (e *UseElement) ClipRule(a ClipRule) *UseElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func UseClipRuleCustom(s string) UseClipRule {
-	return UseClipRule(s)
 }
 
 func (e *UseElement) Color(s string) *UseElement {
@@ -503,24 +286,16 @@ func (e *UseElement) Color(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) ColorInterpolation(a UseColorInterpolation) *UseElement {
+func (e *UseElement) ColorInterpolation(a ColorInterpolation) *UseElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func UseColorInterpolationCustom(s string) UseColorInterpolation {
-	return UseColorInterpolation(s)
-}
-
-func (e *UseElement) ColorInterpolationFilters(a UseColorInterpolationFilters) *UseElement {
+func (e *UseElement) ColorInterpolationFilters(a ColorInterpolationFilters) *UseElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func UseColorInterpolationFiltersCustom(s string) UseColorInterpolationFilters {
-	return UseColorInterpolationFilters(s)
 }
 
 func (e *UseElement) Cursor(s string) *UseElement {
@@ -545,14 +320,10 @@ func (e *UseElement) Data(name string, s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) Direction(a UseDirection) *UseElement {
+func (e *UseElement) Direction(a Direction) *UseElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func UseDirectionCustom(s string) UseDirection {
-	return UseDirection(s)
 }
 
 func (e *UseElement) Display(s string) *UseElement {
@@ -561,14 +332,10 @@ func (e *UseElement) Display(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) DominantBaseline(a UseDominantBaseline) *UseElement {
+func (e *UseElement) DominantBaseline(a DominantBaseline) *UseElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func UseDominantBaselineCustom(s string) UseDominantBaseline {
-	return UseDominantBaseline(s)
 }
 
 func (e *UseElement) Fill(s string) *UseElement {
@@ -583,14 +350,10 @@ func (e *UseElement) FillOpacity(f float64) *UseElement {
 	return e
 }
 
-func (e *UseElement) FillRule(a UseFillRule) *UseElement {
+func (e *UseElement) FillRule(a FillRule) *UseElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func UseFillRuleCustom(s string) UseFillRule {
-	return UseFillRule(s)
 }
 
 func (e *UseElement) Filter(s string) *UseElement {
@@ -635,14 +398,10 @@ func (e *UseElement) FontStretch(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) FontStyle(a UseFontStyle) *UseElement {
+func (e *UseElement) FontStyle(a FontStyle) *UseElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func UseFontStyleCustom(s string) UseFontStyle {
-	return UseFontStyle(s)
 }
 
 func (e *UseElement) FontVariant(s string) *UseElement {
@@ -681,14 +440,10 @@ func (e *UseElement) Id(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) ImageRendering(a UseImageRendering) *UseElement {
+func (e *UseElement) ImageRendering(a ImageRendering) *UseElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func UseImageRenderingCustom(s string) UseImageRendering {
-	return UseImageRendering(s)
 }
 
 func (e *UseElement) Lang(s string) *UseElement {
@@ -739,14 +494,10 @@ func (e *UseElement) Opacity(f float64) *UseElement {
 	return e
 }
 
-func (e *UseElement) Overflow(a UseOverflow) *UseElement {
+func (e *UseElement) Overflow(a Overflow) *UseElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func UseOverflowCustom(s string) UseOverflow {
-	return UseOverflow(s)
 }
 
 func (e *UseElement) PaintOrder(s string) *UseElement {
@@ -755,14 +506,10 @@ func (e *UseElement) PaintOrder(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) PointerEvents(a UsePointerEvents) *UseElement {
+func (e *UseElement) PointerEvents(a PointerEvents) *UseElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func UsePointerEventsCustom(s string) UsePointerEvents {
-	return UsePointerEvents(s)
 }
 
 func (e *UseElement) RequiredExtensions(s string) *UseElement {
@@ -771,14 +518,10 @@ func (e *UseElement) RequiredExtensions(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) ShapeRendering(a UseShapeRendering) *UseElement {
+func (e *UseElement) ShapeRendering(a ShapeRendering) *UseElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func UseShapeRenderingCustom(s string) UseShapeRendering {
-	return UseShapeRendering(s)
 }
 
 func (e *UseElement) StopColor(s string) *UseElement {
@@ -811,24 +554,16 @@ func (e *UseElement) StrokeDashoffset(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) StrokeLinecap(a UseStrokeLinecap) *UseElement {
+func (e *UseElement) StrokeLinecap(a StrokeLinecap) *UseElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func UseStrokeLinecapCustom(s string) UseStrokeLinecap {
-	return UseStrokeLinecap(s)
-}
-
-func (e *UseElement) StrokeLinejoin(a UseStrokeLinejoin) *UseElement {
+func (e *UseElement) StrokeLinejoin(a StrokeLinejoin) *UseElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func UseStrokeLinejoinCustom(s string) UseStrokeLinejoin {
-	return UseStrokeLinejoin(s)
 }
 
 func (e *UseElement) StrokeMiterlimit(f float64) *UseElement {
@@ -861,14 +596,10 @@ func (e *UseElement) Tabindex(i int) *UseElement {
 	return e
 }
 
-func (e *UseElement) TextAnchor(a UseTextAnchor) *UseElement {
+func (e *UseElement) TextAnchor(a TextAnchor) *UseElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func UseTextAnchorCustom(s string) UseTextAnchor {
-	return UseTextAnchor(s)
 }
 
 func (e *UseElement) TextDecoration(s string) *UseElement {
@@ -883,14 +614,10 @@ func (e *UseElement) TextOverflow(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) TextRendering(a UseTextRendering) *UseElement {
+func (e *UseElement) TextRendering(a TextRendering) *UseElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func UseTextRenderingCustom(s string) UseTextRendering {
-	return UseTextRendering(s)
 }
 
 func (e *UseElement) Transform(s string) *UseElement {
@@ -899,14 +626,10 @@ func (e *UseElement) Transform(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) TransformBox(a UseTransformBox) *UseElement {
+func (e *UseElement) TransformBox(a TransformBox) *UseElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func UseTransformBoxCustom(s string) UseTransformBox {
-	return UseTransformBox(s)
 }
 
 func (e *UseElement) TransformOrigin(s string) *UseElement {
@@ -921,24 +644,16 @@ func (e *UseElement) UnicodeBidi(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) VectorEffect(a UseVectorEffect) *UseElement {
+func (e *UseElement) VectorEffect(a VectorEffect) *UseElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func UseVectorEffectCustom(s string) UseVectorEffect {
-	return UseVectorEffect(s)
-}
-
-func (e *UseElement) Visibility(a UseVisibility) *UseElement {
+func (e *UseElement) Visibility(a Visibility) *UseElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func UseVisibilityCustom(s string) UseVisibility {
-	return UseVisibility(s)
 }
 
 func (e *UseElement) WhiteSpace(s string) *UseElement {
@@ -953,14 +668,10 @@ func (e *UseElement) WordSpacing(s string) *UseElement {
 	return e
 }
 
-func (e *UseElement) WritingMode(a UseWritingMode) *UseElement {
+func (e *UseElement) WritingMode(a WritingMode) *UseElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func UseWritingModeCustom(s string) UseWritingMode {
-	return UseWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -975,7 +686,7 @@ func (e *UseElement) XmlLang(s string) *UseElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *UseElement) XmlSpace(a UseXmlSpace) *UseElement {
+func (e *UseElement) XmlSpace(a XmlSpace) *UseElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

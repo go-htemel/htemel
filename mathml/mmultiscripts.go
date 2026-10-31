@@ -14,15 +14,17 @@ import (
 
 type MmultiscriptsElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mmultiscripts creates a tag <mmultiscripts> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mmultiscripts(children ...htemel.Node) *MmultiscriptsElement {
+func Mmultiscripts(children ...Content) *MmultiscriptsElement {
 	node := &MmultiscriptsElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mmultiscripts(children ...htemel.Node) *MmultiscriptsElement {
 }
 
 // MmultiscriptsIf creates a tag <mmultiscripts> instance that is only rendered when condition is true.
-func MmultiscriptsIf(condition bool, children ...htemel.Node) *MmultiscriptsElement {
+func MmultiscriptsIf(condition bool, children ...Content) *MmultiscriptsElement {
 	if condition {
 		return Mmultiscripts(children...)
 	}
@@ -43,7 +45,7 @@ func MmultiscriptsIf(condition bool, children ...htemel.Node) *MmultiscriptsElem
 }
 
 // MmultiscriptsTernary creates a tag <mmultiscripts> containing then when condition is true, otherwise containing otherwise.
-func MmultiscriptsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MmultiscriptsElement {
+func MmultiscriptsTernary(condition bool, then Content, otherwise Content) *MmultiscriptsElement {
 	if condition {
 		return Mmultiscripts(then)
 	}
@@ -51,7 +53,7 @@ func MmultiscriptsTernary(condition bool, then htemel.Node, otherwise htemel.Nod
 }
 
 // Children appends children to this element.
-func (e *MmultiscriptsElement) Children(children ...htemel.Node) *MmultiscriptsElement {
+func (e *MmultiscriptsElement) Children(children ...Content) *MmultiscriptsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MmultiscriptsElement) Textf(format string, args ...any) *MmultiscriptsE
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MmultiscriptsElement) If(cond bool, child htemel.Node) *MmultiscriptsElement {
+func (e *MmultiscriptsElement) If(cond bool, child Content) *MmultiscriptsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MmultiscriptsElement) If(cond bool, child htemel.Node) *MmultiscriptsEl
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MmultiscriptsElement) IfElse(cond bool, then, els htemel.Node) *MmultiscriptsElement {
+func (e *MmultiscriptsElement) IfElse(cond bool, then, els Content) *MmultiscriptsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MmultiscriptsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MmultiscriptsDir string
-
-const (
-	MmultiscriptsDirLtr MmultiscriptsDir = "ltr"
-	MmultiscriptsDirRtl MmultiscriptsDir = "rtl"
-)
-
-type MmultiscriptsDisplaystyle string
-
-const (
-	MmultiscriptsDisplaystyleFalse MmultiscriptsDisplaystyle = "false"
-	MmultiscriptsDisplaystyleTrue  MmultiscriptsDisplaystyle = "true"
-)
+// MathMLContent marks <mmultiscripts> as a permitted child (Content).
+func (*MmultiscriptsElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MmultiscriptsElement) Data(name string, s string) *MmultiscriptsElement
 	return e
 }
 
-func (e *MmultiscriptsElement) Dir(a MmultiscriptsDir) *MmultiscriptsElement {
+func (e *MmultiscriptsElement) Dir(a Dir) *MmultiscriptsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MmultiscriptsElement) Displaystyle(a MmultiscriptsDisplaystyle) *MmultiscriptsElement {
+func (e *MmultiscriptsElement) Displaystyle(a Displaystyle) *MmultiscriptsElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

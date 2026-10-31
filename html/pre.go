@@ -13,16 +13,20 @@ import (
 )
 
 type PreElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Pre creates a tag <pre> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The pre element represents a block of preformatted text, in which structure is represented by typographic conventions rather than by elements.
-func Pre(children ...htemel.Node) *PreElement {
+func Pre(children ...htemel.PhrasingContent) *PreElement {
 	node := &PreElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Pre(children ...htemel.Node) *PreElement {
 }
 
 // PreIf creates a tag <pre> instance that is only rendered when condition is true.
-func PreIf(condition bool, children ...htemel.Node) *PreElement {
+func PreIf(condition bool, children ...htemel.PhrasingContent) *PreElement {
 	if condition {
 		return Pre(children...)
 	}
@@ -43,7 +47,7 @@ func PreIf(condition bool, children ...htemel.Node) *PreElement {
 }
 
 // PreTernary creates a tag <pre> containing then when condition is true, otherwise containing otherwise.
-func PreTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PreElement {
+func PreTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *PreElement {
 	if condition {
 		return Pre(then)
 	}
@@ -51,7 +55,7 @@ func PreTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PreEle
 }
 
 // Children appends children to this element.
-func (e *PreElement) Children(children ...htemel.Node) *PreElement {
+func (e *PreElement) Children(children ...htemel.PhrasingContent) *PreElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *PreElement) Textf(format string, args ...any) *PreElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PreElement) If(cond bool, child htemel.Node) *PreElement {
+func (e *PreElement) If(cond bool, child htemel.PhrasingContent) *PreElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *PreElement) If(cond bool, child htemel.Node) *PreElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PreElement) IfElse(cond bool, then, els htemel.Node) *PreElement {
+func (e *PreElement) IfElse(cond bool, then, els htemel.PhrasingContent) *PreElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *PreElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PreAutocapitalize string
-
-const (
-	PreAutocapitalizeCharacters PreAutocapitalize = "characters"
-	PreAutocapitalizeNone       PreAutocapitalize = "none"
-	PreAutocapitalizeOff        PreAutocapitalize = "off"
-	PreAutocapitalizeOn         PreAutocapitalize = "on"
-	PreAutocapitalizeSentences  PreAutocapitalize = "sentences"
-	PreAutocapitalizeWords      PreAutocapitalize = "words"
-)
-
-type PreAutocorrect string
-
-const (
-	PreAutocorrectOff   PreAutocorrect = "off"
-	PreAutocorrectOn    PreAutocorrect = "on"
-	PreAutocorrectEmpty PreAutocorrect = ""
-)
-
-type PreContenteditable string
-
-const (
-	PreContenteditableFalse         PreContenteditable = "false"
-	PreContenteditablePlaintextOnly PreContenteditable = "plaintext-only"
-	PreContenteditableTrue          PreContenteditable = "true"
-	PreContenteditableEmpty         PreContenteditable = ""
-)
-
-type PreDir string
-
-const (
-	PreDirAuto PreDir = "auto"
-	PreDirLtr  PreDir = "ltr"
-	PreDirRtl  PreDir = "rtl"
-)
-
-type PreDraggable string
-
-const (
-	PreDraggableFalse PreDraggable = "false"
-	PreDraggableTrue  PreDraggable = "true"
-)
-
-type PreEnterkeyhint string
-
-const (
-	PreEnterkeyhintDone     PreEnterkeyhint = "done"
-	PreEnterkeyhintEnter    PreEnterkeyhint = "enter"
-	PreEnterkeyhintGo       PreEnterkeyhint = "go"
-	PreEnterkeyhintNext     PreEnterkeyhint = "next"
-	PreEnterkeyhintPrevious PreEnterkeyhint = "previous"
-	PreEnterkeyhintSearch   PreEnterkeyhint = "search"
-	PreEnterkeyhintSend     PreEnterkeyhint = "send"
-)
-
-type PreHidden string
-
-const (
-	PreHiddenHidden     PreHidden = "hidden"
-	PreHiddenUntilFound PreHidden = "until-found"
-	PreHiddenEmpty      PreHidden = ""
-)
-
-type PreInputmode string
-
-const (
-	PreInputmodeDecimal PreInputmode = "decimal"
-	PreInputmodeEmail   PreInputmode = "email"
-	PreInputmodeNone    PreInputmode = "none"
-	PreInputmodeNumeric PreInputmode = "numeric"
-	PreInputmodeSearch  PreInputmode = "search"
-	PreInputmodeTel     PreInputmode = "tel"
-	PreInputmodeText    PreInputmode = "text"
-	PreInputmodeUrl     PreInputmode = "url"
-)
-
-type PrePopover string
-
-const (
-	PrePopoverAuto   PrePopover = "auto"
-	PrePopoverHint   PrePopover = "hint"
-	PrePopoverManual PrePopover = "manual"
-	PrePopoverEmpty  PrePopover = ""
-)
-
-type PreSpellcheck string
-
-const (
-	PreSpellcheckFalse PreSpellcheck = "false"
-	PreSpellcheckTrue  PreSpellcheck = "true"
-	PreSpellcheckEmpty PreSpellcheck = ""
-)
-
-type PreTranslate string
-
-const (
-	PreTranslateNo    PreTranslate = "no"
-	PreTranslateYes   PreTranslate = "yes"
-	PreTranslateEmpty PreTranslate = ""
-)
-
-type PreWritingsuggestions string
-
-const (
-	PreWritingsuggestionsFalse PreWritingsuggestions = "false"
-	PreWritingsuggestionsTrue  PreWritingsuggestions = "true"
-	PreWritingsuggestionsEmpty PreWritingsuggestions = ""
-)
-
 func (e *PreElement) Accesskey(r rune) *PreElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *PreElement) Aria(name string, s string) *PreElement {
 	return e
 }
 
-func (e *PreElement) Autocapitalize(a PreAutocapitalize) *PreElement {
+func (e *PreElement) Autocapitalize(a Autocapitalize) *PreElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *PreElement) Autocapitalize(a PreAutocapitalize) *PreElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Autocorrect(v ...PreAutocorrect) *PreElement {
-	var val PreAutocorrect
+func (e *PreElement) Autocorrect(v ...Autocorrect) *PreElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *PreElement) Class(s ...string) *PreElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Contenteditable(v ...PreContenteditable) *PreElement {
-	var val PreContenteditable
+func (e *PreElement) Contenteditable(v ...Contenteditable) *PreElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *PreElement) Data(name string, s string) *PreElement {
 	return e
 }
 
-func (e *PreElement) Dir(a PreDir) *PreElement {
+func (e *PreElement) Dir(a Dir) *PreElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *PreElement) Draggable(a PreDraggable) *PreElement {
+func (e *PreElement) Draggable(a Draggable) *PreElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *PreElement) Enterkeyhint(a PreEnterkeyhint) *PreElement {
+func (e *PreElement) Enterkeyhint(a Enterkeyhint) *PreElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *PreElement) Headingreset(b bool) *PreElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Hidden(v ...PreHidden) *PreElement {
-	var val PreHidden
+func (e *PreElement) Hidden(v ...Hidden) *PreElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *PreElement) Inert(b bool) *PreElement {
 	return e
 }
 
-func (e *PreElement) Inputmode(a PreInputmode) *PreElement {
+func (e *PreElement) Inputmode(a Inputmode) *PreElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *PreElement) Part(s ...string) *PreElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Popover(v ...PrePopover) *PreElement {
-	var val PrePopover
+func (e *PreElement) Popover(v ...Popover) *PreElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *PreElement) Slot(s string) *PreElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Spellcheck(v ...PreSpellcheck) *PreElement {
-	var val PreSpellcheck
+func (e *PreElement) Spellcheck(v ...Spellcheck) *PreElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *PreElement) Title(s string) *PreElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Translate(v ...PreTranslate) *PreElement {
-	var val PreTranslate
+func (e *PreElement) Translate(v ...Translate) *PreElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *PreElement) Translate(v ...PreTranslate) *PreElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *PreElement) Writingsuggestions(v ...PreWritingsuggestions) *PreElement {
-	var val PreWritingsuggestions
+func (e *PreElement) Writingsuggestions(v ...Writingsuggestions) *PreElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

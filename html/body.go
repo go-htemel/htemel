@@ -14,15 +14,17 @@ import (
 
 type BodyElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Body creates a tag <body> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The body element represents the contents of the document.
-func Body(children ...htemel.Node) *BodyElement {
+func Body(children ...htemel.FlowContent) *BodyElement {
 	node := &BodyElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Body(children ...htemel.Node) *BodyElement {
 }
 
 // BodyIf creates a tag <body> instance that is only rendered when condition is true.
-func BodyIf(condition bool, children ...htemel.Node) *BodyElement {
+func BodyIf(condition bool, children ...htemel.FlowContent) *BodyElement {
 	if condition {
 		return Body(children...)
 	}
@@ -43,7 +45,7 @@ func BodyIf(condition bool, children ...htemel.Node) *BodyElement {
 }
 
 // BodyTernary creates a tag <body> containing then when condition is true, otherwise containing otherwise.
-func BodyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BodyElement {
+func BodyTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *BodyElement {
 	if condition {
 		return Body(then)
 	}
@@ -51,7 +53,7 @@ func BodyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BodyE
 }
 
 // Children appends children to this element.
-func (e *BodyElement) Children(children ...htemel.Node) *BodyElement {
+func (e *BodyElement) Children(children ...htemel.FlowContent) *BodyElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *BodyElement) Textf(format string, args ...any) *BodyElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BodyElement) If(cond bool, child htemel.Node) *BodyElement {
+func (e *BodyElement) If(cond bool, child htemel.FlowContent) *BodyElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *BodyElement) If(cond bool, child htemel.Node) *BodyElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BodyElement) IfElse(cond bool, then, els htemel.Node) *BodyElement {
+func (e *BodyElement) IfElse(cond bool, then, els htemel.FlowContent) *BodyElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +166,8 @@ func (e *BodyElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BodyAutocapitalize string
-
-const (
-	BodyAutocapitalizeCharacters BodyAutocapitalize = "characters"
-	BodyAutocapitalizeNone       BodyAutocapitalize = "none"
-	BodyAutocapitalizeOff        BodyAutocapitalize = "off"
-	BodyAutocapitalizeOn         BodyAutocapitalize = "on"
-	BodyAutocapitalizeSentences  BodyAutocapitalize = "sentences"
-	BodyAutocapitalizeWords      BodyAutocapitalize = "words"
-)
-
-type BodyAutocorrect string
-
-const (
-	BodyAutocorrectOff   BodyAutocorrect = "off"
-	BodyAutocorrectOn    BodyAutocorrect = "on"
-	BodyAutocorrectEmpty BodyAutocorrect = ""
-)
-
-type BodyContenteditable string
-
-const (
-	BodyContenteditableFalse         BodyContenteditable = "false"
-	BodyContenteditablePlaintextOnly BodyContenteditable = "plaintext-only"
-	BodyContenteditableTrue          BodyContenteditable = "true"
-	BodyContenteditableEmpty         BodyContenteditable = ""
-)
-
-type BodyDir string
-
-const (
-	BodyDirAuto BodyDir = "auto"
-	BodyDirLtr  BodyDir = "ltr"
-	BodyDirRtl  BodyDir = "rtl"
-)
-
-type BodyDraggable string
-
-const (
-	BodyDraggableFalse BodyDraggable = "false"
-	BodyDraggableTrue  BodyDraggable = "true"
-)
-
-type BodyEnterkeyhint string
-
-const (
-	BodyEnterkeyhintDone     BodyEnterkeyhint = "done"
-	BodyEnterkeyhintEnter    BodyEnterkeyhint = "enter"
-	BodyEnterkeyhintGo       BodyEnterkeyhint = "go"
-	BodyEnterkeyhintNext     BodyEnterkeyhint = "next"
-	BodyEnterkeyhintPrevious BodyEnterkeyhint = "previous"
-	BodyEnterkeyhintSearch   BodyEnterkeyhint = "search"
-	BodyEnterkeyhintSend     BodyEnterkeyhint = "send"
-)
-
-type BodyHidden string
-
-const (
-	BodyHiddenHidden     BodyHidden = "hidden"
-	BodyHiddenUntilFound BodyHidden = "until-found"
-	BodyHiddenEmpty      BodyHidden = ""
-)
-
-type BodyInputmode string
-
-const (
-	BodyInputmodeDecimal BodyInputmode = "decimal"
-	BodyInputmodeEmail   BodyInputmode = "email"
-	BodyInputmodeNone    BodyInputmode = "none"
-	BodyInputmodeNumeric BodyInputmode = "numeric"
-	BodyInputmodeSearch  BodyInputmode = "search"
-	BodyInputmodeTel     BodyInputmode = "tel"
-	BodyInputmodeText    BodyInputmode = "text"
-	BodyInputmodeUrl     BodyInputmode = "url"
-)
-
-type BodyPopover string
-
-const (
-	BodyPopoverAuto   BodyPopover = "auto"
-	BodyPopoverHint   BodyPopover = "hint"
-	BodyPopoverManual BodyPopover = "manual"
-	BodyPopoverEmpty  BodyPopover = ""
-)
-
-type BodySpellcheck string
-
-const (
-	BodySpellcheckFalse BodySpellcheck = "false"
-	BodySpellcheckTrue  BodySpellcheck = "true"
-	BodySpellcheckEmpty BodySpellcheck = ""
-)
-
-type BodyTranslate string
-
-const (
-	BodyTranslateNo    BodyTranslate = "no"
-	BodyTranslateYes   BodyTranslate = "yes"
-	BodyTranslateEmpty BodyTranslate = ""
-)
-
-type BodyWritingsuggestions string
-
-const (
-	BodyWritingsuggestionsFalse BodyWritingsuggestions = "false"
-	BodyWritingsuggestionsTrue  BodyWritingsuggestions = "true"
-	BodyWritingsuggestionsEmpty BodyWritingsuggestions = ""
-)
+// HTMLHtmlChild marks <body> as a permitted child of <html> (HtmlChild).
+func (*BodyElement) HTMLHtmlChild() {}
 
 func (e *BodyElement) Onafterprint(s string) *BodyElement {
 	e.attributes.Set("onafterprint", s)
@@ -403,7 +299,7 @@ func (e *BodyElement) Aria(name string, s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Autocapitalize(a BodyAutocapitalize) *BodyElement {
+func (e *BodyElement) Autocapitalize(a Autocapitalize) *BodyElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -411,8 +307,8 @@ func (e *BodyElement) Autocapitalize(a BodyAutocapitalize) *BodyElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Autocorrect(v ...BodyAutocorrect) *BodyElement {
-	var val BodyAutocorrect
+func (e *BodyElement) Autocorrect(v ...Autocorrect) *BodyElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -437,8 +333,8 @@ func (e *BodyElement) Class(s ...string) *BodyElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Contenteditable(v ...BodyContenteditable) *BodyElement {
-	var val BodyContenteditable
+func (e *BodyElement) Contenteditable(v ...Contenteditable) *BodyElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -463,19 +359,19 @@ func (e *BodyElement) Data(name string, s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Dir(a BodyDir) *BodyElement {
+func (e *BodyElement) Dir(a Dir) *BodyElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BodyElement) Draggable(a BodyDraggable) *BodyElement {
+func (e *BodyElement) Draggable(a Draggable) *BodyElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BodyElement) Enterkeyhint(a BodyEnterkeyhint) *BodyElement {
+func (e *BodyElement) Enterkeyhint(a Enterkeyhint) *BodyElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -503,8 +399,8 @@ func (e *BodyElement) Headingreset(b bool) *BodyElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Hidden(v ...BodyHidden) *BodyElement {
-	var val BodyHidden
+func (e *BodyElement) Hidden(v ...Hidden) *BodyElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -527,7 +423,7 @@ func (e *BodyElement) Inert(b bool) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Inputmode(a BodyInputmode) *BodyElement {
+func (e *BodyElement) Inputmode(a Inputmode) *BodyElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -593,8 +489,8 @@ func (e *BodyElement) Part(s ...string) *BodyElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Popover(v ...BodyPopover) *BodyElement {
-	var val BodyPopover
+func (e *BodyElement) Popover(v ...Popover) *BodyElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -617,8 +513,8 @@ func (e *BodyElement) Slot(s string) *BodyElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Spellcheck(v ...BodySpellcheck) *BodyElement {
-	var val BodySpellcheck
+func (e *BodyElement) Spellcheck(v ...Spellcheck) *BodyElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -647,8 +543,8 @@ func (e *BodyElement) Title(s string) *BodyElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Translate(v ...BodyTranslate) *BodyElement {
-	var val BodyTranslate
+func (e *BodyElement) Translate(v ...Translate) *BodyElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -659,8 +555,8 @@ func (e *BodyElement) Translate(v ...BodyTranslate) *BodyElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BodyElement) Writingsuggestions(v ...BodyWritingsuggestions) *BodyElement {
-	var val BodyWritingsuggestions
+func (e *BodyElement) Writingsuggestions(v ...Writingsuggestions) *BodyElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

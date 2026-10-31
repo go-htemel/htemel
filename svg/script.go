@@ -14,15 +14,17 @@ import (
 
 type ScriptElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Script creates a tag <script> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The script element embeds or references an executable script.
-func Script(children ...htemel.Node) *ScriptElement {
+func Script(children ...Content) *ScriptElement {
 	node := &ScriptElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Script(children ...htemel.Node) *ScriptElement {
 }
 
 // ScriptIf creates a tag <script> instance that is only rendered when condition is true.
-func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
+func ScriptIf(condition bool, children ...Content) *ScriptElement {
 	if condition {
 		return Script(children...)
 	}
@@ -43,7 +45,7 @@ func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
 }
 
 // ScriptTernary creates a tag <script> containing then when condition is true, otherwise containing otherwise.
-func ScriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ScriptElement {
+func ScriptTernary(condition bool, then Content, otherwise Content) *ScriptElement {
 	if condition {
 		return Script(then)
 	}
@@ -51,7 +53,7 @@ func ScriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Scr
 }
 
 // Children appends children to this element.
-func (e *ScriptElement) Children(children ...htemel.Node) *ScriptElement {
+func (e *ScriptElement) Children(children ...Content) *ScriptElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -77,7 +79,7 @@ func (e *ScriptElement) Textf(format string, args ...any) *ScriptElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ScriptElement) If(cond bool, child htemel.Node) *ScriptElement {
+func (e *ScriptElement) If(cond bool, child Content) *ScriptElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -85,7 +87,7 @@ func (e *ScriptElement) If(cond bool, child htemel.Node) *ScriptElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ScriptElement) IfElse(cond bool, then, els htemel.Node) *ScriptElement {
+func (e *ScriptElement) IfElse(cond bool, then, els Content) *ScriptElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -167,232 +169,13 @@ func (e *ScriptElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ScriptCrossorigin string
-
-const (
-	ScriptCrossoriginAnonymous      ScriptCrossorigin = "anonymous"
-	ScriptCrossoriginUseCredentials ScriptCrossorigin = "use-credentials"
-	ScriptCrossoriginEmpty          ScriptCrossorigin = ""
-)
-
-type ScriptAlignmentBaseline string
-
-const (
-	ScriptAlignmentBaselineAfterEdge      ScriptAlignmentBaseline = "after-edge"
-	ScriptAlignmentBaselineAlphabetic     ScriptAlignmentBaseline = "alphabetic"
-	ScriptAlignmentBaselineAuto           ScriptAlignmentBaseline = "auto"
-	ScriptAlignmentBaselineBaseline       ScriptAlignmentBaseline = "baseline"
-	ScriptAlignmentBaselineBeforeEdge     ScriptAlignmentBaseline = "before-edge"
-	ScriptAlignmentBaselineBottom         ScriptAlignmentBaseline = "bottom"
-	ScriptAlignmentBaselineCenter         ScriptAlignmentBaseline = "center"
-	ScriptAlignmentBaselineCentral        ScriptAlignmentBaseline = "central"
-	ScriptAlignmentBaselineHanging        ScriptAlignmentBaseline = "hanging"
-	ScriptAlignmentBaselineIdeographic    ScriptAlignmentBaseline = "ideographic"
-	ScriptAlignmentBaselineMathematical   ScriptAlignmentBaseline = "mathematical"
-	ScriptAlignmentBaselineMiddle         ScriptAlignmentBaseline = "middle"
-	ScriptAlignmentBaselineTextAfterEdge  ScriptAlignmentBaseline = "text-after-edge"
-	ScriptAlignmentBaselineTextBeforeEdge ScriptAlignmentBaseline = "text-before-edge"
-	ScriptAlignmentBaselineTextBottom     ScriptAlignmentBaseline = "text-bottom"
-	ScriptAlignmentBaselineTextTop        ScriptAlignmentBaseline = "text-top"
-	ScriptAlignmentBaselineTop            ScriptAlignmentBaseline = "top"
-)
-
-type ScriptClipRule string
-
-const (
-	ScriptClipRuleEvenodd ScriptClipRule = "evenodd"
-	ScriptClipRuleNonzero ScriptClipRule = "nonzero"
-)
-
-type ScriptColorInterpolation string
-
-const (
-	ScriptColorInterpolationAuto      ScriptColorInterpolation = "auto"
-	ScriptColorInterpolationLinearRGB ScriptColorInterpolation = "linearRGB"
-	ScriptColorInterpolationSRGB      ScriptColorInterpolation = "sRGB"
-)
-
-type ScriptColorInterpolationFilters string
-
-const (
-	ScriptColorInterpolationFiltersAuto      ScriptColorInterpolationFilters = "auto"
-	ScriptColorInterpolationFiltersLinearRGB ScriptColorInterpolationFilters = "linearRGB"
-	ScriptColorInterpolationFiltersSRGB      ScriptColorInterpolationFilters = "sRGB"
-)
-
-type ScriptDirection string
-
-const (
-	ScriptDirectionLtr ScriptDirection = "ltr"
-	ScriptDirectionRtl ScriptDirection = "rtl"
-)
-
-type ScriptDominantBaseline string
-
-const (
-	ScriptDominantBaselineAlphabetic   ScriptDominantBaseline = "alphabetic"
-	ScriptDominantBaselineAuto         ScriptDominantBaseline = "auto"
-	ScriptDominantBaselineCentral      ScriptDominantBaseline = "central"
-	ScriptDominantBaselineHanging      ScriptDominantBaseline = "hanging"
-	ScriptDominantBaselineIdeographic  ScriptDominantBaseline = "ideographic"
-	ScriptDominantBaselineMathematical ScriptDominantBaseline = "mathematical"
-	ScriptDominantBaselineMiddle       ScriptDominantBaseline = "middle"
-	ScriptDominantBaselineTextBottom   ScriptDominantBaseline = "text-bottom"
-	ScriptDominantBaselineTextTop      ScriptDominantBaseline = "text-top"
-)
-
-type ScriptFillRule string
-
-const (
-	ScriptFillRuleEvenodd ScriptFillRule = "evenodd"
-	ScriptFillRuleNonzero ScriptFillRule = "nonzero"
-)
-
-type ScriptFontStyle string
-
-const (
-	ScriptFontStyleItalic  ScriptFontStyle = "italic"
-	ScriptFontStyleNormal  ScriptFontStyle = "normal"
-	ScriptFontStyleOblique ScriptFontStyle = "oblique"
-)
-
-type ScriptImageRendering string
-
-const (
-	ScriptImageRenderingAuto            ScriptImageRendering = "auto"
-	ScriptImageRenderingCrispEdges      ScriptImageRendering = "crisp-edges"
-	ScriptImageRenderingHighQuality     ScriptImageRendering = "high-quality"
-	ScriptImageRenderingOptimizeQuality ScriptImageRendering = "optimizeQuality"
-	ScriptImageRenderingOptimizeSpeed   ScriptImageRendering = "optimizeSpeed"
-	ScriptImageRenderingPixelated       ScriptImageRendering = "pixelated"
-	ScriptImageRenderingSmooth          ScriptImageRendering = "smooth"
-)
-
-type ScriptOverflow string
-
-const (
-	ScriptOverflowAuto    ScriptOverflow = "auto"
-	ScriptOverflowClip    ScriptOverflow = "clip"
-	ScriptOverflowHidden  ScriptOverflow = "hidden"
-	ScriptOverflowScroll  ScriptOverflow = "scroll"
-	ScriptOverflowVisible ScriptOverflow = "visible"
-)
-
-type ScriptPointerEvents string
-
-const (
-	ScriptPointerEventsAll            ScriptPointerEvents = "all"
-	ScriptPointerEventsAuto           ScriptPointerEvents = "auto"
-	ScriptPointerEventsBoundingBox    ScriptPointerEvents = "bounding-box"
-	ScriptPointerEventsFill           ScriptPointerEvents = "fill"
-	ScriptPointerEventsNone           ScriptPointerEvents = "none"
-	ScriptPointerEventsPainted        ScriptPointerEvents = "painted"
-	ScriptPointerEventsStroke         ScriptPointerEvents = "stroke"
-	ScriptPointerEventsVisible        ScriptPointerEvents = "visible"
-	ScriptPointerEventsVisibleFill    ScriptPointerEvents = "visibleFill"
-	ScriptPointerEventsVisiblePainted ScriptPointerEvents = "visiblePainted"
-	ScriptPointerEventsVisibleStroke  ScriptPointerEvents = "visibleStroke"
-)
-
-type ScriptShapeRendering string
-
-const (
-	ScriptShapeRenderingAuto               ScriptShapeRendering = "auto"
-	ScriptShapeRenderingCrispEdges         ScriptShapeRendering = "crispEdges"
-	ScriptShapeRenderingGeometricPrecision ScriptShapeRendering = "geometricPrecision"
-	ScriptShapeRenderingOptimizeSpeed      ScriptShapeRendering = "optimizeSpeed"
-)
-
-type ScriptStrokeLinecap string
-
-const (
-	ScriptStrokeLinecapButt   ScriptStrokeLinecap = "butt"
-	ScriptStrokeLinecapRound  ScriptStrokeLinecap = "round"
-	ScriptStrokeLinecapSquare ScriptStrokeLinecap = "square"
-)
-
-type ScriptStrokeLinejoin string
-
-const (
-	ScriptStrokeLinejoinArcs      ScriptStrokeLinejoin = "arcs"
-	ScriptStrokeLinejoinBevel     ScriptStrokeLinejoin = "bevel"
-	ScriptStrokeLinejoinMiter     ScriptStrokeLinejoin = "miter"
-	ScriptStrokeLinejoinMiterClip ScriptStrokeLinejoin = "miter-clip"
-	ScriptStrokeLinejoinRound     ScriptStrokeLinejoin = "round"
-)
-
-type ScriptTextAnchor string
-
-const (
-	ScriptTextAnchorEnd    ScriptTextAnchor = "end"
-	ScriptTextAnchorMiddle ScriptTextAnchor = "middle"
-	ScriptTextAnchorStart  ScriptTextAnchor = "start"
-)
-
-type ScriptTextRendering string
-
-const (
-	ScriptTextRenderingAuto               ScriptTextRendering = "auto"
-	ScriptTextRenderingGeometricPrecision ScriptTextRendering = "geometricPrecision"
-	ScriptTextRenderingOptimizeLegibility ScriptTextRendering = "optimizeLegibility"
-	ScriptTextRenderingOptimizeSpeed      ScriptTextRendering = "optimizeSpeed"
-)
-
-type ScriptTransformBox string
-
-const (
-	ScriptTransformBoxBorderBox  ScriptTransformBox = "border-box"
-	ScriptTransformBoxContentBox ScriptTransformBox = "content-box"
-	ScriptTransformBoxFillBox    ScriptTransformBox = "fill-box"
-	ScriptTransformBoxStrokeBox  ScriptTransformBox = "stroke-box"
-	ScriptTransformBoxViewBox    ScriptTransformBox = "view-box"
-)
-
-type ScriptVectorEffect string
-
-const (
-	ScriptVectorEffectFixedPosition    ScriptVectorEffect = "fixed-position"
-	ScriptVectorEffectNonRotation      ScriptVectorEffect = "non-rotation"
-	ScriptVectorEffectNonScalingSize   ScriptVectorEffect = "non-scaling-size"
-	ScriptVectorEffectNonScalingStroke ScriptVectorEffect = "non-scaling-stroke"
-	ScriptVectorEffectNone             ScriptVectorEffect = "none"
-)
-
-type ScriptVisibility string
-
-const (
-	ScriptVisibilityCollapse ScriptVisibility = "collapse"
-	ScriptVisibilityHidden   ScriptVisibility = "hidden"
-	ScriptVisibilityVisible  ScriptVisibility = "visible"
-)
-
-type ScriptWritingMode string
-
-const (
-	ScriptWritingModeHorizontalTb ScriptWritingMode = "horizontal-tb"
-	ScriptWritingModeLr           ScriptWritingMode = "lr"
-	ScriptWritingModeLrTb         ScriptWritingMode = "lr-tb"
-	ScriptWritingModeRl           ScriptWritingMode = "rl"
-	ScriptWritingModeRlTb         ScriptWritingMode = "rl-tb"
-	ScriptWritingModeSidewaysLr   ScriptWritingMode = "sideways-lr"
-	ScriptWritingModeSidewaysRl   ScriptWritingMode = "sideways-rl"
-	ScriptWritingModeTb           ScriptWritingMode = "tb"
-	ScriptWritingModeTbRl         ScriptWritingMode = "tb-rl"
-	ScriptWritingModeVerticalLr   ScriptWritingMode = "vertical-lr"
-	ScriptWritingModeVerticalRl   ScriptWritingMode = "vertical-rl"
-)
-
-type ScriptXmlSpace string
-
-const (
-	ScriptXmlSpaceDefault  ScriptXmlSpace = "default"
-	ScriptXmlSpacePreserve ScriptXmlSpace = "preserve"
-)
+// SVGContent marks <script> as a permitted child (Content).
+func (*ScriptElement) SVGContent() {}
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Crossorigin(v ...ScriptCrossorigin) *ScriptElement {
-	var val ScriptCrossorigin
+func (e *ScriptElement) Crossorigin(v ...Crossorigin) *ScriptElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,14 +208,10 @@ func (e *ScriptElement) XlinkHref(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) AlignmentBaseline(a ScriptAlignmentBaseline) *ScriptElement {
+func (e *ScriptElement) AlignmentBaseline(a AlignmentBaseline) *ScriptElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func ScriptAlignmentBaselineCustom(s string) ScriptAlignmentBaseline {
-	return ScriptAlignmentBaseline(s)
 }
 
 func (e *ScriptElement) AriaUnsafe(name string, s string) *ScriptElement {
@@ -486,14 +265,10 @@ func (e *ScriptElement) ClipPath(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) ClipRule(a ScriptClipRule) *ScriptElement {
+func (e *ScriptElement) ClipRule(a ClipRule) *ScriptElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func ScriptClipRuleCustom(s string) ScriptClipRule {
-	return ScriptClipRule(s)
 }
 
 func (e *ScriptElement) Color(s string) *ScriptElement {
@@ -502,24 +277,16 @@ func (e *ScriptElement) Color(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) ColorInterpolation(a ScriptColorInterpolation) *ScriptElement {
+func (e *ScriptElement) ColorInterpolation(a ColorInterpolation) *ScriptElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func ScriptColorInterpolationCustom(s string) ScriptColorInterpolation {
-	return ScriptColorInterpolation(s)
-}
-
-func (e *ScriptElement) ColorInterpolationFilters(a ScriptColorInterpolationFilters) *ScriptElement {
+func (e *ScriptElement) ColorInterpolationFilters(a ColorInterpolationFilters) *ScriptElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func ScriptColorInterpolationFiltersCustom(s string) ScriptColorInterpolationFilters {
-	return ScriptColorInterpolationFilters(s)
 }
 
 func (e *ScriptElement) Cursor(s string) *ScriptElement {
@@ -544,14 +311,10 @@ func (e *ScriptElement) Data(name string, s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Direction(a ScriptDirection) *ScriptElement {
+func (e *ScriptElement) Direction(a Direction) *ScriptElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func ScriptDirectionCustom(s string) ScriptDirection {
-	return ScriptDirection(s)
 }
 
 func (e *ScriptElement) Display(s string) *ScriptElement {
@@ -560,14 +323,10 @@ func (e *ScriptElement) Display(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) DominantBaseline(a ScriptDominantBaseline) *ScriptElement {
+func (e *ScriptElement) DominantBaseline(a DominantBaseline) *ScriptElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func ScriptDominantBaselineCustom(s string) ScriptDominantBaseline {
-	return ScriptDominantBaseline(s)
 }
 
 func (e *ScriptElement) Fill(s string) *ScriptElement {
@@ -582,14 +341,10 @@ func (e *ScriptElement) FillOpacity(f float64) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) FillRule(a ScriptFillRule) *ScriptElement {
+func (e *ScriptElement) FillRule(a FillRule) *ScriptElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func ScriptFillRuleCustom(s string) ScriptFillRule {
-	return ScriptFillRule(s)
 }
 
 func (e *ScriptElement) Filter(s string) *ScriptElement {
@@ -634,14 +389,10 @@ func (e *ScriptElement) FontStretch(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) FontStyle(a ScriptFontStyle) *ScriptElement {
+func (e *ScriptElement) FontStyle(a FontStyle) *ScriptElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func ScriptFontStyleCustom(s string) ScriptFontStyle {
-	return ScriptFontStyle(s)
 }
 
 func (e *ScriptElement) FontVariant(s string) *ScriptElement {
@@ -680,14 +431,10 @@ func (e *ScriptElement) Id(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) ImageRendering(a ScriptImageRendering) *ScriptElement {
+func (e *ScriptElement) ImageRendering(a ImageRendering) *ScriptElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func ScriptImageRenderingCustom(s string) ScriptImageRendering {
-	return ScriptImageRendering(s)
 }
 
 func (e *ScriptElement) Lang(s string) *ScriptElement {
@@ -738,14 +485,10 @@ func (e *ScriptElement) Opacity(f float64) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Overflow(a ScriptOverflow) *ScriptElement {
+func (e *ScriptElement) Overflow(a Overflow) *ScriptElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func ScriptOverflowCustom(s string) ScriptOverflow {
-	return ScriptOverflow(s)
 }
 
 func (e *ScriptElement) PaintOrder(s string) *ScriptElement {
@@ -754,14 +497,10 @@ func (e *ScriptElement) PaintOrder(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) PointerEvents(a ScriptPointerEvents) *ScriptElement {
+func (e *ScriptElement) PointerEvents(a PointerEvents) *ScriptElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func ScriptPointerEventsCustom(s string) ScriptPointerEvents {
-	return ScriptPointerEvents(s)
 }
 
 func (e *ScriptElement) RequiredExtensions(s string) *ScriptElement {
@@ -770,14 +509,10 @@ func (e *ScriptElement) RequiredExtensions(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) ShapeRendering(a ScriptShapeRendering) *ScriptElement {
+func (e *ScriptElement) ShapeRendering(a ShapeRendering) *ScriptElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func ScriptShapeRenderingCustom(s string) ScriptShapeRendering {
-	return ScriptShapeRendering(s)
 }
 
 func (e *ScriptElement) StopColor(s string) *ScriptElement {
@@ -810,24 +545,16 @@ func (e *ScriptElement) StrokeDashoffset(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) StrokeLinecap(a ScriptStrokeLinecap) *ScriptElement {
+func (e *ScriptElement) StrokeLinecap(a StrokeLinecap) *ScriptElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func ScriptStrokeLinecapCustom(s string) ScriptStrokeLinecap {
-	return ScriptStrokeLinecap(s)
-}
-
-func (e *ScriptElement) StrokeLinejoin(a ScriptStrokeLinejoin) *ScriptElement {
+func (e *ScriptElement) StrokeLinejoin(a StrokeLinejoin) *ScriptElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func ScriptStrokeLinejoinCustom(s string) ScriptStrokeLinejoin {
-	return ScriptStrokeLinejoin(s)
 }
 
 func (e *ScriptElement) StrokeMiterlimit(f float64) *ScriptElement {
@@ -860,14 +587,10 @@ func (e *ScriptElement) Tabindex(i int) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) TextAnchor(a ScriptTextAnchor) *ScriptElement {
+func (e *ScriptElement) TextAnchor(a TextAnchor) *ScriptElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func ScriptTextAnchorCustom(s string) ScriptTextAnchor {
-	return ScriptTextAnchor(s)
 }
 
 func (e *ScriptElement) TextDecoration(s string) *ScriptElement {
@@ -882,14 +605,10 @@ func (e *ScriptElement) TextOverflow(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) TextRendering(a ScriptTextRendering) *ScriptElement {
+func (e *ScriptElement) TextRendering(a TextRendering) *ScriptElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func ScriptTextRenderingCustom(s string) ScriptTextRendering {
-	return ScriptTextRendering(s)
 }
 
 func (e *ScriptElement) Transform(s string) *ScriptElement {
@@ -898,14 +617,10 @@ func (e *ScriptElement) Transform(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) TransformBox(a ScriptTransformBox) *ScriptElement {
+func (e *ScriptElement) TransformBox(a TransformBox) *ScriptElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func ScriptTransformBoxCustom(s string) ScriptTransformBox {
-	return ScriptTransformBox(s)
 }
 
 func (e *ScriptElement) TransformOrigin(s string) *ScriptElement {
@@ -920,24 +635,16 @@ func (e *ScriptElement) UnicodeBidi(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) VectorEffect(a ScriptVectorEffect) *ScriptElement {
+func (e *ScriptElement) VectorEffect(a VectorEffect) *ScriptElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func ScriptVectorEffectCustom(s string) ScriptVectorEffect {
-	return ScriptVectorEffect(s)
-}
-
-func (e *ScriptElement) Visibility(a ScriptVisibility) *ScriptElement {
+func (e *ScriptElement) Visibility(a Visibility) *ScriptElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func ScriptVisibilityCustom(s string) ScriptVisibility {
-	return ScriptVisibility(s)
 }
 
 func (e *ScriptElement) WhiteSpace(s string) *ScriptElement {
@@ -952,14 +659,10 @@ func (e *ScriptElement) WordSpacing(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) WritingMode(a ScriptWritingMode) *ScriptElement {
+func (e *ScriptElement) WritingMode(a WritingMode) *ScriptElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func ScriptWritingModeCustom(s string) ScriptWritingMode {
-	return ScriptWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -974,7 +677,7 @@ func (e *ScriptElement) XmlLang(s string) *ScriptElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *ScriptElement) XmlSpace(a ScriptXmlSpace) *ScriptElement {
+func (e *ScriptElement) XmlSpace(a XmlSpace) *ScriptElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

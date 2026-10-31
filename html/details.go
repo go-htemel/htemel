@@ -12,17 +12,39 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// DetailsChild is a permitted child of <details>: <summary>, flow content.
+//
+// It is implemented by <a>, <abbr>, <address>, <area>, <article>, <aside>, <audio>, <b>, <bdi>,
+// <bdo>, <blockquote>, <br>, <button>, <canvas>, <cite>, <code>, <data>, <datalist>, <del>,
+// <details>, <dfn>, <dialog>, <div>, <dl>, <em>, <embed>, <fieldset>, <figure>, <footer>, <form>,
+// <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <header>, <hgroup>, <hr>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <link>, <main>, <map>, <mark>, <menu>, <meta>, <meter>, <nav>,
+// <noscript>, <object>, <ol>, <output>, <p>, <picture>, <pre>, <progress>, <q>, <ruby>, <s>,
+// <samp>, <script>, <search>, <section>, <select>, <slot>, <small>, <span>, <strong>, <style>,
+// <sub>, <summary>, <sup>, <table>, <template>, <textarea>, <time>, <u>, <ul>, <var>, <video>,
+// <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.FlowMarker and by
+// the unchecked nodes of package htemel (Group, Each, If, Unchecked, ...).
+type DetailsChild interface {
+	htemel.Node
+	HTMLDetailsChild()
+}
+
 type DetailsElement struct {
+	htemel.FlowMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []DetailsChild
 	skipRender bool
 }
 
 // Details creates a tag <details> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <summary>, flow content (DetailsChild).
+//
 // Spec Description: The details element represents a disclosure widget from which the user can obtain additional information or controls.
-func Details(children ...htemel.Node) *DetailsElement {
+func Details(children ...DetailsChild) *DetailsElement {
 	node := &DetailsElement{
 		children: children,
 	}
@@ -31,7 +53,7 @@ func Details(children ...htemel.Node) *DetailsElement {
 }
 
 // DetailsIf creates a tag <details> instance that is only rendered when condition is true.
-func DetailsIf(condition bool, children ...htemel.Node) *DetailsElement {
+func DetailsIf(condition bool, children ...DetailsChild) *DetailsElement {
 	if condition {
 		return Details(children...)
 	}
@@ -43,7 +65,7 @@ func DetailsIf(condition bool, children ...htemel.Node) *DetailsElement {
 }
 
 // DetailsTernary creates a tag <details> containing then when condition is true, otherwise containing otherwise.
-func DetailsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DetailsElement {
+func DetailsTernary(condition bool, then DetailsChild, otherwise DetailsChild) *DetailsElement {
 	if condition {
 		return Details(then)
 	}
@@ -51,7 +73,7 @@ func DetailsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *De
 }
 
 // Children appends children to this element.
-func (e *DetailsElement) Children(children ...htemel.Node) *DetailsElement {
+func (e *DetailsElement) Children(children ...DetailsChild) *DetailsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +96,7 @@ func (e *DetailsElement) Textf(format string, args ...any) *DetailsElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DetailsElement) If(cond bool, child htemel.Node) *DetailsElement {
+func (e *DetailsElement) If(cond bool, child DetailsChild) *DetailsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +104,7 @@ func (e *DetailsElement) If(cond bool, child htemel.Node) *DetailsElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DetailsElement) IfElse(cond bool, then, els htemel.Node) *DetailsElement {
+func (e *DetailsElement) IfElse(cond bool, then, els DetailsChild) *DetailsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +186,6 @@ func (e *DetailsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DetailsAutocapitalize string
-
-const (
-	DetailsAutocapitalizeCharacters DetailsAutocapitalize = "characters"
-	DetailsAutocapitalizeNone       DetailsAutocapitalize = "none"
-	DetailsAutocapitalizeOff        DetailsAutocapitalize = "off"
-	DetailsAutocapitalizeOn         DetailsAutocapitalize = "on"
-	DetailsAutocapitalizeSentences  DetailsAutocapitalize = "sentences"
-	DetailsAutocapitalizeWords      DetailsAutocapitalize = "words"
-)
-
-type DetailsAutocorrect string
-
-const (
-	DetailsAutocorrectOff   DetailsAutocorrect = "off"
-	DetailsAutocorrectOn    DetailsAutocorrect = "on"
-	DetailsAutocorrectEmpty DetailsAutocorrect = ""
-)
-
-type DetailsContenteditable string
-
-const (
-	DetailsContenteditableFalse         DetailsContenteditable = "false"
-	DetailsContenteditablePlaintextOnly DetailsContenteditable = "plaintext-only"
-	DetailsContenteditableTrue          DetailsContenteditable = "true"
-	DetailsContenteditableEmpty         DetailsContenteditable = ""
-)
-
-type DetailsDir string
-
-const (
-	DetailsDirAuto DetailsDir = "auto"
-	DetailsDirLtr  DetailsDir = "ltr"
-	DetailsDirRtl  DetailsDir = "rtl"
-)
-
-type DetailsDraggable string
-
-const (
-	DetailsDraggableFalse DetailsDraggable = "false"
-	DetailsDraggableTrue  DetailsDraggable = "true"
-)
-
-type DetailsEnterkeyhint string
-
-const (
-	DetailsEnterkeyhintDone     DetailsEnterkeyhint = "done"
-	DetailsEnterkeyhintEnter    DetailsEnterkeyhint = "enter"
-	DetailsEnterkeyhintGo       DetailsEnterkeyhint = "go"
-	DetailsEnterkeyhintNext     DetailsEnterkeyhint = "next"
-	DetailsEnterkeyhintPrevious DetailsEnterkeyhint = "previous"
-	DetailsEnterkeyhintSearch   DetailsEnterkeyhint = "search"
-	DetailsEnterkeyhintSend     DetailsEnterkeyhint = "send"
-)
-
-type DetailsHidden string
-
-const (
-	DetailsHiddenHidden     DetailsHidden = "hidden"
-	DetailsHiddenUntilFound DetailsHidden = "until-found"
-	DetailsHiddenEmpty      DetailsHidden = ""
-)
-
-type DetailsInputmode string
-
-const (
-	DetailsInputmodeDecimal DetailsInputmode = "decimal"
-	DetailsInputmodeEmail   DetailsInputmode = "email"
-	DetailsInputmodeNone    DetailsInputmode = "none"
-	DetailsInputmodeNumeric DetailsInputmode = "numeric"
-	DetailsInputmodeSearch  DetailsInputmode = "search"
-	DetailsInputmodeTel     DetailsInputmode = "tel"
-	DetailsInputmodeText    DetailsInputmode = "text"
-	DetailsInputmodeUrl     DetailsInputmode = "url"
-)
-
-type DetailsPopover string
-
-const (
-	DetailsPopoverAuto   DetailsPopover = "auto"
-	DetailsPopoverHint   DetailsPopover = "hint"
-	DetailsPopoverManual DetailsPopover = "manual"
-	DetailsPopoverEmpty  DetailsPopover = ""
-)
-
-type DetailsSpellcheck string
-
-const (
-	DetailsSpellcheckFalse DetailsSpellcheck = "false"
-	DetailsSpellcheckTrue  DetailsSpellcheck = "true"
-	DetailsSpellcheckEmpty DetailsSpellcheck = ""
-)
-
-type DetailsTranslate string
-
-const (
-	DetailsTranslateNo    DetailsTranslate = "no"
-	DetailsTranslateYes   DetailsTranslate = "yes"
-	DetailsTranslateEmpty DetailsTranslate = ""
-)
-
-type DetailsWritingsuggestions string
-
-const (
-	DetailsWritingsuggestionsFalse DetailsWritingsuggestions = "false"
-	DetailsWritingsuggestionsTrue  DetailsWritingsuggestions = "true"
-	DetailsWritingsuggestionsEmpty DetailsWritingsuggestions = ""
-)
-
 func (e *DetailsElement) Name(s string) *DetailsElement {
 	e.attributes.Set("name", s)
 
@@ -309,7 +222,7 @@ func (e *DetailsElement) Aria(name string, s string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Autocapitalize(a DetailsAutocapitalize) *DetailsElement {
+func (e *DetailsElement) Autocapitalize(a Autocapitalize) *DetailsElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -317,8 +230,8 @@ func (e *DetailsElement) Autocapitalize(a DetailsAutocapitalize) *DetailsElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Autocorrect(v ...DetailsAutocorrect) *DetailsElement {
-	var val DetailsAutocorrect
+func (e *DetailsElement) Autocorrect(v ...Autocorrect) *DetailsElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -343,8 +256,8 @@ func (e *DetailsElement) Class(s ...string) *DetailsElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Contenteditable(v ...DetailsContenteditable) *DetailsElement {
-	var val DetailsContenteditable
+func (e *DetailsElement) Contenteditable(v ...Contenteditable) *DetailsElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -369,19 +282,19 @@ func (e *DetailsElement) Data(name string, s string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Dir(a DetailsDir) *DetailsElement {
+func (e *DetailsElement) Dir(a Dir) *DetailsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DetailsElement) Draggable(a DetailsDraggable) *DetailsElement {
+func (e *DetailsElement) Draggable(a Draggable) *DetailsElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DetailsElement) Enterkeyhint(a DetailsEnterkeyhint) *DetailsElement {
+func (e *DetailsElement) Enterkeyhint(a Enterkeyhint) *DetailsElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -409,8 +322,8 @@ func (e *DetailsElement) Headingreset(b bool) *DetailsElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Hidden(v ...DetailsHidden) *DetailsElement {
-	var val DetailsHidden
+func (e *DetailsElement) Hidden(v ...Hidden) *DetailsElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -433,7 +346,7 @@ func (e *DetailsElement) Inert(b bool) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Inputmode(a DetailsInputmode) *DetailsElement {
+func (e *DetailsElement) Inputmode(a Inputmode) *DetailsElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -499,8 +412,8 @@ func (e *DetailsElement) Part(s ...string) *DetailsElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Popover(v ...DetailsPopover) *DetailsElement {
-	var val DetailsPopover
+func (e *DetailsElement) Popover(v ...Popover) *DetailsElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -523,8 +436,8 @@ func (e *DetailsElement) Slot(s string) *DetailsElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Spellcheck(v ...DetailsSpellcheck) *DetailsElement {
-	var val DetailsSpellcheck
+func (e *DetailsElement) Spellcheck(v ...Spellcheck) *DetailsElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -553,8 +466,8 @@ func (e *DetailsElement) Title(s string) *DetailsElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Translate(v ...DetailsTranslate) *DetailsElement {
-	var val DetailsTranslate
+func (e *DetailsElement) Translate(v ...Translate) *DetailsElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -565,8 +478,8 @@ func (e *DetailsElement) Translate(v ...DetailsTranslate) *DetailsElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DetailsElement) Writingsuggestions(v ...DetailsWritingsuggestions) *DetailsElement {
-	var val DetailsWritingsuggestions
+func (e *DetailsElement) Writingsuggestions(v ...Writingsuggestions) *DetailsElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

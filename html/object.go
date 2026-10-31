@@ -13,16 +13,24 @@ import (
 )
 
 type ObjectElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Object creates a tag <object> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <object> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The object element can represent an external resource, which, depending on the type of the resource, will either be treated as an image or as a child navigable.
-func Object(children ...htemel.Node) *ObjectElement {
+func Object(children ...htemel.FlowContent) *ObjectElement {
 	node := &ObjectElement{
 		children: children,
 	}
@@ -31,7 +39,7 @@ func Object(children ...htemel.Node) *ObjectElement {
 }
 
 // ObjectIf creates a tag <object> instance that is only rendered when condition is true.
-func ObjectIf(condition bool, children ...htemel.Node) *ObjectElement {
+func ObjectIf(condition bool, children ...htemel.FlowContent) *ObjectElement {
 	if condition {
 		return Object(children...)
 	}
@@ -43,7 +51,7 @@ func ObjectIf(condition bool, children ...htemel.Node) *ObjectElement {
 }
 
 // ObjectTernary creates a tag <object> containing then when condition is true, otherwise containing otherwise.
-func ObjectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ObjectElement {
+func ObjectTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *ObjectElement {
 	if condition {
 		return Object(then)
 	}
@@ -51,7 +59,7 @@ func ObjectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Obj
 }
 
 // Children appends children to this element.
-func (e *ObjectElement) Children(children ...htemel.Node) *ObjectElement {
+func (e *ObjectElement) Children(children ...htemel.FlowContent) *ObjectElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +82,7 @@ func (e *ObjectElement) Textf(format string, args ...any) *ObjectElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ObjectElement) If(cond bool, child htemel.Node) *ObjectElement {
+func (e *ObjectElement) If(cond bool, child htemel.FlowContent) *ObjectElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +90,7 @@ func (e *ObjectElement) If(cond bool, child htemel.Node) *ObjectElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ObjectElement) IfElse(cond bool, then, els htemel.Node) *ObjectElement {
+func (e *ObjectElement) IfElse(cond bool, then, els htemel.FlowContent) *ObjectElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +172,6 @@ func (e *ObjectElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ObjectAutocapitalize string
-
-const (
-	ObjectAutocapitalizeCharacters ObjectAutocapitalize = "characters"
-	ObjectAutocapitalizeNone       ObjectAutocapitalize = "none"
-	ObjectAutocapitalizeOff        ObjectAutocapitalize = "off"
-	ObjectAutocapitalizeOn         ObjectAutocapitalize = "on"
-	ObjectAutocapitalizeSentences  ObjectAutocapitalize = "sentences"
-	ObjectAutocapitalizeWords      ObjectAutocapitalize = "words"
-)
-
-type ObjectAutocorrect string
-
-const (
-	ObjectAutocorrectOff   ObjectAutocorrect = "off"
-	ObjectAutocorrectOn    ObjectAutocorrect = "on"
-	ObjectAutocorrectEmpty ObjectAutocorrect = ""
-)
-
-type ObjectContenteditable string
-
-const (
-	ObjectContenteditableFalse         ObjectContenteditable = "false"
-	ObjectContenteditablePlaintextOnly ObjectContenteditable = "plaintext-only"
-	ObjectContenteditableTrue          ObjectContenteditable = "true"
-	ObjectContenteditableEmpty         ObjectContenteditable = ""
-)
-
-type ObjectDir string
-
-const (
-	ObjectDirAuto ObjectDir = "auto"
-	ObjectDirLtr  ObjectDir = "ltr"
-	ObjectDirRtl  ObjectDir = "rtl"
-)
-
-type ObjectDraggable string
-
-const (
-	ObjectDraggableFalse ObjectDraggable = "false"
-	ObjectDraggableTrue  ObjectDraggable = "true"
-)
-
-type ObjectEnterkeyhint string
-
-const (
-	ObjectEnterkeyhintDone     ObjectEnterkeyhint = "done"
-	ObjectEnterkeyhintEnter    ObjectEnterkeyhint = "enter"
-	ObjectEnterkeyhintGo       ObjectEnterkeyhint = "go"
-	ObjectEnterkeyhintNext     ObjectEnterkeyhint = "next"
-	ObjectEnterkeyhintPrevious ObjectEnterkeyhint = "previous"
-	ObjectEnterkeyhintSearch   ObjectEnterkeyhint = "search"
-	ObjectEnterkeyhintSend     ObjectEnterkeyhint = "send"
-)
-
-type ObjectHidden string
-
-const (
-	ObjectHiddenHidden     ObjectHidden = "hidden"
-	ObjectHiddenUntilFound ObjectHidden = "until-found"
-	ObjectHiddenEmpty      ObjectHidden = ""
-)
-
-type ObjectInputmode string
-
-const (
-	ObjectInputmodeDecimal ObjectInputmode = "decimal"
-	ObjectInputmodeEmail   ObjectInputmode = "email"
-	ObjectInputmodeNone    ObjectInputmode = "none"
-	ObjectInputmodeNumeric ObjectInputmode = "numeric"
-	ObjectInputmodeSearch  ObjectInputmode = "search"
-	ObjectInputmodeTel     ObjectInputmode = "tel"
-	ObjectInputmodeText    ObjectInputmode = "text"
-	ObjectInputmodeUrl     ObjectInputmode = "url"
-)
-
-type ObjectPopover string
-
-const (
-	ObjectPopoverAuto   ObjectPopover = "auto"
-	ObjectPopoverHint   ObjectPopover = "hint"
-	ObjectPopoverManual ObjectPopover = "manual"
-	ObjectPopoverEmpty  ObjectPopover = ""
-)
-
-type ObjectSpellcheck string
-
-const (
-	ObjectSpellcheckFalse ObjectSpellcheck = "false"
-	ObjectSpellcheckTrue  ObjectSpellcheck = "true"
-	ObjectSpellcheckEmpty ObjectSpellcheck = ""
-)
-
-type ObjectTranslate string
-
-const (
-	ObjectTranslateNo    ObjectTranslate = "no"
-	ObjectTranslateYes   ObjectTranslate = "yes"
-	ObjectTranslateEmpty ObjectTranslate = ""
-)
-
-type ObjectWritingsuggestions string
-
-const (
-	ObjectWritingsuggestionsFalse ObjectWritingsuggestions = "false"
-	ObjectWritingsuggestionsTrue  ObjectWritingsuggestions = "true"
-	ObjectWritingsuggestionsEmpty ObjectWritingsuggestions = ""
-)
-
 // Data sets the "data" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *ObjectElement) Data(s string) *ObjectElement {
@@ -333,7 +232,7 @@ func (e *ObjectElement) Aria(name string, s string) *ObjectElement {
 	return e
 }
 
-func (e *ObjectElement) Autocapitalize(a ObjectAutocapitalize) *ObjectElement {
+func (e *ObjectElement) Autocapitalize(a Autocapitalize) *ObjectElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -341,8 +240,8 @@ func (e *ObjectElement) Autocapitalize(a ObjectAutocapitalize) *ObjectElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Autocorrect(v ...ObjectAutocorrect) *ObjectElement {
-	var val ObjectAutocorrect
+func (e *ObjectElement) Autocorrect(v ...Autocorrect) *ObjectElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -367,8 +266,8 @@ func (e *ObjectElement) Class(s ...string) *ObjectElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Contenteditable(v ...ObjectContenteditable) *ObjectElement {
-	var val ObjectContenteditable
+func (e *ObjectElement) Contenteditable(v ...Contenteditable) *ObjectElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -377,19 +276,19 @@ func (e *ObjectElement) Contenteditable(v ...ObjectContenteditable) *ObjectEleme
 	return e
 }
 
-func (e *ObjectElement) Dir(a ObjectDir) *ObjectElement {
+func (e *ObjectElement) Dir(a Dir) *ObjectElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ObjectElement) Draggable(a ObjectDraggable) *ObjectElement {
+func (e *ObjectElement) Draggable(a Draggable) *ObjectElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ObjectElement) Enterkeyhint(a ObjectEnterkeyhint) *ObjectElement {
+func (e *ObjectElement) Enterkeyhint(a Enterkeyhint) *ObjectElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -417,8 +316,8 @@ func (e *ObjectElement) Headingreset(b bool) *ObjectElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Hidden(v ...ObjectHidden) *ObjectElement {
-	var val ObjectHidden
+func (e *ObjectElement) Hidden(v ...Hidden) *ObjectElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -441,7 +340,7 @@ func (e *ObjectElement) Inert(b bool) *ObjectElement {
 	return e
 }
 
-func (e *ObjectElement) Inputmode(a ObjectInputmode) *ObjectElement {
+func (e *ObjectElement) Inputmode(a Inputmode) *ObjectElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -507,8 +406,8 @@ func (e *ObjectElement) Part(s ...string) *ObjectElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Popover(v ...ObjectPopover) *ObjectElement {
-	var val ObjectPopover
+func (e *ObjectElement) Popover(v ...Popover) *ObjectElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -531,8 +430,8 @@ func (e *ObjectElement) Slot(s string) *ObjectElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Spellcheck(v ...ObjectSpellcheck) *ObjectElement {
-	var val ObjectSpellcheck
+func (e *ObjectElement) Spellcheck(v ...Spellcheck) *ObjectElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -561,8 +460,8 @@ func (e *ObjectElement) Title(s string) *ObjectElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Translate(v ...ObjectTranslate) *ObjectElement {
-	var val ObjectTranslate
+func (e *ObjectElement) Translate(v ...Translate) *ObjectElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -573,8 +472,8 @@ func (e *ObjectElement) Translate(v ...ObjectTranslate) *ObjectElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ObjectElement) Writingsuggestions(v ...ObjectWritingsuggestions) *ObjectElement {
-	var val ObjectWritingsuggestions
+func (e *ObjectElement) Writingsuggestions(v ...Writingsuggestions) *ObjectElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

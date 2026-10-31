@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -13,81 +12,42 @@ import (
 )
 
 type IframeElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+
 	skipRender bool
 }
 
 // Iframe creates a tag <iframe> instance and returns it for further modification.
-// Any children passed will be nested within the tag.
+//
+// <iframe> takes no children (its content model is nothing), but it is not a void element: it
+// renders an end tag.
 //
 // Spec Description: The iframe element represents its content navigable.
-func Iframe(children ...htemel.Node) *IframeElement {
-	node := &IframeElement{
-		children: children,
-	}
+func Iframe() *IframeElement {
+	node := &IframeElement{}
 
 	return node
 }
 
 // IframeIf creates a tag <iframe> instance that is only rendered when condition is true.
-func IframeIf(condition bool, children ...htemel.Node) *IframeElement {
+func IframeIf(condition bool) *IframeElement {
 	if condition {
-		return Iframe(children...)
+		return Iframe()
 	}
 
 	return &IframeElement{
-		children:   children,
+
 		skipRender: true,
 	}
-}
-
-// IframeTernary creates a tag <iframe> containing then when condition is true, otherwise containing otherwise.
-func IframeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *IframeElement {
-	if condition {
-		return Iframe(then)
-	}
-	return Iframe(otherwise)
-}
-
-// Children appends children to this element.
-func (e *IframeElement) Children(children ...htemel.Node) *IframeElement {
-	e.children = append(e.children, children...)
-	return e
 }
 
 // With allows passing a function to modify the element via a closure.
 func (e *IframeElement) With(fn func(*IframeElement)) *IframeElement {
 	fn(e)
-	return e
-}
-
-// Text adds an HTML-escaped text node to the element.
-func (e *IframeElement) Text(text string) *IframeElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *IframeElement) Textf(format string, args ...any) *IframeElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
-// If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *IframeElement) If(cond bool, child htemel.Node) *IframeElement {
-	if cond {
-		return e.Children(child)
-	}
-	return e
-}
-
-// IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *IframeElement) IfElse(cond bool, then, els htemel.Node) *IframeElement {
-	if cond {
-		e.Children(then)
-	} else {
-		e.Children(els)
-	}
 	return e
 }
 
@@ -164,136 +124,6 @@ func (e *IframeElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type IframeLoading string
-
-const (
-	IframeLoadingEager IframeLoading = "eager"
-	IframeLoadingLazy  IframeLoading = "lazy"
-)
-
-type IframeReferrerpolicy string
-
-const (
-	IframeReferrerpolicyNoReferrer                  IframeReferrerpolicy = "no-referrer"
-	IframeReferrerpolicyNoReferrerWhenDowngrade     IframeReferrerpolicy = "no-referrer-when-downgrade"
-	IframeReferrerpolicyOrigin                      IframeReferrerpolicy = "origin"
-	IframeReferrerpolicyOriginWhenCrossOrigin       IframeReferrerpolicy = "origin-when-cross-origin"
-	IframeReferrerpolicySameOrigin                  IframeReferrerpolicy = "same-origin"
-	IframeReferrerpolicyStrictOrigin                IframeReferrerpolicy = "strict-origin"
-	IframeReferrerpolicyStrictOriginWhenCrossOrigin IframeReferrerpolicy = "strict-origin-when-cross-origin"
-	IframeReferrerpolicyUnsafeUrl                   IframeReferrerpolicy = "unsafe-url"
-	IframeReferrerpolicyEmpty                       IframeReferrerpolicy = ""
-)
-
-type IframeAutocapitalize string
-
-const (
-	IframeAutocapitalizeCharacters IframeAutocapitalize = "characters"
-	IframeAutocapitalizeNone       IframeAutocapitalize = "none"
-	IframeAutocapitalizeOff        IframeAutocapitalize = "off"
-	IframeAutocapitalizeOn         IframeAutocapitalize = "on"
-	IframeAutocapitalizeSentences  IframeAutocapitalize = "sentences"
-	IframeAutocapitalizeWords      IframeAutocapitalize = "words"
-)
-
-type IframeAutocorrect string
-
-const (
-	IframeAutocorrectOff   IframeAutocorrect = "off"
-	IframeAutocorrectOn    IframeAutocorrect = "on"
-	IframeAutocorrectEmpty IframeAutocorrect = ""
-)
-
-type IframeContenteditable string
-
-const (
-	IframeContenteditableFalse         IframeContenteditable = "false"
-	IframeContenteditablePlaintextOnly IframeContenteditable = "plaintext-only"
-	IframeContenteditableTrue          IframeContenteditable = "true"
-	IframeContenteditableEmpty         IframeContenteditable = ""
-)
-
-type IframeDir string
-
-const (
-	IframeDirAuto IframeDir = "auto"
-	IframeDirLtr  IframeDir = "ltr"
-	IframeDirRtl  IframeDir = "rtl"
-)
-
-type IframeDraggable string
-
-const (
-	IframeDraggableFalse IframeDraggable = "false"
-	IframeDraggableTrue  IframeDraggable = "true"
-)
-
-type IframeEnterkeyhint string
-
-const (
-	IframeEnterkeyhintDone     IframeEnterkeyhint = "done"
-	IframeEnterkeyhintEnter    IframeEnterkeyhint = "enter"
-	IframeEnterkeyhintGo       IframeEnterkeyhint = "go"
-	IframeEnterkeyhintNext     IframeEnterkeyhint = "next"
-	IframeEnterkeyhintPrevious IframeEnterkeyhint = "previous"
-	IframeEnterkeyhintSearch   IframeEnterkeyhint = "search"
-	IframeEnterkeyhintSend     IframeEnterkeyhint = "send"
-)
-
-type IframeHidden string
-
-const (
-	IframeHiddenHidden     IframeHidden = "hidden"
-	IframeHiddenUntilFound IframeHidden = "until-found"
-	IframeHiddenEmpty      IframeHidden = ""
-)
-
-type IframeInputmode string
-
-const (
-	IframeInputmodeDecimal IframeInputmode = "decimal"
-	IframeInputmodeEmail   IframeInputmode = "email"
-	IframeInputmodeNone    IframeInputmode = "none"
-	IframeInputmodeNumeric IframeInputmode = "numeric"
-	IframeInputmodeSearch  IframeInputmode = "search"
-	IframeInputmodeTel     IframeInputmode = "tel"
-	IframeInputmodeText    IframeInputmode = "text"
-	IframeInputmodeUrl     IframeInputmode = "url"
-)
-
-type IframePopover string
-
-const (
-	IframePopoverAuto   IframePopover = "auto"
-	IframePopoverHint   IframePopover = "hint"
-	IframePopoverManual IframePopover = "manual"
-	IframePopoverEmpty  IframePopover = ""
-)
-
-type IframeSpellcheck string
-
-const (
-	IframeSpellcheckFalse IframeSpellcheck = "false"
-	IframeSpellcheckTrue  IframeSpellcheck = "true"
-	IframeSpellcheckEmpty IframeSpellcheck = ""
-)
-
-type IframeTranslate string
-
-const (
-	IframeTranslateNo    IframeTranslate = "no"
-	IframeTranslateYes   IframeTranslate = "yes"
-	IframeTranslateEmpty IframeTranslate = ""
-)
-
-type IframeWritingsuggestions string
-
-const (
-	IframeWritingsuggestionsFalse IframeWritingsuggestions = "false"
-	IframeWritingsuggestionsTrue  IframeWritingsuggestions = "true"
-	IframeWritingsuggestionsEmpty IframeWritingsuggestions = ""
-)
-
 func (e *IframeElement) Allow(s string) *IframeElement {
 	e.attributes.Set("allow", s)
 
@@ -314,7 +144,7 @@ func (e *IframeElement) Height(i int) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Loading(a IframeLoading) *IframeElement {
+func (e *IframeElement) Loading(a Loading) *IframeElement {
 	e.attributes.Set("loading", string(a))
 
 	return e
@@ -328,8 +158,8 @@ func (e *IframeElement) Name(s string) *IframeElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Referrerpolicy(v ...IframeReferrerpolicy) *IframeElement {
-	var val IframeReferrerpolicy
+func (e *IframeElement) Referrerpolicy(v ...Referrerpolicy) *IframeElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -386,7 +216,7 @@ func (e *IframeElement) Aria(name string, s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Autocapitalize(a IframeAutocapitalize) *IframeElement {
+func (e *IframeElement) Autocapitalize(a Autocapitalize) *IframeElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -394,8 +224,8 @@ func (e *IframeElement) Autocapitalize(a IframeAutocapitalize) *IframeElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Autocorrect(v ...IframeAutocorrect) *IframeElement {
-	var val IframeAutocorrect
+func (e *IframeElement) Autocorrect(v ...Autocorrect) *IframeElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -420,8 +250,8 @@ func (e *IframeElement) Class(s ...string) *IframeElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Contenteditable(v ...IframeContenteditable) *IframeElement {
-	var val IframeContenteditable
+func (e *IframeElement) Contenteditable(v ...Contenteditable) *IframeElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -446,19 +276,19 @@ func (e *IframeElement) Data(name string, s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Dir(a IframeDir) *IframeElement {
+func (e *IframeElement) Dir(a Dir) *IframeElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *IframeElement) Draggable(a IframeDraggable) *IframeElement {
+func (e *IframeElement) Draggable(a Draggable) *IframeElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *IframeElement) Enterkeyhint(a IframeEnterkeyhint) *IframeElement {
+func (e *IframeElement) Enterkeyhint(a Enterkeyhint) *IframeElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -486,8 +316,8 @@ func (e *IframeElement) Headingreset(b bool) *IframeElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Hidden(v ...IframeHidden) *IframeElement {
-	var val IframeHidden
+func (e *IframeElement) Hidden(v ...Hidden) *IframeElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -510,7 +340,7 @@ func (e *IframeElement) Inert(b bool) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Inputmode(a IframeInputmode) *IframeElement {
+func (e *IframeElement) Inputmode(a Inputmode) *IframeElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -576,8 +406,8 @@ func (e *IframeElement) Part(s ...string) *IframeElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Popover(v ...IframePopover) *IframeElement {
-	var val IframePopover
+func (e *IframeElement) Popover(v ...Popover) *IframeElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -600,8 +430,8 @@ func (e *IframeElement) Slot(s string) *IframeElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Spellcheck(v ...IframeSpellcheck) *IframeElement {
-	var val IframeSpellcheck
+func (e *IframeElement) Spellcheck(v ...Spellcheck) *IframeElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -630,8 +460,8 @@ func (e *IframeElement) Title(s string) *IframeElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Translate(v ...IframeTranslate) *IframeElement {
-	var val IframeTranslate
+func (e *IframeElement) Translate(v ...Translate) *IframeElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -642,8 +472,8 @@ func (e *IframeElement) Translate(v ...IframeTranslate) *IframeElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *IframeElement) Writingsuggestions(v ...IframeWritingsuggestions) *IframeElement {
-	var val IframeWritingsuggestions
+func (e *IframeElement) Writingsuggestions(v ...Writingsuggestions) *IframeElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -652,7 +482,7 @@ func (e *IframeElement) Writingsuggestions(v ...IframeWritingsuggestions) *Ifram
 	return e
 }
 
-// Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
+// Render writes the opening tag and its attributes, then writes the closing tag: <iframe> has no children.
 //
 // Output is written directly to w as many small writes, with no intermediate buffering.
 // Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
@@ -673,12 +503,6 @@ func (e *IframeElement) Render(w io.Writer) error {
 			return err
 		}
 		if _, err := io.WriteString(w, ">"); err != nil {
-			return err
-		}
-	}
-
-	for _, child := range e.children {
-		if err := child.Render(w); err != nil {
 			return err
 		}
 	}

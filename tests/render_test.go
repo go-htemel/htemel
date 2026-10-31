@@ -98,7 +98,7 @@ func TestGenericRender(t *testing.T) {
 
 func TestRenderPropagatesErrors(t *testing.T) {
 	boom := errors.New("boom")
-	page := html.Div(html.P().Text("before"), failNode{boom})
+	page := html.Div(html.P().Text("before"), failNode{err: boom})
 
 	if err := htemel.Render(&onlyWriter{}, page); !errors.Is(err, boom) {
 		t.Errorf("Render: got %v, want boom", err)
@@ -125,7 +125,11 @@ type onlyWriter struct{ buf bytes.Buffer }
 func (w *onlyWriter) Write(p []byte) (int, error) { return w.buf.Write(p) }
 func (w *onlyWriter) String() string              { return w.buf.String() }
 
-type failNode struct{ err error }
+// failNode is a custom component; embedding FlowMarker makes it flow content.
+type failNode struct {
+	htemel.FlowMarker
+	err error
+}
 
 func (f failNode) Render(io.Writer) error { return f.err }
 

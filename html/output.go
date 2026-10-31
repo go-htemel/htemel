@@ -13,16 +13,20 @@ import (
 )
 
 type OutputElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Output creates a tag <output> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The output element represents the result of a calculation performed by the application, or the result of a user action.
-func Output(children ...htemel.Node) *OutputElement {
+func Output(children ...htemel.PhrasingContent) *OutputElement {
 	node := &OutputElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Output(children ...htemel.Node) *OutputElement {
 }
 
 // OutputIf creates a tag <output> instance that is only rendered when condition is true.
-func OutputIf(condition bool, children ...htemel.Node) *OutputElement {
+func OutputIf(condition bool, children ...htemel.PhrasingContent) *OutputElement {
 	if condition {
 		return Output(children...)
 	}
@@ -43,7 +47,7 @@ func OutputIf(condition bool, children ...htemel.Node) *OutputElement {
 }
 
 // OutputTernary creates a tag <output> containing then when condition is true, otherwise containing otherwise.
-func OutputTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OutputElement {
+func OutputTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *OutputElement {
 	if condition {
 		return Output(then)
 	}
@@ -51,7 +55,7 @@ func OutputTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Out
 }
 
 // Children appends children to this element.
-func (e *OutputElement) Children(children ...htemel.Node) *OutputElement {
+func (e *OutputElement) Children(children ...htemel.PhrasingContent) *OutputElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *OutputElement) Textf(format string, args ...any) *OutputElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OutputElement) If(cond bool, child htemel.Node) *OutputElement {
+func (e *OutputElement) If(cond bool, child htemel.PhrasingContent) *OutputElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *OutputElement) If(cond bool, child htemel.Node) *OutputElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OutputElement) IfElse(cond bool, then, els htemel.Node) *OutputElement {
+func (e *OutputElement) IfElse(cond bool, then, els htemel.PhrasingContent) *OutputElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *OutputElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type OutputAutocapitalize string
-
-const (
-	OutputAutocapitalizeCharacters OutputAutocapitalize = "characters"
-	OutputAutocapitalizeNone       OutputAutocapitalize = "none"
-	OutputAutocapitalizeOff        OutputAutocapitalize = "off"
-	OutputAutocapitalizeOn         OutputAutocapitalize = "on"
-	OutputAutocapitalizeSentences  OutputAutocapitalize = "sentences"
-	OutputAutocapitalizeWords      OutputAutocapitalize = "words"
-)
-
-type OutputAutocorrect string
-
-const (
-	OutputAutocorrectOff   OutputAutocorrect = "off"
-	OutputAutocorrectOn    OutputAutocorrect = "on"
-	OutputAutocorrectEmpty OutputAutocorrect = ""
-)
-
-type OutputContenteditable string
-
-const (
-	OutputContenteditableFalse         OutputContenteditable = "false"
-	OutputContenteditablePlaintextOnly OutputContenteditable = "plaintext-only"
-	OutputContenteditableTrue          OutputContenteditable = "true"
-	OutputContenteditableEmpty         OutputContenteditable = ""
-)
-
-type OutputDir string
-
-const (
-	OutputDirAuto OutputDir = "auto"
-	OutputDirLtr  OutputDir = "ltr"
-	OutputDirRtl  OutputDir = "rtl"
-)
-
-type OutputDraggable string
-
-const (
-	OutputDraggableFalse OutputDraggable = "false"
-	OutputDraggableTrue  OutputDraggable = "true"
-)
-
-type OutputEnterkeyhint string
-
-const (
-	OutputEnterkeyhintDone     OutputEnterkeyhint = "done"
-	OutputEnterkeyhintEnter    OutputEnterkeyhint = "enter"
-	OutputEnterkeyhintGo       OutputEnterkeyhint = "go"
-	OutputEnterkeyhintNext     OutputEnterkeyhint = "next"
-	OutputEnterkeyhintPrevious OutputEnterkeyhint = "previous"
-	OutputEnterkeyhintSearch   OutputEnterkeyhint = "search"
-	OutputEnterkeyhintSend     OutputEnterkeyhint = "send"
-)
-
-type OutputHidden string
-
-const (
-	OutputHiddenHidden     OutputHidden = "hidden"
-	OutputHiddenUntilFound OutputHidden = "until-found"
-	OutputHiddenEmpty      OutputHidden = ""
-)
-
-type OutputInputmode string
-
-const (
-	OutputInputmodeDecimal OutputInputmode = "decimal"
-	OutputInputmodeEmail   OutputInputmode = "email"
-	OutputInputmodeNone    OutputInputmode = "none"
-	OutputInputmodeNumeric OutputInputmode = "numeric"
-	OutputInputmodeSearch  OutputInputmode = "search"
-	OutputInputmodeTel     OutputInputmode = "tel"
-	OutputInputmodeText    OutputInputmode = "text"
-	OutputInputmodeUrl     OutputInputmode = "url"
-)
-
-type OutputPopover string
-
-const (
-	OutputPopoverAuto   OutputPopover = "auto"
-	OutputPopoverHint   OutputPopover = "hint"
-	OutputPopoverManual OutputPopover = "manual"
-	OutputPopoverEmpty  OutputPopover = ""
-)
-
-type OutputSpellcheck string
-
-const (
-	OutputSpellcheckFalse OutputSpellcheck = "false"
-	OutputSpellcheckTrue  OutputSpellcheck = "true"
-	OutputSpellcheckEmpty OutputSpellcheck = ""
-)
-
-type OutputTranslate string
-
-const (
-	OutputTranslateNo    OutputTranslate = "no"
-	OutputTranslateYes   OutputTranslate = "yes"
-	OutputTranslateEmpty OutputTranslate = ""
-)
-
-type OutputWritingsuggestions string
-
-const (
-	OutputWritingsuggestionsFalse OutputWritingsuggestions = "false"
-	OutputWritingsuggestionsTrue  OutputWritingsuggestions = "true"
-	OutputWritingsuggestionsEmpty OutputWritingsuggestions = ""
-)
-
 func (e *OutputElement) For(s ...string) *OutputElement {
 	e.attributes.Set("for", strings.Join(s, " "))
 
@@ -313,7 +208,7 @@ func (e *OutputElement) Aria(name string, s string) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Autocapitalize(a OutputAutocapitalize) *OutputElement {
+func (e *OutputElement) Autocapitalize(a Autocapitalize) *OutputElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -321,8 +216,8 @@ func (e *OutputElement) Autocapitalize(a OutputAutocapitalize) *OutputElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Autocorrect(v ...OutputAutocorrect) *OutputElement {
-	var val OutputAutocorrect
+func (e *OutputElement) Autocorrect(v ...Autocorrect) *OutputElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -347,8 +242,8 @@ func (e *OutputElement) Class(s ...string) *OutputElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Contenteditable(v ...OutputContenteditable) *OutputElement {
-	var val OutputContenteditable
+func (e *OutputElement) Contenteditable(v ...Contenteditable) *OutputElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -373,19 +268,19 @@ func (e *OutputElement) Data(name string, s string) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Dir(a OutputDir) *OutputElement {
+func (e *OutputElement) Dir(a Dir) *OutputElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *OutputElement) Draggable(a OutputDraggable) *OutputElement {
+func (e *OutputElement) Draggable(a Draggable) *OutputElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *OutputElement) Enterkeyhint(a OutputEnterkeyhint) *OutputElement {
+func (e *OutputElement) Enterkeyhint(a Enterkeyhint) *OutputElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -413,8 +308,8 @@ func (e *OutputElement) Headingreset(b bool) *OutputElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Hidden(v ...OutputHidden) *OutputElement {
-	var val OutputHidden
+func (e *OutputElement) Hidden(v ...Hidden) *OutputElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -437,7 +332,7 @@ func (e *OutputElement) Inert(b bool) *OutputElement {
 	return e
 }
 
-func (e *OutputElement) Inputmode(a OutputInputmode) *OutputElement {
+func (e *OutputElement) Inputmode(a Inputmode) *OutputElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -503,8 +398,8 @@ func (e *OutputElement) Part(s ...string) *OutputElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Popover(v ...OutputPopover) *OutputElement {
-	var val OutputPopover
+func (e *OutputElement) Popover(v ...Popover) *OutputElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -527,8 +422,8 @@ func (e *OutputElement) Slot(s string) *OutputElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Spellcheck(v ...OutputSpellcheck) *OutputElement {
-	var val OutputSpellcheck
+func (e *OutputElement) Spellcheck(v ...Spellcheck) *OutputElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +452,8 @@ func (e *OutputElement) Title(s string) *OutputElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Translate(v ...OutputTranslate) *OutputElement {
-	var val OutputTranslate
+func (e *OutputElement) Translate(v ...Translate) *OutputElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -569,8 +464,8 @@ func (e *OutputElement) Translate(v ...OutputTranslate) *OutputElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OutputElement) Writingsuggestions(v ...OutputWritingsuggestions) *OutputElement {
-	var val OutputWritingsuggestions
+func (e *OutputElement) Writingsuggestions(v ...Writingsuggestions) *OutputElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

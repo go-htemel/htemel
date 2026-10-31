@@ -14,15 +14,17 @@ import (
 
 type FeSpecularLightingElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeSpecularLighting creates a tag <feSpecularLighting> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feSpecularLighting filter primitive lights an image using the alpha channel as a bump map with specular reflection.
-func FeSpecularLighting(children ...htemel.Node) *FeSpecularLightingElement {
+func FeSpecularLighting(children ...Content) *FeSpecularLightingElement {
 	node := &FeSpecularLightingElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeSpecularLighting(children ...htemel.Node) *FeSpecularLightingElement {
 }
 
 // FeSpecularLightingIf creates a tag <feSpecularLighting> instance that is only rendered when condition is true.
-func FeSpecularLightingIf(condition bool, children ...htemel.Node) *FeSpecularLightingElement {
+func FeSpecularLightingIf(condition bool, children ...Content) *FeSpecularLightingElement {
 	if condition {
 		return FeSpecularLighting(children...)
 	}
@@ -43,7 +45,7 @@ func FeSpecularLightingIf(condition bool, children ...htemel.Node) *FeSpecularLi
 }
 
 // FeSpecularLightingTernary creates a tag <feSpecularLighting> containing then when condition is true, otherwise containing otherwise.
-func FeSpecularLightingTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeSpecularLightingElement {
+func FeSpecularLightingTernary(condition bool, then Content, otherwise Content) *FeSpecularLightingElement {
 	if condition {
 		return FeSpecularLighting(then)
 	}
@@ -51,7 +53,7 @@ func FeSpecularLightingTernary(condition bool, then htemel.Node, otherwise hteme
 }
 
 // Children appends children to this element.
-func (e *FeSpecularLightingElement) Children(children ...htemel.Node) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) Children(children ...Content) *FeSpecularLightingElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeSpecularLightingElement) Textf(format string, args ...any) *FeSpecula
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeSpecularLightingElement) If(cond bool, child htemel.Node) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) If(cond bool, child Content) *FeSpecularLightingElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeSpecularLightingElement) If(cond bool, child htemel.Node) *FeSpecular
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeSpecularLightingElement) IfElse(cond bool, then, els htemel.Node) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) IfElse(cond bool, then, els Content) *FeSpecularLightingElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeSpecularLightingElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeSpecularLightingAlignmentBaseline string
-
-const (
-	FeSpecularLightingAlignmentBaselineAfterEdge      FeSpecularLightingAlignmentBaseline = "after-edge"
-	FeSpecularLightingAlignmentBaselineAlphabetic     FeSpecularLightingAlignmentBaseline = "alphabetic"
-	FeSpecularLightingAlignmentBaselineAuto           FeSpecularLightingAlignmentBaseline = "auto"
-	FeSpecularLightingAlignmentBaselineBaseline       FeSpecularLightingAlignmentBaseline = "baseline"
-	FeSpecularLightingAlignmentBaselineBeforeEdge     FeSpecularLightingAlignmentBaseline = "before-edge"
-	FeSpecularLightingAlignmentBaselineBottom         FeSpecularLightingAlignmentBaseline = "bottom"
-	FeSpecularLightingAlignmentBaselineCenter         FeSpecularLightingAlignmentBaseline = "center"
-	FeSpecularLightingAlignmentBaselineCentral        FeSpecularLightingAlignmentBaseline = "central"
-	FeSpecularLightingAlignmentBaselineHanging        FeSpecularLightingAlignmentBaseline = "hanging"
-	FeSpecularLightingAlignmentBaselineIdeographic    FeSpecularLightingAlignmentBaseline = "ideographic"
-	FeSpecularLightingAlignmentBaselineMathematical   FeSpecularLightingAlignmentBaseline = "mathematical"
-	FeSpecularLightingAlignmentBaselineMiddle         FeSpecularLightingAlignmentBaseline = "middle"
-	FeSpecularLightingAlignmentBaselineTextAfterEdge  FeSpecularLightingAlignmentBaseline = "text-after-edge"
-	FeSpecularLightingAlignmentBaselineTextBeforeEdge FeSpecularLightingAlignmentBaseline = "text-before-edge"
-	FeSpecularLightingAlignmentBaselineTextBottom     FeSpecularLightingAlignmentBaseline = "text-bottom"
-	FeSpecularLightingAlignmentBaselineTextTop        FeSpecularLightingAlignmentBaseline = "text-top"
-	FeSpecularLightingAlignmentBaselineTop            FeSpecularLightingAlignmentBaseline = "top"
-)
-
-type FeSpecularLightingClipRule string
-
-const (
-	FeSpecularLightingClipRuleEvenodd FeSpecularLightingClipRule = "evenodd"
-	FeSpecularLightingClipRuleNonzero FeSpecularLightingClipRule = "nonzero"
-)
-
-type FeSpecularLightingColorInterpolation string
-
-const (
-	FeSpecularLightingColorInterpolationAuto      FeSpecularLightingColorInterpolation = "auto"
-	FeSpecularLightingColorInterpolationLinearRGB FeSpecularLightingColorInterpolation = "linearRGB"
-	FeSpecularLightingColorInterpolationSRGB      FeSpecularLightingColorInterpolation = "sRGB"
-)
-
-type FeSpecularLightingColorInterpolationFilters string
-
-const (
-	FeSpecularLightingColorInterpolationFiltersAuto      FeSpecularLightingColorInterpolationFilters = "auto"
-	FeSpecularLightingColorInterpolationFiltersLinearRGB FeSpecularLightingColorInterpolationFilters = "linearRGB"
-	FeSpecularLightingColorInterpolationFiltersSRGB      FeSpecularLightingColorInterpolationFilters = "sRGB"
-)
-
-type FeSpecularLightingDirection string
-
-const (
-	FeSpecularLightingDirectionLtr FeSpecularLightingDirection = "ltr"
-	FeSpecularLightingDirectionRtl FeSpecularLightingDirection = "rtl"
-)
-
-type FeSpecularLightingDominantBaseline string
-
-const (
-	FeSpecularLightingDominantBaselineAlphabetic   FeSpecularLightingDominantBaseline = "alphabetic"
-	FeSpecularLightingDominantBaselineAuto         FeSpecularLightingDominantBaseline = "auto"
-	FeSpecularLightingDominantBaselineCentral      FeSpecularLightingDominantBaseline = "central"
-	FeSpecularLightingDominantBaselineHanging      FeSpecularLightingDominantBaseline = "hanging"
-	FeSpecularLightingDominantBaselineIdeographic  FeSpecularLightingDominantBaseline = "ideographic"
-	FeSpecularLightingDominantBaselineMathematical FeSpecularLightingDominantBaseline = "mathematical"
-	FeSpecularLightingDominantBaselineMiddle       FeSpecularLightingDominantBaseline = "middle"
-	FeSpecularLightingDominantBaselineTextBottom   FeSpecularLightingDominantBaseline = "text-bottom"
-	FeSpecularLightingDominantBaselineTextTop      FeSpecularLightingDominantBaseline = "text-top"
-)
-
-type FeSpecularLightingFillRule string
-
-const (
-	FeSpecularLightingFillRuleEvenodd FeSpecularLightingFillRule = "evenodd"
-	FeSpecularLightingFillRuleNonzero FeSpecularLightingFillRule = "nonzero"
-)
-
-type FeSpecularLightingFontStyle string
-
-const (
-	FeSpecularLightingFontStyleItalic  FeSpecularLightingFontStyle = "italic"
-	FeSpecularLightingFontStyleNormal  FeSpecularLightingFontStyle = "normal"
-	FeSpecularLightingFontStyleOblique FeSpecularLightingFontStyle = "oblique"
-)
-
-type FeSpecularLightingImageRendering string
-
-const (
-	FeSpecularLightingImageRenderingAuto            FeSpecularLightingImageRendering = "auto"
-	FeSpecularLightingImageRenderingCrispEdges      FeSpecularLightingImageRendering = "crisp-edges"
-	FeSpecularLightingImageRenderingHighQuality     FeSpecularLightingImageRendering = "high-quality"
-	FeSpecularLightingImageRenderingOptimizeQuality FeSpecularLightingImageRendering = "optimizeQuality"
-	FeSpecularLightingImageRenderingOptimizeSpeed   FeSpecularLightingImageRendering = "optimizeSpeed"
-	FeSpecularLightingImageRenderingPixelated       FeSpecularLightingImageRendering = "pixelated"
-	FeSpecularLightingImageRenderingSmooth          FeSpecularLightingImageRendering = "smooth"
-)
-
-type FeSpecularLightingOverflow string
-
-const (
-	FeSpecularLightingOverflowAuto    FeSpecularLightingOverflow = "auto"
-	FeSpecularLightingOverflowClip    FeSpecularLightingOverflow = "clip"
-	FeSpecularLightingOverflowHidden  FeSpecularLightingOverflow = "hidden"
-	FeSpecularLightingOverflowScroll  FeSpecularLightingOverflow = "scroll"
-	FeSpecularLightingOverflowVisible FeSpecularLightingOverflow = "visible"
-)
-
-type FeSpecularLightingPointerEvents string
-
-const (
-	FeSpecularLightingPointerEventsAll            FeSpecularLightingPointerEvents = "all"
-	FeSpecularLightingPointerEventsAuto           FeSpecularLightingPointerEvents = "auto"
-	FeSpecularLightingPointerEventsBoundingBox    FeSpecularLightingPointerEvents = "bounding-box"
-	FeSpecularLightingPointerEventsFill           FeSpecularLightingPointerEvents = "fill"
-	FeSpecularLightingPointerEventsNone           FeSpecularLightingPointerEvents = "none"
-	FeSpecularLightingPointerEventsPainted        FeSpecularLightingPointerEvents = "painted"
-	FeSpecularLightingPointerEventsStroke         FeSpecularLightingPointerEvents = "stroke"
-	FeSpecularLightingPointerEventsVisible        FeSpecularLightingPointerEvents = "visible"
-	FeSpecularLightingPointerEventsVisibleFill    FeSpecularLightingPointerEvents = "visibleFill"
-	FeSpecularLightingPointerEventsVisiblePainted FeSpecularLightingPointerEvents = "visiblePainted"
-	FeSpecularLightingPointerEventsVisibleStroke  FeSpecularLightingPointerEvents = "visibleStroke"
-)
-
-type FeSpecularLightingShapeRendering string
-
-const (
-	FeSpecularLightingShapeRenderingAuto               FeSpecularLightingShapeRendering = "auto"
-	FeSpecularLightingShapeRenderingCrispEdges         FeSpecularLightingShapeRendering = "crispEdges"
-	FeSpecularLightingShapeRenderingGeometricPrecision FeSpecularLightingShapeRendering = "geometricPrecision"
-	FeSpecularLightingShapeRenderingOptimizeSpeed      FeSpecularLightingShapeRendering = "optimizeSpeed"
-)
-
-type FeSpecularLightingStrokeLinecap string
-
-const (
-	FeSpecularLightingStrokeLinecapButt   FeSpecularLightingStrokeLinecap = "butt"
-	FeSpecularLightingStrokeLinecapRound  FeSpecularLightingStrokeLinecap = "round"
-	FeSpecularLightingStrokeLinecapSquare FeSpecularLightingStrokeLinecap = "square"
-)
-
-type FeSpecularLightingStrokeLinejoin string
-
-const (
-	FeSpecularLightingStrokeLinejoinArcs      FeSpecularLightingStrokeLinejoin = "arcs"
-	FeSpecularLightingStrokeLinejoinBevel     FeSpecularLightingStrokeLinejoin = "bevel"
-	FeSpecularLightingStrokeLinejoinMiter     FeSpecularLightingStrokeLinejoin = "miter"
-	FeSpecularLightingStrokeLinejoinMiterClip FeSpecularLightingStrokeLinejoin = "miter-clip"
-	FeSpecularLightingStrokeLinejoinRound     FeSpecularLightingStrokeLinejoin = "round"
-)
-
-type FeSpecularLightingTextAnchor string
-
-const (
-	FeSpecularLightingTextAnchorEnd    FeSpecularLightingTextAnchor = "end"
-	FeSpecularLightingTextAnchorMiddle FeSpecularLightingTextAnchor = "middle"
-	FeSpecularLightingTextAnchorStart  FeSpecularLightingTextAnchor = "start"
-)
-
-type FeSpecularLightingTextRendering string
-
-const (
-	FeSpecularLightingTextRenderingAuto               FeSpecularLightingTextRendering = "auto"
-	FeSpecularLightingTextRenderingGeometricPrecision FeSpecularLightingTextRendering = "geometricPrecision"
-	FeSpecularLightingTextRenderingOptimizeLegibility FeSpecularLightingTextRendering = "optimizeLegibility"
-	FeSpecularLightingTextRenderingOptimizeSpeed      FeSpecularLightingTextRendering = "optimizeSpeed"
-)
-
-type FeSpecularLightingTransformBox string
-
-const (
-	FeSpecularLightingTransformBoxBorderBox  FeSpecularLightingTransformBox = "border-box"
-	FeSpecularLightingTransformBoxContentBox FeSpecularLightingTransformBox = "content-box"
-	FeSpecularLightingTransformBoxFillBox    FeSpecularLightingTransformBox = "fill-box"
-	FeSpecularLightingTransformBoxStrokeBox  FeSpecularLightingTransformBox = "stroke-box"
-	FeSpecularLightingTransformBoxViewBox    FeSpecularLightingTransformBox = "view-box"
-)
-
-type FeSpecularLightingVectorEffect string
-
-const (
-	FeSpecularLightingVectorEffectFixedPosition    FeSpecularLightingVectorEffect = "fixed-position"
-	FeSpecularLightingVectorEffectNonRotation      FeSpecularLightingVectorEffect = "non-rotation"
-	FeSpecularLightingVectorEffectNonScalingSize   FeSpecularLightingVectorEffect = "non-scaling-size"
-	FeSpecularLightingVectorEffectNonScalingStroke FeSpecularLightingVectorEffect = "non-scaling-stroke"
-	FeSpecularLightingVectorEffectNone             FeSpecularLightingVectorEffect = "none"
-)
-
-type FeSpecularLightingVisibility string
-
-const (
-	FeSpecularLightingVisibilityCollapse FeSpecularLightingVisibility = "collapse"
-	FeSpecularLightingVisibilityHidden   FeSpecularLightingVisibility = "hidden"
-	FeSpecularLightingVisibilityVisible  FeSpecularLightingVisibility = "visible"
-)
-
-type FeSpecularLightingWritingMode string
-
-const (
-	FeSpecularLightingWritingModeHorizontalTb FeSpecularLightingWritingMode = "horizontal-tb"
-	FeSpecularLightingWritingModeLr           FeSpecularLightingWritingMode = "lr"
-	FeSpecularLightingWritingModeLrTb         FeSpecularLightingWritingMode = "lr-tb"
-	FeSpecularLightingWritingModeRl           FeSpecularLightingWritingMode = "rl"
-	FeSpecularLightingWritingModeRlTb         FeSpecularLightingWritingMode = "rl-tb"
-	FeSpecularLightingWritingModeSidewaysLr   FeSpecularLightingWritingMode = "sideways-lr"
-	FeSpecularLightingWritingModeSidewaysRl   FeSpecularLightingWritingMode = "sideways-rl"
-	FeSpecularLightingWritingModeTb           FeSpecularLightingWritingMode = "tb"
-	FeSpecularLightingWritingModeTbRl         FeSpecularLightingWritingMode = "tb-rl"
-	FeSpecularLightingWritingModeVerticalLr   FeSpecularLightingWritingMode = "vertical-lr"
-	FeSpecularLightingWritingModeVerticalRl   FeSpecularLightingWritingMode = "vertical-rl"
-)
-
-type FeSpecularLightingXmlSpace string
-
-const (
-	FeSpecularLightingXmlSpaceDefault  FeSpecularLightingXmlSpace = "default"
-	FeSpecularLightingXmlSpacePreserve FeSpecularLightingXmlSpace = "preserve"
-)
+// SVGContent marks <feSpecularLighting> as a permitted child (Content).
+func (*FeSpecularLightingElement) SVGContent() {}
 
 func (e *FeSpecularLightingElement) Height(s string) *FeSpecularLightingElement {
 	e.attributes.Set("height", s)
@@ -438,14 +229,10 @@ func (e *FeSpecularLightingElement) Y(s string) *FeSpecularLightingElement {
 	return e
 }
 
-func (e *FeSpecularLightingElement) AlignmentBaseline(a FeSpecularLightingAlignmentBaseline) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) AlignmentBaseline(a AlignmentBaseline) *FeSpecularLightingElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeSpecularLightingAlignmentBaselineCustom(s string) FeSpecularLightingAlignmentBaseline {
-	return FeSpecularLightingAlignmentBaseline(s)
 }
 
 func (e *FeSpecularLightingElement) AriaUnsafe(name string, s string) *FeSpecularLightingElement {
@@ -499,14 +286,10 @@ func (e *FeSpecularLightingElement) ClipPath(s string) *FeSpecularLightingElemen
 	return e
 }
 
-func (e *FeSpecularLightingElement) ClipRule(a FeSpecularLightingClipRule) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) ClipRule(a ClipRule) *FeSpecularLightingElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeSpecularLightingClipRuleCustom(s string) FeSpecularLightingClipRule {
-	return FeSpecularLightingClipRule(s)
 }
 
 func (e *FeSpecularLightingElement) Color(s string) *FeSpecularLightingElement {
@@ -515,24 +298,16 @@ func (e *FeSpecularLightingElement) Color(s string) *FeSpecularLightingElement {
 	return e
 }
 
-func (e *FeSpecularLightingElement) ColorInterpolation(a FeSpecularLightingColorInterpolation) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) ColorInterpolation(a ColorInterpolation) *FeSpecularLightingElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeSpecularLightingColorInterpolationCustom(s string) FeSpecularLightingColorInterpolation {
-	return FeSpecularLightingColorInterpolation(s)
-}
-
-func (e *FeSpecularLightingElement) ColorInterpolationFilters(a FeSpecularLightingColorInterpolationFilters) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeSpecularLightingElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeSpecularLightingColorInterpolationFiltersCustom(s string) FeSpecularLightingColorInterpolationFilters {
-	return FeSpecularLightingColorInterpolationFilters(s)
 }
 
 func (e *FeSpecularLightingElement) Cursor(s string) *FeSpecularLightingElement {
@@ -557,14 +332,10 @@ func (e *FeSpecularLightingElement) Data(name string, s string) *FeSpecularLight
 	return e
 }
 
-func (e *FeSpecularLightingElement) Direction(a FeSpecularLightingDirection) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) Direction(a Direction) *FeSpecularLightingElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeSpecularLightingDirectionCustom(s string) FeSpecularLightingDirection {
-	return FeSpecularLightingDirection(s)
 }
 
 func (e *FeSpecularLightingElement) Display(s string) *FeSpecularLightingElement {
@@ -573,14 +344,10 @@ func (e *FeSpecularLightingElement) Display(s string) *FeSpecularLightingElement
 	return e
 }
 
-func (e *FeSpecularLightingElement) DominantBaseline(a FeSpecularLightingDominantBaseline) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) DominantBaseline(a DominantBaseline) *FeSpecularLightingElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeSpecularLightingDominantBaselineCustom(s string) FeSpecularLightingDominantBaseline {
-	return FeSpecularLightingDominantBaseline(s)
 }
 
 func (e *FeSpecularLightingElement) Fill(s string) *FeSpecularLightingElement {
@@ -595,14 +362,10 @@ func (e *FeSpecularLightingElement) FillOpacity(f float64) *FeSpecularLightingEl
 	return e
 }
 
-func (e *FeSpecularLightingElement) FillRule(a FeSpecularLightingFillRule) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) FillRule(a FillRule) *FeSpecularLightingElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeSpecularLightingFillRuleCustom(s string) FeSpecularLightingFillRule {
-	return FeSpecularLightingFillRule(s)
 }
 
 func (e *FeSpecularLightingElement) Filter(s string) *FeSpecularLightingElement {
@@ -647,14 +410,10 @@ func (e *FeSpecularLightingElement) FontStretch(s string) *FeSpecularLightingEle
 	return e
 }
 
-func (e *FeSpecularLightingElement) FontStyle(a FeSpecularLightingFontStyle) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) FontStyle(a FontStyle) *FeSpecularLightingElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeSpecularLightingFontStyleCustom(s string) FeSpecularLightingFontStyle {
-	return FeSpecularLightingFontStyle(s)
 }
 
 func (e *FeSpecularLightingElement) FontVariant(s string) *FeSpecularLightingElement {
@@ -693,14 +452,10 @@ func (e *FeSpecularLightingElement) Id(s string) *FeSpecularLightingElement {
 	return e
 }
 
-func (e *FeSpecularLightingElement) ImageRendering(a FeSpecularLightingImageRendering) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) ImageRendering(a ImageRendering) *FeSpecularLightingElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeSpecularLightingImageRenderingCustom(s string) FeSpecularLightingImageRendering {
-	return FeSpecularLightingImageRendering(s)
 }
 
 func (e *FeSpecularLightingElement) Lang(s string) *FeSpecularLightingElement {
@@ -751,14 +506,10 @@ func (e *FeSpecularLightingElement) Opacity(f float64) *FeSpecularLightingElemen
 	return e
 }
 
-func (e *FeSpecularLightingElement) Overflow(a FeSpecularLightingOverflow) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) Overflow(a Overflow) *FeSpecularLightingElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeSpecularLightingOverflowCustom(s string) FeSpecularLightingOverflow {
-	return FeSpecularLightingOverflow(s)
 }
 
 func (e *FeSpecularLightingElement) PaintOrder(s string) *FeSpecularLightingElement {
@@ -767,14 +518,10 @@ func (e *FeSpecularLightingElement) PaintOrder(s string) *FeSpecularLightingElem
 	return e
 }
 
-func (e *FeSpecularLightingElement) PointerEvents(a FeSpecularLightingPointerEvents) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) PointerEvents(a PointerEvents) *FeSpecularLightingElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeSpecularLightingPointerEventsCustom(s string) FeSpecularLightingPointerEvents {
-	return FeSpecularLightingPointerEvents(s)
 }
 
 func (e *FeSpecularLightingElement) RequiredExtensions(s string) *FeSpecularLightingElement {
@@ -783,14 +530,10 @@ func (e *FeSpecularLightingElement) RequiredExtensions(s string) *FeSpecularLigh
 	return e
 }
 
-func (e *FeSpecularLightingElement) ShapeRendering(a FeSpecularLightingShapeRendering) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) ShapeRendering(a ShapeRendering) *FeSpecularLightingElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeSpecularLightingShapeRenderingCustom(s string) FeSpecularLightingShapeRendering {
-	return FeSpecularLightingShapeRendering(s)
 }
 
 func (e *FeSpecularLightingElement) StopColor(s string) *FeSpecularLightingElement {
@@ -823,24 +566,16 @@ func (e *FeSpecularLightingElement) StrokeDashoffset(s string) *FeSpecularLighti
 	return e
 }
 
-func (e *FeSpecularLightingElement) StrokeLinecap(a FeSpecularLightingStrokeLinecap) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) StrokeLinecap(a StrokeLinecap) *FeSpecularLightingElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeSpecularLightingStrokeLinecapCustom(s string) FeSpecularLightingStrokeLinecap {
-	return FeSpecularLightingStrokeLinecap(s)
-}
-
-func (e *FeSpecularLightingElement) StrokeLinejoin(a FeSpecularLightingStrokeLinejoin) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) StrokeLinejoin(a StrokeLinejoin) *FeSpecularLightingElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeSpecularLightingStrokeLinejoinCustom(s string) FeSpecularLightingStrokeLinejoin {
-	return FeSpecularLightingStrokeLinejoin(s)
 }
 
 func (e *FeSpecularLightingElement) StrokeMiterlimit(f float64) *FeSpecularLightingElement {
@@ -873,14 +608,10 @@ func (e *FeSpecularLightingElement) Tabindex(i int) *FeSpecularLightingElement {
 	return e
 }
 
-func (e *FeSpecularLightingElement) TextAnchor(a FeSpecularLightingTextAnchor) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) TextAnchor(a TextAnchor) *FeSpecularLightingElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeSpecularLightingTextAnchorCustom(s string) FeSpecularLightingTextAnchor {
-	return FeSpecularLightingTextAnchor(s)
 }
 
 func (e *FeSpecularLightingElement) TextDecoration(s string) *FeSpecularLightingElement {
@@ -895,14 +626,10 @@ func (e *FeSpecularLightingElement) TextOverflow(s string) *FeSpecularLightingEl
 	return e
 }
 
-func (e *FeSpecularLightingElement) TextRendering(a FeSpecularLightingTextRendering) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) TextRendering(a TextRendering) *FeSpecularLightingElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeSpecularLightingTextRenderingCustom(s string) FeSpecularLightingTextRendering {
-	return FeSpecularLightingTextRendering(s)
 }
 
 func (e *FeSpecularLightingElement) Transform(s string) *FeSpecularLightingElement {
@@ -911,14 +638,10 @@ func (e *FeSpecularLightingElement) Transform(s string) *FeSpecularLightingEleme
 	return e
 }
 
-func (e *FeSpecularLightingElement) TransformBox(a FeSpecularLightingTransformBox) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) TransformBox(a TransformBox) *FeSpecularLightingElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeSpecularLightingTransformBoxCustom(s string) FeSpecularLightingTransformBox {
-	return FeSpecularLightingTransformBox(s)
 }
 
 func (e *FeSpecularLightingElement) TransformOrigin(s string) *FeSpecularLightingElement {
@@ -933,24 +656,16 @@ func (e *FeSpecularLightingElement) UnicodeBidi(s string) *FeSpecularLightingEle
 	return e
 }
 
-func (e *FeSpecularLightingElement) VectorEffect(a FeSpecularLightingVectorEffect) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) VectorEffect(a VectorEffect) *FeSpecularLightingElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeSpecularLightingVectorEffectCustom(s string) FeSpecularLightingVectorEffect {
-	return FeSpecularLightingVectorEffect(s)
-}
-
-func (e *FeSpecularLightingElement) Visibility(a FeSpecularLightingVisibility) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) Visibility(a Visibility) *FeSpecularLightingElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeSpecularLightingVisibilityCustom(s string) FeSpecularLightingVisibility {
-	return FeSpecularLightingVisibility(s)
 }
 
 func (e *FeSpecularLightingElement) WhiteSpace(s string) *FeSpecularLightingElement {
@@ -965,14 +680,10 @@ func (e *FeSpecularLightingElement) WordSpacing(s string) *FeSpecularLightingEle
 	return e
 }
 
-func (e *FeSpecularLightingElement) WritingMode(a FeSpecularLightingWritingMode) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) WritingMode(a WritingMode) *FeSpecularLightingElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeSpecularLightingWritingModeCustom(s string) FeSpecularLightingWritingMode {
-	return FeSpecularLightingWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -987,7 +698,7 @@ func (e *FeSpecularLightingElement) XmlLang(s string) *FeSpecularLightingElement
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeSpecularLightingElement) XmlSpace(a FeSpecularLightingXmlSpace) *FeSpecularLightingElement {
+func (e *FeSpecularLightingElement) XmlSpace(a XmlSpace) *FeSpecularLightingElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

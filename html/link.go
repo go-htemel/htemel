@@ -12,6 +12,8 @@ import (
 )
 
 type LinkElement struct {
+	htemel.PhrasingMarker
+	htemel.MetadataMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +43,14 @@ func LinkIf(condition bool) *LinkElement {
 // With allows passing a function to modify the element via a closure.
 func (e *LinkElement) With(fn func(*LinkElement)) *LinkElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *LinkElement) IfThen(cond bool, fn func(*LinkElement)) *LinkElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,145 +119,6 @@ func (e *LinkElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LinkCrossorigin string
-
-const (
-	LinkCrossoriginAnonymous      LinkCrossorigin = "anonymous"
-	LinkCrossoriginUseCredentials LinkCrossorigin = "use-credentials"
-	LinkCrossoriginEmpty          LinkCrossorigin = ""
-)
-
-type LinkFetchpriority string
-
-const (
-	LinkFetchpriorityAuto LinkFetchpriority = "auto"
-	LinkFetchpriorityHigh LinkFetchpriority = "high"
-	LinkFetchpriorityLow  LinkFetchpriority = "low"
-)
-
-type LinkReferrerpolicy string
-
-const (
-	LinkReferrerpolicyNoReferrer                  LinkReferrerpolicy = "no-referrer"
-	LinkReferrerpolicyNoReferrerWhenDowngrade     LinkReferrerpolicy = "no-referrer-when-downgrade"
-	LinkReferrerpolicyOrigin                      LinkReferrerpolicy = "origin"
-	LinkReferrerpolicyOriginWhenCrossOrigin       LinkReferrerpolicy = "origin-when-cross-origin"
-	LinkReferrerpolicySameOrigin                  LinkReferrerpolicy = "same-origin"
-	LinkReferrerpolicyStrictOrigin                LinkReferrerpolicy = "strict-origin"
-	LinkReferrerpolicyStrictOriginWhenCrossOrigin LinkReferrerpolicy = "strict-origin-when-cross-origin"
-	LinkReferrerpolicyUnsafeUrl                   LinkReferrerpolicy = "unsafe-url"
-	LinkReferrerpolicyEmpty                       LinkReferrerpolicy = ""
-)
-
-type LinkAutocapitalize string
-
-const (
-	LinkAutocapitalizeCharacters LinkAutocapitalize = "characters"
-	LinkAutocapitalizeNone       LinkAutocapitalize = "none"
-	LinkAutocapitalizeOff        LinkAutocapitalize = "off"
-	LinkAutocapitalizeOn         LinkAutocapitalize = "on"
-	LinkAutocapitalizeSentences  LinkAutocapitalize = "sentences"
-	LinkAutocapitalizeWords      LinkAutocapitalize = "words"
-)
-
-type LinkAutocorrect string
-
-const (
-	LinkAutocorrectOff   LinkAutocorrect = "off"
-	LinkAutocorrectOn    LinkAutocorrect = "on"
-	LinkAutocorrectEmpty LinkAutocorrect = ""
-)
-
-type LinkContenteditable string
-
-const (
-	LinkContenteditableFalse         LinkContenteditable = "false"
-	LinkContenteditablePlaintextOnly LinkContenteditable = "plaintext-only"
-	LinkContenteditableTrue          LinkContenteditable = "true"
-	LinkContenteditableEmpty         LinkContenteditable = ""
-)
-
-type LinkDir string
-
-const (
-	LinkDirAuto LinkDir = "auto"
-	LinkDirLtr  LinkDir = "ltr"
-	LinkDirRtl  LinkDir = "rtl"
-)
-
-type LinkDraggable string
-
-const (
-	LinkDraggableFalse LinkDraggable = "false"
-	LinkDraggableTrue  LinkDraggable = "true"
-)
-
-type LinkEnterkeyhint string
-
-const (
-	LinkEnterkeyhintDone     LinkEnterkeyhint = "done"
-	LinkEnterkeyhintEnter    LinkEnterkeyhint = "enter"
-	LinkEnterkeyhintGo       LinkEnterkeyhint = "go"
-	LinkEnterkeyhintNext     LinkEnterkeyhint = "next"
-	LinkEnterkeyhintPrevious LinkEnterkeyhint = "previous"
-	LinkEnterkeyhintSearch   LinkEnterkeyhint = "search"
-	LinkEnterkeyhintSend     LinkEnterkeyhint = "send"
-)
-
-type LinkHidden string
-
-const (
-	LinkHiddenHidden     LinkHidden = "hidden"
-	LinkHiddenUntilFound LinkHidden = "until-found"
-	LinkHiddenEmpty      LinkHidden = ""
-)
-
-type LinkInputmode string
-
-const (
-	LinkInputmodeDecimal LinkInputmode = "decimal"
-	LinkInputmodeEmail   LinkInputmode = "email"
-	LinkInputmodeNone    LinkInputmode = "none"
-	LinkInputmodeNumeric LinkInputmode = "numeric"
-	LinkInputmodeSearch  LinkInputmode = "search"
-	LinkInputmodeTel     LinkInputmode = "tel"
-	LinkInputmodeText    LinkInputmode = "text"
-	LinkInputmodeUrl     LinkInputmode = "url"
-)
-
-type LinkPopover string
-
-const (
-	LinkPopoverAuto   LinkPopover = "auto"
-	LinkPopoverHint   LinkPopover = "hint"
-	LinkPopoverManual LinkPopover = "manual"
-	LinkPopoverEmpty  LinkPopover = ""
-)
-
-type LinkSpellcheck string
-
-const (
-	LinkSpellcheckFalse LinkSpellcheck = "false"
-	LinkSpellcheckTrue  LinkSpellcheck = "true"
-	LinkSpellcheckEmpty LinkSpellcheck = ""
-)
-
-type LinkTranslate string
-
-const (
-	LinkTranslateNo    LinkTranslate = "no"
-	LinkTranslateYes   LinkTranslate = "yes"
-	LinkTranslateEmpty LinkTranslate = ""
-)
-
-type LinkWritingsuggestions string
-
-const (
-	LinkWritingsuggestionsFalse LinkWritingsuggestions = "false"
-	LinkWritingsuggestionsTrue  LinkWritingsuggestions = "true"
-	LinkWritingsuggestionsEmpty LinkWritingsuggestions = ""
-)
-
 func (e *LinkElement) As(s string) *LinkElement {
 	e.attributes.Set("as", s)
 
@@ -268,8 +139,8 @@ func (e *LinkElement) Color(s string) *LinkElement {
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Crossorigin(v ...LinkCrossorigin) *LinkElement {
-	var val LinkCrossorigin
+func (e *LinkElement) Crossorigin(v ...Crossorigin) *LinkElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -286,7 +157,7 @@ func (e *LinkElement) Disabled(b bool) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Fetchpriority(a LinkFetchpriority) *LinkElement {
+func (e *LinkElement) Fetchpriority(a Fetchpriority) *LinkElement {
 	e.attributes.Set("fetchpriority", string(a))
 
 	return e
@@ -332,8 +203,8 @@ func (e *LinkElement) Media(s string) *LinkElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Referrerpolicy(v ...LinkReferrerpolicy) *LinkElement {
-	var val LinkReferrerpolicy
+func (e *LinkElement) Referrerpolicy(v ...Referrerpolicy) *LinkElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -382,7 +253,7 @@ func (e *LinkElement) Aria(name string, s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Autocapitalize(a LinkAutocapitalize) *LinkElement {
+func (e *LinkElement) Autocapitalize(a Autocapitalize) *LinkElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -390,8 +261,8 @@ func (e *LinkElement) Autocapitalize(a LinkAutocapitalize) *LinkElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Autocorrect(v ...LinkAutocorrect) *LinkElement {
-	var val LinkAutocorrect
+func (e *LinkElement) Autocorrect(v ...Autocorrect) *LinkElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -416,8 +287,8 @@ func (e *LinkElement) Class(s ...string) *LinkElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Contenteditable(v ...LinkContenteditable) *LinkElement {
-	var val LinkContenteditable
+func (e *LinkElement) Contenteditable(v ...Contenteditable) *LinkElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -442,19 +313,19 @@ func (e *LinkElement) Data(name string, s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Dir(a LinkDir) *LinkElement {
+func (e *LinkElement) Dir(a Dir) *LinkElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *LinkElement) Draggable(a LinkDraggable) *LinkElement {
+func (e *LinkElement) Draggable(a Draggable) *LinkElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *LinkElement) Enterkeyhint(a LinkEnterkeyhint) *LinkElement {
+func (e *LinkElement) Enterkeyhint(a Enterkeyhint) *LinkElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -482,8 +353,8 @@ func (e *LinkElement) Headingreset(b bool) *LinkElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Hidden(v ...LinkHidden) *LinkElement {
-	var val LinkHidden
+func (e *LinkElement) Hidden(v ...Hidden) *LinkElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -506,7 +377,7 @@ func (e *LinkElement) Inert(b bool) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Inputmode(a LinkInputmode) *LinkElement {
+func (e *LinkElement) Inputmode(a Inputmode) *LinkElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -572,8 +443,8 @@ func (e *LinkElement) Part(s ...string) *LinkElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Popover(v ...LinkPopover) *LinkElement {
-	var val LinkPopover
+func (e *LinkElement) Popover(v ...Popover) *LinkElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -596,8 +467,8 @@ func (e *LinkElement) Slot(s string) *LinkElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Spellcheck(v ...LinkSpellcheck) *LinkElement {
-	var val LinkSpellcheck
+func (e *LinkElement) Spellcheck(v ...Spellcheck) *LinkElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -626,8 +497,8 @@ func (e *LinkElement) Title(s string) *LinkElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Translate(v ...LinkTranslate) *LinkElement {
-	var val LinkTranslate
+func (e *LinkElement) Translate(v ...Translate) *LinkElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -638,8 +509,8 @@ func (e *LinkElement) Translate(v ...LinkTranslate) *LinkElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LinkElement) Writingsuggestions(v ...LinkWritingsuggestions) *LinkElement {
-	var val LinkWritingsuggestions
+func (e *LinkElement) Writingsuggestions(v ...Writingsuggestions) *LinkElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

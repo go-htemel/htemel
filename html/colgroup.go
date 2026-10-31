@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,28 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// ColgroupChild is a permitted child of <colgroup>: <col>, <template>.
+//
+// It is implemented by <col>, <template> and by the unchecked nodes of package htemel (Group,
+// Each, If, Unchecked, ...).
+type ColgroupChild interface {
+	htemel.Node
+	HTMLColgroupChild()
+}
+
 type ColgroupElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []ColgroupChild
 	skipRender bool
 }
 
 // Colgroup creates a tag <colgroup> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <col>, <template> (ColgroupChild).
+//
 // Spec Description: The colgroup element represents a group of one or more columns in the table that is its parent, if it has a parent and that is a table element.
-func Colgroup(children ...htemel.Node) *ColgroupElement {
+func Colgroup(children ...ColgroupChild) *ColgroupElement {
 	node := &ColgroupElement{
 		children: children,
 	}
@@ -31,7 +41,7 @@ func Colgroup(children ...htemel.Node) *ColgroupElement {
 }
 
 // ColgroupIf creates a tag <colgroup> instance that is only rendered when condition is true.
-func ColgroupIf(condition bool, children ...htemel.Node) *ColgroupElement {
+func ColgroupIf(condition bool, children ...ColgroupChild) *ColgroupElement {
 	if condition {
 		return Colgroup(children...)
 	}
@@ -43,7 +53,7 @@ func ColgroupIf(condition bool, children ...htemel.Node) *ColgroupElement {
 }
 
 // ColgroupTernary creates a tag <colgroup> containing then when condition is true, otherwise containing otherwise.
-func ColgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ColgroupElement {
+func ColgroupTernary(condition bool, then ColgroupChild, otherwise ColgroupChild) *ColgroupElement {
 	if condition {
 		return Colgroup(then)
 	}
@@ -51,7 +61,7 @@ func ColgroupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *C
 }
 
 // Children appends children to this element.
-func (e *ColgroupElement) Children(children ...htemel.Node) *ColgroupElement {
+func (e *ColgroupElement) Children(children ...ColgroupChild) *ColgroupElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +72,8 @@ func (e *ColgroupElement) With(fn func(*ColgroupElement)) *ColgroupElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *ColgroupElement) Text(text string) *ColgroupElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *ColgroupElement) Textf(format string, args ...any) *ColgroupElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ColgroupElement) If(cond bool, child htemel.Node) *ColgroupElement {
+func (e *ColgroupElement) If(cond bool, child ColgroupChild) *ColgroupElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +81,7 @@ func (e *ColgroupElement) If(cond bool, child htemel.Node) *ColgroupElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ColgroupElement) IfElse(cond bool, then, els htemel.Node) *ColgroupElement {
+func (e *ColgroupElement) IfElse(cond bool, then, els ColgroupChild) *ColgroupElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +163,8 @@ func (e *ColgroupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ColgroupAutocapitalize string
-
-const (
-	ColgroupAutocapitalizeCharacters ColgroupAutocapitalize = "characters"
-	ColgroupAutocapitalizeNone       ColgroupAutocapitalize = "none"
-	ColgroupAutocapitalizeOff        ColgroupAutocapitalize = "off"
-	ColgroupAutocapitalizeOn         ColgroupAutocapitalize = "on"
-	ColgroupAutocapitalizeSentences  ColgroupAutocapitalize = "sentences"
-	ColgroupAutocapitalizeWords      ColgroupAutocapitalize = "words"
-)
-
-type ColgroupAutocorrect string
-
-const (
-	ColgroupAutocorrectOff   ColgroupAutocorrect = "off"
-	ColgroupAutocorrectOn    ColgroupAutocorrect = "on"
-	ColgroupAutocorrectEmpty ColgroupAutocorrect = ""
-)
-
-type ColgroupContenteditable string
-
-const (
-	ColgroupContenteditableFalse         ColgroupContenteditable = "false"
-	ColgroupContenteditablePlaintextOnly ColgroupContenteditable = "plaintext-only"
-	ColgroupContenteditableTrue          ColgroupContenteditable = "true"
-	ColgroupContenteditableEmpty         ColgroupContenteditable = ""
-)
-
-type ColgroupDir string
-
-const (
-	ColgroupDirAuto ColgroupDir = "auto"
-	ColgroupDirLtr  ColgroupDir = "ltr"
-	ColgroupDirRtl  ColgroupDir = "rtl"
-)
-
-type ColgroupDraggable string
-
-const (
-	ColgroupDraggableFalse ColgroupDraggable = "false"
-	ColgroupDraggableTrue  ColgroupDraggable = "true"
-)
-
-type ColgroupEnterkeyhint string
-
-const (
-	ColgroupEnterkeyhintDone     ColgroupEnterkeyhint = "done"
-	ColgroupEnterkeyhintEnter    ColgroupEnterkeyhint = "enter"
-	ColgroupEnterkeyhintGo       ColgroupEnterkeyhint = "go"
-	ColgroupEnterkeyhintNext     ColgroupEnterkeyhint = "next"
-	ColgroupEnterkeyhintPrevious ColgroupEnterkeyhint = "previous"
-	ColgroupEnterkeyhintSearch   ColgroupEnterkeyhint = "search"
-	ColgroupEnterkeyhintSend     ColgroupEnterkeyhint = "send"
-)
-
-type ColgroupHidden string
-
-const (
-	ColgroupHiddenHidden     ColgroupHidden = "hidden"
-	ColgroupHiddenUntilFound ColgroupHidden = "until-found"
-	ColgroupHiddenEmpty      ColgroupHidden = ""
-)
-
-type ColgroupInputmode string
-
-const (
-	ColgroupInputmodeDecimal ColgroupInputmode = "decimal"
-	ColgroupInputmodeEmail   ColgroupInputmode = "email"
-	ColgroupInputmodeNone    ColgroupInputmode = "none"
-	ColgroupInputmodeNumeric ColgroupInputmode = "numeric"
-	ColgroupInputmodeSearch  ColgroupInputmode = "search"
-	ColgroupInputmodeTel     ColgroupInputmode = "tel"
-	ColgroupInputmodeText    ColgroupInputmode = "text"
-	ColgroupInputmodeUrl     ColgroupInputmode = "url"
-)
-
-type ColgroupPopover string
-
-const (
-	ColgroupPopoverAuto   ColgroupPopover = "auto"
-	ColgroupPopoverHint   ColgroupPopover = "hint"
-	ColgroupPopoverManual ColgroupPopover = "manual"
-	ColgroupPopoverEmpty  ColgroupPopover = ""
-)
-
-type ColgroupSpellcheck string
-
-const (
-	ColgroupSpellcheckFalse ColgroupSpellcheck = "false"
-	ColgroupSpellcheckTrue  ColgroupSpellcheck = "true"
-	ColgroupSpellcheckEmpty ColgroupSpellcheck = ""
-)
-
-type ColgroupTranslate string
-
-const (
-	ColgroupTranslateNo    ColgroupTranslate = "no"
-	ColgroupTranslateYes   ColgroupTranslate = "yes"
-	ColgroupTranslateEmpty ColgroupTranslate = ""
-)
-
-type ColgroupWritingsuggestions string
-
-const (
-	ColgroupWritingsuggestionsFalse ColgroupWritingsuggestions = "false"
-	ColgroupWritingsuggestionsTrue  ColgroupWritingsuggestions = "true"
-	ColgroupWritingsuggestionsEmpty ColgroupWritingsuggestions = ""
-)
+// HTMLTableChild marks <colgroup> as a permitted child of <table> (TableChild).
+func (*ColgroupElement) HTMLTableChild() {}
 
 func (e *ColgroupElement) Span(i int) *ColgroupElement {
 	e.attributes.Set("span", strconv.Itoa(i))
@@ -301,7 +194,7 @@ func (e *ColgroupElement) Aria(name string, s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Autocapitalize(a ColgroupAutocapitalize) *ColgroupElement {
+func (e *ColgroupElement) Autocapitalize(a Autocapitalize) *ColgroupElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +202,8 @@ func (e *ColgroupElement) Autocapitalize(a ColgroupAutocapitalize) *ColgroupElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Autocorrect(v ...ColgroupAutocorrect) *ColgroupElement {
-	var val ColgroupAutocorrect
+func (e *ColgroupElement) Autocorrect(v ...Autocorrect) *ColgroupElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +228,8 @@ func (e *ColgroupElement) Class(s ...string) *ColgroupElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Contenteditable(v ...ColgroupContenteditable) *ColgroupElement {
-	var val ColgroupContenteditable
+func (e *ColgroupElement) Contenteditable(v ...Contenteditable) *ColgroupElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +254,19 @@ func (e *ColgroupElement) Data(name string, s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Dir(a ColgroupDir) *ColgroupElement {
+func (e *ColgroupElement) Dir(a Dir) *ColgroupElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ColgroupElement) Draggable(a ColgroupDraggable) *ColgroupElement {
+func (e *ColgroupElement) Draggable(a Draggable) *ColgroupElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ColgroupElement) Enterkeyhint(a ColgroupEnterkeyhint) *ColgroupElement {
+func (e *ColgroupElement) Enterkeyhint(a Enterkeyhint) *ColgroupElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +294,8 @@ func (e *ColgroupElement) Headingreset(b bool) *ColgroupElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Hidden(v ...ColgroupHidden) *ColgroupElement {
-	var val ColgroupHidden
+func (e *ColgroupElement) Hidden(v ...Hidden) *ColgroupElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +318,7 @@ func (e *ColgroupElement) Inert(b bool) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Inputmode(a ColgroupInputmode) *ColgroupElement {
+func (e *ColgroupElement) Inputmode(a Inputmode) *ColgroupElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +384,8 @@ func (e *ColgroupElement) Part(s ...string) *ColgroupElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Popover(v ...ColgroupPopover) *ColgroupElement {
-	var val ColgroupPopover
+func (e *ColgroupElement) Popover(v ...Popover) *ColgroupElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +408,8 @@ func (e *ColgroupElement) Slot(s string) *ColgroupElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Spellcheck(v ...ColgroupSpellcheck) *ColgroupElement {
-	var val ColgroupSpellcheck
+func (e *ColgroupElement) Spellcheck(v ...Spellcheck) *ColgroupElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +438,8 @@ func (e *ColgroupElement) Title(s string) *ColgroupElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Translate(v ...ColgroupTranslate) *ColgroupElement {
-	var val ColgroupTranslate
+func (e *ColgroupElement) Translate(v ...Translate) *ColgroupElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +450,8 @@ func (e *ColgroupElement) Translate(v ...ColgroupTranslate) *ColgroupElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ColgroupElement) Writingsuggestions(v ...ColgroupWritingsuggestions) *ColgroupElement {
-	var val ColgroupWritingsuggestions
+func (e *ColgroupElement) Writingsuggestions(v ...Writingsuggestions) *ColgroupElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

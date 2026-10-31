@@ -12,6 +12,7 @@ import (
 )
 
 type BaseElement struct {
+	htemel.MetadataMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +42,14 @@ func BaseIf(condition bool) *BaseElement {
 // With allows passing a function to modify the element via a closure.
 func (e *BaseElement) With(fn func(*BaseElement)) *BaseElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *BaseElement) IfThen(cond bool, fn func(*BaseElement)) *BaseElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,115 +118,6 @@ func (e *BaseElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BaseAutocapitalize string
-
-const (
-	BaseAutocapitalizeCharacters BaseAutocapitalize = "characters"
-	BaseAutocapitalizeNone       BaseAutocapitalize = "none"
-	BaseAutocapitalizeOff        BaseAutocapitalize = "off"
-	BaseAutocapitalizeOn         BaseAutocapitalize = "on"
-	BaseAutocapitalizeSentences  BaseAutocapitalize = "sentences"
-	BaseAutocapitalizeWords      BaseAutocapitalize = "words"
-)
-
-type BaseAutocorrect string
-
-const (
-	BaseAutocorrectOff   BaseAutocorrect = "off"
-	BaseAutocorrectOn    BaseAutocorrect = "on"
-	BaseAutocorrectEmpty BaseAutocorrect = ""
-)
-
-type BaseContenteditable string
-
-const (
-	BaseContenteditableFalse         BaseContenteditable = "false"
-	BaseContenteditablePlaintextOnly BaseContenteditable = "plaintext-only"
-	BaseContenteditableTrue          BaseContenteditable = "true"
-	BaseContenteditableEmpty         BaseContenteditable = ""
-)
-
-type BaseDir string
-
-const (
-	BaseDirAuto BaseDir = "auto"
-	BaseDirLtr  BaseDir = "ltr"
-	BaseDirRtl  BaseDir = "rtl"
-)
-
-type BaseDraggable string
-
-const (
-	BaseDraggableFalse BaseDraggable = "false"
-	BaseDraggableTrue  BaseDraggable = "true"
-)
-
-type BaseEnterkeyhint string
-
-const (
-	BaseEnterkeyhintDone     BaseEnterkeyhint = "done"
-	BaseEnterkeyhintEnter    BaseEnterkeyhint = "enter"
-	BaseEnterkeyhintGo       BaseEnterkeyhint = "go"
-	BaseEnterkeyhintNext     BaseEnterkeyhint = "next"
-	BaseEnterkeyhintPrevious BaseEnterkeyhint = "previous"
-	BaseEnterkeyhintSearch   BaseEnterkeyhint = "search"
-	BaseEnterkeyhintSend     BaseEnterkeyhint = "send"
-)
-
-type BaseHidden string
-
-const (
-	BaseHiddenHidden     BaseHidden = "hidden"
-	BaseHiddenUntilFound BaseHidden = "until-found"
-	BaseHiddenEmpty      BaseHidden = ""
-)
-
-type BaseInputmode string
-
-const (
-	BaseInputmodeDecimal BaseInputmode = "decimal"
-	BaseInputmodeEmail   BaseInputmode = "email"
-	BaseInputmodeNone    BaseInputmode = "none"
-	BaseInputmodeNumeric BaseInputmode = "numeric"
-	BaseInputmodeSearch  BaseInputmode = "search"
-	BaseInputmodeTel     BaseInputmode = "tel"
-	BaseInputmodeText    BaseInputmode = "text"
-	BaseInputmodeUrl     BaseInputmode = "url"
-)
-
-type BasePopover string
-
-const (
-	BasePopoverAuto   BasePopover = "auto"
-	BasePopoverHint   BasePopover = "hint"
-	BasePopoverManual BasePopover = "manual"
-	BasePopoverEmpty  BasePopover = ""
-)
-
-type BaseSpellcheck string
-
-const (
-	BaseSpellcheckFalse BaseSpellcheck = "false"
-	BaseSpellcheckTrue  BaseSpellcheck = "true"
-	BaseSpellcheckEmpty BaseSpellcheck = ""
-)
-
-type BaseTranslate string
-
-const (
-	BaseTranslateNo    BaseTranslate = "no"
-	BaseTranslateYes   BaseTranslate = "yes"
-	BaseTranslateEmpty BaseTranslate = ""
-)
-
-type BaseWritingsuggestions string
-
-const (
-	BaseWritingsuggestionsFalse BaseWritingsuggestions = "false"
-	BaseWritingsuggestionsTrue  BaseWritingsuggestions = "true"
-	BaseWritingsuggestionsEmpty BaseWritingsuggestions = ""
-)
-
 // Href sets the "href" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *BaseElement) Href(s string) *BaseElement {
@@ -254,7 +154,7 @@ func (e *BaseElement) Aria(name string, s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Autocapitalize(a BaseAutocapitalize) *BaseElement {
+func (e *BaseElement) Autocapitalize(a Autocapitalize) *BaseElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -262,8 +162,8 @@ func (e *BaseElement) Autocapitalize(a BaseAutocapitalize) *BaseElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Autocorrect(v ...BaseAutocorrect) *BaseElement {
-	var val BaseAutocorrect
+func (e *BaseElement) Autocorrect(v ...Autocorrect) *BaseElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -288,8 +188,8 @@ func (e *BaseElement) Class(s ...string) *BaseElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Contenteditable(v ...BaseContenteditable) *BaseElement {
-	var val BaseContenteditable
+func (e *BaseElement) Contenteditable(v ...Contenteditable) *BaseElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -314,19 +214,19 @@ func (e *BaseElement) Data(name string, s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Dir(a BaseDir) *BaseElement {
+func (e *BaseElement) Dir(a Dir) *BaseElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BaseElement) Draggable(a BaseDraggable) *BaseElement {
+func (e *BaseElement) Draggable(a Draggable) *BaseElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BaseElement) Enterkeyhint(a BaseEnterkeyhint) *BaseElement {
+func (e *BaseElement) Enterkeyhint(a Enterkeyhint) *BaseElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -354,8 +254,8 @@ func (e *BaseElement) Headingreset(b bool) *BaseElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Hidden(v ...BaseHidden) *BaseElement {
-	var val BaseHidden
+func (e *BaseElement) Hidden(v ...Hidden) *BaseElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -378,7 +278,7 @@ func (e *BaseElement) Inert(b bool) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Inputmode(a BaseInputmode) *BaseElement {
+func (e *BaseElement) Inputmode(a Inputmode) *BaseElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -444,8 +344,8 @@ func (e *BaseElement) Part(s ...string) *BaseElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Popover(v ...BasePopover) *BaseElement {
-	var val BasePopover
+func (e *BaseElement) Popover(v ...Popover) *BaseElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -468,8 +368,8 @@ func (e *BaseElement) Slot(s string) *BaseElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Spellcheck(v ...BaseSpellcheck) *BaseElement {
-	var val BaseSpellcheck
+func (e *BaseElement) Spellcheck(v ...Spellcheck) *BaseElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -498,8 +398,8 @@ func (e *BaseElement) Title(s string) *BaseElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Translate(v ...BaseTranslate) *BaseElement {
-	var val BaseTranslate
+func (e *BaseElement) Translate(v ...Translate) *BaseElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -510,8 +410,8 @@ func (e *BaseElement) Translate(v ...BaseTranslate) *BaseElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BaseElement) Writingsuggestions(v ...BaseWritingsuggestions) *BaseElement {
-	var val BaseWritingsuggestions
+func (e *BaseElement) Writingsuggestions(v ...Writingsuggestions) *BaseElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

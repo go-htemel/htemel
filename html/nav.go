@@ -13,16 +13,21 @@ import (
 )
 
 type NavElement struct {
+	htemel.FlowMarker
+	htemel.SectioningMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Nav creates a tag <nav> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The nav element represents a section of a page that links to other pages or to parts within the page: a section with navigation links.
-func Nav(children ...htemel.Node) *NavElement {
+func Nav(children ...htemel.FlowContent) *NavElement {
 	node := &NavElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Nav(children ...htemel.Node) *NavElement {
 }
 
 // NavIf creates a tag <nav> instance that is only rendered when condition is true.
-func NavIf(condition bool, children ...htemel.Node) *NavElement {
+func NavIf(condition bool, children ...htemel.FlowContent) *NavElement {
 	if condition {
 		return Nav(children...)
 	}
@@ -43,7 +48,7 @@ func NavIf(condition bool, children ...htemel.Node) *NavElement {
 }
 
 // NavTernary creates a tag <nav> containing then when condition is true, otherwise containing otherwise.
-func NavTernary(condition bool, then htemel.Node, otherwise htemel.Node) *NavElement {
+func NavTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *NavElement {
 	if condition {
 		return Nav(then)
 	}
@@ -51,7 +56,7 @@ func NavTernary(condition bool, then htemel.Node, otherwise htemel.Node) *NavEle
 }
 
 // Children appends children to this element.
-func (e *NavElement) Children(children ...htemel.Node) *NavElement {
+func (e *NavElement) Children(children ...htemel.FlowContent) *NavElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *NavElement) Textf(format string, args ...any) *NavElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *NavElement) If(cond bool, child htemel.Node) *NavElement {
+func (e *NavElement) If(cond bool, child htemel.FlowContent) *NavElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *NavElement) If(cond bool, child htemel.Node) *NavElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *NavElement) IfElse(cond bool, then, els htemel.Node) *NavElement {
+func (e *NavElement) IfElse(cond bool, then, els htemel.FlowContent) *NavElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *NavElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type NavAutocapitalize string
-
-const (
-	NavAutocapitalizeCharacters NavAutocapitalize = "characters"
-	NavAutocapitalizeNone       NavAutocapitalize = "none"
-	NavAutocapitalizeOff        NavAutocapitalize = "off"
-	NavAutocapitalizeOn         NavAutocapitalize = "on"
-	NavAutocapitalizeSentences  NavAutocapitalize = "sentences"
-	NavAutocapitalizeWords      NavAutocapitalize = "words"
-)
-
-type NavAutocorrect string
-
-const (
-	NavAutocorrectOff   NavAutocorrect = "off"
-	NavAutocorrectOn    NavAutocorrect = "on"
-	NavAutocorrectEmpty NavAutocorrect = ""
-)
-
-type NavContenteditable string
-
-const (
-	NavContenteditableFalse         NavContenteditable = "false"
-	NavContenteditablePlaintextOnly NavContenteditable = "plaintext-only"
-	NavContenteditableTrue          NavContenteditable = "true"
-	NavContenteditableEmpty         NavContenteditable = ""
-)
-
-type NavDir string
-
-const (
-	NavDirAuto NavDir = "auto"
-	NavDirLtr  NavDir = "ltr"
-	NavDirRtl  NavDir = "rtl"
-)
-
-type NavDraggable string
-
-const (
-	NavDraggableFalse NavDraggable = "false"
-	NavDraggableTrue  NavDraggable = "true"
-)
-
-type NavEnterkeyhint string
-
-const (
-	NavEnterkeyhintDone     NavEnterkeyhint = "done"
-	NavEnterkeyhintEnter    NavEnterkeyhint = "enter"
-	NavEnterkeyhintGo       NavEnterkeyhint = "go"
-	NavEnterkeyhintNext     NavEnterkeyhint = "next"
-	NavEnterkeyhintPrevious NavEnterkeyhint = "previous"
-	NavEnterkeyhintSearch   NavEnterkeyhint = "search"
-	NavEnterkeyhintSend     NavEnterkeyhint = "send"
-)
-
-type NavHidden string
-
-const (
-	NavHiddenHidden     NavHidden = "hidden"
-	NavHiddenUntilFound NavHidden = "until-found"
-	NavHiddenEmpty      NavHidden = ""
-)
-
-type NavInputmode string
-
-const (
-	NavInputmodeDecimal NavInputmode = "decimal"
-	NavInputmodeEmail   NavInputmode = "email"
-	NavInputmodeNone    NavInputmode = "none"
-	NavInputmodeNumeric NavInputmode = "numeric"
-	NavInputmodeSearch  NavInputmode = "search"
-	NavInputmodeTel     NavInputmode = "tel"
-	NavInputmodeText    NavInputmode = "text"
-	NavInputmodeUrl     NavInputmode = "url"
-)
-
-type NavPopover string
-
-const (
-	NavPopoverAuto   NavPopover = "auto"
-	NavPopoverHint   NavPopover = "hint"
-	NavPopoverManual NavPopover = "manual"
-	NavPopoverEmpty  NavPopover = ""
-)
-
-type NavSpellcheck string
-
-const (
-	NavSpellcheckFalse NavSpellcheck = "false"
-	NavSpellcheckTrue  NavSpellcheck = "true"
-	NavSpellcheckEmpty NavSpellcheck = ""
-)
-
-type NavTranslate string
-
-const (
-	NavTranslateNo    NavTranslate = "no"
-	NavTranslateYes   NavTranslate = "yes"
-	NavTranslateEmpty NavTranslate = ""
-)
-
-type NavWritingsuggestions string
-
-const (
-	NavWritingsuggestionsFalse NavWritingsuggestions = "false"
-	NavWritingsuggestionsTrue  NavWritingsuggestions = "true"
-	NavWritingsuggestionsEmpty NavWritingsuggestions = ""
-)
-
 func (e *NavElement) Accesskey(r rune) *NavElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +191,7 @@ func (e *NavElement) Aria(name string, s string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Autocapitalize(a NavAutocapitalize) *NavElement {
+func (e *NavElement) Autocapitalize(a Autocapitalize) *NavElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +199,8 @@ func (e *NavElement) Autocapitalize(a NavAutocapitalize) *NavElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Autocorrect(v ...NavAutocorrect) *NavElement {
-	var val NavAutocorrect
+func (e *NavElement) Autocorrect(v ...Autocorrect) *NavElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +225,8 @@ func (e *NavElement) Class(s ...string) *NavElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Contenteditable(v ...NavContenteditable) *NavElement {
-	var val NavContenteditable
+func (e *NavElement) Contenteditable(v ...Contenteditable) *NavElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +251,19 @@ func (e *NavElement) Data(name string, s string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Dir(a NavDir) *NavElement {
+func (e *NavElement) Dir(a Dir) *NavElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *NavElement) Draggable(a NavDraggable) *NavElement {
+func (e *NavElement) Draggable(a Draggable) *NavElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *NavElement) Enterkeyhint(a NavEnterkeyhint) *NavElement {
+func (e *NavElement) Enterkeyhint(a Enterkeyhint) *NavElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +291,8 @@ func (e *NavElement) Headingreset(b bool) *NavElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Hidden(v ...NavHidden) *NavElement {
-	var val NavHidden
+func (e *NavElement) Hidden(v ...Hidden) *NavElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +315,7 @@ func (e *NavElement) Inert(b bool) *NavElement {
 	return e
 }
 
-func (e *NavElement) Inputmode(a NavInputmode) *NavElement {
+func (e *NavElement) Inputmode(a Inputmode) *NavElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +381,8 @@ func (e *NavElement) Part(s ...string) *NavElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Popover(v ...NavPopover) *NavElement {
-	var val NavPopover
+func (e *NavElement) Popover(v ...Popover) *NavElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +405,8 @@ func (e *NavElement) Slot(s string) *NavElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Spellcheck(v ...NavSpellcheck) *NavElement {
-	var val NavSpellcheck
+func (e *NavElement) Spellcheck(v ...Spellcheck) *NavElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +435,8 @@ func (e *NavElement) Title(s string) *NavElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Translate(v ...NavTranslate) *NavElement {
-	var val NavTranslate
+func (e *NavElement) Translate(v ...Translate) *NavElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +447,8 @@ func (e *NavElement) Translate(v ...NavTranslate) *NavElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NavElement) Writingsuggestions(v ...NavWritingsuggestions) *NavElement {
-	var val NavWritingsuggestions
+func (e *NavElement) Writingsuggestions(v ...Writingsuggestions) *NavElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

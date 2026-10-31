@@ -13,16 +13,20 @@ import (
 )
 
 type HeaderElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Header creates a tag <header> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The header element represents a group of introductory or navigational aids.
-func Header(children ...htemel.Node) *HeaderElement {
+func Header(children ...htemel.FlowContent) *HeaderElement {
 	node := &HeaderElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Header(children ...htemel.Node) *HeaderElement {
 }
 
 // HeaderIf creates a tag <header> instance that is only rendered when condition is true.
-func HeaderIf(condition bool, children ...htemel.Node) *HeaderElement {
+func HeaderIf(condition bool, children ...htemel.FlowContent) *HeaderElement {
 	if condition {
 		return Header(children...)
 	}
@@ -43,7 +47,7 @@ func HeaderIf(condition bool, children ...htemel.Node) *HeaderElement {
 }
 
 // HeaderTernary creates a tag <header> containing then when condition is true, otherwise containing otherwise.
-func HeaderTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HeaderElement {
+func HeaderTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *HeaderElement {
 	if condition {
 		return Header(then)
 	}
@@ -51,7 +55,7 @@ func HeaderTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Hea
 }
 
 // Children appends children to this element.
-func (e *HeaderElement) Children(children ...htemel.Node) *HeaderElement {
+func (e *HeaderElement) Children(children ...htemel.FlowContent) *HeaderElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *HeaderElement) Textf(format string, args ...any) *HeaderElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HeaderElement) If(cond bool, child htemel.Node) *HeaderElement {
+func (e *HeaderElement) If(cond bool, child htemel.FlowContent) *HeaderElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *HeaderElement) If(cond bool, child htemel.Node) *HeaderElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HeaderElement) IfElse(cond bool, then, els htemel.Node) *HeaderElement {
+func (e *HeaderElement) IfElse(cond bool, then, els htemel.FlowContent) *HeaderElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *HeaderElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type HeaderAutocapitalize string
-
-const (
-	HeaderAutocapitalizeCharacters HeaderAutocapitalize = "characters"
-	HeaderAutocapitalizeNone       HeaderAutocapitalize = "none"
-	HeaderAutocapitalizeOff        HeaderAutocapitalize = "off"
-	HeaderAutocapitalizeOn         HeaderAutocapitalize = "on"
-	HeaderAutocapitalizeSentences  HeaderAutocapitalize = "sentences"
-	HeaderAutocapitalizeWords      HeaderAutocapitalize = "words"
-)
-
-type HeaderAutocorrect string
-
-const (
-	HeaderAutocorrectOff   HeaderAutocorrect = "off"
-	HeaderAutocorrectOn    HeaderAutocorrect = "on"
-	HeaderAutocorrectEmpty HeaderAutocorrect = ""
-)
-
-type HeaderContenteditable string
-
-const (
-	HeaderContenteditableFalse         HeaderContenteditable = "false"
-	HeaderContenteditablePlaintextOnly HeaderContenteditable = "plaintext-only"
-	HeaderContenteditableTrue          HeaderContenteditable = "true"
-	HeaderContenteditableEmpty         HeaderContenteditable = ""
-)
-
-type HeaderDir string
-
-const (
-	HeaderDirAuto HeaderDir = "auto"
-	HeaderDirLtr  HeaderDir = "ltr"
-	HeaderDirRtl  HeaderDir = "rtl"
-)
-
-type HeaderDraggable string
-
-const (
-	HeaderDraggableFalse HeaderDraggable = "false"
-	HeaderDraggableTrue  HeaderDraggable = "true"
-)
-
-type HeaderEnterkeyhint string
-
-const (
-	HeaderEnterkeyhintDone     HeaderEnterkeyhint = "done"
-	HeaderEnterkeyhintEnter    HeaderEnterkeyhint = "enter"
-	HeaderEnterkeyhintGo       HeaderEnterkeyhint = "go"
-	HeaderEnterkeyhintNext     HeaderEnterkeyhint = "next"
-	HeaderEnterkeyhintPrevious HeaderEnterkeyhint = "previous"
-	HeaderEnterkeyhintSearch   HeaderEnterkeyhint = "search"
-	HeaderEnterkeyhintSend     HeaderEnterkeyhint = "send"
-)
-
-type HeaderHidden string
-
-const (
-	HeaderHiddenHidden     HeaderHidden = "hidden"
-	HeaderHiddenUntilFound HeaderHidden = "until-found"
-	HeaderHiddenEmpty      HeaderHidden = ""
-)
-
-type HeaderInputmode string
-
-const (
-	HeaderInputmodeDecimal HeaderInputmode = "decimal"
-	HeaderInputmodeEmail   HeaderInputmode = "email"
-	HeaderInputmodeNone    HeaderInputmode = "none"
-	HeaderInputmodeNumeric HeaderInputmode = "numeric"
-	HeaderInputmodeSearch  HeaderInputmode = "search"
-	HeaderInputmodeTel     HeaderInputmode = "tel"
-	HeaderInputmodeText    HeaderInputmode = "text"
-	HeaderInputmodeUrl     HeaderInputmode = "url"
-)
-
-type HeaderPopover string
-
-const (
-	HeaderPopoverAuto   HeaderPopover = "auto"
-	HeaderPopoverHint   HeaderPopover = "hint"
-	HeaderPopoverManual HeaderPopover = "manual"
-	HeaderPopoverEmpty  HeaderPopover = ""
-)
-
-type HeaderSpellcheck string
-
-const (
-	HeaderSpellcheckFalse HeaderSpellcheck = "false"
-	HeaderSpellcheckTrue  HeaderSpellcheck = "true"
-	HeaderSpellcheckEmpty HeaderSpellcheck = ""
-)
-
-type HeaderTranslate string
-
-const (
-	HeaderTranslateNo    HeaderTranslate = "no"
-	HeaderTranslateYes   HeaderTranslate = "yes"
-	HeaderTranslateEmpty HeaderTranslate = ""
-)
-
-type HeaderWritingsuggestions string
-
-const (
-	HeaderWritingsuggestionsFalse HeaderWritingsuggestions = "false"
-	HeaderWritingsuggestionsTrue  HeaderWritingsuggestions = "true"
-	HeaderWritingsuggestionsEmpty HeaderWritingsuggestions = ""
-)
-
 func (e *HeaderElement) Accesskey(r rune) *HeaderElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *HeaderElement) Aria(name string, s string) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Autocapitalize(a HeaderAutocapitalize) *HeaderElement {
+func (e *HeaderElement) Autocapitalize(a Autocapitalize) *HeaderElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *HeaderElement) Autocapitalize(a HeaderAutocapitalize) *HeaderElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Autocorrect(v ...HeaderAutocorrect) *HeaderElement {
-	var val HeaderAutocorrect
+func (e *HeaderElement) Autocorrect(v ...Autocorrect) *HeaderElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *HeaderElement) Class(s ...string) *HeaderElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Contenteditable(v ...HeaderContenteditable) *HeaderElement {
-	var val HeaderContenteditable
+func (e *HeaderElement) Contenteditable(v ...Contenteditable) *HeaderElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *HeaderElement) Data(name string, s string) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Dir(a HeaderDir) *HeaderElement {
+func (e *HeaderElement) Dir(a Dir) *HeaderElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *HeaderElement) Draggable(a HeaderDraggable) *HeaderElement {
+func (e *HeaderElement) Draggable(a Draggable) *HeaderElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *HeaderElement) Enterkeyhint(a HeaderEnterkeyhint) *HeaderElement {
+func (e *HeaderElement) Enterkeyhint(a Enterkeyhint) *HeaderElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *HeaderElement) Headingreset(b bool) *HeaderElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Hidden(v ...HeaderHidden) *HeaderElement {
-	var val HeaderHidden
+func (e *HeaderElement) Hidden(v ...Hidden) *HeaderElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *HeaderElement) Inert(b bool) *HeaderElement {
 	return e
 }
 
-func (e *HeaderElement) Inputmode(a HeaderInputmode) *HeaderElement {
+func (e *HeaderElement) Inputmode(a Inputmode) *HeaderElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *HeaderElement) Part(s ...string) *HeaderElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Popover(v ...HeaderPopover) *HeaderElement {
-	var val HeaderPopover
+func (e *HeaderElement) Popover(v ...Popover) *HeaderElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *HeaderElement) Slot(s string) *HeaderElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Spellcheck(v ...HeaderSpellcheck) *HeaderElement {
-	var val HeaderSpellcheck
+func (e *HeaderElement) Spellcheck(v ...Spellcheck) *HeaderElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *HeaderElement) Title(s string) *HeaderElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Translate(v ...HeaderTranslate) *HeaderElement {
-	var val HeaderTranslate
+func (e *HeaderElement) Translate(v ...Translate) *HeaderElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *HeaderElement) Translate(v ...HeaderTranslate) *HeaderElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeaderElement) Writingsuggestions(v ...HeaderWritingsuggestions) *HeaderElement {
-	var val HeaderWritingsuggestions
+func (e *HeaderElement) Writingsuggestions(v ...Writingsuggestions) *HeaderElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

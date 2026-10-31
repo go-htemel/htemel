@@ -12,6 +12,7 @@ import (
 )
 
 type WbrElement struct {
+	htemel.PhrasingMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +42,14 @@ func WbrIf(condition bool) *WbrElement {
 // With allows passing a function to modify the element via a closure.
 func (e *WbrElement) With(fn func(*WbrElement)) *WbrElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *WbrElement) IfThen(cond bool, fn func(*WbrElement)) *WbrElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,115 +118,6 @@ func (e *WbrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type WbrAutocapitalize string
-
-const (
-	WbrAutocapitalizeCharacters WbrAutocapitalize = "characters"
-	WbrAutocapitalizeNone       WbrAutocapitalize = "none"
-	WbrAutocapitalizeOff        WbrAutocapitalize = "off"
-	WbrAutocapitalizeOn         WbrAutocapitalize = "on"
-	WbrAutocapitalizeSentences  WbrAutocapitalize = "sentences"
-	WbrAutocapitalizeWords      WbrAutocapitalize = "words"
-)
-
-type WbrAutocorrect string
-
-const (
-	WbrAutocorrectOff   WbrAutocorrect = "off"
-	WbrAutocorrectOn    WbrAutocorrect = "on"
-	WbrAutocorrectEmpty WbrAutocorrect = ""
-)
-
-type WbrContenteditable string
-
-const (
-	WbrContenteditableFalse         WbrContenteditable = "false"
-	WbrContenteditablePlaintextOnly WbrContenteditable = "plaintext-only"
-	WbrContenteditableTrue          WbrContenteditable = "true"
-	WbrContenteditableEmpty         WbrContenteditable = ""
-)
-
-type WbrDir string
-
-const (
-	WbrDirAuto WbrDir = "auto"
-	WbrDirLtr  WbrDir = "ltr"
-	WbrDirRtl  WbrDir = "rtl"
-)
-
-type WbrDraggable string
-
-const (
-	WbrDraggableFalse WbrDraggable = "false"
-	WbrDraggableTrue  WbrDraggable = "true"
-)
-
-type WbrEnterkeyhint string
-
-const (
-	WbrEnterkeyhintDone     WbrEnterkeyhint = "done"
-	WbrEnterkeyhintEnter    WbrEnterkeyhint = "enter"
-	WbrEnterkeyhintGo       WbrEnterkeyhint = "go"
-	WbrEnterkeyhintNext     WbrEnterkeyhint = "next"
-	WbrEnterkeyhintPrevious WbrEnterkeyhint = "previous"
-	WbrEnterkeyhintSearch   WbrEnterkeyhint = "search"
-	WbrEnterkeyhintSend     WbrEnterkeyhint = "send"
-)
-
-type WbrHidden string
-
-const (
-	WbrHiddenHidden     WbrHidden = "hidden"
-	WbrHiddenUntilFound WbrHidden = "until-found"
-	WbrHiddenEmpty      WbrHidden = ""
-)
-
-type WbrInputmode string
-
-const (
-	WbrInputmodeDecimal WbrInputmode = "decimal"
-	WbrInputmodeEmail   WbrInputmode = "email"
-	WbrInputmodeNone    WbrInputmode = "none"
-	WbrInputmodeNumeric WbrInputmode = "numeric"
-	WbrInputmodeSearch  WbrInputmode = "search"
-	WbrInputmodeTel     WbrInputmode = "tel"
-	WbrInputmodeText    WbrInputmode = "text"
-	WbrInputmodeUrl     WbrInputmode = "url"
-)
-
-type WbrPopover string
-
-const (
-	WbrPopoverAuto   WbrPopover = "auto"
-	WbrPopoverHint   WbrPopover = "hint"
-	WbrPopoverManual WbrPopover = "manual"
-	WbrPopoverEmpty  WbrPopover = ""
-)
-
-type WbrSpellcheck string
-
-const (
-	WbrSpellcheckFalse WbrSpellcheck = "false"
-	WbrSpellcheckTrue  WbrSpellcheck = "true"
-	WbrSpellcheckEmpty WbrSpellcheck = ""
-)
-
-type WbrTranslate string
-
-const (
-	WbrTranslateNo    WbrTranslate = "no"
-	WbrTranslateYes   WbrTranslate = "yes"
-	WbrTranslateEmpty WbrTranslate = ""
-)
-
-type WbrWritingsuggestions string
-
-const (
-	WbrWritingsuggestionsFalse WbrWritingsuggestions = "false"
-	WbrWritingsuggestionsTrue  WbrWritingsuggestions = "true"
-	WbrWritingsuggestionsEmpty WbrWritingsuggestions = ""
-)
-
 func (e *WbrElement) Accesskey(r rune) *WbrElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -240,7 +140,7 @@ func (e *WbrElement) Aria(name string, s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Autocapitalize(a WbrAutocapitalize) *WbrElement {
+func (e *WbrElement) Autocapitalize(a Autocapitalize) *WbrElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -248,8 +148,8 @@ func (e *WbrElement) Autocapitalize(a WbrAutocapitalize) *WbrElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Autocorrect(v ...WbrAutocorrect) *WbrElement {
-	var val WbrAutocorrect
+func (e *WbrElement) Autocorrect(v ...Autocorrect) *WbrElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -274,8 +174,8 @@ func (e *WbrElement) Class(s ...string) *WbrElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Contenteditable(v ...WbrContenteditable) *WbrElement {
-	var val WbrContenteditable
+func (e *WbrElement) Contenteditable(v ...Contenteditable) *WbrElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -300,19 +200,19 @@ func (e *WbrElement) Data(name string, s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Dir(a WbrDir) *WbrElement {
+func (e *WbrElement) Dir(a Dir) *WbrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *WbrElement) Draggable(a WbrDraggable) *WbrElement {
+func (e *WbrElement) Draggable(a Draggable) *WbrElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *WbrElement) Enterkeyhint(a WbrEnterkeyhint) *WbrElement {
+func (e *WbrElement) Enterkeyhint(a Enterkeyhint) *WbrElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -340,8 +240,8 @@ func (e *WbrElement) Headingreset(b bool) *WbrElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Hidden(v ...WbrHidden) *WbrElement {
-	var val WbrHidden
+func (e *WbrElement) Hidden(v ...Hidden) *WbrElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -364,7 +264,7 @@ func (e *WbrElement) Inert(b bool) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Inputmode(a WbrInputmode) *WbrElement {
+func (e *WbrElement) Inputmode(a Inputmode) *WbrElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -430,8 +330,8 @@ func (e *WbrElement) Part(s ...string) *WbrElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Popover(v ...WbrPopover) *WbrElement {
-	var val WbrPopover
+func (e *WbrElement) Popover(v ...Popover) *WbrElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -454,8 +354,8 @@ func (e *WbrElement) Slot(s string) *WbrElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Spellcheck(v ...WbrSpellcheck) *WbrElement {
-	var val WbrSpellcheck
+func (e *WbrElement) Spellcheck(v ...Spellcheck) *WbrElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -484,8 +384,8 @@ func (e *WbrElement) Title(s string) *WbrElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Translate(v ...WbrTranslate) *WbrElement {
-	var val WbrTranslate
+func (e *WbrElement) Translate(v ...Translate) *WbrElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -496,8 +396,8 @@ func (e *WbrElement) Translate(v ...WbrTranslate) *WbrElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *WbrElement) Writingsuggestions(v ...WbrWritingsuggestions) *WbrElement {
-	var val WbrWritingsuggestions
+func (e *WbrElement) Writingsuggestions(v ...Writingsuggestions) *WbrElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

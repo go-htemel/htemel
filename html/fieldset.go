@@ -12,17 +12,38 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// FieldsetChild is a permitted child of <fieldset>: <legend>, flow content.
+//
+// It is implemented by <a>, <abbr>, <address>, <area>, <article>, <aside>, <audio>, <b>, <bdi>,
+// <bdo>, <blockquote>, <br>, <button>, <canvas>, <cite>, <code>, <data>, <datalist>, <del>,
+// <details>, <dfn>, <dialog>, <div>, <dl>, <em>, <embed>, <fieldset>, <figure>, <footer>, <form>,
+// <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <header>, <hgroup>, <hr>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <legend>, <link>, <main>, <map>, <mark>, <menu>, <meta>, <meter>, <nav>,
+// <noscript>, <object>, <ol>, <output>, <p>, <picture>, <pre>, <progress>, <q>, <ruby>, <s>,
+// <samp>, <script>, <search>, <section>, <select>, <slot>, <small>, <span>, <strong>, <style>,
+// <sub>, <sup>, <table>, <template>, <textarea>, <time>, <u>, <ul>, <var>, <video>, <wbr>, by text
+// (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.FlowMarker and by the unchecked
+// nodes of package htemel (Group, Each, If, Unchecked, ...).
+type FieldsetChild interface {
+	htemel.Node
+	HTMLFieldsetChild()
+}
+
 type FieldsetElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []FieldsetChild
 	skipRender bool
 }
 
 // Fieldset creates a tag <fieldset> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <legend>, flow content (FieldsetChild).
+//
 // Spec Description: The fieldset element represents a set of form controls (or other content) grouped together, optionally with a caption. The caption is given by the first legend element that is a child of the fieldset element, if any. The remainder of the descendants form the group.
-func Fieldset(children ...htemel.Node) *FieldsetElement {
+func Fieldset(children ...FieldsetChild) *FieldsetElement {
 	node := &FieldsetElement{
 		children: children,
 	}
@@ -31,7 +52,7 @@ func Fieldset(children ...htemel.Node) *FieldsetElement {
 }
 
 // FieldsetIf creates a tag <fieldset> instance that is only rendered when condition is true.
-func FieldsetIf(condition bool, children ...htemel.Node) *FieldsetElement {
+func FieldsetIf(condition bool, children ...FieldsetChild) *FieldsetElement {
 	if condition {
 		return Fieldset(children...)
 	}
@@ -43,7 +64,7 @@ func FieldsetIf(condition bool, children ...htemel.Node) *FieldsetElement {
 }
 
 // FieldsetTernary creates a tag <fieldset> containing then when condition is true, otherwise containing otherwise.
-func FieldsetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FieldsetElement {
+func FieldsetTernary(condition bool, then FieldsetChild, otherwise FieldsetChild) *FieldsetElement {
 	if condition {
 		return Fieldset(then)
 	}
@@ -51,7 +72,7 @@ func FieldsetTernary(condition bool, then htemel.Node, otherwise htemel.Node) *F
 }
 
 // Children appends children to this element.
-func (e *FieldsetElement) Children(children ...htemel.Node) *FieldsetElement {
+func (e *FieldsetElement) Children(children ...FieldsetChild) *FieldsetElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +95,7 @@ func (e *FieldsetElement) Textf(format string, args ...any) *FieldsetElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FieldsetElement) If(cond bool, child htemel.Node) *FieldsetElement {
+func (e *FieldsetElement) If(cond bool, child FieldsetChild) *FieldsetElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +103,7 @@ func (e *FieldsetElement) If(cond bool, child htemel.Node) *FieldsetElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FieldsetElement) IfElse(cond bool, then, els htemel.Node) *FieldsetElement {
+func (e *FieldsetElement) IfElse(cond bool, then, els FieldsetChild) *FieldsetElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +185,6 @@ func (e *FieldsetElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FieldsetAutocapitalize string
-
-const (
-	FieldsetAutocapitalizeCharacters FieldsetAutocapitalize = "characters"
-	FieldsetAutocapitalizeNone       FieldsetAutocapitalize = "none"
-	FieldsetAutocapitalizeOff        FieldsetAutocapitalize = "off"
-	FieldsetAutocapitalizeOn         FieldsetAutocapitalize = "on"
-	FieldsetAutocapitalizeSentences  FieldsetAutocapitalize = "sentences"
-	FieldsetAutocapitalizeWords      FieldsetAutocapitalize = "words"
-)
-
-type FieldsetAutocorrect string
-
-const (
-	FieldsetAutocorrectOff   FieldsetAutocorrect = "off"
-	FieldsetAutocorrectOn    FieldsetAutocorrect = "on"
-	FieldsetAutocorrectEmpty FieldsetAutocorrect = ""
-)
-
-type FieldsetContenteditable string
-
-const (
-	FieldsetContenteditableFalse         FieldsetContenteditable = "false"
-	FieldsetContenteditablePlaintextOnly FieldsetContenteditable = "plaintext-only"
-	FieldsetContenteditableTrue          FieldsetContenteditable = "true"
-	FieldsetContenteditableEmpty         FieldsetContenteditable = ""
-)
-
-type FieldsetDir string
-
-const (
-	FieldsetDirAuto FieldsetDir = "auto"
-	FieldsetDirLtr  FieldsetDir = "ltr"
-	FieldsetDirRtl  FieldsetDir = "rtl"
-)
-
-type FieldsetDraggable string
-
-const (
-	FieldsetDraggableFalse FieldsetDraggable = "false"
-	FieldsetDraggableTrue  FieldsetDraggable = "true"
-)
-
-type FieldsetEnterkeyhint string
-
-const (
-	FieldsetEnterkeyhintDone     FieldsetEnterkeyhint = "done"
-	FieldsetEnterkeyhintEnter    FieldsetEnterkeyhint = "enter"
-	FieldsetEnterkeyhintGo       FieldsetEnterkeyhint = "go"
-	FieldsetEnterkeyhintNext     FieldsetEnterkeyhint = "next"
-	FieldsetEnterkeyhintPrevious FieldsetEnterkeyhint = "previous"
-	FieldsetEnterkeyhintSearch   FieldsetEnterkeyhint = "search"
-	FieldsetEnterkeyhintSend     FieldsetEnterkeyhint = "send"
-)
-
-type FieldsetHidden string
-
-const (
-	FieldsetHiddenHidden     FieldsetHidden = "hidden"
-	FieldsetHiddenUntilFound FieldsetHidden = "until-found"
-	FieldsetHiddenEmpty      FieldsetHidden = ""
-)
-
-type FieldsetInputmode string
-
-const (
-	FieldsetInputmodeDecimal FieldsetInputmode = "decimal"
-	FieldsetInputmodeEmail   FieldsetInputmode = "email"
-	FieldsetInputmodeNone    FieldsetInputmode = "none"
-	FieldsetInputmodeNumeric FieldsetInputmode = "numeric"
-	FieldsetInputmodeSearch  FieldsetInputmode = "search"
-	FieldsetInputmodeTel     FieldsetInputmode = "tel"
-	FieldsetInputmodeText    FieldsetInputmode = "text"
-	FieldsetInputmodeUrl     FieldsetInputmode = "url"
-)
-
-type FieldsetPopover string
-
-const (
-	FieldsetPopoverAuto   FieldsetPopover = "auto"
-	FieldsetPopoverHint   FieldsetPopover = "hint"
-	FieldsetPopoverManual FieldsetPopover = "manual"
-	FieldsetPopoverEmpty  FieldsetPopover = ""
-)
-
-type FieldsetSpellcheck string
-
-const (
-	FieldsetSpellcheckFalse FieldsetSpellcheck = "false"
-	FieldsetSpellcheckTrue  FieldsetSpellcheck = "true"
-	FieldsetSpellcheckEmpty FieldsetSpellcheck = ""
-)
-
-type FieldsetTranslate string
-
-const (
-	FieldsetTranslateNo    FieldsetTranslate = "no"
-	FieldsetTranslateYes   FieldsetTranslate = "yes"
-	FieldsetTranslateEmpty FieldsetTranslate = ""
-)
-
-type FieldsetWritingsuggestions string
-
-const (
-	FieldsetWritingsuggestionsFalse FieldsetWritingsuggestions = "false"
-	FieldsetWritingsuggestionsTrue  FieldsetWritingsuggestions = "true"
-	FieldsetWritingsuggestionsEmpty FieldsetWritingsuggestions = ""
-)
-
 // Disabled sets the boolean attribute "disabled". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *FieldsetElement) Disabled(b bool) *FieldsetElement {
@@ -315,7 +227,7 @@ func (e *FieldsetElement) Aria(name string, s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Autocapitalize(a FieldsetAutocapitalize) *FieldsetElement {
+func (e *FieldsetElement) Autocapitalize(a Autocapitalize) *FieldsetElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -323,8 +235,8 @@ func (e *FieldsetElement) Autocapitalize(a FieldsetAutocapitalize) *FieldsetElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Autocorrect(v ...FieldsetAutocorrect) *FieldsetElement {
-	var val FieldsetAutocorrect
+func (e *FieldsetElement) Autocorrect(v ...Autocorrect) *FieldsetElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -349,8 +261,8 @@ func (e *FieldsetElement) Class(s ...string) *FieldsetElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Contenteditable(v ...FieldsetContenteditable) *FieldsetElement {
-	var val FieldsetContenteditable
+func (e *FieldsetElement) Contenteditable(v ...Contenteditable) *FieldsetElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -375,19 +287,19 @@ func (e *FieldsetElement) Data(name string, s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Dir(a FieldsetDir) *FieldsetElement {
+func (e *FieldsetElement) Dir(a Dir) *FieldsetElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *FieldsetElement) Draggable(a FieldsetDraggable) *FieldsetElement {
+func (e *FieldsetElement) Draggable(a Draggable) *FieldsetElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *FieldsetElement) Enterkeyhint(a FieldsetEnterkeyhint) *FieldsetElement {
+func (e *FieldsetElement) Enterkeyhint(a Enterkeyhint) *FieldsetElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -415,8 +327,8 @@ func (e *FieldsetElement) Headingreset(b bool) *FieldsetElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Hidden(v ...FieldsetHidden) *FieldsetElement {
-	var val FieldsetHidden
+func (e *FieldsetElement) Hidden(v ...Hidden) *FieldsetElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -439,7 +351,7 @@ func (e *FieldsetElement) Inert(b bool) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Inputmode(a FieldsetInputmode) *FieldsetElement {
+func (e *FieldsetElement) Inputmode(a Inputmode) *FieldsetElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -505,8 +417,8 @@ func (e *FieldsetElement) Part(s ...string) *FieldsetElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Popover(v ...FieldsetPopover) *FieldsetElement {
-	var val FieldsetPopover
+func (e *FieldsetElement) Popover(v ...Popover) *FieldsetElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -529,8 +441,8 @@ func (e *FieldsetElement) Slot(s string) *FieldsetElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Spellcheck(v ...FieldsetSpellcheck) *FieldsetElement {
-	var val FieldsetSpellcheck
+func (e *FieldsetElement) Spellcheck(v ...Spellcheck) *FieldsetElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -559,8 +471,8 @@ func (e *FieldsetElement) Title(s string) *FieldsetElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Translate(v ...FieldsetTranslate) *FieldsetElement {
-	var val FieldsetTranslate
+func (e *FieldsetElement) Translate(v ...Translate) *FieldsetElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -571,8 +483,8 @@ func (e *FieldsetElement) Translate(v ...FieldsetTranslate) *FieldsetElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FieldsetElement) Writingsuggestions(v ...FieldsetWritingsuggestions) *FieldsetElement {
-	var val FieldsetWritingsuggestions
+func (e *FieldsetElement) Writingsuggestions(v ...Writingsuggestions) *FieldsetElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

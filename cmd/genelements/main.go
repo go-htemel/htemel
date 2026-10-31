@@ -2,6 +2,10 @@
 //
 //	go run ./cmd/genelements -spec specs/html.json            # writes ./html, package html
 //	go run ./cmd/genelements -spec specs/svg.json -out svg    # writes ./svg,  package svg
+//
+// With -slots FILE it also writes FILE, a file of package htemel that lets the wildcard nodes of
+// package htemel (Group, Each, If, Unchecked, ...) and text satisfy the generated child interfaces
+// (html.UlChild, svg.Content). It is only meaningful inside the htemel module itself.
 package main
 
 import (
@@ -21,15 +25,16 @@ func main() {
 	specPath := flag.String("spec", "specs/html.json", "path to the element spec JSON file")
 	outDir := flag.String("out", "", "output directory for generated files (default: lower-cased spec name, e.g. html)")
 	pkgName := flag.String("pkg", "", "Go package name of the generated files (default: lower-cased spec name, e.g. html)")
+	slots := flag.String("slots", "", "also write the htemel wildcard methods for the generated child interfaces to this file (htemel module only)")
 	flag.Parse()
 
-	if err := run(*specPath, *outDir, *pkgName); err != nil {
+	if err := run(*specPath, *outDir, *pkgName, *slots); err != nil {
 		fmt.Fprintln(os.Stderr, "genelements:", err)
 		os.Exit(1)
 	}
 }
 
-func run(specPath, out, pkg string) error {
+func run(specPath, out, pkg, slots string) error {
 	specFile, err := os.ReadFile(specPath)
 	if err != nil {
 		return err
@@ -50,5 +55,5 @@ func run(specPath, out, pkg string) error {
 		return fmt.Errorf("invalid Go package name %q (set -pkg)", pkg)
 	}
 
-	return generators.Generate(&sp, out, pkg)
+	return generators.GenerateWith(&sp, out, pkg, generators.Options{SlotsFile: slots})
 }

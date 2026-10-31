@@ -16,7 +16,8 @@ var generatedPackages = []struct{ spec, dir string }{
 }
 
 // TestGeneratedCodeIsCurrent runs the generator for each spec into a temp dir and compares the output
-// file-by-file with the committed package directory.
+// file-by-file with the committed package directory, and the generated slots_<dir>.go file of
+// package htemel with the committed one.
 func TestGeneratedCodeIsCurrent(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping generator comparison in -short mode")
@@ -36,16 +37,24 @@ func TestGeneratedCodeIsCurrent(t *testing.T) {
 
 func checkGenerated(t *testing.T, root, specName, dir string) {
 	out := t.TempDir()
+	slots := filepath.Join(t.TempDir(), "slots_"+dir+".go")
 	cmd := exec.Command("go", "run", "./cmd/genelements",
 		"-spec", filepath.Join(root, "specs", specName),
 		"-out", out,
-		"-pkg", dir)
+		"-pkg", dir,
+		"-slots", slots)
 	cmd.Dir = root
 	if b, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("generator failed: %v\n%s", err, b)
 	}
 
 	const hint = "run `go generate ./...` and commit the result"
+
+	if want, err := os.ReadFile(slots); err != nil {
+		t.Fatal(err)
+	} else if got, err := os.ReadFile(filepath.Join(root, "slots_"+dir+".go")); err != nil || string(got) != string(want) {
+		t.Errorf("slots_%s.go is missing or out of date with specs/%s; %s", dir, specName, hint)
+	}
 
 	generated := map[string]bool{}
 	entries, err := os.ReadDir(out)

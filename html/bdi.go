@@ -13,16 +13,20 @@ import (
 )
 
 type BdiElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Bdi creates a tag <bdi> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The bdi element represents a span of text that is to be isolated from its surroundings for the purposes of bidirectional text formatting. [BIDI]
-func Bdi(children ...htemel.Node) *BdiElement {
+func Bdi(children ...htemel.PhrasingContent) *BdiElement {
 	node := &BdiElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Bdi(children ...htemel.Node) *BdiElement {
 }
 
 // BdiIf creates a tag <bdi> instance that is only rendered when condition is true.
-func BdiIf(condition bool, children ...htemel.Node) *BdiElement {
+func BdiIf(condition bool, children ...htemel.PhrasingContent) *BdiElement {
 	if condition {
 		return Bdi(children...)
 	}
@@ -43,7 +47,7 @@ func BdiIf(condition bool, children ...htemel.Node) *BdiElement {
 }
 
 // BdiTernary creates a tag <bdi> containing then when condition is true, otherwise containing otherwise.
-func BdiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdiElement {
+func BdiTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *BdiElement {
 	if condition {
 		return Bdi(then)
 	}
@@ -51,7 +55,7 @@ func BdiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdiEle
 }
 
 // Children appends children to this element.
-func (e *BdiElement) Children(children ...htemel.Node) *BdiElement {
+func (e *BdiElement) Children(children ...htemel.PhrasingContent) *BdiElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *BdiElement) Textf(format string, args ...any) *BdiElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BdiElement) If(cond bool, child htemel.Node) *BdiElement {
+func (e *BdiElement) If(cond bool, child htemel.PhrasingContent) *BdiElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *BdiElement) If(cond bool, child htemel.Node) *BdiElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BdiElement) IfElse(cond bool, then, els htemel.Node) *BdiElement {
+func (e *BdiElement) IfElse(cond bool, then, els htemel.PhrasingContent) *BdiElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *BdiElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BdiAutocapitalize string
-
-const (
-	BdiAutocapitalizeCharacters BdiAutocapitalize = "characters"
-	BdiAutocapitalizeNone       BdiAutocapitalize = "none"
-	BdiAutocapitalizeOff        BdiAutocapitalize = "off"
-	BdiAutocapitalizeOn         BdiAutocapitalize = "on"
-	BdiAutocapitalizeSentences  BdiAutocapitalize = "sentences"
-	BdiAutocapitalizeWords      BdiAutocapitalize = "words"
-)
-
-type BdiAutocorrect string
-
-const (
-	BdiAutocorrectOff   BdiAutocorrect = "off"
-	BdiAutocorrectOn    BdiAutocorrect = "on"
-	BdiAutocorrectEmpty BdiAutocorrect = ""
-)
-
-type BdiContenteditable string
-
-const (
-	BdiContenteditableFalse         BdiContenteditable = "false"
-	BdiContenteditablePlaintextOnly BdiContenteditable = "plaintext-only"
-	BdiContenteditableTrue          BdiContenteditable = "true"
-	BdiContenteditableEmpty         BdiContenteditable = ""
-)
-
-type BdiDir string
-
-const (
-	BdiDirAuto BdiDir = "auto"
-	BdiDirLtr  BdiDir = "ltr"
-	BdiDirRtl  BdiDir = "rtl"
-)
-
-type BdiDraggable string
-
-const (
-	BdiDraggableFalse BdiDraggable = "false"
-	BdiDraggableTrue  BdiDraggable = "true"
-)
-
-type BdiEnterkeyhint string
-
-const (
-	BdiEnterkeyhintDone     BdiEnterkeyhint = "done"
-	BdiEnterkeyhintEnter    BdiEnterkeyhint = "enter"
-	BdiEnterkeyhintGo       BdiEnterkeyhint = "go"
-	BdiEnterkeyhintNext     BdiEnterkeyhint = "next"
-	BdiEnterkeyhintPrevious BdiEnterkeyhint = "previous"
-	BdiEnterkeyhintSearch   BdiEnterkeyhint = "search"
-	BdiEnterkeyhintSend     BdiEnterkeyhint = "send"
-)
-
-type BdiHidden string
-
-const (
-	BdiHiddenHidden     BdiHidden = "hidden"
-	BdiHiddenUntilFound BdiHidden = "until-found"
-	BdiHiddenEmpty      BdiHidden = ""
-)
-
-type BdiInputmode string
-
-const (
-	BdiInputmodeDecimal BdiInputmode = "decimal"
-	BdiInputmodeEmail   BdiInputmode = "email"
-	BdiInputmodeNone    BdiInputmode = "none"
-	BdiInputmodeNumeric BdiInputmode = "numeric"
-	BdiInputmodeSearch  BdiInputmode = "search"
-	BdiInputmodeTel     BdiInputmode = "tel"
-	BdiInputmodeText    BdiInputmode = "text"
-	BdiInputmodeUrl     BdiInputmode = "url"
-)
-
-type BdiPopover string
-
-const (
-	BdiPopoverAuto   BdiPopover = "auto"
-	BdiPopoverHint   BdiPopover = "hint"
-	BdiPopoverManual BdiPopover = "manual"
-	BdiPopoverEmpty  BdiPopover = ""
-)
-
-type BdiSpellcheck string
-
-const (
-	BdiSpellcheckFalse BdiSpellcheck = "false"
-	BdiSpellcheckTrue  BdiSpellcheck = "true"
-	BdiSpellcheckEmpty BdiSpellcheck = ""
-)
-
-type BdiTranslate string
-
-const (
-	BdiTranslateNo    BdiTranslate = "no"
-	BdiTranslateYes   BdiTranslate = "yes"
-	BdiTranslateEmpty BdiTranslate = ""
-)
-
-type BdiWritingsuggestions string
-
-const (
-	BdiWritingsuggestionsFalse BdiWritingsuggestions = "false"
-	BdiWritingsuggestionsTrue  BdiWritingsuggestions = "true"
-	BdiWritingsuggestionsEmpty BdiWritingsuggestions = ""
-)
-
 func (e *BdiElement) Accesskey(r rune) *BdiElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *BdiElement) Aria(name string, s string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Autocapitalize(a BdiAutocapitalize) *BdiElement {
+func (e *BdiElement) Autocapitalize(a Autocapitalize) *BdiElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *BdiElement) Autocapitalize(a BdiAutocapitalize) *BdiElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Autocorrect(v ...BdiAutocorrect) *BdiElement {
-	var val BdiAutocorrect
+func (e *BdiElement) Autocorrect(v ...Autocorrect) *BdiElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *BdiElement) Class(s ...string) *BdiElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Contenteditable(v ...BdiContenteditable) *BdiElement {
-	var val BdiContenteditable
+func (e *BdiElement) Contenteditable(v ...Contenteditable) *BdiElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *BdiElement) Data(name string, s string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Dir(a BdiDir) *BdiElement {
+func (e *BdiElement) Dir(a Dir) *BdiElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BdiElement) Draggable(a BdiDraggable) *BdiElement {
+func (e *BdiElement) Draggable(a Draggable) *BdiElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BdiElement) Enterkeyhint(a BdiEnterkeyhint) *BdiElement {
+func (e *BdiElement) Enterkeyhint(a Enterkeyhint) *BdiElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *BdiElement) Headingreset(b bool) *BdiElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Hidden(v ...BdiHidden) *BdiElement {
-	var val BdiHidden
+func (e *BdiElement) Hidden(v ...Hidden) *BdiElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *BdiElement) Inert(b bool) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Inputmode(a BdiInputmode) *BdiElement {
+func (e *BdiElement) Inputmode(a Inputmode) *BdiElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *BdiElement) Part(s ...string) *BdiElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Popover(v ...BdiPopover) *BdiElement {
-	var val BdiPopover
+func (e *BdiElement) Popover(v ...Popover) *BdiElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *BdiElement) Slot(s string) *BdiElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Spellcheck(v ...BdiSpellcheck) *BdiElement {
-	var val BdiSpellcheck
+func (e *BdiElement) Spellcheck(v ...Spellcheck) *BdiElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *BdiElement) Title(s string) *BdiElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Translate(v ...BdiTranslate) *BdiElement {
-	var val BdiTranslate
+func (e *BdiElement) Translate(v ...Translate) *BdiElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *BdiElement) Translate(v ...BdiTranslate) *BdiElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdiElement) Writingsuggestions(v ...BdiWritingsuggestions) *BdiElement {
-	var val BdiWritingsuggestions
+func (e *BdiElement) Writingsuggestions(v ...Writingsuggestions) *BdiElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -13,16 +13,19 @@ import (
 )
 
 type ThElement struct {
+	htemel.InteractiveMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Th creates a tag <th> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The th element represents a header cell in a table.
-func Th(children ...htemel.Node) *ThElement {
+func Th(children ...htemel.FlowContent) *ThElement {
 	node := &ThElement{
 		children: children,
 	}
@@ -31,7 +34,7 @@ func Th(children ...htemel.Node) *ThElement {
 }
 
 // ThIf creates a tag <th> instance that is only rendered when condition is true.
-func ThIf(condition bool, children ...htemel.Node) *ThElement {
+func ThIf(condition bool, children ...htemel.FlowContent) *ThElement {
 	if condition {
 		return Th(children...)
 	}
@@ -43,7 +46,7 @@ func ThIf(condition bool, children ...htemel.Node) *ThElement {
 }
 
 // ThTernary creates a tag <th> containing then when condition is true, otherwise containing otherwise.
-func ThTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ThElement {
+func ThTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *ThElement {
 	if condition {
 		return Th(then)
 	}
@@ -51,7 +54,7 @@ func ThTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ThEleme
 }
 
 // Children appends children to this element.
-func (e *ThElement) Children(children ...htemel.Node) *ThElement {
+func (e *ThElement) Children(children ...htemel.FlowContent) *ThElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +77,7 @@ func (e *ThElement) Textf(format string, args ...any) *ThElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ThElement) If(cond bool, child htemel.Node) *ThElement {
+func (e *ThElement) If(cond bool, child htemel.FlowContent) *ThElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +85,7 @@ func (e *ThElement) If(cond bool, child htemel.Node) *ThElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ThElement) IfElse(cond bool, then, els htemel.Node) *ThElement {
+func (e *ThElement) IfElse(cond bool, then, els htemel.FlowContent) *ThElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,123 +167,8 @@ func (e *ThElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ThScope string
-
-const (
-	ThScopeCol      ThScope = "col"
-	ThScopeColgroup ThScope = "colgroup"
-	ThScopeRow      ThScope = "row"
-	ThScopeRowgroup ThScope = "rowgroup"
-)
-
-type ThAutocapitalize string
-
-const (
-	ThAutocapitalizeCharacters ThAutocapitalize = "characters"
-	ThAutocapitalizeNone       ThAutocapitalize = "none"
-	ThAutocapitalizeOff        ThAutocapitalize = "off"
-	ThAutocapitalizeOn         ThAutocapitalize = "on"
-	ThAutocapitalizeSentences  ThAutocapitalize = "sentences"
-	ThAutocapitalizeWords      ThAutocapitalize = "words"
-)
-
-type ThAutocorrect string
-
-const (
-	ThAutocorrectOff   ThAutocorrect = "off"
-	ThAutocorrectOn    ThAutocorrect = "on"
-	ThAutocorrectEmpty ThAutocorrect = ""
-)
-
-type ThContenteditable string
-
-const (
-	ThContenteditableFalse         ThContenteditable = "false"
-	ThContenteditablePlaintextOnly ThContenteditable = "plaintext-only"
-	ThContenteditableTrue          ThContenteditable = "true"
-	ThContenteditableEmpty         ThContenteditable = ""
-)
-
-type ThDir string
-
-const (
-	ThDirAuto ThDir = "auto"
-	ThDirLtr  ThDir = "ltr"
-	ThDirRtl  ThDir = "rtl"
-)
-
-type ThDraggable string
-
-const (
-	ThDraggableFalse ThDraggable = "false"
-	ThDraggableTrue  ThDraggable = "true"
-)
-
-type ThEnterkeyhint string
-
-const (
-	ThEnterkeyhintDone     ThEnterkeyhint = "done"
-	ThEnterkeyhintEnter    ThEnterkeyhint = "enter"
-	ThEnterkeyhintGo       ThEnterkeyhint = "go"
-	ThEnterkeyhintNext     ThEnterkeyhint = "next"
-	ThEnterkeyhintPrevious ThEnterkeyhint = "previous"
-	ThEnterkeyhintSearch   ThEnterkeyhint = "search"
-	ThEnterkeyhintSend     ThEnterkeyhint = "send"
-)
-
-type ThHidden string
-
-const (
-	ThHiddenHidden     ThHidden = "hidden"
-	ThHiddenUntilFound ThHidden = "until-found"
-	ThHiddenEmpty      ThHidden = ""
-)
-
-type ThInputmode string
-
-const (
-	ThInputmodeDecimal ThInputmode = "decimal"
-	ThInputmodeEmail   ThInputmode = "email"
-	ThInputmodeNone    ThInputmode = "none"
-	ThInputmodeNumeric ThInputmode = "numeric"
-	ThInputmodeSearch  ThInputmode = "search"
-	ThInputmodeTel     ThInputmode = "tel"
-	ThInputmodeText    ThInputmode = "text"
-	ThInputmodeUrl     ThInputmode = "url"
-)
-
-type ThPopover string
-
-const (
-	ThPopoverAuto   ThPopover = "auto"
-	ThPopoverHint   ThPopover = "hint"
-	ThPopoverManual ThPopover = "manual"
-	ThPopoverEmpty  ThPopover = ""
-)
-
-type ThSpellcheck string
-
-const (
-	ThSpellcheckFalse ThSpellcheck = "false"
-	ThSpellcheckTrue  ThSpellcheck = "true"
-	ThSpellcheckEmpty ThSpellcheck = ""
-)
-
-type ThTranslate string
-
-const (
-	ThTranslateNo    ThTranslate = "no"
-	ThTranslateYes   ThTranslate = "yes"
-	ThTranslateEmpty ThTranslate = ""
-)
-
-type ThWritingsuggestions string
-
-const (
-	ThWritingsuggestionsFalse ThWritingsuggestions = "false"
-	ThWritingsuggestionsTrue  ThWritingsuggestions = "true"
-	ThWritingsuggestionsEmpty ThWritingsuggestions = ""
-)
+// HTMLTrChild marks <th> as a permitted child of <tr> (TrChild).
+func (*ThElement) HTMLTrChild() {}
 
 func (e *ThElement) Abbr(s string) *ThElement {
 	e.attributes.Set("abbr", s)
@@ -306,7 +194,7 @@ func (e *ThElement) Rowspan(i int) *ThElement {
 	return e
 }
 
-func (e *ThElement) Scope(a ThScope) *ThElement {
+func (e *ThElement) Scope(a Scope) *ThElement {
 	e.attributes.Set("scope", string(a))
 
 	return e
@@ -334,7 +222,7 @@ func (e *ThElement) Aria(name string, s string) *ThElement {
 	return e
 }
 
-func (e *ThElement) Autocapitalize(a ThAutocapitalize) *ThElement {
+func (e *ThElement) Autocapitalize(a Autocapitalize) *ThElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -342,8 +230,8 @@ func (e *ThElement) Autocapitalize(a ThAutocapitalize) *ThElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Autocorrect(v ...ThAutocorrect) *ThElement {
-	var val ThAutocorrect
+func (e *ThElement) Autocorrect(v ...Autocorrect) *ThElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -368,8 +256,8 @@ func (e *ThElement) Class(s ...string) *ThElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Contenteditable(v ...ThContenteditable) *ThElement {
-	var val ThContenteditable
+func (e *ThElement) Contenteditable(v ...Contenteditable) *ThElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -394,19 +282,19 @@ func (e *ThElement) Data(name string, s string) *ThElement {
 	return e
 }
 
-func (e *ThElement) Dir(a ThDir) *ThElement {
+func (e *ThElement) Dir(a Dir) *ThElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ThElement) Draggable(a ThDraggable) *ThElement {
+func (e *ThElement) Draggable(a Draggable) *ThElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ThElement) Enterkeyhint(a ThEnterkeyhint) *ThElement {
+func (e *ThElement) Enterkeyhint(a Enterkeyhint) *ThElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -434,8 +322,8 @@ func (e *ThElement) Headingreset(b bool) *ThElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Hidden(v ...ThHidden) *ThElement {
-	var val ThHidden
+func (e *ThElement) Hidden(v ...Hidden) *ThElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -458,7 +346,7 @@ func (e *ThElement) Inert(b bool) *ThElement {
 	return e
 }
 
-func (e *ThElement) Inputmode(a ThInputmode) *ThElement {
+func (e *ThElement) Inputmode(a Inputmode) *ThElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -524,8 +412,8 @@ func (e *ThElement) Part(s ...string) *ThElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Popover(v ...ThPopover) *ThElement {
-	var val ThPopover
+func (e *ThElement) Popover(v ...Popover) *ThElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -548,8 +436,8 @@ func (e *ThElement) Slot(s string) *ThElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Spellcheck(v ...ThSpellcheck) *ThElement {
-	var val ThSpellcheck
+func (e *ThElement) Spellcheck(v ...Spellcheck) *ThElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -578,8 +466,8 @@ func (e *ThElement) Title(s string) *ThElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Translate(v ...ThTranslate) *ThElement {
-	var val ThTranslate
+func (e *ThElement) Translate(v ...Translate) *ThElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -590,8 +478,8 @@ func (e *ThElement) Translate(v ...ThTranslate) *ThElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ThElement) Writingsuggestions(v ...ThWritingsuggestions) *ThElement {
-	var val ThWritingsuggestions
+func (e *ThElement) Writingsuggestions(v ...Writingsuggestions) *ThElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

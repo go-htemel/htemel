@@ -14,15 +14,17 @@ import (
 
 type MpathElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mpath creates a tag <mpath> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The mpath element references a path element to use as the motion path of animateMotion.
-func Mpath(children ...htemel.Node) *MpathElement {
+func Mpath(children ...Content) *MpathElement {
 	node := &MpathElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mpath(children ...htemel.Node) *MpathElement {
 }
 
 // MpathIf creates a tag <mpath> instance that is only rendered when condition is true.
-func MpathIf(condition bool, children ...htemel.Node) *MpathElement {
+func MpathIf(condition bool, children ...Content) *MpathElement {
 	if condition {
 		return Mpath(children...)
 	}
@@ -43,7 +45,7 @@ func MpathIf(condition bool, children ...htemel.Node) *MpathElement {
 }
 
 // MpathTernary creates a tag <mpath> containing then when condition is true, otherwise containing otherwise.
-func MpathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MpathElement {
+func MpathTernary(condition bool, then Content, otherwise Content) *MpathElement {
 	if condition {
 		return Mpath(then)
 	}
@@ -51,7 +53,7 @@ func MpathTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mpat
 }
 
 // Children appends children to this element.
-func (e *MpathElement) Children(children ...htemel.Node) *MpathElement {
+func (e *MpathElement) Children(children ...Content) *MpathElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MpathElement) Textf(format string, args ...any) *MpathElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MpathElement) If(cond bool, child htemel.Node) *MpathElement {
+func (e *MpathElement) If(cond bool, child Content) *MpathElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MpathElement) If(cond bool, child htemel.Node) *MpathElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MpathElement) IfElse(cond bool, then, els htemel.Node) *MpathElement {
+func (e *MpathElement) IfElse(cond bool, then, els Content) *MpathElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *MpathElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MpathAlignmentBaseline string
-
-const (
-	MpathAlignmentBaselineAfterEdge      MpathAlignmentBaseline = "after-edge"
-	MpathAlignmentBaselineAlphabetic     MpathAlignmentBaseline = "alphabetic"
-	MpathAlignmentBaselineAuto           MpathAlignmentBaseline = "auto"
-	MpathAlignmentBaselineBaseline       MpathAlignmentBaseline = "baseline"
-	MpathAlignmentBaselineBeforeEdge     MpathAlignmentBaseline = "before-edge"
-	MpathAlignmentBaselineBottom         MpathAlignmentBaseline = "bottom"
-	MpathAlignmentBaselineCenter         MpathAlignmentBaseline = "center"
-	MpathAlignmentBaselineCentral        MpathAlignmentBaseline = "central"
-	MpathAlignmentBaselineHanging        MpathAlignmentBaseline = "hanging"
-	MpathAlignmentBaselineIdeographic    MpathAlignmentBaseline = "ideographic"
-	MpathAlignmentBaselineMathematical   MpathAlignmentBaseline = "mathematical"
-	MpathAlignmentBaselineMiddle         MpathAlignmentBaseline = "middle"
-	MpathAlignmentBaselineTextAfterEdge  MpathAlignmentBaseline = "text-after-edge"
-	MpathAlignmentBaselineTextBeforeEdge MpathAlignmentBaseline = "text-before-edge"
-	MpathAlignmentBaselineTextBottom     MpathAlignmentBaseline = "text-bottom"
-	MpathAlignmentBaselineTextTop        MpathAlignmentBaseline = "text-top"
-	MpathAlignmentBaselineTop            MpathAlignmentBaseline = "top"
-)
-
-type MpathClipRule string
-
-const (
-	MpathClipRuleEvenodd MpathClipRule = "evenodd"
-	MpathClipRuleNonzero MpathClipRule = "nonzero"
-)
-
-type MpathColorInterpolation string
-
-const (
-	MpathColorInterpolationAuto      MpathColorInterpolation = "auto"
-	MpathColorInterpolationLinearRGB MpathColorInterpolation = "linearRGB"
-	MpathColorInterpolationSRGB      MpathColorInterpolation = "sRGB"
-)
-
-type MpathColorInterpolationFilters string
-
-const (
-	MpathColorInterpolationFiltersAuto      MpathColorInterpolationFilters = "auto"
-	MpathColorInterpolationFiltersLinearRGB MpathColorInterpolationFilters = "linearRGB"
-	MpathColorInterpolationFiltersSRGB      MpathColorInterpolationFilters = "sRGB"
-)
-
-type MpathDirection string
-
-const (
-	MpathDirectionLtr MpathDirection = "ltr"
-	MpathDirectionRtl MpathDirection = "rtl"
-)
-
-type MpathDominantBaseline string
-
-const (
-	MpathDominantBaselineAlphabetic   MpathDominantBaseline = "alphabetic"
-	MpathDominantBaselineAuto         MpathDominantBaseline = "auto"
-	MpathDominantBaselineCentral      MpathDominantBaseline = "central"
-	MpathDominantBaselineHanging      MpathDominantBaseline = "hanging"
-	MpathDominantBaselineIdeographic  MpathDominantBaseline = "ideographic"
-	MpathDominantBaselineMathematical MpathDominantBaseline = "mathematical"
-	MpathDominantBaselineMiddle       MpathDominantBaseline = "middle"
-	MpathDominantBaselineTextBottom   MpathDominantBaseline = "text-bottom"
-	MpathDominantBaselineTextTop      MpathDominantBaseline = "text-top"
-)
-
-type MpathFillRule string
-
-const (
-	MpathFillRuleEvenodd MpathFillRule = "evenodd"
-	MpathFillRuleNonzero MpathFillRule = "nonzero"
-)
-
-type MpathFontStyle string
-
-const (
-	MpathFontStyleItalic  MpathFontStyle = "italic"
-	MpathFontStyleNormal  MpathFontStyle = "normal"
-	MpathFontStyleOblique MpathFontStyle = "oblique"
-)
-
-type MpathImageRendering string
-
-const (
-	MpathImageRenderingAuto            MpathImageRendering = "auto"
-	MpathImageRenderingCrispEdges      MpathImageRendering = "crisp-edges"
-	MpathImageRenderingHighQuality     MpathImageRendering = "high-quality"
-	MpathImageRenderingOptimizeQuality MpathImageRendering = "optimizeQuality"
-	MpathImageRenderingOptimizeSpeed   MpathImageRendering = "optimizeSpeed"
-	MpathImageRenderingPixelated       MpathImageRendering = "pixelated"
-	MpathImageRenderingSmooth          MpathImageRendering = "smooth"
-)
-
-type MpathOverflow string
-
-const (
-	MpathOverflowAuto    MpathOverflow = "auto"
-	MpathOverflowClip    MpathOverflow = "clip"
-	MpathOverflowHidden  MpathOverflow = "hidden"
-	MpathOverflowScroll  MpathOverflow = "scroll"
-	MpathOverflowVisible MpathOverflow = "visible"
-)
-
-type MpathPointerEvents string
-
-const (
-	MpathPointerEventsAll            MpathPointerEvents = "all"
-	MpathPointerEventsAuto           MpathPointerEvents = "auto"
-	MpathPointerEventsBoundingBox    MpathPointerEvents = "bounding-box"
-	MpathPointerEventsFill           MpathPointerEvents = "fill"
-	MpathPointerEventsNone           MpathPointerEvents = "none"
-	MpathPointerEventsPainted        MpathPointerEvents = "painted"
-	MpathPointerEventsStroke         MpathPointerEvents = "stroke"
-	MpathPointerEventsVisible        MpathPointerEvents = "visible"
-	MpathPointerEventsVisibleFill    MpathPointerEvents = "visibleFill"
-	MpathPointerEventsVisiblePainted MpathPointerEvents = "visiblePainted"
-	MpathPointerEventsVisibleStroke  MpathPointerEvents = "visibleStroke"
-)
-
-type MpathShapeRendering string
-
-const (
-	MpathShapeRenderingAuto               MpathShapeRendering = "auto"
-	MpathShapeRenderingCrispEdges         MpathShapeRendering = "crispEdges"
-	MpathShapeRenderingGeometricPrecision MpathShapeRendering = "geometricPrecision"
-	MpathShapeRenderingOptimizeSpeed      MpathShapeRendering = "optimizeSpeed"
-)
-
-type MpathStrokeLinecap string
-
-const (
-	MpathStrokeLinecapButt   MpathStrokeLinecap = "butt"
-	MpathStrokeLinecapRound  MpathStrokeLinecap = "round"
-	MpathStrokeLinecapSquare MpathStrokeLinecap = "square"
-)
-
-type MpathStrokeLinejoin string
-
-const (
-	MpathStrokeLinejoinArcs      MpathStrokeLinejoin = "arcs"
-	MpathStrokeLinejoinBevel     MpathStrokeLinejoin = "bevel"
-	MpathStrokeLinejoinMiter     MpathStrokeLinejoin = "miter"
-	MpathStrokeLinejoinMiterClip MpathStrokeLinejoin = "miter-clip"
-	MpathStrokeLinejoinRound     MpathStrokeLinejoin = "round"
-)
-
-type MpathTextAnchor string
-
-const (
-	MpathTextAnchorEnd    MpathTextAnchor = "end"
-	MpathTextAnchorMiddle MpathTextAnchor = "middle"
-	MpathTextAnchorStart  MpathTextAnchor = "start"
-)
-
-type MpathTextRendering string
-
-const (
-	MpathTextRenderingAuto               MpathTextRendering = "auto"
-	MpathTextRenderingGeometricPrecision MpathTextRendering = "geometricPrecision"
-	MpathTextRenderingOptimizeLegibility MpathTextRendering = "optimizeLegibility"
-	MpathTextRenderingOptimizeSpeed      MpathTextRendering = "optimizeSpeed"
-)
-
-type MpathTransformBox string
-
-const (
-	MpathTransformBoxBorderBox  MpathTransformBox = "border-box"
-	MpathTransformBoxContentBox MpathTransformBox = "content-box"
-	MpathTransformBoxFillBox    MpathTransformBox = "fill-box"
-	MpathTransformBoxStrokeBox  MpathTransformBox = "stroke-box"
-	MpathTransformBoxViewBox    MpathTransformBox = "view-box"
-)
-
-type MpathVectorEffect string
-
-const (
-	MpathVectorEffectFixedPosition    MpathVectorEffect = "fixed-position"
-	MpathVectorEffectNonRotation      MpathVectorEffect = "non-rotation"
-	MpathVectorEffectNonScalingSize   MpathVectorEffect = "non-scaling-size"
-	MpathVectorEffectNonScalingStroke MpathVectorEffect = "non-scaling-stroke"
-	MpathVectorEffectNone             MpathVectorEffect = "none"
-)
-
-type MpathVisibility string
-
-const (
-	MpathVisibilityCollapse MpathVisibility = "collapse"
-	MpathVisibilityHidden   MpathVisibility = "hidden"
-	MpathVisibilityVisible  MpathVisibility = "visible"
-)
-
-type MpathWritingMode string
-
-const (
-	MpathWritingModeHorizontalTb MpathWritingMode = "horizontal-tb"
-	MpathWritingModeLr           MpathWritingMode = "lr"
-	MpathWritingModeLrTb         MpathWritingMode = "lr-tb"
-	MpathWritingModeRl           MpathWritingMode = "rl"
-	MpathWritingModeRlTb         MpathWritingMode = "rl-tb"
-	MpathWritingModeSidewaysLr   MpathWritingMode = "sideways-lr"
-	MpathWritingModeSidewaysRl   MpathWritingMode = "sideways-rl"
-	MpathWritingModeTb           MpathWritingMode = "tb"
-	MpathWritingModeTbRl         MpathWritingMode = "tb-rl"
-	MpathWritingModeVerticalLr   MpathWritingMode = "vertical-lr"
-	MpathWritingModeVerticalRl   MpathWritingMode = "vertical-rl"
-)
-
-type MpathXmlSpace string
-
-const (
-	MpathXmlSpaceDefault  MpathXmlSpace = "default"
-	MpathXmlSpacePreserve MpathXmlSpace = "preserve"
-)
+// SVGContent marks <mpath> as a permitted child (Content).
+func (*MpathElement) SVGContent() {}
 
 // Href sets the "href" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
@@ -396,14 +187,10 @@ func (e *MpathElement) XlinkHref(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) AlignmentBaseline(a MpathAlignmentBaseline) *MpathElement {
+func (e *MpathElement) AlignmentBaseline(a AlignmentBaseline) *MpathElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func MpathAlignmentBaselineCustom(s string) MpathAlignmentBaseline {
-	return MpathAlignmentBaseline(s)
 }
 
 func (e *MpathElement) AriaUnsafe(name string, s string) *MpathElement {
@@ -457,14 +244,10 @@ func (e *MpathElement) ClipPath(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) ClipRule(a MpathClipRule) *MpathElement {
+func (e *MpathElement) ClipRule(a ClipRule) *MpathElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func MpathClipRuleCustom(s string) MpathClipRule {
-	return MpathClipRule(s)
 }
 
 func (e *MpathElement) Color(s string) *MpathElement {
@@ -473,24 +256,16 @@ func (e *MpathElement) Color(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) ColorInterpolation(a MpathColorInterpolation) *MpathElement {
+func (e *MpathElement) ColorInterpolation(a ColorInterpolation) *MpathElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func MpathColorInterpolationCustom(s string) MpathColorInterpolation {
-	return MpathColorInterpolation(s)
-}
-
-func (e *MpathElement) ColorInterpolationFilters(a MpathColorInterpolationFilters) *MpathElement {
+func (e *MpathElement) ColorInterpolationFilters(a ColorInterpolationFilters) *MpathElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func MpathColorInterpolationFiltersCustom(s string) MpathColorInterpolationFilters {
-	return MpathColorInterpolationFilters(s)
 }
 
 func (e *MpathElement) Cursor(s string) *MpathElement {
@@ -515,14 +290,10 @@ func (e *MpathElement) Data(name string, s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) Direction(a MpathDirection) *MpathElement {
+func (e *MpathElement) Direction(a Direction) *MpathElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func MpathDirectionCustom(s string) MpathDirection {
-	return MpathDirection(s)
 }
 
 func (e *MpathElement) Display(s string) *MpathElement {
@@ -531,14 +302,10 @@ func (e *MpathElement) Display(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) DominantBaseline(a MpathDominantBaseline) *MpathElement {
+func (e *MpathElement) DominantBaseline(a DominantBaseline) *MpathElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func MpathDominantBaselineCustom(s string) MpathDominantBaseline {
-	return MpathDominantBaseline(s)
 }
 
 func (e *MpathElement) Fill(s string) *MpathElement {
@@ -553,14 +320,10 @@ func (e *MpathElement) FillOpacity(f float64) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) FillRule(a MpathFillRule) *MpathElement {
+func (e *MpathElement) FillRule(a FillRule) *MpathElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func MpathFillRuleCustom(s string) MpathFillRule {
-	return MpathFillRule(s)
 }
 
 func (e *MpathElement) Filter(s string) *MpathElement {
@@ -605,14 +368,10 @@ func (e *MpathElement) FontStretch(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) FontStyle(a MpathFontStyle) *MpathElement {
+func (e *MpathElement) FontStyle(a FontStyle) *MpathElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func MpathFontStyleCustom(s string) MpathFontStyle {
-	return MpathFontStyle(s)
 }
 
 func (e *MpathElement) FontVariant(s string) *MpathElement {
@@ -651,14 +410,10 @@ func (e *MpathElement) Id(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) ImageRendering(a MpathImageRendering) *MpathElement {
+func (e *MpathElement) ImageRendering(a ImageRendering) *MpathElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func MpathImageRenderingCustom(s string) MpathImageRendering {
-	return MpathImageRendering(s)
 }
 
 func (e *MpathElement) Lang(s string) *MpathElement {
@@ -709,14 +464,10 @@ func (e *MpathElement) Opacity(f float64) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) Overflow(a MpathOverflow) *MpathElement {
+func (e *MpathElement) Overflow(a Overflow) *MpathElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func MpathOverflowCustom(s string) MpathOverflow {
-	return MpathOverflow(s)
 }
 
 func (e *MpathElement) PaintOrder(s string) *MpathElement {
@@ -725,14 +476,10 @@ func (e *MpathElement) PaintOrder(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) PointerEvents(a MpathPointerEvents) *MpathElement {
+func (e *MpathElement) PointerEvents(a PointerEvents) *MpathElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func MpathPointerEventsCustom(s string) MpathPointerEvents {
-	return MpathPointerEvents(s)
 }
 
 func (e *MpathElement) RequiredExtensions(s string) *MpathElement {
@@ -741,14 +488,10 @@ func (e *MpathElement) RequiredExtensions(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) ShapeRendering(a MpathShapeRendering) *MpathElement {
+func (e *MpathElement) ShapeRendering(a ShapeRendering) *MpathElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func MpathShapeRenderingCustom(s string) MpathShapeRendering {
-	return MpathShapeRendering(s)
 }
 
 func (e *MpathElement) StopColor(s string) *MpathElement {
@@ -781,24 +524,16 @@ func (e *MpathElement) StrokeDashoffset(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) StrokeLinecap(a MpathStrokeLinecap) *MpathElement {
+func (e *MpathElement) StrokeLinecap(a StrokeLinecap) *MpathElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func MpathStrokeLinecapCustom(s string) MpathStrokeLinecap {
-	return MpathStrokeLinecap(s)
-}
-
-func (e *MpathElement) StrokeLinejoin(a MpathStrokeLinejoin) *MpathElement {
+func (e *MpathElement) StrokeLinejoin(a StrokeLinejoin) *MpathElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func MpathStrokeLinejoinCustom(s string) MpathStrokeLinejoin {
-	return MpathStrokeLinejoin(s)
 }
 
 func (e *MpathElement) StrokeMiterlimit(f float64) *MpathElement {
@@ -831,14 +566,10 @@ func (e *MpathElement) Tabindex(i int) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) TextAnchor(a MpathTextAnchor) *MpathElement {
+func (e *MpathElement) TextAnchor(a TextAnchor) *MpathElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func MpathTextAnchorCustom(s string) MpathTextAnchor {
-	return MpathTextAnchor(s)
 }
 
 func (e *MpathElement) TextDecoration(s string) *MpathElement {
@@ -853,14 +584,10 @@ func (e *MpathElement) TextOverflow(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) TextRendering(a MpathTextRendering) *MpathElement {
+func (e *MpathElement) TextRendering(a TextRendering) *MpathElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func MpathTextRenderingCustom(s string) MpathTextRendering {
-	return MpathTextRendering(s)
 }
 
 func (e *MpathElement) Transform(s string) *MpathElement {
@@ -869,14 +596,10 @@ func (e *MpathElement) Transform(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) TransformBox(a MpathTransformBox) *MpathElement {
+func (e *MpathElement) TransformBox(a TransformBox) *MpathElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func MpathTransformBoxCustom(s string) MpathTransformBox {
-	return MpathTransformBox(s)
 }
 
 func (e *MpathElement) TransformOrigin(s string) *MpathElement {
@@ -891,24 +614,16 @@ func (e *MpathElement) UnicodeBidi(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) VectorEffect(a MpathVectorEffect) *MpathElement {
+func (e *MpathElement) VectorEffect(a VectorEffect) *MpathElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func MpathVectorEffectCustom(s string) MpathVectorEffect {
-	return MpathVectorEffect(s)
-}
-
-func (e *MpathElement) Visibility(a MpathVisibility) *MpathElement {
+func (e *MpathElement) Visibility(a Visibility) *MpathElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func MpathVisibilityCustom(s string) MpathVisibility {
-	return MpathVisibility(s)
 }
 
 func (e *MpathElement) WhiteSpace(s string) *MpathElement {
@@ -923,14 +638,10 @@ func (e *MpathElement) WordSpacing(s string) *MpathElement {
 	return e
 }
 
-func (e *MpathElement) WritingMode(a MpathWritingMode) *MpathElement {
+func (e *MpathElement) WritingMode(a WritingMode) *MpathElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func MpathWritingModeCustom(s string) MpathWritingMode {
-	return MpathWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -945,7 +656,7 @@ func (e *MpathElement) XmlLang(s string) *MpathElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *MpathElement) XmlSpace(a MpathXmlSpace) *MpathElement {
+func (e *MpathElement) XmlSpace(a XmlSpace) *MpathElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

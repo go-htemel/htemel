@@ -13,16 +13,20 @@ import (
 )
 
 type StrongElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Strong creates a tag <strong> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The strong element represents strong importance, seriousness, or urgency for its contents.
-func Strong(children ...htemel.Node) *StrongElement {
+func Strong(children ...htemel.PhrasingContent) *StrongElement {
 	node := &StrongElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Strong(children ...htemel.Node) *StrongElement {
 }
 
 // StrongIf creates a tag <strong> instance that is only rendered when condition is true.
-func StrongIf(condition bool, children ...htemel.Node) *StrongElement {
+func StrongIf(condition bool, children ...htemel.PhrasingContent) *StrongElement {
 	if condition {
 		return Strong(children...)
 	}
@@ -43,7 +47,7 @@ func StrongIf(condition bool, children ...htemel.Node) *StrongElement {
 }
 
 // StrongTernary creates a tag <strong> containing then when condition is true, otherwise containing otherwise.
-func StrongTernary(condition bool, then htemel.Node, otherwise htemel.Node) *StrongElement {
+func StrongTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *StrongElement {
 	if condition {
 		return Strong(then)
 	}
@@ -51,7 +55,7 @@ func StrongTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Str
 }
 
 // Children appends children to this element.
-func (e *StrongElement) Children(children ...htemel.Node) *StrongElement {
+func (e *StrongElement) Children(children ...htemel.PhrasingContent) *StrongElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *StrongElement) Textf(format string, args ...any) *StrongElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *StrongElement) If(cond bool, child htemel.Node) *StrongElement {
+func (e *StrongElement) If(cond bool, child htemel.PhrasingContent) *StrongElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *StrongElement) If(cond bool, child htemel.Node) *StrongElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *StrongElement) IfElse(cond bool, then, els htemel.Node) *StrongElement {
+func (e *StrongElement) IfElse(cond bool, then, els htemel.PhrasingContent) *StrongElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *StrongElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type StrongAutocapitalize string
-
-const (
-	StrongAutocapitalizeCharacters StrongAutocapitalize = "characters"
-	StrongAutocapitalizeNone       StrongAutocapitalize = "none"
-	StrongAutocapitalizeOff        StrongAutocapitalize = "off"
-	StrongAutocapitalizeOn         StrongAutocapitalize = "on"
-	StrongAutocapitalizeSentences  StrongAutocapitalize = "sentences"
-	StrongAutocapitalizeWords      StrongAutocapitalize = "words"
-)
-
-type StrongAutocorrect string
-
-const (
-	StrongAutocorrectOff   StrongAutocorrect = "off"
-	StrongAutocorrectOn    StrongAutocorrect = "on"
-	StrongAutocorrectEmpty StrongAutocorrect = ""
-)
-
-type StrongContenteditable string
-
-const (
-	StrongContenteditableFalse         StrongContenteditable = "false"
-	StrongContenteditablePlaintextOnly StrongContenteditable = "plaintext-only"
-	StrongContenteditableTrue          StrongContenteditable = "true"
-	StrongContenteditableEmpty         StrongContenteditable = ""
-)
-
-type StrongDir string
-
-const (
-	StrongDirAuto StrongDir = "auto"
-	StrongDirLtr  StrongDir = "ltr"
-	StrongDirRtl  StrongDir = "rtl"
-)
-
-type StrongDraggable string
-
-const (
-	StrongDraggableFalse StrongDraggable = "false"
-	StrongDraggableTrue  StrongDraggable = "true"
-)
-
-type StrongEnterkeyhint string
-
-const (
-	StrongEnterkeyhintDone     StrongEnterkeyhint = "done"
-	StrongEnterkeyhintEnter    StrongEnterkeyhint = "enter"
-	StrongEnterkeyhintGo       StrongEnterkeyhint = "go"
-	StrongEnterkeyhintNext     StrongEnterkeyhint = "next"
-	StrongEnterkeyhintPrevious StrongEnterkeyhint = "previous"
-	StrongEnterkeyhintSearch   StrongEnterkeyhint = "search"
-	StrongEnterkeyhintSend     StrongEnterkeyhint = "send"
-)
-
-type StrongHidden string
-
-const (
-	StrongHiddenHidden     StrongHidden = "hidden"
-	StrongHiddenUntilFound StrongHidden = "until-found"
-	StrongHiddenEmpty      StrongHidden = ""
-)
-
-type StrongInputmode string
-
-const (
-	StrongInputmodeDecimal StrongInputmode = "decimal"
-	StrongInputmodeEmail   StrongInputmode = "email"
-	StrongInputmodeNone    StrongInputmode = "none"
-	StrongInputmodeNumeric StrongInputmode = "numeric"
-	StrongInputmodeSearch  StrongInputmode = "search"
-	StrongInputmodeTel     StrongInputmode = "tel"
-	StrongInputmodeText    StrongInputmode = "text"
-	StrongInputmodeUrl     StrongInputmode = "url"
-)
-
-type StrongPopover string
-
-const (
-	StrongPopoverAuto   StrongPopover = "auto"
-	StrongPopoverHint   StrongPopover = "hint"
-	StrongPopoverManual StrongPopover = "manual"
-	StrongPopoverEmpty  StrongPopover = ""
-)
-
-type StrongSpellcheck string
-
-const (
-	StrongSpellcheckFalse StrongSpellcheck = "false"
-	StrongSpellcheckTrue  StrongSpellcheck = "true"
-	StrongSpellcheckEmpty StrongSpellcheck = ""
-)
-
-type StrongTranslate string
-
-const (
-	StrongTranslateNo    StrongTranslate = "no"
-	StrongTranslateYes   StrongTranslate = "yes"
-	StrongTranslateEmpty StrongTranslate = ""
-)
-
-type StrongWritingsuggestions string
-
-const (
-	StrongWritingsuggestionsFalse StrongWritingsuggestions = "false"
-	StrongWritingsuggestionsTrue  StrongWritingsuggestions = "true"
-	StrongWritingsuggestionsEmpty StrongWritingsuggestions = ""
-)
-
 func (e *StrongElement) Accesskey(r rune) *StrongElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *StrongElement) Aria(name string, s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Autocapitalize(a StrongAutocapitalize) *StrongElement {
+func (e *StrongElement) Autocapitalize(a Autocapitalize) *StrongElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *StrongElement) Autocapitalize(a StrongAutocapitalize) *StrongElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Autocorrect(v ...StrongAutocorrect) *StrongElement {
-	var val StrongAutocorrect
+func (e *StrongElement) Autocorrect(v ...Autocorrect) *StrongElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *StrongElement) Class(s ...string) *StrongElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Contenteditable(v ...StrongContenteditable) *StrongElement {
-	var val StrongContenteditable
+func (e *StrongElement) Contenteditable(v ...Contenteditable) *StrongElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *StrongElement) Data(name string, s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Dir(a StrongDir) *StrongElement {
+func (e *StrongElement) Dir(a Dir) *StrongElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *StrongElement) Draggable(a StrongDraggable) *StrongElement {
+func (e *StrongElement) Draggable(a Draggable) *StrongElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *StrongElement) Enterkeyhint(a StrongEnterkeyhint) *StrongElement {
+func (e *StrongElement) Enterkeyhint(a Enterkeyhint) *StrongElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *StrongElement) Headingreset(b bool) *StrongElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Hidden(v ...StrongHidden) *StrongElement {
-	var val StrongHidden
+func (e *StrongElement) Hidden(v ...Hidden) *StrongElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *StrongElement) Inert(b bool) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Inputmode(a StrongInputmode) *StrongElement {
+func (e *StrongElement) Inputmode(a Inputmode) *StrongElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *StrongElement) Part(s ...string) *StrongElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Popover(v ...StrongPopover) *StrongElement {
-	var val StrongPopover
+func (e *StrongElement) Popover(v ...Popover) *StrongElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *StrongElement) Slot(s string) *StrongElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Spellcheck(v ...StrongSpellcheck) *StrongElement {
-	var val StrongSpellcheck
+func (e *StrongElement) Spellcheck(v ...Spellcheck) *StrongElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *StrongElement) Title(s string) *StrongElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Translate(v ...StrongTranslate) *StrongElement {
-	var val StrongTranslate
+func (e *StrongElement) Translate(v ...Translate) *StrongElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *StrongElement) Translate(v ...StrongTranslate) *StrongElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *StrongElement) Writingsuggestions(v ...StrongWritingsuggestions) *StrongElement {
-	var val StrongWritingsuggestions
+func (e *StrongElement) Writingsuggestions(v ...Writingsuggestions) *StrongElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

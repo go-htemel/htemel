@@ -13,16 +13,21 @@ import (
 )
 
 type TextareaElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.TextContent
 	skipRender bool
 }
 
 // Textarea creates a tag <textarea> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: text only (htemel.TextContent).
+//
 // Spec Description: The textarea element represents a multiline plain text edit control for the element's raw value. The contents of the control represent the control's default value.
-func Textarea(children ...htemel.Node) *TextareaElement {
+func Textarea(children ...htemel.TextContent) *TextareaElement {
 	node := &TextareaElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Textarea(children ...htemel.Node) *TextareaElement {
 }
 
 // TextareaIf creates a tag <textarea> instance that is only rendered when condition is true.
-func TextareaIf(condition bool, children ...htemel.Node) *TextareaElement {
+func TextareaIf(condition bool, children ...htemel.TextContent) *TextareaElement {
 	if condition {
 		return Textarea(children...)
 	}
@@ -43,7 +48,7 @@ func TextareaIf(condition bool, children ...htemel.Node) *TextareaElement {
 }
 
 // TextareaTernary creates a tag <textarea> containing then when condition is true, otherwise containing otherwise.
-func TextareaTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TextareaElement {
+func TextareaTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *TextareaElement {
 	if condition {
 		return Textarea(then)
 	}
@@ -51,7 +56,7 @@ func TextareaTernary(condition bool, then htemel.Node, otherwise htemel.Node) *T
 }
 
 // Children appends children to this element.
-func (e *TextareaElement) Children(children ...htemel.Node) *TextareaElement {
+func (e *TextareaElement) Children(children ...htemel.TextContent) *TextareaElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *TextareaElement) Textf(format string, args ...any) *TextareaElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TextareaElement) If(cond bool, child htemel.Node) *TextareaElement {
+func (e *TextareaElement) If(cond bool, child htemel.TextContent) *TextareaElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *TextareaElement) If(cond bool, child htemel.Node) *TextareaElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TextareaElement) IfElse(cond bool, then, els htemel.Node) *TextareaElement {
+func (e *TextareaElement) IfElse(cond bool, then, els htemel.TextContent) *TextareaElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,122 +169,6 @@ func (e *TextareaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TextareaWrap string
-
-const (
-	TextareaWrapHard TextareaWrap = "hard"
-	TextareaWrapSoft TextareaWrap = "soft"
-)
-
-type TextareaAutocapitalize string
-
-const (
-	TextareaAutocapitalizeCharacters TextareaAutocapitalize = "characters"
-	TextareaAutocapitalizeNone       TextareaAutocapitalize = "none"
-	TextareaAutocapitalizeOff        TextareaAutocapitalize = "off"
-	TextareaAutocapitalizeOn         TextareaAutocapitalize = "on"
-	TextareaAutocapitalizeSentences  TextareaAutocapitalize = "sentences"
-	TextareaAutocapitalizeWords      TextareaAutocapitalize = "words"
-)
-
-type TextareaAutocorrect string
-
-const (
-	TextareaAutocorrectOff   TextareaAutocorrect = "off"
-	TextareaAutocorrectOn    TextareaAutocorrect = "on"
-	TextareaAutocorrectEmpty TextareaAutocorrect = ""
-)
-
-type TextareaContenteditable string
-
-const (
-	TextareaContenteditableFalse         TextareaContenteditable = "false"
-	TextareaContenteditablePlaintextOnly TextareaContenteditable = "plaintext-only"
-	TextareaContenteditableTrue          TextareaContenteditable = "true"
-	TextareaContenteditableEmpty         TextareaContenteditable = ""
-)
-
-type TextareaDir string
-
-const (
-	TextareaDirAuto TextareaDir = "auto"
-	TextareaDirLtr  TextareaDir = "ltr"
-	TextareaDirRtl  TextareaDir = "rtl"
-)
-
-type TextareaDraggable string
-
-const (
-	TextareaDraggableFalse TextareaDraggable = "false"
-	TextareaDraggableTrue  TextareaDraggable = "true"
-)
-
-type TextareaEnterkeyhint string
-
-const (
-	TextareaEnterkeyhintDone     TextareaEnterkeyhint = "done"
-	TextareaEnterkeyhintEnter    TextareaEnterkeyhint = "enter"
-	TextareaEnterkeyhintGo       TextareaEnterkeyhint = "go"
-	TextareaEnterkeyhintNext     TextareaEnterkeyhint = "next"
-	TextareaEnterkeyhintPrevious TextareaEnterkeyhint = "previous"
-	TextareaEnterkeyhintSearch   TextareaEnterkeyhint = "search"
-	TextareaEnterkeyhintSend     TextareaEnterkeyhint = "send"
-)
-
-type TextareaHidden string
-
-const (
-	TextareaHiddenHidden     TextareaHidden = "hidden"
-	TextareaHiddenUntilFound TextareaHidden = "until-found"
-	TextareaHiddenEmpty      TextareaHidden = ""
-)
-
-type TextareaInputmode string
-
-const (
-	TextareaInputmodeDecimal TextareaInputmode = "decimal"
-	TextareaInputmodeEmail   TextareaInputmode = "email"
-	TextareaInputmodeNone    TextareaInputmode = "none"
-	TextareaInputmodeNumeric TextareaInputmode = "numeric"
-	TextareaInputmodeSearch  TextareaInputmode = "search"
-	TextareaInputmodeTel     TextareaInputmode = "tel"
-	TextareaInputmodeText    TextareaInputmode = "text"
-	TextareaInputmodeUrl     TextareaInputmode = "url"
-)
-
-type TextareaPopover string
-
-const (
-	TextareaPopoverAuto   TextareaPopover = "auto"
-	TextareaPopoverHint   TextareaPopover = "hint"
-	TextareaPopoverManual TextareaPopover = "manual"
-	TextareaPopoverEmpty  TextareaPopover = ""
-)
-
-type TextareaSpellcheck string
-
-const (
-	TextareaSpellcheckFalse TextareaSpellcheck = "false"
-	TextareaSpellcheckTrue  TextareaSpellcheck = "true"
-	TextareaSpellcheckEmpty TextareaSpellcheck = ""
-)
-
-type TextareaTranslate string
-
-const (
-	TextareaTranslateNo    TextareaTranslate = "no"
-	TextareaTranslateYes   TextareaTranslate = "yes"
-	TextareaTranslateEmpty TextareaTranslate = ""
-)
-
-type TextareaWritingsuggestions string
-
-const (
-	TextareaWritingsuggestionsFalse TextareaWritingsuggestions = "false"
-	TextareaWritingsuggestionsTrue  TextareaWritingsuggestions = "true"
-	TextareaWritingsuggestionsEmpty TextareaWritingsuggestions = ""
-)
-
 func (e *TextareaElement) Autocomplete(s ...string) *TextareaElement {
 	e.attributes.Set("autocomplete", strings.Join(s, " "))
 
@@ -358,7 +247,7 @@ func (e *TextareaElement) Rows(i int) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Wrap(a TextareaWrap) *TextareaElement {
+func (e *TextareaElement) Wrap(a Wrap) *TextareaElement {
 	e.attributes.Set("wrap", string(a))
 
 	return e
@@ -386,7 +275,7 @@ func (e *TextareaElement) Aria(name string, s string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Autocapitalize(a TextareaAutocapitalize) *TextareaElement {
+func (e *TextareaElement) Autocapitalize(a Autocapitalize) *TextareaElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -394,8 +283,8 @@ func (e *TextareaElement) Autocapitalize(a TextareaAutocapitalize) *TextareaElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Autocorrect(v ...TextareaAutocorrect) *TextareaElement {
-	var val TextareaAutocorrect
+func (e *TextareaElement) Autocorrect(v ...Autocorrect) *TextareaElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -420,8 +309,8 @@ func (e *TextareaElement) Class(s ...string) *TextareaElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Contenteditable(v ...TextareaContenteditable) *TextareaElement {
-	var val TextareaContenteditable
+func (e *TextareaElement) Contenteditable(v ...Contenteditable) *TextareaElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -446,19 +335,19 @@ func (e *TextareaElement) Data(name string, s string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Dir(a TextareaDir) *TextareaElement {
+func (e *TextareaElement) Dir(a Dir) *TextareaElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TextareaElement) Draggable(a TextareaDraggable) *TextareaElement {
+func (e *TextareaElement) Draggable(a Draggable) *TextareaElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TextareaElement) Enterkeyhint(a TextareaEnterkeyhint) *TextareaElement {
+func (e *TextareaElement) Enterkeyhint(a Enterkeyhint) *TextareaElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -486,8 +375,8 @@ func (e *TextareaElement) Headingreset(b bool) *TextareaElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Hidden(v ...TextareaHidden) *TextareaElement {
-	var val TextareaHidden
+func (e *TextareaElement) Hidden(v ...Hidden) *TextareaElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -510,7 +399,7 @@ func (e *TextareaElement) Inert(b bool) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Inputmode(a TextareaInputmode) *TextareaElement {
+func (e *TextareaElement) Inputmode(a Inputmode) *TextareaElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -576,8 +465,8 @@ func (e *TextareaElement) Part(s ...string) *TextareaElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Popover(v ...TextareaPopover) *TextareaElement {
-	var val TextareaPopover
+func (e *TextareaElement) Popover(v ...Popover) *TextareaElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -600,8 +489,8 @@ func (e *TextareaElement) Slot(s string) *TextareaElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Spellcheck(v ...TextareaSpellcheck) *TextareaElement {
-	var val TextareaSpellcheck
+func (e *TextareaElement) Spellcheck(v ...Spellcheck) *TextareaElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -630,8 +519,8 @@ func (e *TextareaElement) Title(s string) *TextareaElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Translate(v ...TextareaTranslate) *TextareaElement {
-	var val TextareaTranslate
+func (e *TextareaElement) Translate(v ...Translate) *TextareaElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -642,8 +531,8 @@ func (e *TextareaElement) Translate(v ...TextareaTranslate) *TextareaElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TextareaElement) Writingsuggestions(v ...TextareaWritingsuggestions) *TextareaElement {
-	var val TextareaWritingsuggestions
+func (e *TextareaElement) Writingsuggestions(v ...Writingsuggestions) *TextareaElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

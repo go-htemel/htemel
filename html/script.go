@@ -13,16 +13,21 @@ import (
 )
 
 type ScriptElement struct {
+	htemel.PhrasingMarker
+	htemel.MetadataMarker
+	htemel.ScriptSupportingMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.TextContent
 	skipRender bool
 }
 
 // Script creates a tag <script> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: text only (htemel.TextContent).
+//
 // Spec Description: The script element allows authors to include dynamic script, instructions to the user agent, and data blocks in their documents. The element does not represent content for the user.
-func Script(children ...htemel.Node) *ScriptElement {
+func Script(children ...htemel.TextContent) *ScriptElement {
 	node := &ScriptElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Script(children ...htemel.Node) *ScriptElement {
 }
 
 // ScriptIf creates a tag <script> instance that is only rendered when condition is true.
-func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
+func ScriptIf(condition bool, children ...htemel.TextContent) *ScriptElement {
 	if condition {
 		return Script(children...)
 	}
@@ -43,7 +48,7 @@ func ScriptIf(condition bool, children ...htemel.Node) *ScriptElement {
 }
 
 // ScriptTernary creates a tag <script> containing then when condition is true, otherwise containing otherwise.
-func ScriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ScriptElement {
+func ScriptTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *ScriptElement {
 	if condition {
 		return Script(then)
 	}
@@ -51,7 +56,7 @@ func ScriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Scr
 }
 
 // Children appends children to this element.
-func (e *ScriptElement) Children(children ...htemel.Node) *ScriptElement {
+func (e *ScriptElement) Children(children ...htemel.TextContent) *ScriptElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -77,7 +82,7 @@ func (e *ScriptElement) Textf(format string, args ...any) *ScriptElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ScriptElement) If(cond bool, child htemel.Node) *ScriptElement {
+func (e *ScriptElement) If(cond bool, child htemel.TextContent) *ScriptElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -85,7 +90,7 @@ func (e *ScriptElement) If(cond bool, child htemel.Node) *ScriptElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ScriptElement) IfElse(cond bool, then, els htemel.Node) *ScriptElement {
+func (e *ScriptElement) IfElse(cond bool, then, els htemel.TextContent) *ScriptElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -167,36 +172,7 @@ func (e *ScriptElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ScriptCrossorigin string
-
-const (
-	ScriptCrossoriginAnonymous      ScriptCrossorigin = "anonymous"
-	ScriptCrossoriginUseCredentials ScriptCrossorigin = "use-credentials"
-	ScriptCrossoriginEmpty          ScriptCrossorigin = ""
-)
-
-type ScriptFetchpriority string
-
-const (
-	ScriptFetchpriorityAuto ScriptFetchpriority = "auto"
-	ScriptFetchpriorityHigh ScriptFetchpriority = "high"
-	ScriptFetchpriorityLow  ScriptFetchpriority = "low"
-)
-
-type ScriptReferrerpolicy string
-
-const (
-	ScriptReferrerpolicyNoReferrer                  ScriptReferrerpolicy = "no-referrer"
-	ScriptReferrerpolicyNoReferrerWhenDowngrade     ScriptReferrerpolicy = "no-referrer-when-downgrade"
-	ScriptReferrerpolicyOrigin                      ScriptReferrerpolicy = "origin"
-	ScriptReferrerpolicyOriginWhenCrossOrigin       ScriptReferrerpolicy = "origin-when-cross-origin"
-	ScriptReferrerpolicySameOrigin                  ScriptReferrerpolicy = "same-origin"
-	ScriptReferrerpolicyStrictOrigin                ScriptReferrerpolicy = "strict-origin"
-	ScriptReferrerpolicyStrictOriginWhenCrossOrigin ScriptReferrerpolicy = "strict-origin-when-cross-origin"
-	ScriptReferrerpolicyUnsafeUrl                   ScriptReferrerpolicy = "unsafe-url"
-	ScriptReferrerpolicyEmpty                       ScriptReferrerpolicy = ""
-)
-
+// ScriptType is a value of the "type" attribute of <script>.
 type ScriptType string
 
 const (
@@ -205,114 +181,10 @@ const (
 	ScriptTypeSpeculationrules ScriptType = "speculationrules"
 )
 
-type ScriptAutocapitalize string
-
-const (
-	ScriptAutocapitalizeCharacters ScriptAutocapitalize = "characters"
-	ScriptAutocapitalizeNone       ScriptAutocapitalize = "none"
-	ScriptAutocapitalizeOff        ScriptAutocapitalize = "off"
-	ScriptAutocapitalizeOn         ScriptAutocapitalize = "on"
-	ScriptAutocapitalizeSentences  ScriptAutocapitalize = "sentences"
-	ScriptAutocapitalizeWords      ScriptAutocapitalize = "words"
-)
-
-type ScriptAutocorrect string
-
-const (
-	ScriptAutocorrectOff   ScriptAutocorrect = "off"
-	ScriptAutocorrectOn    ScriptAutocorrect = "on"
-	ScriptAutocorrectEmpty ScriptAutocorrect = ""
-)
-
-type ScriptContenteditable string
-
-const (
-	ScriptContenteditableFalse         ScriptContenteditable = "false"
-	ScriptContenteditablePlaintextOnly ScriptContenteditable = "plaintext-only"
-	ScriptContenteditableTrue          ScriptContenteditable = "true"
-	ScriptContenteditableEmpty         ScriptContenteditable = ""
-)
-
-type ScriptDir string
-
-const (
-	ScriptDirAuto ScriptDir = "auto"
-	ScriptDirLtr  ScriptDir = "ltr"
-	ScriptDirRtl  ScriptDir = "rtl"
-)
-
-type ScriptDraggable string
-
-const (
-	ScriptDraggableFalse ScriptDraggable = "false"
-	ScriptDraggableTrue  ScriptDraggable = "true"
-)
-
-type ScriptEnterkeyhint string
-
-const (
-	ScriptEnterkeyhintDone     ScriptEnterkeyhint = "done"
-	ScriptEnterkeyhintEnter    ScriptEnterkeyhint = "enter"
-	ScriptEnterkeyhintGo       ScriptEnterkeyhint = "go"
-	ScriptEnterkeyhintNext     ScriptEnterkeyhint = "next"
-	ScriptEnterkeyhintPrevious ScriptEnterkeyhint = "previous"
-	ScriptEnterkeyhintSearch   ScriptEnterkeyhint = "search"
-	ScriptEnterkeyhintSend     ScriptEnterkeyhint = "send"
-)
-
-type ScriptHidden string
-
-const (
-	ScriptHiddenHidden     ScriptHidden = "hidden"
-	ScriptHiddenUntilFound ScriptHidden = "until-found"
-	ScriptHiddenEmpty      ScriptHidden = ""
-)
-
-type ScriptInputmode string
-
-const (
-	ScriptInputmodeDecimal ScriptInputmode = "decimal"
-	ScriptInputmodeEmail   ScriptInputmode = "email"
-	ScriptInputmodeNone    ScriptInputmode = "none"
-	ScriptInputmodeNumeric ScriptInputmode = "numeric"
-	ScriptInputmodeSearch  ScriptInputmode = "search"
-	ScriptInputmodeTel     ScriptInputmode = "tel"
-	ScriptInputmodeText    ScriptInputmode = "text"
-	ScriptInputmodeUrl     ScriptInputmode = "url"
-)
-
-type ScriptPopover string
-
-const (
-	ScriptPopoverAuto   ScriptPopover = "auto"
-	ScriptPopoverHint   ScriptPopover = "hint"
-	ScriptPopoverManual ScriptPopover = "manual"
-	ScriptPopoverEmpty  ScriptPopover = ""
-)
-
-type ScriptSpellcheck string
-
-const (
-	ScriptSpellcheckFalse ScriptSpellcheck = "false"
-	ScriptSpellcheckTrue  ScriptSpellcheck = "true"
-	ScriptSpellcheckEmpty ScriptSpellcheck = ""
-)
-
-type ScriptTranslate string
-
-const (
-	ScriptTranslateNo    ScriptTranslate = "no"
-	ScriptTranslateYes   ScriptTranslate = "yes"
-	ScriptTranslateEmpty ScriptTranslate = ""
-)
-
-type ScriptWritingsuggestions string
-
-const (
-	ScriptWritingsuggestionsFalse ScriptWritingsuggestions = "false"
-	ScriptWritingsuggestionsTrue  ScriptWritingsuggestions = "true"
-	ScriptWritingsuggestionsEmpty ScriptWritingsuggestions = ""
-)
+// ScriptTypeCustom returns s as a ScriptType, for values not listed in the specification.
+func ScriptTypeCustom(s string) ScriptType {
+	return ScriptType(s)
+}
 
 // Async sets the boolean attribute "async". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -330,8 +202,8 @@ func (e *ScriptElement) Blocking(s ...string) *ScriptElement {
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Crossorigin(v ...ScriptCrossorigin) *ScriptElement {
-	var val ScriptCrossorigin
+func (e *ScriptElement) Crossorigin(v ...Crossorigin) *ScriptElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -348,7 +220,7 @@ func (e *ScriptElement) Defer(b bool) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
+func (e *ScriptElement) Fetchpriority(a Fetchpriority) *ScriptElement {
 	e.attributes.Set("fetchpriority", string(a))
 
 	return e
@@ -370,8 +242,8 @@ func (e *ScriptElement) Nomodule(b bool) *ScriptElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Referrerpolicy(v ...ScriptReferrerpolicy) *ScriptElement {
-	var val ScriptReferrerpolicy
+func (e *ScriptElement) Referrerpolicy(v ...Referrerpolicy) *ScriptElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -392,10 +264,6 @@ func (e *ScriptElement) Type(a ScriptType) *ScriptElement {
 	e.attributes.Set("type", string(a))
 
 	return e
-}
-
-func ScriptTypeCustom(s string) ScriptType {
-	return ScriptType(s)
 }
 
 func (e *ScriptElement) Accesskey(r rune) *ScriptElement {
@@ -420,7 +288,7 @@ func (e *ScriptElement) Aria(name string, s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Autocapitalize(a ScriptAutocapitalize) *ScriptElement {
+func (e *ScriptElement) Autocapitalize(a Autocapitalize) *ScriptElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -428,8 +296,8 @@ func (e *ScriptElement) Autocapitalize(a ScriptAutocapitalize) *ScriptElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Autocorrect(v ...ScriptAutocorrect) *ScriptElement {
-	var val ScriptAutocorrect
+func (e *ScriptElement) Autocorrect(v ...Autocorrect) *ScriptElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -454,8 +322,8 @@ func (e *ScriptElement) Class(s ...string) *ScriptElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Contenteditable(v ...ScriptContenteditable) *ScriptElement {
-	var val ScriptContenteditable
+func (e *ScriptElement) Contenteditable(v ...Contenteditable) *ScriptElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -480,19 +348,19 @@ func (e *ScriptElement) Data(name string, s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Dir(a ScriptDir) *ScriptElement {
+func (e *ScriptElement) Dir(a Dir) *ScriptElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *ScriptElement) Draggable(a ScriptDraggable) *ScriptElement {
+func (e *ScriptElement) Draggable(a Draggable) *ScriptElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *ScriptElement) Enterkeyhint(a ScriptEnterkeyhint) *ScriptElement {
+func (e *ScriptElement) Enterkeyhint(a Enterkeyhint) *ScriptElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -520,8 +388,8 @@ func (e *ScriptElement) Headingreset(b bool) *ScriptElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Hidden(v ...ScriptHidden) *ScriptElement {
-	var val ScriptHidden
+func (e *ScriptElement) Hidden(v ...Hidden) *ScriptElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -544,7 +412,7 @@ func (e *ScriptElement) Inert(b bool) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Inputmode(a ScriptInputmode) *ScriptElement {
+func (e *ScriptElement) Inputmode(a Inputmode) *ScriptElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -610,8 +478,8 @@ func (e *ScriptElement) Part(s ...string) *ScriptElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Popover(v ...ScriptPopover) *ScriptElement {
-	var val ScriptPopover
+func (e *ScriptElement) Popover(v ...Popover) *ScriptElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -634,8 +502,8 @@ func (e *ScriptElement) Slot(s string) *ScriptElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Spellcheck(v ...ScriptSpellcheck) *ScriptElement {
-	var val ScriptSpellcheck
+func (e *ScriptElement) Spellcheck(v ...Spellcheck) *ScriptElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -664,8 +532,8 @@ func (e *ScriptElement) Title(s string) *ScriptElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Translate(v ...ScriptTranslate) *ScriptElement {
-	var val ScriptTranslate
+func (e *ScriptElement) Translate(v ...Translate) *ScriptElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -676,8 +544,8 @@ func (e *ScriptElement) Translate(v ...ScriptTranslate) *ScriptElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ScriptElement) Writingsuggestions(v ...ScriptWritingsuggestions) *ScriptElement {
-	var val ScriptWritingsuggestions
+func (e *ScriptElement) Writingsuggestions(v ...Writingsuggestions) *ScriptElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

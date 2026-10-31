@@ -13,16 +13,20 @@ import (
 )
 
 type DataElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Data creates a tag <data> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The data element represents its contents, along with a machine-readable form of those contents in the value attribute.
-func Data(children ...htemel.Node) *DataElement {
+func Data(children ...htemel.PhrasingContent) *DataElement {
 	node := &DataElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Data(children ...htemel.Node) *DataElement {
 }
 
 // DataIf creates a tag <data> instance that is only rendered when condition is true.
-func DataIf(condition bool, children ...htemel.Node) *DataElement {
+func DataIf(condition bool, children ...htemel.PhrasingContent) *DataElement {
 	if condition {
 		return Data(children...)
 	}
@@ -43,7 +47,7 @@ func DataIf(condition bool, children ...htemel.Node) *DataElement {
 }
 
 // DataTernary creates a tag <data> containing then when condition is true, otherwise containing otherwise.
-func DataTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DataElement {
+func DataTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *DataElement {
 	if condition {
 		return Data(then)
 	}
@@ -51,7 +55,7 @@ func DataTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DataE
 }
 
 // Children appends children to this element.
-func (e *DataElement) Children(children ...htemel.Node) *DataElement {
+func (e *DataElement) Children(children ...htemel.PhrasingContent) *DataElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *DataElement) Textf(format string, args ...any) *DataElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DataElement) If(cond bool, child htemel.Node) *DataElement {
+func (e *DataElement) If(cond bool, child htemel.PhrasingContent) *DataElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *DataElement) If(cond bool, child htemel.Node) *DataElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DataElement) IfElse(cond bool, then, els htemel.Node) *DataElement {
+func (e *DataElement) IfElse(cond bool, then, els htemel.PhrasingContent) *DataElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *DataElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DataAutocapitalize string
-
-const (
-	DataAutocapitalizeCharacters DataAutocapitalize = "characters"
-	DataAutocapitalizeNone       DataAutocapitalize = "none"
-	DataAutocapitalizeOff        DataAutocapitalize = "off"
-	DataAutocapitalizeOn         DataAutocapitalize = "on"
-	DataAutocapitalizeSentences  DataAutocapitalize = "sentences"
-	DataAutocapitalizeWords      DataAutocapitalize = "words"
-)
-
-type DataAutocorrect string
-
-const (
-	DataAutocorrectOff   DataAutocorrect = "off"
-	DataAutocorrectOn    DataAutocorrect = "on"
-	DataAutocorrectEmpty DataAutocorrect = ""
-)
-
-type DataContenteditable string
-
-const (
-	DataContenteditableFalse         DataContenteditable = "false"
-	DataContenteditablePlaintextOnly DataContenteditable = "plaintext-only"
-	DataContenteditableTrue          DataContenteditable = "true"
-	DataContenteditableEmpty         DataContenteditable = ""
-)
-
-type DataDir string
-
-const (
-	DataDirAuto DataDir = "auto"
-	DataDirLtr  DataDir = "ltr"
-	DataDirRtl  DataDir = "rtl"
-)
-
-type DataDraggable string
-
-const (
-	DataDraggableFalse DataDraggable = "false"
-	DataDraggableTrue  DataDraggable = "true"
-)
-
-type DataEnterkeyhint string
-
-const (
-	DataEnterkeyhintDone     DataEnterkeyhint = "done"
-	DataEnterkeyhintEnter    DataEnterkeyhint = "enter"
-	DataEnterkeyhintGo       DataEnterkeyhint = "go"
-	DataEnterkeyhintNext     DataEnterkeyhint = "next"
-	DataEnterkeyhintPrevious DataEnterkeyhint = "previous"
-	DataEnterkeyhintSearch   DataEnterkeyhint = "search"
-	DataEnterkeyhintSend     DataEnterkeyhint = "send"
-)
-
-type DataHidden string
-
-const (
-	DataHiddenHidden     DataHidden = "hidden"
-	DataHiddenUntilFound DataHidden = "until-found"
-	DataHiddenEmpty      DataHidden = ""
-)
-
-type DataInputmode string
-
-const (
-	DataInputmodeDecimal DataInputmode = "decimal"
-	DataInputmodeEmail   DataInputmode = "email"
-	DataInputmodeNone    DataInputmode = "none"
-	DataInputmodeNumeric DataInputmode = "numeric"
-	DataInputmodeSearch  DataInputmode = "search"
-	DataInputmodeTel     DataInputmode = "tel"
-	DataInputmodeText    DataInputmode = "text"
-	DataInputmodeUrl     DataInputmode = "url"
-)
-
-type DataPopover string
-
-const (
-	DataPopoverAuto   DataPopover = "auto"
-	DataPopoverHint   DataPopover = "hint"
-	DataPopoverManual DataPopover = "manual"
-	DataPopoverEmpty  DataPopover = ""
-)
-
-type DataSpellcheck string
-
-const (
-	DataSpellcheckFalse DataSpellcheck = "false"
-	DataSpellcheckTrue  DataSpellcheck = "true"
-	DataSpellcheckEmpty DataSpellcheck = ""
-)
-
-type DataTranslate string
-
-const (
-	DataTranslateNo    DataTranslate = "no"
-	DataTranslateYes   DataTranslate = "yes"
-	DataTranslateEmpty DataTranslate = ""
-)
-
-type DataWritingsuggestions string
-
-const (
-	DataWritingsuggestionsFalse DataWritingsuggestions = "false"
-	DataWritingsuggestionsTrue  DataWritingsuggestions = "true"
-	DataWritingsuggestionsEmpty DataWritingsuggestions = ""
-)
-
 func (e *DataElement) Value(s string) *DataElement {
 	e.attributes.Set("value", s)
 
@@ -301,7 +196,7 @@ func (e *DataElement) Aria(name string, s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Autocapitalize(a DataAutocapitalize) *DataElement {
+func (e *DataElement) Autocapitalize(a Autocapitalize) *DataElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +204,8 @@ func (e *DataElement) Autocapitalize(a DataAutocapitalize) *DataElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Autocorrect(v ...DataAutocorrect) *DataElement {
-	var val DataAutocorrect
+func (e *DataElement) Autocorrect(v ...Autocorrect) *DataElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +230,8 @@ func (e *DataElement) Class(s ...string) *DataElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Contenteditable(v ...DataContenteditable) *DataElement {
-	var val DataContenteditable
+func (e *DataElement) Contenteditable(v ...Contenteditable) *DataElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +256,19 @@ func (e *DataElement) Data(name string, s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Dir(a DataDir) *DataElement {
+func (e *DataElement) Dir(a Dir) *DataElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DataElement) Draggable(a DataDraggable) *DataElement {
+func (e *DataElement) Draggable(a Draggable) *DataElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DataElement) Enterkeyhint(a DataEnterkeyhint) *DataElement {
+func (e *DataElement) Enterkeyhint(a Enterkeyhint) *DataElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +296,8 @@ func (e *DataElement) Headingreset(b bool) *DataElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Hidden(v ...DataHidden) *DataElement {
-	var val DataHidden
+func (e *DataElement) Hidden(v ...Hidden) *DataElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +320,7 @@ func (e *DataElement) Inert(b bool) *DataElement {
 	return e
 }
 
-func (e *DataElement) Inputmode(a DataInputmode) *DataElement {
+func (e *DataElement) Inputmode(a Inputmode) *DataElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +386,8 @@ func (e *DataElement) Part(s ...string) *DataElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Popover(v ...DataPopover) *DataElement {
-	var val DataPopover
+func (e *DataElement) Popover(v ...Popover) *DataElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +410,8 @@ func (e *DataElement) Slot(s string) *DataElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Spellcheck(v ...DataSpellcheck) *DataElement {
-	var val DataSpellcheck
+func (e *DataElement) Spellcheck(v ...Spellcheck) *DataElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +440,8 @@ func (e *DataElement) Title(s string) *DataElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Translate(v ...DataTranslate) *DataElement {
-	var val DataTranslate
+func (e *DataElement) Translate(v ...Translate) *DataElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +452,8 @@ func (e *DataElement) Translate(v ...DataTranslate) *DataElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DataElement) Writingsuggestions(v ...DataWritingsuggestions) *DataElement {
-	var val DataWritingsuggestions
+func (e *DataElement) Writingsuggestions(v ...Writingsuggestions) *DataElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

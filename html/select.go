@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,34 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// SelectChild is a permitted child of <select>: <button>, <div>, <hr>, <noscript>, <optgroup>,
+// <option>, script-supporting elements.
+//
+// It is implemented by <button>, <div>, <hr>, <noscript>, <optgroup>, <option>, <script>,
+// <template>, by any type embedding htemel.ScriptSupportingMarker and by the unchecked nodes of
+// package htemel (Group, Each, If, Unchecked, ...).
+type SelectChild interface {
+	htemel.Node
+	HTMLSelectChild()
+}
+
 type SelectElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []SelectChild
 	skipRender bool
 }
 
 // Select creates a tag <select> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <button>, <div>, <hr>, <noscript>, <optgroup>, <option>, script-supporting elements
+// (SelectChild).
+//
 // Spec Description: The select element represents a control for selecting amongst a set of options.
-func Select(children ...htemel.Node) *SelectElement {
+func Select(children ...SelectChild) *SelectElement {
 	node := &SelectElement{
 		children: children,
 	}
@@ -31,7 +47,7 @@ func Select(children ...htemel.Node) *SelectElement {
 }
 
 // SelectIf creates a tag <select> instance that is only rendered when condition is true.
-func SelectIf(condition bool, children ...htemel.Node) *SelectElement {
+func SelectIf(condition bool, children ...SelectChild) *SelectElement {
 	if condition {
 		return Select(children...)
 	}
@@ -43,7 +59,7 @@ func SelectIf(condition bool, children ...htemel.Node) *SelectElement {
 }
 
 // SelectTernary creates a tag <select> containing then when condition is true, otherwise containing otherwise.
-func SelectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SelectElement {
+func SelectTernary(condition bool, then SelectChild, otherwise SelectChild) *SelectElement {
 	if condition {
 		return Select(then)
 	}
@@ -51,7 +67,7 @@ func SelectTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Sel
 }
 
 // Children appends children to this element.
-func (e *SelectElement) Children(children ...htemel.Node) *SelectElement {
+func (e *SelectElement) Children(children ...SelectChild) *SelectElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +78,8 @@ func (e *SelectElement) With(fn func(*SelectElement)) *SelectElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *SelectElement) Text(text string) *SelectElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *SelectElement) Textf(format string, args ...any) *SelectElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SelectElement) If(cond bool, child htemel.Node) *SelectElement {
+func (e *SelectElement) If(cond bool, child SelectChild) *SelectElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *SelectElement) If(cond bool, child htemel.Node) *SelectElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SelectElement) IfElse(cond bool, then, els htemel.Node) *SelectElement {
+func (e *SelectElement) IfElse(cond bool, then, els SelectChild) *SelectElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *SelectElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SelectAutocapitalize string
-
-const (
-	SelectAutocapitalizeCharacters SelectAutocapitalize = "characters"
-	SelectAutocapitalizeNone       SelectAutocapitalize = "none"
-	SelectAutocapitalizeOff        SelectAutocapitalize = "off"
-	SelectAutocapitalizeOn         SelectAutocapitalize = "on"
-	SelectAutocapitalizeSentences  SelectAutocapitalize = "sentences"
-	SelectAutocapitalizeWords      SelectAutocapitalize = "words"
-)
-
-type SelectAutocorrect string
-
-const (
-	SelectAutocorrectOff   SelectAutocorrect = "off"
-	SelectAutocorrectOn    SelectAutocorrect = "on"
-	SelectAutocorrectEmpty SelectAutocorrect = ""
-)
-
-type SelectContenteditable string
-
-const (
-	SelectContenteditableFalse         SelectContenteditable = "false"
-	SelectContenteditablePlaintextOnly SelectContenteditable = "plaintext-only"
-	SelectContenteditableTrue          SelectContenteditable = "true"
-	SelectContenteditableEmpty         SelectContenteditable = ""
-)
-
-type SelectDir string
-
-const (
-	SelectDirAuto SelectDir = "auto"
-	SelectDirLtr  SelectDir = "ltr"
-	SelectDirRtl  SelectDir = "rtl"
-)
-
-type SelectDraggable string
-
-const (
-	SelectDraggableFalse SelectDraggable = "false"
-	SelectDraggableTrue  SelectDraggable = "true"
-)
-
-type SelectEnterkeyhint string
-
-const (
-	SelectEnterkeyhintDone     SelectEnterkeyhint = "done"
-	SelectEnterkeyhintEnter    SelectEnterkeyhint = "enter"
-	SelectEnterkeyhintGo       SelectEnterkeyhint = "go"
-	SelectEnterkeyhintNext     SelectEnterkeyhint = "next"
-	SelectEnterkeyhintPrevious SelectEnterkeyhint = "previous"
-	SelectEnterkeyhintSearch   SelectEnterkeyhint = "search"
-	SelectEnterkeyhintSend     SelectEnterkeyhint = "send"
-)
-
-type SelectHidden string
-
-const (
-	SelectHiddenHidden     SelectHidden = "hidden"
-	SelectHiddenUntilFound SelectHidden = "until-found"
-	SelectHiddenEmpty      SelectHidden = ""
-)
-
-type SelectInputmode string
-
-const (
-	SelectInputmodeDecimal SelectInputmode = "decimal"
-	SelectInputmodeEmail   SelectInputmode = "email"
-	SelectInputmodeNone    SelectInputmode = "none"
-	SelectInputmodeNumeric SelectInputmode = "numeric"
-	SelectInputmodeSearch  SelectInputmode = "search"
-	SelectInputmodeTel     SelectInputmode = "tel"
-	SelectInputmodeText    SelectInputmode = "text"
-	SelectInputmodeUrl     SelectInputmode = "url"
-)
-
-type SelectPopover string
-
-const (
-	SelectPopoverAuto   SelectPopover = "auto"
-	SelectPopoverHint   SelectPopover = "hint"
-	SelectPopoverManual SelectPopover = "manual"
-	SelectPopoverEmpty  SelectPopover = ""
-)
-
-type SelectSpellcheck string
-
-const (
-	SelectSpellcheckFalse SelectSpellcheck = "false"
-	SelectSpellcheckTrue  SelectSpellcheck = "true"
-	SelectSpellcheckEmpty SelectSpellcheck = ""
-)
-
-type SelectTranslate string
-
-const (
-	SelectTranslateNo    SelectTranslate = "no"
-	SelectTranslateYes   SelectTranslate = "yes"
-	SelectTranslateEmpty SelectTranslate = ""
-)
-
-type SelectWritingsuggestions string
-
-const (
-	SelectWritingsuggestionsFalse SelectWritingsuggestions = "false"
-	SelectWritingsuggestionsTrue  SelectWritingsuggestions = "true"
-	SelectWritingsuggestionsEmpty SelectWritingsuggestions = ""
-)
-
 func (e *SelectElement) Autocomplete(s ...string) *SelectElement {
 	e.attributes.Set("autocomplete", strings.Join(s, " "))
 
@@ -343,7 +239,7 @@ func (e *SelectElement) Aria(name string, s string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Autocapitalize(a SelectAutocapitalize) *SelectElement {
+func (e *SelectElement) Autocapitalize(a Autocapitalize) *SelectElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -351,8 +247,8 @@ func (e *SelectElement) Autocapitalize(a SelectAutocapitalize) *SelectElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Autocorrect(v ...SelectAutocorrect) *SelectElement {
-	var val SelectAutocorrect
+func (e *SelectElement) Autocorrect(v ...Autocorrect) *SelectElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -377,8 +273,8 @@ func (e *SelectElement) Class(s ...string) *SelectElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Contenteditable(v ...SelectContenteditable) *SelectElement {
-	var val SelectContenteditable
+func (e *SelectElement) Contenteditable(v ...Contenteditable) *SelectElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -403,19 +299,19 @@ func (e *SelectElement) Data(name string, s string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Dir(a SelectDir) *SelectElement {
+func (e *SelectElement) Dir(a Dir) *SelectElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SelectElement) Draggable(a SelectDraggable) *SelectElement {
+func (e *SelectElement) Draggable(a Draggable) *SelectElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SelectElement) Enterkeyhint(a SelectEnterkeyhint) *SelectElement {
+func (e *SelectElement) Enterkeyhint(a Enterkeyhint) *SelectElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -443,8 +339,8 @@ func (e *SelectElement) Headingreset(b bool) *SelectElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Hidden(v ...SelectHidden) *SelectElement {
-	var val SelectHidden
+func (e *SelectElement) Hidden(v ...Hidden) *SelectElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -467,7 +363,7 @@ func (e *SelectElement) Inert(b bool) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Inputmode(a SelectInputmode) *SelectElement {
+func (e *SelectElement) Inputmode(a Inputmode) *SelectElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -533,8 +429,8 @@ func (e *SelectElement) Part(s ...string) *SelectElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Popover(v ...SelectPopover) *SelectElement {
-	var val SelectPopover
+func (e *SelectElement) Popover(v ...Popover) *SelectElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +453,8 @@ func (e *SelectElement) Slot(s string) *SelectElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Spellcheck(v ...SelectSpellcheck) *SelectElement {
-	var val SelectSpellcheck
+func (e *SelectElement) Spellcheck(v ...Spellcheck) *SelectElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -587,8 +483,8 @@ func (e *SelectElement) Title(s string) *SelectElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Translate(v ...SelectTranslate) *SelectElement {
-	var val SelectTranslate
+func (e *SelectElement) Translate(v ...Translate) *SelectElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -599,8 +495,8 @@ func (e *SelectElement) Translate(v ...SelectTranslate) *SelectElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SelectElement) Writingsuggestions(v ...SelectWritingsuggestions) *SelectElement {
-	var val SelectWritingsuggestions
+func (e *SelectElement) Writingsuggestions(v ...Writingsuggestions) *SelectElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -17,7 +17,7 @@ lint:
 		go vet ./...; \
 	fi
 
-GENERATED_DIRS := html/ svg/ mathml/
+GENERATED_DIRS := html/ svg/ mathml/ slots_html.go slots_svg.go slots_mathml.go
 
 check-generated: generate
 	@if [ -n "$$(git status --porcelain $(GENERATED_DIRS))" ]; then \

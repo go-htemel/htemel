@@ -13,16 +13,20 @@ import (
 )
 
 type BdoElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Bdo creates a tag <bdo> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The bdo element represents explicit text directionality formatting control for its children. It allows authors to override the Unicode bidirectional algorithm by explicitly specifying a direction override. [BIDI]
-func Bdo(children ...htemel.Node) *BdoElement {
+func Bdo(children ...htemel.PhrasingContent) *BdoElement {
 	node := &BdoElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Bdo(children ...htemel.Node) *BdoElement {
 }
 
 // BdoIf creates a tag <bdo> instance that is only rendered when condition is true.
-func BdoIf(condition bool, children ...htemel.Node) *BdoElement {
+func BdoIf(condition bool, children ...htemel.PhrasingContent) *BdoElement {
 	if condition {
 		return Bdo(children...)
 	}
@@ -43,7 +47,7 @@ func BdoIf(condition bool, children ...htemel.Node) *BdoElement {
 }
 
 // BdoTernary creates a tag <bdo> containing then when condition is true, otherwise containing otherwise.
-func BdoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdoElement {
+func BdoTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *BdoElement {
 	if condition {
 		return Bdo(then)
 	}
@@ -51,7 +55,7 @@ func BdoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BdoEle
 }
 
 // Children appends children to this element.
-func (e *BdoElement) Children(children ...htemel.Node) *BdoElement {
+func (e *BdoElement) Children(children ...htemel.PhrasingContent) *BdoElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *BdoElement) Textf(format string, args ...any) *BdoElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BdoElement) If(cond bool, child htemel.Node) *BdoElement {
+func (e *BdoElement) If(cond bool, child htemel.PhrasingContent) *BdoElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *BdoElement) If(cond bool, child htemel.Node) *BdoElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BdoElement) IfElse(cond bool, then, els htemel.Node) *BdoElement {
+func (e *BdoElement) IfElse(cond bool, then, els htemel.PhrasingContent) *BdoElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *BdoElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BdoAutocapitalize string
-
-const (
-	BdoAutocapitalizeCharacters BdoAutocapitalize = "characters"
-	BdoAutocapitalizeNone       BdoAutocapitalize = "none"
-	BdoAutocapitalizeOff        BdoAutocapitalize = "off"
-	BdoAutocapitalizeOn         BdoAutocapitalize = "on"
-	BdoAutocapitalizeSentences  BdoAutocapitalize = "sentences"
-	BdoAutocapitalizeWords      BdoAutocapitalize = "words"
-)
-
-type BdoAutocorrect string
-
-const (
-	BdoAutocorrectOff   BdoAutocorrect = "off"
-	BdoAutocorrectOn    BdoAutocorrect = "on"
-	BdoAutocorrectEmpty BdoAutocorrect = ""
-)
-
-type BdoContenteditable string
-
-const (
-	BdoContenteditableFalse         BdoContenteditable = "false"
-	BdoContenteditablePlaintextOnly BdoContenteditable = "plaintext-only"
-	BdoContenteditableTrue          BdoContenteditable = "true"
-	BdoContenteditableEmpty         BdoContenteditable = ""
-)
-
-type BdoDir string
-
-const (
-	BdoDirAuto BdoDir = "auto"
-	BdoDirLtr  BdoDir = "ltr"
-	BdoDirRtl  BdoDir = "rtl"
-)
-
-type BdoDraggable string
-
-const (
-	BdoDraggableFalse BdoDraggable = "false"
-	BdoDraggableTrue  BdoDraggable = "true"
-)
-
-type BdoEnterkeyhint string
-
-const (
-	BdoEnterkeyhintDone     BdoEnterkeyhint = "done"
-	BdoEnterkeyhintEnter    BdoEnterkeyhint = "enter"
-	BdoEnterkeyhintGo       BdoEnterkeyhint = "go"
-	BdoEnterkeyhintNext     BdoEnterkeyhint = "next"
-	BdoEnterkeyhintPrevious BdoEnterkeyhint = "previous"
-	BdoEnterkeyhintSearch   BdoEnterkeyhint = "search"
-	BdoEnterkeyhintSend     BdoEnterkeyhint = "send"
-)
-
-type BdoHidden string
-
-const (
-	BdoHiddenHidden     BdoHidden = "hidden"
-	BdoHiddenUntilFound BdoHidden = "until-found"
-	BdoHiddenEmpty      BdoHidden = ""
-)
-
-type BdoInputmode string
-
-const (
-	BdoInputmodeDecimal BdoInputmode = "decimal"
-	BdoInputmodeEmail   BdoInputmode = "email"
-	BdoInputmodeNone    BdoInputmode = "none"
-	BdoInputmodeNumeric BdoInputmode = "numeric"
-	BdoInputmodeSearch  BdoInputmode = "search"
-	BdoInputmodeTel     BdoInputmode = "tel"
-	BdoInputmodeText    BdoInputmode = "text"
-	BdoInputmodeUrl     BdoInputmode = "url"
-)
-
-type BdoPopover string
-
-const (
-	BdoPopoverAuto   BdoPopover = "auto"
-	BdoPopoverHint   BdoPopover = "hint"
-	BdoPopoverManual BdoPopover = "manual"
-	BdoPopoverEmpty  BdoPopover = ""
-)
-
-type BdoSpellcheck string
-
-const (
-	BdoSpellcheckFalse BdoSpellcheck = "false"
-	BdoSpellcheckTrue  BdoSpellcheck = "true"
-	BdoSpellcheckEmpty BdoSpellcheck = ""
-)
-
-type BdoTranslate string
-
-const (
-	BdoTranslateNo    BdoTranslate = "no"
-	BdoTranslateYes   BdoTranslate = "yes"
-	BdoTranslateEmpty BdoTranslate = ""
-)
-
-type BdoWritingsuggestions string
-
-const (
-	BdoWritingsuggestionsFalse BdoWritingsuggestions = "false"
-	BdoWritingsuggestionsTrue  BdoWritingsuggestions = "true"
-	BdoWritingsuggestionsEmpty BdoWritingsuggestions = ""
-)
-
 func (e *BdoElement) Accesskey(r rune) *BdoElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *BdoElement) Aria(name string, s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Autocapitalize(a BdoAutocapitalize) *BdoElement {
+func (e *BdoElement) Autocapitalize(a Autocapitalize) *BdoElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *BdoElement) Autocapitalize(a BdoAutocapitalize) *BdoElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Autocorrect(v ...BdoAutocorrect) *BdoElement {
-	var val BdoAutocorrect
+func (e *BdoElement) Autocorrect(v ...Autocorrect) *BdoElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *BdoElement) Class(s ...string) *BdoElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Contenteditable(v ...BdoContenteditable) *BdoElement {
-	var val BdoContenteditable
+func (e *BdoElement) Contenteditable(v ...Contenteditable) *BdoElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *BdoElement) Data(name string, s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Dir(a BdoDir) *BdoElement {
+func (e *BdoElement) Dir(a Dir) *BdoElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BdoElement) Draggable(a BdoDraggable) *BdoElement {
+func (e *BdoElement) Draggable(a Draggable) *BdoElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BdoElement) Enterkeyhint(a BdoEnterkeyhint) *BdoElement {
+func (e *BdoElement) Enterkeyhint(a Enterkeyhint) *BdoElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *BdoElement) Headingreset(b bool) *BdoElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Hidden(v ...BdoHidden) *BdoElement {
-	var val BdoHidden
+func (e *BdoElement) Hidden(v ...Hidden) *BdoElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *BdoElement) Inert(b bool) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Inputmode(a BdoInputmode) *BdoElement {
+func (e *BdoElement) Inputmode(a Inputmode) *BdoElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *BdoElement) Part(s ...string) *BdoElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Popover(v ...BdoPopover) *BdoElement {
-	var val BdoPopover
+func (e *BdoElement) Popover(v ...Popover) *BdoElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *BdoElement) Slot(s string) *BdoElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Spellcheck(v ...BdoSpellcheck) *BdoElement {
-	var val BdoSpellcheck
+func (e *BdoElement) Spellcheck(v ...Spellcheck) *BdoElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *BdoElement) Title(s string) *BdoElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Translate(v ...BdoTranslate) *BdoElement {
-	var val BdoTranslate
+func (e *BdoElement) Translate(v ...Translate) *BdoElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *BdoElement) Translate(v ...BdoTranslate) *BdoElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BdoElement) Writingsuggestions(v ...BdoWritingsuggestions) *BdoElement {
-	var val BdoWritingsuggestions
+func (e *BdoElement) Writingsuggestions(v ...Writingsuggestions) *BdoElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

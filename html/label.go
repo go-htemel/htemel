@@ -13,16 +13,21 @@ import (
 )
 
 type LabelElement struct {
+	htemel.PhrasingMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Label creates a tag <label> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The label element represents a caption in a user interface. The caption can be associated with a specific form control, known as the label element's labeled control, either using the for attribute, or by putting the form control inside the label element itself.
-func Label(children ...htemel.Node) *LabelElement {
+func Label(children ...htemel.PhrasingContent) *LabelElement {
 	node := &LabelElement{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func Label(children ...htemel.Node) *LabelElement {
 }
 
 // LabelIf creates a tag <label> instance that is only rendered when condition is true.
-func LabelIf(condition bool, children ...htemel.Node) *LabelElement {
+func LabelIf(condition bool, children ...htemel.PhrasingContent) *LabelElement {
 	if condition {
 		return Label(children...)
 	}
@@ -43,7 +48,7 @@ func LabelIf(condition bool, children ...htemel.Node) *LabelElement {
 }
 
 // LabelTernary creates a tag <label> containing then when condition is true, otherwise containing otherwise.
-func LabelTernary(condition bool, then htemel.Node, otherwise htemel.Node) *LabelElement {
+func LabelTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *LabelElement {
 	if condition {
 		return Label(then)
 	}
@@ -51,7 +56,7 @@ func LabelTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Labe
 }
 
 // Children appends children to this element.
-func (e *LabelElement) Children(children ...htemel.Node) *LabelElement {
+func (e *LabelElement) Children(children ...htemel.PhrasingContent) *LabelElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *LabelElement) Textf(format string, args ...any) *LabelElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *LabelElement) If(cond bool, child htemel.Node) *LabelElement {
+func (e *LabelElement) If(cond bool, child htemel.PhrasingContent) *LabelElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *LabelElement) If(cond bool, child htemel.Node) *LabelElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *LabelElement) IfElse(cond bool, then, els htemel.Node) *LabelElement {
+func (e *LabelElement) IfElse(cond bool, then, els htemel.PhrasingContent) *LabelElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +169,6 @@ func (e *LabelElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type LabelAutocapitalize string
-
-const (
-	LabelAutocapitalizeCharacters LabelAutocapitalize = "characters"
-	LabelAutocapitalizeNone       LabelAutocapitalize = "none"
-	LabelAutocapitalizeOff        LabelAutocapitalize = "off"
-	LabelAutocapitalizeOn         LabelAutocapitalize = "on"
-	LabelAutocapitalizeSentences  LabelAutocapitalize = "sentences"
-	LabelAutocapitalizeWords      LabelAutocapitalize = "words"
-)
-
-type LabelAutocorrect string
-
-const (
-	LabelAutocorrectOff   LabelAutocorrect = "off"
-	LabelAutocorrectOn    LabelAutocorrect = "on"
-	LabelAutocorrectEmpty LabelAutocorrect = ""
-)
-
-type LabelContenteditable string
-
-const (
-	LabelContenteditableFalse         LabelContenteditable = "false"
-	LabelContenteditablePlaintextOnly LabelContenteditable = "plaintext-only"
-	LabelContenteditableTrue          LabelContenteditable = "true"
-	LabelContenteditableEmpty         LabelContenteditable = ""
-)
-
-type LabelDir string
-
-const (
-	LabelDirAuto LabelDir = "auto"
-	LabelDirLtr  LabelDir = "ltr"
-	LabelDirRtl  LabelDir = "rtl"
-)
-
-type LabelDraggable string
-
-const (
-	LabelDraggableFalse LabelDraggable = "false"
-	LabelDraggableTrue  LabelDraggable = "true"
-)
-
-type LabelEnterkeyhint string
-
-const (
-	LabelEnterkeyhintDone     LabelEnterkeyhint = "done"
-	LabelEnterkeyhintEnter    LabelEnterkeyhint = "enter"
-	LabelEnterkeyhintGo       LabelEnterkeyhint = "go"
-	LabelEnterkeyhintNext     LabelEnterkeyhint = "next"
-	LabelEnterkeyhintPrevious LabelEnterkeyhint = "previous"
-	LabelEnterkeyhintSearch   LabelEnterkeyhint = "search"
-	LabelEnterkeyhintSend     LabelEnterkeyhint = "send"
-)
-
-type LabelHidden string
-
-const (
-	LabelHiddenHidden     LabelHidden = "hidden"
-	LabelHiddenUntilFound LabelHidden = "until-found"
-	LabelHiddenEmpty      LabelHidden = ""
-)
-
-type LabelInputmode string
-
-const (
-	LabelInputmodeDecimal LabelInputmode = "decimal"
-	LabelInputmodeEmail   LabelInputmode = "email"
-	LabelInputmodeNone    LabelInputmode = "none"
-	LabelInputmodeNumeric LabelInputmode = "numeric"
-	LabelInputmodeSearch  LabelInputmode = "search"
-	LabelInputmodeTel     LabelInputmode = "tel"
-	LabelInputmodeText    LabelInputmode = "text"
-	LabelInputmodeUrl     LabelInputmode = "url"
-)
-
-type LabelPopover string
-
-const (
-	LabelPopoverAuto   LabelPopover = "auto"
-	LabelPopoverHint   LabelPopover = "hint"
-	LabelPopoverManual LabelPopover = "manual"
-	LabelPopoverEmpty  LabelPopover = ""
-)
-
-type LabelSpellcheck string
-
-const (
-	LabelSpellcheckFalse LabelSpellcheck = "false"
-	LabelSpellcheckTrue  LabelSpellcheck = "true"
-	LabelSpellcheckEmpty LabelSpellcheck = ""
-)
-
-type LabelTranslate string
-
-const (
-	LabelTranslateNo    LabelTranslate = "no"
-	LabelTranslateYes   LabelTranslate = "yes"
-	LabelTranslateEmpty LabelTranslate = ""
-)
-
-type LabelWritingsuggestions string
-
-const (
-	LabelWritingsuggestionsFalse LabelWritingsuggestions = "false"
-	LabelWritingsuggestionsTrue  LabelWritingsuggestions = "true"
-	LabelWritingsuggestionsEmpty LabelWritingsuggestions = ""
-)
-
 func (e *LabelElement) For(s string) *LabelElement {
 	e.attributes.Set("for", s)
 
@@ -301,7 +197,7 @@ func (e *LabelElement) Aria(name string, s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Autocapitalize(a LabelAutocapitalize) *LabelElement {
+func (e *LabelElement) Autocapitalize(a Autocapitalize) *LabelElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +205,8 @@ func (e *LabelElement) Autocapitalize(a LabelAutocapitalize) *LabelElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Autocorrect(v ...LabelAutocorrect) *LabelElement {
-	var val LabelAutocorrect
+func (e *LabelElement) Autocorrect(v ...Autocorrect) *LabelElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +231,8 @@ func (e *LabelElement) Class(s ...string) *LabelElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Contenteditable(v ...LabelContenteditable) *LabelElement {
-	var val LabelContenteditable
+func (e *LabelElement) Contenteditable(v ...Contenteditable) *LabelElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +257,19 @@ func (e *LabelElement) Data(name string, s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Dir(a LabelDir) *LabelElement {
+func (e *LabelElement) Dir(a Dir) *LabelElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *LabelElement) Draggable(a LabelDraggable) *LabelElement {
+func (e *LabelElement) Draggable(a Draggable) *LabelElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *LabelElement) Enterkeyhint(a LabelEnterkeyhint) *LabelElement {
+func (e *LabelElement) Enterkeyhint(a Enterkeyhint) *LabelElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +297,8 @@ func (e *LabelElement) Headingreset(b bool) *LabelElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Hidden(v ...LabelHidden) *LabelElement {
-	var val LabelHidden
+func (e *LabelElement) Hidden(v ...Hidden) *LabelElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +321,7 @@ func (e *LabelElement) Inert(b bool) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Inputmode(a LabelInputmode) *LabelElement {
+func (e *LabelElement) Inputmode(a Inputmode) *LabelElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +387,8 @@ func (e *LabelElement) Part(s ...string) *LabelElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Popover(v ...LabelPopover) *LabelElement {
-	var val LabelPopover
+func (e *LabelElement) Popover(v ...Popover) *LabelElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +411,8 @@ func (e *LabelElement) Slot(s string) *LabelElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Spellcheck(v ...LabelSpellcheck) *LabelElement {
-	var val LabelSpellcheck
+func (e *LabelElement) Spellcheck(v ...Spellcheck) *LabelElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +441,8 @@ func (e *LabelElement) Title(s string) *LabelElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Translate(v ...LabelTranslate) *LabelElement {
-	var val LabelTranslate
+func (e *LabelElement) Translate(v ...Translate) *LabelElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +453,8 @@ func (e *LabelElement) Translate(v ...LabelTranslate) *LabelElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *LabelElement) Writingsuggestions(v ...LabelWritingsuggestions) *LabelElement {
-	var val LabelWritingsuggestions
+func (e *LabelElement) Writingsuggestions(v ...Writingsuggestions) *LabelElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

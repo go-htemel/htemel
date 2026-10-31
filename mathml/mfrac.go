@@ -14,15 +14,17 @@ import (
 
 type MfracElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mfrac creates a tag <mfrac> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mfrac(children ...htemel.Node) *MfracElement {
+func Mfrac(children ...Content) *MfracElement {
 	node := &MfracElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mfrac(children ...htemel.Node) *MfracElement {
 }
 
 // MfracIf creates a tag <mfrac> instance that is only rendered when condition is true.
-func MfracIf(condition bool, children ...htemel.Node) *MfracElement {
+func MfracIf(condition bool, children ...Content) *MfracElement {
 	if condition {
 		return Mfrac(children...)
 	}
@@ -43,7 +45,7 @@ func MfracIf(condition bool, children ...htemel.Node) *MfracElement {
 }
 
 // MfracTernary creates a tag <mfrac> containing then when condition is true, otherwise containing otherwise.
-func MfracTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MfracElement {
+func MfracTernary(condition bool, then Content, otherwise Content) *MfracElement {
 	if condition {
 		return Mfrac(then)
 	}
@@ -51,7 +53,7 @@ func MfracTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mfra
 }
 
 // Children appends children to this element.
-func (e *MfracElement) Children(children ...htemel.Node) *MfracElement {
+func (e *MfracElement) Children(children ...Content) *MfracElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MfracElement) Textf(format string, args ...any) *MfracElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MfracElement) If(cond bool, child htemel.Node) *MfracElement {
+func (e *MfracElement) If(cond bool, child Content) *MfracElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MfracElement) If(cond bool, child htemel.Node) *MfracElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MfracElement) IfElse(cond bool, then, els htemel.Node) *MfracElement {
+func (e *MfracElement) IfElse(cond bool, then, els Content) *MfracElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MfracElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MfracDir string
-
-const (
-	MfracDirLtr MfracDir = "ltr"
-	MfracDirRtl MfracDir = "rtl"
-)
-
-type MfracDisplaystyle string
-
-const (
-	MfracDisplaystyleFalse MfracDisplaystyle = "false"
-	MfracDisplaystyleTrue  MfracDisplaystyle = "true"
-)
+// MathMLContent marks <mfrac> as a permitted child (Content).
+func (*MfracElement) MathMLContent() {}
 
 func (e *MfracElement) Linethickness(s string) *MfracElement {
 	e.attributes.Set("linethickness", s)
@@ -214,13 +205,13 @@ func (e *MfracElement) Data(name string, s string) *MfracElement {
 	return e
 }
 
-func (e *MfracElement) Dir(a MfracDir) *MfracElement {
+func (e *MfracElement) Dir(a Dir) *MfracElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MfracElement) Displaystyle(a MfracDisplaystyle) *MfracElement {
+func (e *MfracElement) Displaystyle(a Displaystyle) *MfracElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

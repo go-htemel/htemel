@@ -14,15 +14,17 @@ import (
 
 type MoElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mo creates a tag <mo> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mo(children ...htemel.Node) *MoElement {
+func Mo(children ...Content) *MoElement {
 	node := &MoElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mo(children ...htemel.Node) *MoElement {
 }
 
 // MoIf creates a tag <mo> instance that is only rendered when condition is true.
-func MoIf(condition bool, children ...htemel.Node) *MoElement {
+func MoIf(condition bool, children ...Content) *MoElement {
 	if condition {
 		return Mo(children...)
 	}
@@ -43,7 +45,7 @@ func MoIf(condition bool, children ...htemel.Node) *MoElement {
 }
 
 // MoTernary creates a tag <mo> containing then when condition is true, otherwise containing otherwise.
-func MoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MoElement {
+func MoTernary(condition bool, then Content, otherwise Content) *MoElement {
 	if condition {
 		return Mo(then)
 	}
@@ -51,7 +53,7 @@ func MoTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MoEleme
 }
 
 // Children appends children to this element.
-func (e *MoElement) Children(children ...htemel.Node) *MoElement {
+func (e *MoElement) Children(children ...Content) *MoElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MoElement) Textf(format string, args ...any) *MoElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MoElement) If(cond bool, child htemel.Node) *MoElement {
+func (e *MoElement) If(cond bool, child Content) *MoElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MoElement) If(cond bool, child htemel.Node) *MoElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MoElement) IfElse(cond bool, then, els htemel.Node) *MoElement {
+func (e *MoElement) IfElse(cond bool, then, els Content) *MoElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,63 +166,16 @@ func (e *MoElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MoForm string
+// MathMLContent marks <mo> as a permitted child (Content).
+func (*MoElement) MathMLContent() {}
 
-const (
-	MoFormInfix   MoForm = "infix"
-	MoFormPostfix MoForm = "postfix"
-	MoFormPrefix  MoForm = "prefix"
-)
-
-type MoLargeop string
-
-const (
-	MoLargeopFalse MoLargeop = "false"
-	MoLargeopTrue  MoLargeop = "true"
-)
-
-type MoMovablelimits string
-
-const (
-	MoMovablelimitsFalse MoMovablelimits = "false"
-	MoMovablelimitsTrue  MoMovablelimits = "true"
-)
-
-type MoStretchy string
-
-const (
-	MoStretchyFalse MoStretchy = "false"
-	MoStretchyTrue  MoStretchy = "true"
-)
-
-type MoSymmetric string
-
-const (
-	MoSymmetricFalse MoSymmetric = "false"
-	MoSymmetricTrue  MoSymmetric = "true"
-)
-
-type MoDir string
-
-const (
-	MoDirLtr MoDir = "ltr"
-	MoDirRtl MoDir = "rtl"
-)
-
-type MoDisplaystyle string
-
-const (
-	MoDisplaystyleFalse MoDisplaystyle = "false"
-	MoDisplaystyleTrue  MoDisplaystyle = "true"
-)
-
-func (e *MoElement) Form(a MoForm) *MoElement {
+func (e *MoElement) Form(a Form) *MoElement {
 	e.attributes.Set("form", string(a))
 
 	return e
 }
 
-func (e *MoElement) Largeop(a MoLargeop) *MoElement {
+func (e *MoElement) Largeop(a Largeop) *MoElement {
 	e.attributes.Set("largeop", string(a))
 
 	return e
@@ -244,7 +199,7 @@ func (e *MoElement) Minsize(s string) *MoElement {
 	return e
 }
 
-func (e *MoElement) Movablelimits(a MoMovablelimits) *MoElement {
+func (e *MoElement) Movablelimits(a Movablelimits) *MoElement {
 	e.attributes.Set("movablelimits", string(a))
 
 	return e
@@ -256,13 +211,13 @@ func (e *MoElement) Rspace(s string) *MoElement {
 	return e
 }
 
-func (e *MoElement) Stretchy(a MoStretchy) *MoElement {
+func (e *MoElement) Stretchy(a Stretchy) *MoElement {
 	e.attributes.Set("stretchy", string(a))
 
 	return e
 }
 
-func (e *MoElement) Symmetric(a MoSymmetric) *MoElement {
+func (e *MoElement) Symmetric(a Symmetric) *MoElement {
 	e.attributes.Set("symmetric", string(a))
 
 	return e
@@ -298,13 +253,13 @@ func (e *MoElement) Data(name string, s string) *MoElement {
 	return e
 }
 
-func (e *MoElement) Dir(a MoDir) *MoElement {
+func (e *MoElement) Dir(a Dir) *MoElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MoElement) Displaystyle(a MoDisplaystyle) *MoElement {
+func (e *MoElement) Displaystyle(a Displaystyle) *MoElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

@@ -14,15 +14,17 @@ import (
 
 type MoverElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mover creates a tag <mover> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mover(children ...htemel.Node) *MoverElement {
+func Mover(children ...Content) *MoverElement {
 	node := &MoverElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mover(children ...htemel.Node) *MoverElement {
 }
 
 // MoverIf creates a tag <mover> instance that is only rendered when condition is true.
-func MoverIf(condition bool, children ...htemel.Node) *MoverElement {
+func MoverIf(condition bool, children ...Content) *MoverElement {
 	if condition {
 		return Mover(children...)
 	}
@@ -43,7 +45,7 @@ func MoverIf(condition bool, children ...htemel.Node) *MoverElement {
 }
 
 // MoverTernary creates a tag <mover> containing then when condition is true, otherwise containing otherwise.
-func MoverTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MoverElement {
+func MoverTernary(condition bool, then Content, otherwise Content) *MoverElement {
 	if condition {
 		return Mover(then)
 	}
@@ -51,7 +53,7 @@ func MoverTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Move
 }
 
 // Children appends children to this element.
-func (e *MoverElement) Children(children ...htemel.Node) *MoverElement {
+func (e *MoverElement) Children(children ...Content) *MoverElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MoverElement) Textf(format string, args ...any) *MoverElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MoverElement) If(cond bool, child htemel.Node) *MoverElement {
+func (e *MoverElement) If(cond bool, child Content) *MoverElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MoverElement) If(cond bool, child htemel.Node) *MoverElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MoverElement) IfElse(cond bool, then, els htemel.Node) *MoverElement {
+func (e *MoverElement) IfElse(cond bool, then, els Content) *MoverElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,28 +166,10 @@ func (e *MoverElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MoverAccent string
+// MathMLContent marks <mover> as a permitted child (Content).
+func (*MoverElement) MathMLContent() {}
 
-const (
-	MoverAccentFalse MoverAccent = "false"
-	MoverAccentTrue  MoverAccent = "true"
-)
-
-type MoverDir string
-
-const (
-	MoverDirLtr MoverDir = "ltr"
-	MoverDirRtl MoverDir = "rtl"
-)
-
-type MoverDisplaystyle string
-
-const (
-	MoverDisplaystyleFalse MoverDisplaystyle = "false"
-	MoverDisplaystyleTrue  MoverDisplaystyle = "true"
-)
-
-func (e *MoverElement) Accent(a MoverAccent) *MoverElement {
+func (e *MoverElement) Accent(a Accent) *MoverElement {
 	e.attributes.Set("accent", string(a))
 
 	return e
@@ -221,13 +205,13 @@ func (e *MoverElement) Data(name string, s string) *MoverElement {
 	return e
 }
 
-func (e *MoverElement) Dir(a MoverDir) *MoverElement {
+func (e *MoverElement) Dir(a Dir) *MoverElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MoverElement) Displaystyle(a MoverDisplaystyle) *MoverElement {
+func (e *MoverElement) Displaystyle(a Displaystyle) *MoverElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

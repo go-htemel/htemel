@@ -14,15 +14,17 @@ import (
 
 type MactionElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Maction creates a tag <maction> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Maction(children ...htemel.Node) *MactionElement {
+func Maction(children ...Content) *MactionElement {
 	node := &MactionElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Maction(children ...htemel.Node) *MactionElement {
 }
 
 // MactionIf creates a tag <maction> instance that is only rendered when condition is true.
-func MactionIf(condition bool, children ...htemel.Node) *MactionElement {
+func MactionIf(condition bool, children ...Content) *MactionElement {
 	if condition {
 		return Maction(children...)
 	}
@@ -43,7 +45,7 @@ func MactionIf(condition bool, children ...htemel.Node) *MactionElement {
 }
 
 // MactionTernary creates a tag <maction> containing then when condition is true, otherwise containing otherwise.
-func MactionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MactionElement {
+func MactionTernary(condition bool, then Content, otherwise Content) *MactionElement {
 	if condition {
 		return Maction(then)
 	}
@@ -51,7 +53,7 @@ func MactionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Ma
 }
 
 // Children appends children to this element.
-func (e *MactionElement) Children(children ...htemel.Node) *MactionElement {
+func (e *MactionElement) Children(children ...Content) *MactionElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MactionElement) Textf(format string, args ...any) *MactionElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MactionElement) If(cond bool, child htemel.Node) *MactionElement {
+func (e *MactionElement) If(cond bool, child Content) *MactionElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MactionElement) If(cond bool, child htemel.Node) *MactionElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MactionElement) IfElse(cond bool, then, els htemel.Node) *MactionElement {
+func (e *MactionElement) IfElse(cond bool, then, els Content) *MactionElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MactionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MactionDir string
-
-const (
-	MactionDirLtr MactionDir = "ltr"
-	MactionDirRtl MactionDir = "rtl"
-)
-
-type MactionDisplaystyle string
-
-const (
-	MactionDisplaystyleFalse MactionDisplaystyle = "false"
-	MactionDisplaystyleTrue  MactionDisplaystyle = "true"
-)
+// MathMLContent marks <maction> as a permitted child (Content).
+func (*MactionElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MactionElement) Data(name string, s string) *MactionElement {
 	return e
 }
 
-func (e *MactionElement) Dir(a MactionDir) *MactionElement {
+func (e *MactionElement) Dir(a Dir) *MactionElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MactionElement) Displaystyle(a MactionDisplaystyle) *MactionElement {
+func (e *MactionElement) Displaystyle(a Displaystyle) *MactionElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

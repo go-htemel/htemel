@@ -14,15 +14,17 @@ import (
 
 type AElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // A creates a tag <a> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The a element creates a hyperlink around SVG content.
-func A(children ...htemel.Node) *AElement {
+func A(children ...Content) *AElement {
 	node := &AElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func A(children ...htemel.Node) *AElement {
 }
 
 // AIf creates a tag <a> instance that is only rendered when condition is true.
-func AIf(condition bool, children ...htemel.Node) *AElement {
+func AIf(condition bool, children ...Content) *AElement {
 	if condition {
 		return A(children...)
 	}
@@ -43,7 +45,7 @@ func AIf(condition bool, children ...htemel.Node) *AElement {
 }
 
 // ATernary creates a tag <a> containing then when condition is true, otherwise containing otherwise.
-func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement {
+func ATernary(condition bool, then Content, otherwise Content) *AElement {
 	if condition {
 		return A(then)
 	}
@@ -51,7 +53,7 @@ func ATernary(condition bool, then htemel.Node, otherwise htemel.Node) *AElement
 }
 
 // Children appends children to this element.
-func (e *AElement) Children(children ...htemel.Node) *AElement {
+func (e *AElement) Children(children ...Content) *AElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *AElement) Textf(format string, args ...any) *AElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AElement) If(cond bool, child htemel.Node) *AElement {
+func (e *AElement) If(cond bool, child Content) *AElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *AElement) If(cond bool, child htemel.Node) *AElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AElement) IfElse(cond bool, then, els htemel.Node) *AElement {
+func (e *AElement) IfElse(cond bool, then, els Content) *AElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,233 +166,8 @@ func (e *AElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AReferrerpolicy string
-
-const (
-	AReferrerpolicyNoReferrer                  AReferrerpolicy = "no-referrer"
-	AReferrerpolicyNoReferrerWhenDowngrade     AReferrerpolicy = "no-referrer-when-downgrade"
-	AReferrerpolicyOrigin                      AReferrerpolicy = "origin"
-	AReferrerpolicyOriginWhenCrossOrigin       AReferrerpolicy = "origin-when-cross-origin"
-	AReferrerpolicySameOrigin                  AReferrerpolicy = "same-origin"
-	AReferrerpolicyStrictOrigin                AReferrerpolicy = "strict-origin"
-	AReferrerpolicyStrictOriginWhenCrossOrigin AReferrerpolicy = "strict-origin-when-cross-origin"
-	AReferrerpolicyUnsafeUrl                   AReferrerpolicy = "unsafe-url"
-	AReferrerpolicyEmpty                       AReferrerpolicy = ""
-)
-
-type AAlignmentBaseline string
-
-const (
-	AAlignmentBaselineAfterEdge      AAlignmentBaseline = "after-edge"
-	AAlignmentBaselineAlphabetic     AAlignmentBaseline = "alphabetic"
-	AAlignmentBaselineAuto           AAlignmentBaseline = "auto"
-	AAlignmentBaselineBaseline       AAlignmentBaseline = "baseline"
-	AAlignmentBaselineBeforeEdge     AAlignmentBaseline = "before-edge"
-	AAlignmentBaselineBottom         AAlignmentBaseline = "bottom"
-	AAlignmentBaselineCenter         AAlignmentBaseline = "center"
-	AAlignmentBaselineCentral        AAlignmentBaseline = "central"
-	AAlignmentBaselineHanging        AAlignmentBaseline = "hanging"
-	AAlignmentBaselineIdeographic    AAlignmentBaseline = "ideographic"
-	AAlignmentBaselineMathematical   AAlignmentBaseline = "mathematical"
-	AAlignmentBaselineMiddle         AAlignmentBaseline = "middle"
-	AAlignmentBaselineTextAfterEdge  AAlignmentBaseline = "text-after-edge"
-	AAlignmentBaselineTextBeforeEdge AAlignmentBaseline = "text-before-edge"
-	AAlignmentBaselineTextBottom     AAlignmentBaseline = "text-bottom"
-	AAlignmentBaselineTextTop        AAlignmentBaseline = "text-top"
-	AAlignmentBaselineTop            AAlignmentBaseline = "top"
-)
-
-type AClipRule string
-
-const (
-	AClipRuleEvenodd AClipRule = "evenodd"
-	AClipRuleNonzero AClipRule = "nonzero"
-)
-
-type AColorInterpolation string
-
-const (
-	AColorInterpolationAuto      AColorInterpolation = "auto"
-	AColorInterpolationLinearRGB AColorInterpolation = "linearRGB"
-	AColorInterpolationSRGB      AColorInterpolation = "sRGB"
-)
-
-type AColorInterpolationFilters string
-
-const (
-	AColorInterpolationFiltersAuto      AColorInterpolationFilters = "auto"
-	AColorInterpolationFiltersLinearRGB AColorInterpolationFilters = "linearRGB"
-	AColorInterpolationFiltersSRGB      AColorInterpolationFilters = "sRGB"
-)
-
-type ADirection string
-
-const (
-	ADirectionLtr ADirection = "ltr"
-	ADirectionRtl ADirection = "rtl"
-)
-
-type ADominantBaseline string
-
-const (
-	ADominantBaselineAlphabetic   ADominantBaseline = "alphabetic"
-	ADominantBaselineAuto         ADominantBaseline = "auto"
-	ADominantBaselineCentral      ADominantBaseline = "central"
-	ADominantBaselineHanging      ADominantBaseline = "hanging"
-	ADominantBaselineIdeographic  ADominantBaseline = "ideographic"
-	ADominantBaselineMathematical ADominantBaseline = "mathematical"
-	ADominantBaselineMiddle       ADominantBaseline = "middle"
-	ADominantBaselineTextBottom   ADominantBaseline = "text-bottom"
-	ADominantBaselineTextTop      ADominantBaseline = "text-top"
-)
-
-type AFillRule string
-
-const (
-	AFillRuleEvenodd AFillRule = "evenodd"
-	AFillRuleNonzero AFillRule = "nonzero"
-)
-
-type AFontStyle string
-
-const (
-	AFontStyleItalic  AFontStyle = "italic"
-	AFontStyleNormal  AFontStyle = "normal"
-	AFontStyleOblique AFontStyle = "oblique"
-)
-
-type AImageRendering string
-
-const (
-	AImageRenderingAuto            AImageRendering = "auto"
-	AImageRenderingCrispEdges      AImageRendering = "crisp-edges"
-	AImageRenderingHighQuality     AImageRendering = "high-quality"
-	AImageRenderingOptimizeQuality AImageRendering = "optimizeQuality"
-	AImageRenderingOptimizeSpeed   AImageRendering = "optimizeSpeed"
-	AImageRenderingPixelated       AImageRendering = "pixelated"
-	AImageRenderingSmooth          AImageRendering = "smooth"
-)
-
-type AOverflow string
-
-const (
-	AOverflowAuto    AOverflow = "auto"
-	AOverflowClip    AOverflow = "clip"
-	AOverflowHidden  AOverflow = "hidden"
-	AOverflowScroll  AOverflow = "scroll"
-	AOverflowVisible AOverflow = "visible"
-)
-
-type APointerEvents string
-
-const (
-	APointerEventsAll            APointerEvents = "all"
-	APointerEventsAuto           APointerEvents = "auto"
-	APointerEventsBoundingBox    APointerEvents = "bounding-box"
-	APointerEventsFill           APointerEvents = "fill"
-	APointerEventsNone           APointerEvents = "none"
-	APointerEventsPainted        APointerEvents = "painted"
-	APointerEventsStroke         APointerEvents = "stroke"
-	APointerEventsVisible        APointerEvents = "visible"
-	APointerEventsVisibleFill    APointerEvents = "visibleFill"
-	APointerEventsVisiblePainted APointerEvents = "visiblePainted"
-	APointerEventsVisibleStroke  APointerEvents = "visibleStroke"
-)
-
-type AShapeRendering string
-
-const (
-	AShapeRenderingAuto               AShapeRendering = "auto"
-	AShapeRenderingCrispEdges         AShapeRendering = "crispEdges"
-	AShapeRenderingGeometricPrecision AShapeRendering = "geometricPrecision"
-	AShapeRenderingOptimizeSpeed      AShapeRendering = "optimizeSpeed"
-)
-
-type AStrokeLinecap string
-
-const (
-	AStrokeLinecapButt   AStrokeLinecap = "butt"
-	AStrokeLinecapRound  AStrokeLinecap = "round"
-	AStrokeLinecapSquare AStrokeLinecap = "square"
-)
-
-type AStrokeLinejoin string
-
-const (
-	AStrokeLinejoinArcs      AStrokeLinejoin = "arcs"
-	AStrokeLinejoinBevel     AStrokeLinejoin = "bevel"
-	AStrokeLinejoinMiter     AStrokeLinejoin = "miter"
-	AStrokeLinejoinMiterClip AStrokeLinejoin = "miter-clip"
-	AStrokeLinejoinRound     AStrokeLinejoin = "round"
-)
-
-type ATextAnchor string
-
-const (
-	ATextAnchorEnd    ATextAnchor = "end"
-	ATextAnchorMiddle ATextAnchor = "middle"
-	ATextAnchorStart  ATextAnchor = "start"
-)
-
-type ATextRendering string
-
-const (
-	ATextRenderingAuto               ATextRendering = "auto"
-	ATextRenderingGeometricPrecision ATextRendering = "geometricPrecision"
-	ATextRenderingOptimizeLegibility ATextRendering = "optimizeLegibility"
-	ATextRenderingOptimizeSpeed      ATextRendering = "optimizeSpeed"
-)
-
-type ATransformBox string
-
-const (
-	ATransformBoxBorderBox  ATransformBox = "border-box"
-	ATransformBoxContentBox ATransformBox = "content-box"
-	ATransformBoxFillBox    ATransformBox = "fill-box"
-	ATransformBoxStrokeBox  ATransformBox = "stroke-box"
-	ATransformBoxViewBox    ATransformBox = "view-box"
-)
-
-type AVectorEffect string
-
-const (
-	AVectorEffectFixedPosition    AVectorEffect = "fixed-position"
-	AVectorEffectNonRotation      AVectorEffect = "non-rotation"
-	AVectorEffectNonScalingSize   AVectorEffect = "non-scaling-size"
-	AVectorEffectNonScalingStroke AVectorEffect = "non-scaling-stroke"
-	AVectorEffectNone             AVectorEffect = "none"
-)
-
-type AVisibility string
-
-const (
-	AVisibilityCollapse AVisibility = "collapse"
-	AVisibilityHidden   AVisibility = "hidden"
-	AVisibilityVisible  AVisibility = "visible"
-)
-
-type AWritingMode string
-
-const (
-	AWritingModeHorizontalTb AWritingMode = "horizontal-tb"
-	AWritingModeLr           AWritingMode = "lr"
-	AWritingModeLrTb         AWritingMode = "lr-tb"
-	AWritingModeRl           AWritingMode = "rl"
-	AWritingModeRlTb         AWritingMode = "rl-tb"
-	AWritingModeSidewaysLr   AWritingMode = "sideways-lr"
-	AWritingModeSidewaysRl   AWritingMode = "sideways-rl"
-	AWritingModeTb           AWritingMode = "tb"
-	AWritingModeTbRl         AWritingMode = "tb-rl"
-	AWritingModeVerticalLr   AWritingMode = "vertical-lr"
-	AWritingModeVerticalRl   AWritingMode = "vertical-rl"
-)
-
-type AXmlSpace string
-
-const (
-	AXmlSpaceDefault  AXmlSpace = "default"
-	AXmlSpacePreserve AXmlSpace = "preserve"
-)
+// SVGContent marks <a> as a permitted child (Content).
+func (*AElement) SVGContent() {}
 
 func (e *AElement) Download(s string) *AElement {
 	e.attributes.Set("download", s)
@@ -420,8 +197,8 @@ func (e *AElement) Ping(s ...string) *AElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AElement) Referrerpolicy(v ...AReferrerpolicy) *AElement {
-	var val AReferrerpolicy
+func (e *AElement) Referrerpolicy(v ...Referrerpolicy) *AElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -491,14 +268,10 @@ func (e *AElement) XlinkTitle(s string) *AElement {
 	return e
 }
 
-func (e *AElement) AlignmentBaseline(a AAlignmentBaseline) *AElement {
+func (e *AElement) AlignmentBaseline(a AlignmentBaseline) *AElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func AAlignmentBaselineCustom(s string) AAlignmentBaseline {
-	return AAlignmentBaseline(s)
 }
 
 func (e *AElement) AriaUnsafe(name string, s string) *AElement {
@@ -552,14 +325,10 @@ func (e *AElement) ClipPath(s string) *AElement {
 	return e
 }
 
-func (e *AElement) ClipRule(a AClipRule) *AElement {
+func (e *AElement) ClipRule(a ClipRule) *AElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func AClipRuleCustom(s string) AClipRule {
-	return AClipRule(s)
 }
 
 func (e *AElement) Color(s string) *AElement {
@@ -568,24 +337,16 @@ func (e *AElement) Color(s string) *AElement {
 	return e
 }
 
-func (e *AElement) ColorInterpolation(a AColorInterpolation) *AElement {
+func (e *AElement) ColorInterpolation(a ColorInterpolation) *AElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func AColorInterpolationCustom(s string) AColorInterpolation {
-	return AColorInterpolation(s)
-}
-
-func (e *AElement) ColorInterpolationFilters(a AColorInterpolationFilters) *AElement {
+func (e *AElement) ColorInterpolationFilters(a ColorInterpolationFilters) *AElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func AColorInterpolationFiltersCustom(s string) AColorInterpolationFilters {
-	return AColorInterpolationFilters(s)
 }
 
 func (e *AElement) Cursor(s string) *AElement {
@@ -610,14 +371,10 @@ func (e *AElement) Data(name string, s string) *AElement {
 	return e
 }
 
-func (e *AElement) Direction(a ADirection) *AElement {
+func (e *AElement) Direction(a Direction) *AElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func ADirectionCustom(s string) ADirection {
-	return ADirection(s)
 }
 
 func (e *AElement) Display(s string) *AElement {
@@ -626,14 +383,10 @@ func (e *AElement) Display(s string) *AElement {
 	return e
 }
 
-func (e *AElement) DominantBaseline(a ADominantBaseline) *AElement {
+func (e *AElement) DominantBaseline(a DominantBaseline) *AElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func ADominantBaselineCustom(s string) ADominantBaseline {
-	return ADominantBaseline(s)
 }
 
 func (e *AElement) Fill(s string) *AElement {
@@ -648,14 +401,10 @@ func (e *AElement) FillOpacity(f float64) *AElement {
 	return e
 }
 
-func (e *AElement) FillRule(a AFillRule) *AElement {
+func (e *AElement) FillRule(a FillRule) *AElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func AFillRuleCustom(s string) AFillRule {
-	return AFillRule(s)
 }
 
 func (e *AElement) Filter(s string) *AElement {
@@ -700,14 +449,10 @@ func (e *AElement) FontStretch(s string) *AElement {
 	return e
 }
 
-func (e *AElement) FontStyle(a AFontStyle) *AElement {
+func (e *AElement) FontStyle(a FontStyle) *AElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func AFontStyleCustom(s string) AFontStyle {
-	return AFontStyle(s)
 }
 
 func (e *AElement) FontVariant(s string) *AElement {
@@ -746,14 +491,10 @@ func (e *AElement) Id(s string) *AElement {
 	return e
 }
 
-func (e *AElement) ImageRendering(a AImageRendering) *AElement {
+func (e *AElement) ImageRendering(a ImageRendering) *AElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func AImageRenderingCustom(s string) AImageRendering {
-	return AImageRendering(s)
 }
 
 func (e *AElement) Lang(s string) *AElement {
@@ -804,14 +545,10 @@ func (e *AElement) Opacity(f float64) *AElement {
 	return e
 }
 
-func (e *AElement) Overflow(a AOverflow) *AElement {
+func (e *AElement) Overflow(a Overflow) *AElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func AOverflowCustom(s string) AOverflow {
-	return AOverflow(s)
 }
 
 func (e *AElement) PaintOrder(s string) *AElement {
@@ -820,14 +557,10 @@ func (e *AElement) PaintOrder(s string) *AElement {
 	return e
 }
 
-func (e *AElement) PointerEvents(a APointerEvents) *AElement {
+func (e *AElement) PointerEvents(a PointerEvents) *AElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func APointerEventsCustom(s string) APointerEvents {
-	return APointerEvents(s)
 }
 
 func (e *AElement) RequiredExtensions(s string) *AElement {
@@ -836,14 +569,10 @@ func (e *AElement) RequiredExtensions(s string) *AElement {
 	return e
 }
 
-func (e *AElement) ShapeRendering(a AShapeRendering) *AElement {
+func (e *AElement) ShapeRendering(a ShapeRendering) *AElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func AShapeRenderingCustom(s string) AShapeRendering {
-	return AShapeRendering(s)
 }
 
 func (e *AElement) StopColor(s string) *AElement {
@@ -876,24 +605,16 @@ func (e *AElement) StrokeDashoffset(s string) *AElement {
 	return e
 }
 
-func (e *AElement) StrokeLinecap(a AStrokeLinecap) *AElement {
+func (e *AElement) StrokeLinecap(a StrokeLinecap) *AElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func AStrokeLinecapCustom(s string) AStrokeLinecap {
-	return AStrokeLinecap(s)
-}
-
-func (e *AElement) StrokeLinejoin(a AStrokeLinejoin) *AElement {
+func (e *AElement) StrokeLinejoin(a StrokeLinejoin) *AElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func AStrokeLinejoinCustom(s string) AStrokeLinejoin {
-	return AStrokeLinejoin(s)
 }
 
 func (e *AElement) StrokeMiterlimit(f float64) *AElement {
@@ -926,14 +647,10 @@ func (e *AElement) Tabindex(i int) *AElement {
 	return e
 }
 
-func (e *AElement) TextAnchor(a ATextAnchor) *AElement {
+func (e *AElement) TextAnchor(a TextAnchor) *AElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func ATextAnchorCustom(s string) ATextAnchor {
-	return ATextAnchor(s)
 }
 
 func (e *AElement) TextDecoration(s string) *AElement {
@@ -948,14 +665,10 @@ func (e *AElement) TextOverflow(s string) *AElement {
 	return e
 }
 
-func (e *AElement) TextRendering(a ATextRendering) *AElement {
+func (e *AElement) TextRendering(a TextRendering) *AElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func ATextRenderingCustom(s string) ATextRendering {
-	return ATextRendering(s)
 }
 
 func (e *AElement) Transform(s string) *AElement {
@@ -964,14 +677,10 @@ func (e *AElement) Transform(s string) *AElement {
 	return e
 }
 
-func (e *AElement) TransformBox(a ATransformBox) *AElement {
+func (e *AElement) TransformBox(a TransformBox) *AElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func ATransformBoxCustom(s string) ATransformBox {
-	return ATransformBox(s)
 }
 
 func (e *AElement) TransformOrigin(s string) *AElement {
@@ -986,24 +695,16 @@ func (e *AElement) UnicodeBidi(s string) *AElement {
 	return e
 }
 
-func (e *AElement) VectorEffect(a AVectorEffect) *AElement {
+func (e *AElement) VectorEffect(a VectorEffect) *AElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func AVectorEffectCustom(s string) AVectorEffect {
-	return AVectorEffect(s)
-}
-
-func (e *AElement) Visibility(a AVisibility) *AElement {
+func (e *AElement) Visibility(a Visibility) *AElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func AVisibilityCustom(s string) AVisibility {
-	return AVisibility(s)
 }
 
 func (e *AElement) WhiteSpace(s string) *AElement {
@@ -1018,14 +719,10 @@ func (e *AElement) WordSpacing(s string) *AElement {
 	return e
 }
 
-func (e *AElement) WritingMode(a AWritingMode) *AElement {
+func (e *AElement) WritingMode(a WritingMode) *AElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func AWritingModeCustom(s string) AWritingMode {
-	return AWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1040,7 +737,7 @@ func (e *AElement) XmlLang(s string) *AElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *AElement) XmlSpace(a AXmlSpace) *AElement {
+func (e *AElement) XmlSpace(a XmlSpace) *AElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

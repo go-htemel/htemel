@@ -44,6 +44,14 @@ func (e *SourceElement) With(fn func(*SourceElement)) *SourceElement {
 	return e
 }
 
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *SourceElement) IfThen(cond bool, fn func(*SourceElement)) *SourceElement {
+	if cond {
+		fn(e)
+	}
+	return e
+}
+
 // AddClass appends a class to the element.
 func (e *SourceElement) AddClass(classes ...string) *SourceElement {
 	current, _ := e.attributes.Get("class")
@@ -109,114 +117,14 @@ func (e *SourceElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SourceAutocapitalize string
+// HTMLAudioChild marks <source> as a permitted child of <audio> (AudioChild).
+func (*SourceElement) HTMLAudioChild() {}
 
-const (
-	SourceAutocapitalizeCharacters SourceAutocapitalize = "characters"
-	SourceAutocapitalizeNone       SourceAutocapitalize = "none"
-	SourceAutocapitalizeOff        SourceAutocapitalize = "off"
-	SourceAutocapitalizeOn         SourceAutocapitalize = "on"
-	SourceAutocapitalizeSentences  SourceAutocapitalize = "sentences"
-	SourceAutocapitalizeWords      SourceAutocapitalize = "words"
-)
+// HTMLPictureChild marks <source> as a permitted child of <picture> (PictureChild).
+func (*SourceElement) HTMLPictureChild() {}
 
-type SourceAutocorrect string
-
-const (
-	SourceAutocorrectOff   SourceAutocorrect = "off"
-	SourceAutocorrectOn    SourceAutocorrect = "on"
-	SourceAutocorrectEmpty SourceAutocorrect = ""
-)
-
-type SourceContenteditable string
-
-const (
-	SourceContenteditableFalse         SourceContenteditable = "false"
-	SourceContenteditablePlaintextOnly SourceContenteditable = "plaintext-only"
-	SourceContenteditableTrue          SourceContenteditable = "true"
-	SourceContenteditableEmpty         SourceContenteditable = ""
-)
-
-type SourceDir string
-
-const (
-	SourceDirAuto SourceDir = "auto"
-	SourceDirLtr  SourceDir = "ltr"
-	SourceDirRtl  SourceDir = "rtl"
-)
-
-type SourceDraggable string
-
-const (
-	SourceDraggableFalse SourceDraggable = "false"
-	SourceDraggableTrue  SourceDraggable = "true"
-)
-
-type SourceEnterkeyhint string
-
-const (
-	SourceEnterkeyhintDone     SourceEnterkeyhint = "done"
-	SourceEnterkeyhintEnter    SourceEnterkeyhint = "enter"
-	SourceEnterkeyhintGo       SourceEnterkeyhint = "go"
-	SourceEnterkeyhintNext     SourceEnterkeyhint = "next"
-	SourceEnterkeyhintPrevious SourceEnterkeyhint = "previous"
-	SourceEnterkeyhintSearch   SourceEnterkeyhint = "search"
-	SourceEnterkeyhintSend     SourceEnterkeyhint = "send"
-)
-
-type SourceHidden string
-
-const (
-	SourceHiddenHidden     SourceHidden = "hidden"
-	SourceHiddenUntilFound SourceHidden = "until-found"
-	SourceHiddenEmpty      SourceHidden = ""
-)
-
-type SourceInputmode string
-
-const (
-	SourceInputmodeDecimal SourceInputmode = "decimal"
-	SourceInputmodeEmail   SourceInputmode = "email"
-	SourceInputmodeNone    SourceInputmode = "none"
-	SourceInputmodeNumeric SourceInputmode = "numeric"
-	SourceInputmodeSearch  SourceInputmode = "search"
-	SourceInputmodeTel     SourceInputmode = "tel"
-	SourceInputmodeText    SourceInputmode = "text"
-	SourceInputmodeUrl     SourceInputmode = "url"
-)
-
-type SourcePopover string
-
-const (
-	SourcePopoverAuto   SourcePopover = "auto"
-	SourcePopoverHint   SourcePopover = "hint"
-	SourcePopoverManual SourcePopover = "manual"
-	SourcePopoverEmpty  SourcePopover = ""
-)
-
-type SourceSpellcheck string
-
-const (
-	SourceSpellcheckFalse SourceSpellcheck = "false"
-	SourceSpellcheckTrue  SourceSpellcheck = "true"
-	SourceSpellcheckEmpty SourceSpellcheck = ""
-)
-
-type SourceTranslate string
-
-const (
-	SourceTranslateNo    SourceTranslate = "no"
-	SourceTranslateYes   SourceTranslate = "yes"
-	SourceTranslateEmpty SourceTranslate = ""
-)
-
-type SourceWritingsuggestions string
-
-const (
-	SourceWritingsuggestionsFalse SourceWritingsuggestions = "false"
-	SourceWritingsuggestionsTrue  SourceWritingsuggestions = "true"
-	SourceWritingsuggestionsEmpty SourceWritingsuggestions = ""
-)
+// HTMLVideoChild marks <source> as a permitted child of <video> (VideoChild).
+func (*SourceElement) HTMLVideoChild() {}
 
 func (e *SourceElement) Height(i int) *SourceElement {
 	e.attributes.Set("height", strconv.Itoa(i))
@@ -284,7 +192,7 @@ func (e *SourceElement) Aria(name string, s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Autocapitalize(a SourceAutocapitalize) *SourceElement {
+func (e *SourceElement) Autocapitalize(a Autocapitalize) *SourceElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -292,8 +200,8 @@ func (e *SourceElement) Autocapitalize(a SourceAutocapitalize) *SourceElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Autocorrect(v ...SourceAutocorrect) *SourceElement {
-	var val SourceAutocorrect
+func (e *SourceElement) Autocorrect(v ...Autocorrect) *SourceElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -318,8 +226,8 @@ func (e *SourceElement) Class(s ...string) *SourceElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Contenteditable(v ...SourceContenteditable) *SourceElement {
-	var val SourceContenteditable
+func (e *SourceElement) Contenteditable(v ...Contenteditable) *SourceElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -344,19 +252,19 @@ func (e *SourceElement) Data(name string, s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Dir(a SourceDir) *SourceElement {
+func (e *SourceElement) Dir(a Dir) *SourceElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SourceElement) Draggable(a SourceDraggable) *SourceElement {
+func (e *SourceElement) Draggable(a Draggable) *SourceElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SourceElement) Enterkeyhint(a SourceEnterkeyhint) *SourceElement {
+func (e *SourceElement) Enterkeyhint(a Enterkeyhint) *SourceElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -384,8 +292,8 @@ func (e *SourceElement) Headingreset(b bool) *SourceElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Hidden(v ...SourceHidden) *SourceElement {
-	var val SourceHidden
+func (e *SourceElement) Hidden(v ...Hidden) *SourceElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -408,7 +316,7 @@ func (e *SourceElement) Inert(b bool) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Inputmode(a SourceInputmode) *SourceElement {
+func (e *SourceElement) Inputmode(a Inputmode) *SourceElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -474,8 +382,8 @@ func (e *SourceElement) Part(s ...string) *SourceElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Popover(v ...SourcePopover) *SourceElement {
-	var val SourcePopover
+func (e *SourceElement) Popover(v ...Popover) *SourceElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -498,8 +406,8 @@ func (e *SourceElement) Slot(s string) *SourceElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Spellcheck(v ...SourceSpellcheck) *SourceElement {
-	var val SourceSpellcheck
+func (e *SourceElement) Spellcheck(v ...Spellcheck) *SourceElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -528,8 +436,8 @@ func (e *SourceElement) Title(s string) *SourceElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Translate(v ...SourceTranslate) *SourceElement {
-	var val SourceTranslate
+func (e *SourceElement) Translate(v ...Translate) *SourceElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -540,8 +448,8 @@ func (e *SourceElement) Translate(v ...SourceTranslate) *SourceElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SourceElement) Writingsuggestions(v ...SourceWritingsuggestions) *SourceElement {
-	var val SourceWritingsuggestions
+func (e *SourceElement) Writingsuggestions(v ...Writingsuggestions) *SourceElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

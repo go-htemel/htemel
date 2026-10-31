@@ -13,16 +13,20 @@ import (
 )
 
 type BlockquoteElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Blockquote creates a tag <blockquote> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The blockquote element represents a section that is quoted from another source.
-func Blockquote(children ...htemel.Node) *BlockquoteElement {
+func Blockquote(children ...htemel.FlowContent) *BlockquoteElement {
 	node := &BlockquoteElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Blockquote(children ...htemel.Node) *BlockquoteElement {
 }
 
 // BlockquoteIf creates a tag <blockquote> instance that is only rendered when condition is true.
-func BlockquoteIf(condition bool, children ...htemel.Node) *BlockquoteElement {
+func BlockquoteIf(condition bool, children ...htemel.FlowContent) *BlockquoteElement {
 	if condition {
 		return Blockquote(children...)
 	}
@@ -43,7 +47,7 @@ func BlockquoteIf(condition bool, children ...htemel.Node) *BlockquoteElement {
 }
 
 // BlockquoteTernary creates a tag <blockquote> containing then when condition is true, otherwise containing otherwise.
-func BlockquoteTernary(condition bool, then htemel.Node, otherwise htemel.Node) *BlockquoteElement {
+func BlockquoteTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *BlockquoteElement {
 	if condition {
 		return Blockquote(then)
 	}
@@ -51,7 +55,7 @@ func BlockquoteTernary(condition bool, then htemel.Node, otherwise htemel.Node) 
 }
 
 // Children appends children to this element.
-func (e *BlockquoteElement) Children(children ...htemel.Node) *BlockquoteElement {
+func (e *BlockquoteElement) Children(children ...htemel.FlowContent) *BlockquoteElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *BlockquoteElement) Textf(format string, args ...any) *BlockquoteElement
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *BlockquoteElement) If(cond bool, child htemel.Node) *BlockquoteElement {
+func (e *BlockquoteElement) If(cond bool, child htemel.FlowContent) *BlockquoteElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *BlockquoteElement) If(cond bool, child htemel.Node) *BlockquoteElement 
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *BlockquoteElement) IfElse(cond bool, then, els htemel.Node) *BlockquoteElement {
+func (e *BlockquoteElement) IfElse(cond bool, then, els htemel.FlowContent) *BlockquoteElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *BlockquoteElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BlockquoteAutocapitalize string
-
-const (
-	BlockquoteAutocapitalizeCharacters BlockquoteAutocapitalize = "characters"
-	BlockquoteAutocapitalizeNone       BlockquoteAutocapitalize = "none"
-	BlockquoteAutocapitalizeOff        BlockquoteAutocapitalize = "off"
-	BlockquoteAutocapitalizeOn         BlockquoteAutocapitalize = "on"
-	BlockquoteAutocapitalizeSentences  BlockquoteAutocapitalize = "sentences"
-	BlockquoteAutocapitalizeWords      BlockquoteAutocapitalize = "words"
-)
-
-type BlockquoteAutocorrect string
-
-const (
-	BlockquoteAutocorrectOff   BlockquoteAutocorrect = "off"
-	BlockquoteAutocorrectOn    BlockquoteAutocorrect = "on"
-	BlockquoteAutocorrectEmpty BlockquoteAutocorrect = ""
-)
-
-type BlockquoteContenteditable string
-
-const (
-	BlockquoteContenteditableFalse         BlockquoteContenteditable = "false"
-	BlockquoteContenteditablePlaintextOnly BlockquoteContenteditable = "plaintext-only"
-	BlockquoteContenteditableTrue          BlockquoteContenteditable = "true"
-	BlockquoteContenteditableEmpty         BlockquoteContenteditable = ""
-)
-
-type BlockquoteDir string
-
-const (
-	BlockquoteDirAuto BlockquoteDir = "auto"
-	BlockquoteDirLtr  BlockquoteDir = "ltr"
-	BlockquoteDirRtl  BlockquoteDir = "rtl"
-)
-
-type BlockquoteDraggable string
-
-const (
-	BlockquoteDraggableFalse BlockquoteDraggable = "false"
-	BlockquoteDraggableTrue  BlockquoteDraggable = "true"
-)
-
-type BlockquoteEnterkeyhint string
-
-const (
-	BlockquoteEnterkeyhintDone     BlockquoteEnterkeyhint = "done"
-	BlockquoteEnterkeyhintEnter    BlockquoteEnterkeyhint = "enter"
-	BlockquoteEnterkeyhintGo       BlockquoteEnterkeyhint = "go"
-	BlockquoteEnterkeyhintNext     BlockquoteEnterkeyhint = "next"
-	BlockquoteEnterkeyhintPrevious BlockquoteEnterkeyhint = "previous"
-	BlockquoteEnterkeyhintSearch   BlockquoteEnterkeyhint = "search"
-	BlockquoteEnterkeyhintSend     BlockquoteEnterkeyhint = "send"
-)
-
-type BlockquoteHidden string
-
-const (
-	BlockquoteHiddenHidden     BlockquoteHidden = "hidden"
-	BlockquoteHiddenUntilFound BlockquoteHidden = "until-found"
-	BlockquoteHiddenEmpty      BlockquoteHidden = ""
-)
-
-type BlockquoteInputmode string
-
-const (
-	BlockquoteInputmodeDecimal BlockquoteInputmode = "decimal"
-	BlockquoteInputmodeEmail   BlockquoteInputmode = "email"
-	BlockquoteInputmodeNone    BlockquoteInputmode = "none"
-	BlockquoteInputmodeNumeric BlockquoteInputmode = "numeric"
-	BlockquoteInputmodeSearch  BlockquoteInputmode = "search"
-	BlockquoteInputmodeTel     BlockquoteInputmode = "tel"
-	BlockquoteInputmodeText    BlockquoteInputmode = "text"
-	BlockquoteInputmodeUrl     BlockquoteInputmode = "url"
-)
-
-type BlockquotePopover string
-
-const (
-	BlockquotePopoverAuto   BlockquotePopover = "auto"
-	BlockquotePopoverHint   BlockquotePopover = "hint"
-	BlockquotePopoverManual BlockquotePopover = "manual"
-	BlockquotePopoverEmpty  BlockquotePopover = ""
-)
-
-type BlockquoteSpellcheck string
-
-const (
-	BlockquoteSpellcheckFalse BlockquoteSpellcheck = "false"
-	BlockquoteSpellcheckTrue  BlockquoteSpellcheck = "true"
-	BlockquoteSpellcheckEmpty BlockquoteSpellcheck = ""
-)
-
-type BlockquoteTranslate string
-
-const (
-	BlockquoteTranslateNo    BlockquoteTranslate = "no"
-	BlockquoteTranslateYes   BlockquoteTranslate = "yes"
-	BlockquoteTranslateEmpty BlockquoteTranslate = ""
-)
-
-type BlockquoteWritingsuggestions string
-
-const (
-	BlockquoteWritingsuggestionsFalse BlockquoteWritingsuggestions = "false"
-	BlockquoteWritingsuggestionsTrue  BlockquoteWritingsuggestions = "true"
-	BlockquoteWritingsuggestionsEmpty BlockquoteWritingsuggestions = ""
-)
-
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *BlockquoteElement) Cite(s string) *BlockquoteElement {
@@ -303,7 +198,7 @@ func (e *BlockquoteElement) Aria(name string, s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Autocapitalize(a BlockquoteAutocapitalize) *BlockquoteElement {
+func (e *BlockquoteElement) Autocapitalize(a Autocapitalize) *BlockquoteElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -311,8 +206,8 @@ func (e *BlockquoteElement) Autocapitalize(a BlockquoteAutocapitalize) *Blockquo
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Autocorrect(v ...BlockquoteAutocorrect) *BlockquoteElement {
-	var val BlockquoteAutocorrect
+func (e *BlockquoteElement) Autocorrect(v ...Autocorrect) *BlockquoteElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -337,8 +232,8 @@ func (e *BlockquoteElement) Class(s ...string) *BlockquoteElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Contenteditable(v ...BlockquoteContenteditable) *BlockquoteElement {
-	var val BlockquoteContenteditable
+func (e *BlockquoteElement) Contenteditable(v ...Contenteditable) *BlockquoteElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -363,19 +258,19 @@ func (e *BlockquoteElement) Data(name string, s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Dir(a BlockquoteDir) *BlockquoteElement {
+func (e *BlockquoteElement) Dir(a Dir) *BlockquoteElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BlockquoteElement) Draggable(a BlockquoteDraggable) *BlockquoteElement {
+func (e *BlockquoteElement) Draggable(a Draggable) *BlockquoteElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BlockquoteElement) Enterkeyhint(a BlockquoteEnterkeyhint) *BlockquoteElement {
+func (e *BlockquoteElement) Enterkeyhint(a Enterkeyhint) *BlockquoteElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -403,8 +298,8 @@ func (e *BlockquoteElement) Headingreset(b bool) *BlockquoteElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Hidden(v ...BlockquoteHidden) *BlockquoteElement {
-	var val BlockquoteHidden
+func (e *BlockquoteElement) Hidden(v ...Hidden) *BlockquoteElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -427,7 +322,7 @@ func (e *BlockquoteElement) Inert(b bool) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Inputmode(a BlockquoteInputmode) *BlockquoteElement {
+func (e *BlockquoteElement) Inputmode(a Inputmode) *BlockquoteElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -493,8 +388,8 @@ func (e *BlockquoteElement) Part(s ...string) *BlockquoteElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Popover(v ...BlockquotePopover) *BlockquoteElement {
-	var val BlockquotePopover
+func (e *BlockquoteElement) Popover(v ...Popover) *BlockquoteElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -517,8 +412,8 @@ func (e *BlockquoteElement) Slot(s string) *BlockquoteElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Spellcheck(v ...BlockquoteSpellcheck) *BlockquoteElement {
-	var val BlockquoteSpellcheck
+func (e *BlockquoteElement) Spellcheck(v ...Spellcheck) *BlockquoteElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -547,8 +442,8 @@ func (e *BlockquoteElement) Title(s string) *BlockquoteElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Translate(v ...BlockquoteTranslate) *BlockquoteElement {
-	var val BlockquoteTranslate
+func (e *BlockquoteElement) Translate(v ...Translate) *BlockquoteElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -559,8 +454,8 @@ func (e *BlockquoteElement) Translate(v ...BlockquoteTranslate) *BlockquoteEleme
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BlockquoteElement) Writingsuggestions(v ...BlockquoteWritingsuggestions) *BlockquoteElement {
-	var val BlockquoteWritingsuggestions
+func (e *BlockquoteElement) Writingsuggestions(v ...Writingsuggestions) *BlockquoteElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

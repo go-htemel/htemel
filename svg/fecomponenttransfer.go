@@ -14,15 +14,17 @@ import (
 
 type FeComponentTransferElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeComponentTransfer creates a tag <feComponentTransfer> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feComponentTransfer filter primitive remaps each color channel using transfer functions.
-func FeComponentTransfer(children ...htemel.Node) *FeComponentTransferElement {
+func FeComponentTransfer(children ...Content) *FeComponentTransferElement {
 	node := &FeComponentTransferElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeComponentTransfer(children ...htemel.Node) *FeComponentTransferElement {
 }
 
 // FeComponentTransferIf creates a tag <feComponentTransfer> instance that is only rendered when condition is true.
-func FeComponentTransferIf(condition bool, children ...htemel.Node) *FeComponentTransferElement {
+func FeComponentTransferIf(condition bool, children ...Content) *FeComponentTransferElement {
 	if condition {
 		return FeComponentTransfer(children...)
 	}
@@ -43,7 +45,7 @@ func FeComponentTransferIf(condition bool, children ...htemel.Node) *FeComponent
 }
 
 // FeComponentTransferTernary creates a tag <feComponentTransfer> containing then when condition is true, otherwise containing otherwise.
-func FeComponentTransferTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeComponentTransferElement {
+func FeComponentTransferTernary(condition bool, then Content, otherwise Content) *FeComponentTransferElement {
 	if condition {
 		return FeComponentTransfer(then)
 	}
@@ -51,7 +53,7 @@ func FeComponentTransferTernary(condition bool, then htemel.Node, otherwise htem
 }
 
 // Children appends children to this element.
-func (e *FeComponentTransferElement) Children(children ...htemel.Node) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) Children(children ...Content) *FeComponentTransferElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeComponentTransferElement) Textf(format string, args ...any) *FeCompon
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeComponentTransferElement) If(cond bool, child htemel.Node) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) If(cond bool, child Content) *FeComponentTransferElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeComponentTransferElement) If(cond bool, child htemel.Node) *FeCompone
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeComponentTransferElement) IfElse(cond bool, then, els htemel.Node) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) IfElse(cond bool, then, els Content) *FeComponentTransferElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeComponentTransferElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeComponentTransferAlignmentBaseline string
-
-const (
-	FeComponentTransferAlignmentBaselineAfterEdge      FeComponentTransferAlignmentBaseline = "after-edge"
-	FeComponentTransferAlignmentBaselineAlphabetic     FeComponentTransferAlignmentBaseline = "alphabetic"
-	FeComponentTransferAlignmentBaselineAuto           FeComponentTransferAlignmentBaseline = "auto"
-	FeComponentTransferAlignmentBaselineBaseline       FeComponentTransferAlignmentBaseline = "baseline"
-	FeComponentTransferAlignmentBaselineBeforeEdge     FeComponentTransferAlignmentBaseline = "before-edge"
-	FeComponentTransferAlignmentBaselineBottom         FeComponentTransferAlignmentBaseline = "bottom"
-	FeComponentTransferAlignmentBaselineCenter         FeComponentTransferAlignmentBaseline = "center"
-	FeComponentTransferAlignmentBaselineCentral        FeComponentTransferAlignmentBaseline = "central"
-	FeComponentTransferAlignmentBaselineHanging        FeComponentTransferAlignmentBaseline = "hanging"
-	FeComponentTransferAlignmentBaselineIdeographic    FeComponentTransferAlignmentBaseline = "ideographic"
-	FeComponentTransferAlignmentBaselineMathematical   FeComponentTransferAlignmentBaseline = "mathematical"
-	FeComponentTransferAlignmentBaselineMiddle         FeComponentTransferAlignmentBaseline = "middle"
-	FeComponentTransferAlignmentBaselineTextAfterEdge  FeComponentTransferAlignmentBaseline = "text-after-edge"
-	FeComponentTransferAlignmentBaselineTextBeforeEdge FeComponentTransferAlignmentBaseline = "text-before-edge"
-	FeComponentTransferAlignmentBaselineTextBottom     FeComponentTransferAlignmentBaseline = "text-bottom"
-	FeComponentTransferAlignmentBaselineTextTop        FeComponentTransferAlignmentBaseline = "text-top"
-	FeComponentTransferAlignmentBaselineTop            FeComponentTransferAlignmentBaseline = "top"
-)
-
-type FeComponentTransferClipRule string
-
-const (
-	FeComponentTransferClipRuleEvenodd FeComponentTransferClipRule = "evenodd"
-	FeComponentTransferClipRuleNonzero FeComponentTransferClipRule = "nonzero"
-)
-
-type FeComponentTransferColorInterpolation string
-
-const (
-	FeComponentTransferColorInterpolationAuto      FeComponentTransferColorInterpolation = "auto"
-	FeComponentTransferColorInterpolationLinearRGB FeComponentTransferColorInterpolation = "linearRGB"
-	FeComponentTransferColorInterpolationSRGB      FeComponentTransferColorInterpolation = "sRGB"
-)
-
-type FeComponentTransferColorInterpolationFilters string
-
-const (
-	FeComponentTransferColorInterpolationFiltersAuto      FeComponentTransferColorInterpolationFilters = "auto"
-	FeComponentTransferColorInterpolationFiltersLinearRGB FeComponentTransferColorInterpolationFilters = "linearRGB"
-	FeComponentTransferColorInterpolationFiltersSRGB      FeComponentTransferColorInterpolationFilters = "sRGB"
-)
-
-type FeComponentTransferDirection string
-
-const (
-	FeComponentTransferDirectionLtr FeComponentTransferDirection = "ltr"
-	FeComponentTransferDirectionRtl FeComponentTransferDirection = "rtl"
-)
-
-type FeComponentTransferDominantBaseline string
-
-const (
-	FeComponentTransferDominantBaselineAlphabetic   FeComponentTransferDominantBaseline = "alphabetic"
-	FeComponentTransferDominantBaselineAuto         FeComponentTransferDominantBaseline = "auto"
-	FeComponentTransferDominantBaselineCentral      FeComponentTransferDominantBaseline = "central"
-	FeComponentTransferDominantBaselineHanging      FeComponentTransferDominantBaseline = "hanging"
-	FeComponentTransferDominantBaselineIdeographic  FeComponentTransferDominantBaseline = "ideographic"
-	FeComponentTransferDominantBaselineMathematical FeComponentTransferDominantBaseline = "mathematical"
-	FeComponentTransferDominantBaselineMiddle       FeComponentTransferDominantBaseline = "middle"
-	FeComponentTransferDominantBaselineTextBottom   FeComponentTransferDominantBaseline = "text-bottom"
-	FeComponentTransferDominantBaselineTextTop      FeComponentTransferDominantBaseline = "text-top"
-)
-
-type FeComponentTransferFillRule string
-
-const (
-	FeComponentTransferFillRuleEvenodd FeComponentTransferFillRule = "evenodd"
-	FeComponentTransferFillRuleNonzero FeComponentTransferFillRule = "nonzero"
-)
-
-type FeComponentTransferFontStyle string
-
-const (
-	FeComponentTransferFontStyleItalic  FeComponentTransferFontStyle = "italic"
-	FeComponentTransferFontStyleNormal  FeComponentTransferFontStyle = "normal"
-	FeComponentTransferFontStyleOblique FeComponentTransferFontStyle = "oblique"
-)
-
-type FeComponentTransferImageRendering string
-
-const (
-	FeComponentTransferImageRenderingAuto            FeComponentTransferImageRendering = "auto"
-	FeComponentTransferImageRenderingCrispEdges      FeComponentTransferImageRendering = "crisp-edges"
-	FeComponentTransferImageRenderingHighQuality     FeComponentTransferImageRendering = "high-quality"
-	FeComponentTransferImageRenderingOptimizeQuality FeComponentTransferImageRendering = "optimizeQuality"
-	FeComponentTransferImageRenderingOptimizeSpeed   FeComponentTransferImageRendering = "optimizeSpeed"
-	FeComponentTransferImageRenderingPixelated       FeComponentTransferImageRendering = "pixelated"
-	FeComponentTransferImageRenderingSmooth          FeComponentTransferImageRendering = "smooth"
-)
-
-type FeComponentTransferOverflow string
-
-const (
-	FeComponentTransferOverflowAuto    FeComponentTransferOverflow = "auto"
-	FeComponentTransferOverflowClip    FeComponentTransferOverflow = "clip"
-	FeComponentTransferOverflowHidden  FeComponentTransferOverflow = "hidden"
-	FeComponentTransferOverflowScroll  FeComponentTransferOverflow = "scroll"
-	FeComponentTransferOverflowVisible FeComponentTransferOverflow = "visible"
-)
-
-type FeComponentTransferPointerEvents string
-
-const (
-	FeComponentTransferPointerEventsAll            FeComponentTransferPointerEvents = "all"
-	FeComponentTransferPointerEventsAuto           FeComponentTransferPointerEvents = "auto"
-	FeComponentTransferPointerEventsBoundingBox    FeComponentTransferPointerEvents = "bounding-box"
-	FeComponentTransferPointerEventsFill           FeComponentTransferPointerEvents = "fill"
-	FeComponentTransferPointerEventsNone           FeComponentTransferPointerEvents = "none"
-	FeComponentTransferPointerEventsPainted        FeComponentTransferPointerEvents = "painted"
-	FeComponentTransferPointerEventsStroke         FeComponentTransferPointerEvents = "stroke"
-	FeComponentTransferPointerEventsVisible        FeComponentTransferPointerEvents = "visible"
-	FeComponentTransferPointerEventsVisibleFill    FeComponentTransferPointerEvents = "visibleFill"
-	FeComponentTransferPointerEventsVisiblePainted FeComponentTransferPointerEvents = "visiblePainted"
-	FeComponentTransferPointerEventsVisibleStroke  FeComponentTransferPointerEvents = "visibleStroke"
-)
-
-type FeComponentTransferShapeRendering string
-
-const (
-	FeComponentTransferShapeRenderingAuto               FeComponentTransferShapeRendering = "auto"
-	FeComponentTransferShapeRenderingCrispEdges         FeComponentTransferShapeRendering = "crispEdges"
-	FeComponentTransferShapeRenderingGeometricPrecision FeComponentTransferShapeRendering = "geometricPrecision"
-	FeComponentTransferShapeRenderingOptimizeSpeed      FeComponentTransferShapeRendering = "optimizeSpeed"
-)
-
-type FeComponentTransferStrokeLinecap string
-
-const (
-	FeComponentTransferStrokeLinecapButt   FeComponentTransferStrokeLinecap = "butt"
-	FeComponentTransferStrokeLinecapRound  FeComponentTransferStrokeLinecap = "round"
-	FeComponentTransferStrokeLinecapSquare FeComponentTransferStrokeLinecap = "square"
-)
-
-type FeComponentTransferStrokeLinejoin string
-
-const (
-	FeComponentTransferStrokeLinejoinArcs      FeComponentTransferStrokeLinejoin = "arcs"
-	FeComponentTransferStrokeLinejoinBevel     FeComponentTransferStrokeLinejoin = "bevel"
-	FeComponentTransferStrokeLinejoinMiter     FeComponentTransferStrokeLinejoin = "miter"
-	FeComponentTransferStrokeLinejoinMiterClip FeComponentTransferStrokeLinejoin = "miter-clip"
-	FeComponentTransferStrokeLinejoinRound     FeComponentTransferStrokeLinejoin = "round"
-)
-
-type FeComponentTransferTextAnchor string
-
-const (
-	FeComponentTransferTextAnchorEnd    FeComponentTransferTextAnchor = "end"
-	FeComponentTransferTextAnchorMiddle FeComponentTransferTextAnchor = "middle"
-	FeComponentTransferTextAnchorStart  FeComponentTransferTextAnchor = "start"
-)
-
-type FeComponentTransferTextRendering string
-
-const (
-	FeComponentTransferTextRenderingAuto               FeComponentTransferTextRendering = "auto"
-	FeComponentTransferTextRenderingGeometricPrecision FeComponentTransferTextRendering = "geometricPrecision"
-	FeComponentTransferTextRenderingOptimizeLegibility FeComponentTransferTextRendering = "optimizeLegibility"
-	FeComponentTransferTextRenderingOptimizeSpeed      FeComponentTransferTextRendering = "optimizeSpeed"
-)
-
-type FeComponentTransferTransformBox string
-
-const (
-	FeComponentTransferTransformBoxBorderBox  FeComponentTransferTransformBox = "border-box"
-	FeComponentTransferTransformBoxContentBox FeComponentTransferTransformBox = "content-box"
-	FeComponentTransferTransformBoxFillBox    FeComponentTransferTransformBox = "fill-box"
-	FeComponentTransferTransformBoxStrokeBox  FeComponentTransferTransformBox = "stroke-box"
-	FeComponentTransferTransformBoxViewBox    FeComponentTransferTransformBox = "view-box"
-)
-
-type FeComponentTransferVectorEffect string
-
-const (
-	FeComponentTransferVectorEffectFixedPosition    FeComponentTransferVectorEffect = "fixed-position"
-	FeComponentTransferVectorEffectNonRotation      FeComponentTransferVectorEffect = "non-rotation"
-	FeComponentTransferVectorEffectNonScalingSize   FeComponentTransferVectorEffect = "non-scaling-size"
-	FeComponentTransferVectorEffectNonScalingStroke FeComponentTransferVectorEffect = "non-scaling-stroke"
-	FeComponentTransferVectorEffectNone             FeComponentTransferVectorEffect = "none"
-)
-
-type FeComponentTransferVisibility string
-
-const (
-	FeComponentTransferVisibilityCollapse FeComponentTransferVisibility = "collapse"
-	FeComponentTransferVisibilityHidden   FeComponentTransferVisibility = "hidden"
-	FeComponentTransferVisibilityVisible  FeComponentTransferVisibility = "visible"
-)
-
-type FeComponentTransferWritingMode string
-
-const (
-	FeComponentTransferWritingModeHorizontalTb FeComponentTransferWritingMode = "horizontal-tb"
-	FeComponentTransferWritingModeLr           FeComponentTransferWritingMode = "lr"
-	FeComponentTransferWritingModeLrTb         FeComponentTransferWritingMode = "lr-tb"
-	FeComponentTransferWritingModeRl           FeComponentTransferWritingMode = "rl"
-	FeComponentTransferWritingModeRlTb         FeComponentTransferWritingMode = "rl-tb"
-	FeComponentTransferWritingModeSidewaysLr   FeComponentTransferWritingMode = "sideways-lr"
-	FeComponentTransferWritingModeSidewaysRl   FeComponentTransferWritingMode = "sideways-rl"
-	FeComponentTransferWritingModeTb           FeComponentTransferWritingMode = "tb"
-	FeComponentTransferWritingModeTbRl         FeComponentTransferWritingMode = "tb-rl"
-	FeComponentTransferWritingModeVerticalLr   FeComponentTransferWritingMode = "vertical-lr"
-	FeComponentTransferWritingModeVerticalRl   FeComponentTransferWritingMode = "vertical-rl"
-)
-
-type FeComponentTransferXmlSpace string
-
-const (
-	FeComponentTransferXmlSpaceDefault  FeComponentTransferXmlSpace = "default"
-	FeComponentTransferXmlSpacePreserve FeComponentTransferXmlSpace = "preserve"
-)
+// SVGContent marks <feComponentTransfer> as a permitted child (Content).
+func (*FeComponentTransferElement) SVGContent() {}
 
 func (e *FeComponentTransferElement) Height(s string) *FeComponentTransferElement {
 	e.attributes.Set("height", s)
@@ -414,14 +205,10 @@ func (e *FeComponentTransferElement) Y(s string) *FeComponentTransferElement {
 	return e
 }
 
-func (e *FeComponentTransferElement) AlignmentBaseline(a FeComponentTransferAlignmentBaseline) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) AlignmentBaseline(a AlignmentBaseline) *FeComponentTransferElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeComponentTransferAlignmentBaselineCustom(s string) FeComponentTransferAlignmentBaseline {
-	return FeComponentTransferAlignmentBaseline(s)
 }
 
 func (e *FeComponentTransferElement) AriaUnsafe(name string, s string) *FeComponentTransferElement {
@@ -475,14 +262,10 @@ func (e *FeComponentTransferElement) ClipPath(s string) *FeComponentTransferElem
 	return e
 }
 
-func (e *FeComponentTransferElement) ClipRule(a FeComponentTransferClipRule) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) ClipRule(a ClipRule) *FeComponentTransferElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeComponentTransferClipRuleCustom(s string) FeComponentTransferClipRule {
-	return FeComponentTransferClipRule(s)
 }
 
 func (e *FeComponentTransferElement) Color(s string) *FeComponentTransferElement {
@@ -491,24 +274,16 @@ func (e *FeComponentTransferElement) Color(s string) *FeComponentTransferElement
 	return e
 }
 
-func (e *FeComponentTransferElement) ColorInterpolation(a FeComponentTransferColorInterpolation) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) ColorInterpolation(a ColorInterpolation) *FeComponentTransferElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeComponentTransferColorInterpolationCustom(s string) FeComponentTransferColorInterpolation {
-	return FeComponentTransferColorInterpolation(s)
-}
-
-func (e *FeComponentTransferElement) ColorInterpolationFilters(a FeComponentTransferColorInterpolationFilters) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeComponentTransferElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeComponentTransferColorInterpolationFiltersCustom(s string) FeComponentTransferColorInterpolationFilters {
-	return FeComponentTransferColorInterpolationFilters(s)
 }
 
 func (e *FeComponentTransferElement) Cursor(s string) *FeComponentTransferElement {
@@ -533,14 +308,10 @@ func (e *FeComponentTransferElement) Data(name string, s string) *FeComponentTra
 	return e
 }
 
-func (e *FeComponentTransferElement) Direction(a FeComponentTransferDirection) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) Direction(a Direction) *FeComponentTransferElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeComponentTransferDirectionCustom(s string) FeComponentTransferDirection {
-	return FeComponentTransferDirection(s)
 }
 
 func (e *FeComponentTransferElement) Display(s string) *FeComponentTransferElement {
@@ -549,14 +320,10 @@ func (e *FeComponentTransferElement) Display(s string) *FeComponentTransferEleme
 	return e
 }
 
-func (e *FeComponentTransferElement) DominantBaseline(a FeComponentTransferDominantBaseline) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) DominantBaseline(a DominantBaseline) *FeComponentTransferElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeComponentTransferDominantBaselineCustom(s string) FeComponentTransferDominantBaseline {
-	return FeComponentTransferDominantBaseline(s)
 }
 
 func (e *FeComponentTransferElement) Fill(s string) *FeComponentTransferElement {
@@ -571,14 +338,10 @@ func (e *FeComponentTransferElement) FillOpacity(f float64) *FeComponentTransfer
 	return e
 }
 
-func (e *FeComponentTransferElement) FillRule(a FeComponentTransferFillRule) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) FillRule(a FillRule) *FeComponentTransferElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeComponentTransferFillRuleCustom(s string) FeComponentTransferFillRule {
-	return FeComponentTransferFillRule(s)
 }
 
 func (e *FeComponentTransferElement) Filter(s string) *FeComponentTransferElement {
@@ -623,14 +386,10 @@ func (e *FeComponentTransferElement) FontStretch(s string) *FeComponentTransferE
 	return e
 }
 
-func (e *FeComponentTransferElement) FontStyle(a FeComponentTransferFontStyle) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) FontStyle(a FontStyle) *FeComponentTransferElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeComponentTransferFontStyleCustom(s string) FeComponentTransferFontStyle {
-	return FeComponentTransferFontStyle(s)
 }
 
 func (e *FeComponentTransferElement) FontVariant(s string) *FeComponentTransferElement {
@@ -669,14 +428,10 @@ func (e *FeComponentTransferElement) Id(s string) *FeComponentTransferElement {
 	return e
 }
 
-func (e *FeComponentTransferElement) ImageRendering(a FeComponentTransferImageRendering) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) ImageRendering(a ImageRendering) *FeComponentTransferElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeComponentTransferImageRenderingCustom(s string) FeComponentTransferImageRendering {
-	return FeComponentTransferImageRendering(s)
 }
 
 func (e *FeComponentTransferElement) Lang(s string) *FeComponentTransferElement {
@@ -727,14 +482,10 @@ func (e *FeComponentTransferElement) Opacity(f float64) *FeComponentTransferElem
 	return e
 }
 
-func (e *FeComponentTransferElement) Overflow(a FeComponentTransferOverflow) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) Overflow(a Overflow) *FeComponentTransferElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeComponentTransferOverflowCustom(s string) FeComponentTransferOverflow {
-	return FeComponentTransferOverflow(s)
 }
 
 func (e *FeComponentTransferElement) PaintOrder(s string) *FeComponentTransferElement {
@@ -743,14 +494,10 @@ func (e *FeComponentTransferElement) PaintOrder(s string) *FeComponentTransferEl
 	return e
 }
 
-func (e *FeComponentTransferElement) PointerEvents(a FeComponentTransferPointerEvents) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) PointerEvents(a PointerEvents) *FeComponentTransferElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeComponentTransferPointerEventsCustom(s string) FeComponentTransferPointerEvents {
-	return FeComponentTransferPointerEvents(s)
 }
 
 func (e *FeComponentTransferElement) RequiredExtensions(s string) *FeComponentTransferElement {
@@ -759,14 +506,10 @@ func (e *FeComponentTransferElement) RequiredExtensions(s string) *FeComponentTr
 	return e
 }
 
-func (e *FeComponentTransferElement) ShapeRendering(a FeComponentTransferShapeRendering) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) ShapeRendering(a ShapeRendering) *FeComponentTransferElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeComponentTransferShapeRenderingCustom(s string) FeComponentTransferShapeRendering {
-	return FeComponentTransferShapeRendering(s)
 }
 
 func (e *FeComponentTransferElement) StopColor(s string) *FeComponentTransferElement {
@@ -799,24 +542,16 @@ func (e *FeComponentTransferElement) StrokeDashoffset(s string) *FeComponentTran
 	return e
 }
 
-func (e *FeComponentTransferElement) StrokeLinecap(a FeComponentTransferStrokeLinecap) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) StrokeLinecap(a StrokeLinecap) *FeComponentTransferElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeComponentTransferStrokeLinecapCustom(s string) FeComponentTransferStrokeLinecap {
-	return FeComponentTransferStrokeLinecap(s)
-}
-
-func (e *FeComponentTransferElement) StrokeLinejoin(a FeComponentTransferStrokeLinejoin) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) StrokeLinejoin(a StrokeLinejoin) *FeComponentTransferElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeComponentTransferStrokeLinejoinCustom(s string) FeComponentTransferStrokeLinejoin {
-	return FeComponentTransferStrokeLinejoin(s)
 }
 
 func (e *FeComponentTransferElement) StrokeMiterlimit(f float64) *FeComponentTransferElement {
@@ -849,14 +584,10 @@ func (e *FeComponentTransferElement) Tabindex(i int) *FeComponentTransferElement
 	return e
 }
 
-func (e *FeComponentTransferElement) TextAnchor(a FeComponentTransferTextAnchor) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) TextAnchor(a TextAnchor) *FeComponentTransferElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeComponentTransferTextAnchorCustom(s string) FeComponentTransferTextAnchor {
-	return FeComponentTransferTextAnchor(s)
 }
 
 func (e *FeComponentTransferElement) TextDecoration(s string) *FeComponentTransferElement {
@@ -871,14 +602,10 @@ func (e *FeComponentTransferElement) TextOverflow(s string) *FeComponentTransfer
 	return e
 }
 
-func (e *FeComponentTransferElement) TextRendering(a FeComponentTransferTextRendering) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) TextRendering(a TextRendering) *FeComponentTransferElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeComponentTransferTextRenderingCustom(s string) FeComponentTransferTextRendering {
-	return FeComponentTransferTextRendering(s)
 }
 
 func (e *FeComponentTransferElement) Transform(s string) *FeComponentTransferElement {
@@ -887,14 +614,10 @@ func (e *FeComponentTransferElement) Transform(s string) *FeComponentTransferEle
 	return e
 }
 
-func (e *FeComponentTransferElement) TransformBox(a FeComponentTransferTransformBox) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) TransformBox(a TransformBox) *FeComponentTransferElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeComponentTransferTransformBoxCustom(s string) FeComponentTransferTransformBox {
-	return FeComponentTransferTransformBox(s)
 }
 
 func (e *FeComponentTransferElement) TransformOrigin(s string) *FeComponentTransferElement {
@@ -909,24 +632,16 @@ func (e *FeComponentTransferElement) UnicodeBidi(s string) *FeComponentTransferE
 	return e
 }
 
-func (e *FeComponentTransferElement) VectorEffect(a FeComponentTransferVectorEffect) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) VectorEffect(a VectorEffect) *FeComponentTransferElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeComponentTransferVectorEffectCustom(s string) FeComponentTransferVectorEffect {
-	return FeComponentTransferVectorEffect(s)
-}
-
-func (e *FeComponentTransferElement) Visibility(a FeComponentTransferVisibility) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) Visibility(a Visibility) *FeComponentTransferElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeComponentTransferVisibilityCustom(s string) FeComponentTransferVisibility {
-	return FeComponentTransferVisibility(s)
 }
 
 func (e *FeComponentTransferElement) WhiteSpace(s string) *FeComponentTransferElement {
@@ -941,14 +656,10 @@ func (e *FeComponentTransferElement) WordSpacing(s string) *FeComponentTransferE
 	return e
 }
 
-func (e *FeComponentTransferElement) WritingMode(a FeComponentTransferWritingMode) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) WritingMode(a WritingMode) *FeComponentTransferElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeComponentTransferWritingModeCustom(s string) FeComponentTransferWritingMode {
-	return FeComponentTransferWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -963,7 +674,7 @@ func (e *FeComponentTransferElement) XmlLang(s string) *FeComponentTransferEleme
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeComponentTransferElement) XmlSpace(a FeComponentTransferXmlSpace) *FeComponentTransferElement {
+func (e *FeComponentTransferElement) XmlSpace(a XmlSpace) *FeComponentTransferElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

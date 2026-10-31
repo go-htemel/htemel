@@ -14,15 +14,17 @@ import (
 
 type RadialGradientElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // RadialGradient creates a tag <radialGradient> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The radialGradient element defines a radial gradient used to fill or stroke shapes.
-func RadialGradient(children ...htemel.Node) *RadialGradientElement {
+func RadialGradient(children ...Content) *RadialGradientElement {
 	node := &RadialGradientElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func RadialGradient(children ...htemel.Node) *RadialGradientElement {
 }
 
 // RadialGradientIf creates a tag <radialGradient> instance that is only rendered when condition is true.
-func RadialGradientIf(condition bool, children ...htemel.Node) *RadialGradientElement {
+func RadialGradientIf(condition bool, children ...Content) *RadialGradientElement {
 	if condition {
 		return RadialGradient(children...)
 	}
@@ -43,7 +45,7 @@ func RadialGradientIf(condition bool, children ...htemel.Node) *RadialGradientEl
 }
 
 // RadialGradientTernary creates a tag <radialGradient> containing then when condition is true, otherwise containing otherwise.
-func RadialGradientTernary(condition bool, then htemel.Node, otherwise htemel.Node) *RadialGradientElement {
+func RadialGradientTernary(condition bool, then Content, otherwise Content) *RadialGradientElement {
 	if condition {
 		return RadialGradient(then)
 	}
@@ -51,7 +53,7 @@ func RadialGradientTernary(condition bool, then htemel.Node, otherwise htemel.No
 }
 
 // Children appends children to this element.
-func (e *RadialGradientElement) Children(children ...htemel.Node) *RadialGradientElement {
+func (e *RadialGradientElement) Children(children ...Content) *RadialGradientElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *RadialGradientElement) Textf(format string, args ...any) *RadialGradien
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *RadialGradientElement) If(cond bool, child htemel.Node) *RadialGradientElement {
+func (e *RadialGradientElement) If(cond bool, child Content) *RadialGradientElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *RadialGradientElement) If(cond bool, child htemel.Node) *RadialGradient
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *RadialGradientElement) IfElse(cond bool, then, els htemel.Node) *RadialGradientElement {
+func (e *RadialGradientElement) IfElse(cond bool, then, els Content) *RadialGradientElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,234 +166,8 @@ func (e *RadialGradientElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type RadialGradientGradientUnits string
-
-const (
-	RadialGradientGradientUnitsObjectBoundingBox RadialGradientGradientUnits = "objectBoundingBox"
-	RadialGradientGradientUnitsUserSpaceOnUse    RadialGradientGradientUnits = "userSpaceOnUse"
-)
-
-type RadialGradientSpreadMethod string
-
-const (
-	RadialGradientSpreadMethodPad     RadialGradientSpreadMethod = "pad"
-	RadialGradientSpreadMethodReflect RadialGradientSpreadMethod = "reflect"
-	RadialGradientSpreadMethodRepeat  RadialGradientSpreadMethod = "repeat"
-)
-
-type RadialGradientAlignmentBaseline string
-
-const (
-	RadialGradientAlignmentBaselineAfterEdge      RadialGradientAlignmentBaseline = "after-edge"
-	RadialGradientAlignmentBaselineAlphabetic     RadialGradientAlignmentBaseline = "alphabetic"
-	RadialGradientAlignmentBaselineAuto           RadialGradientAlignmentBaseline = "auto"
-	RadialGradientAlignmentBaselineBaseline       RadialGradientAlignmentBaseline = "baseline"
-	RadialGradientAlignmentBaselineBeforeEdge     RadialGradientAlignmentBaseline = "before-edge"
-	RadialGradientAlignmentBaselineBottom         RadialGradientAlignmentBaseline = "bottom"
-	RadialGradientAlignmentBaselineCenter         RadialGradientAlignmentBaseline = "center"
-	RadialGradientAlignmentBaselineCentral        RadialGradientAlignmentBaseline = "central"
-	RadialGradientAlignmentBaselineHanging        RadialGradientAlignmentBaseline = "hanging"
-	RadialGradientAlignmentBaselineIdeographic    RadialGradientAlignmentBaseline = "ideographic"
-	RadialGradientAlignmentBaselineMathematical   RadialGradientAlignmentBaseline = "mathematical"
-	RadialGradientAlignmentBaselineMiddle         RadialGradientAlignmentBaseline = "middle"
-	RadialGradientAlignmentBaselineTextAfterEdge  RadialGradientAlignmentBaseline = "text-after-edge"
-	RadialGradientAlignmentBaselineTextBeforeEdge RadialGradientAlignmentBaseline = "text-before-edge"
-	RadialGradientAlignmentBaselineTextBottom     RadialGradientAlignmentBaseline = "text-bottom"
-	RadialGradientAlignmentBaselineTextTop        RadialGradientAlignmentBaseline = "text-top"
-	RadialGradientAlignmentBaselineTop            RadialGradientAlignmentBaseline = "top"
-)
-
-type RadialGradientClipRule string
-
-const (
-	RadialGradientClipRuleEvenodd RadialGradientClipRule = "evenodd"
-	RadialGradientClipRuleNonzero RadialGradientClipRule = "nonzero"
-)
-
-type RadialGradientColorInterpolation string
-
-const (
-	RadialGradientColorInterpolationAuto      RadialGradientColorInterpolation = "auto"
-	RadialGradientColorInterpolationLinearRGB RadialGradientColorInterpolation = "linearRGB"
-	RadialGradientColorInterpolationSRGB      RadialGradientColorInterpolation = "sRGB"
-)
-
-type RadialGradientColorInterpolationFilters string
-
-const (
-	RadialGradientColorInterpolationFiltersAuto      RadialGradientColorInterpolationFilters = "auto"
-	RadialGradientColorInterpolationFiltersLinearRGB RadialGradientColorInterpolationFilters = "linearRGB"
-	RadialGradientColorInterpolationFiltersSRGB      RadialGradientColorInterpolationFilters = "sRGB"
-)
-
-type RadialGradientDirection string
-
-const (
-	RadialGradientDirectionLtr RadialGradientDirection = "ltr"
-	RadialGradientDirectionRtl RadialGradientDirection = "rtl"
-)
-
-type RadialGradientDominantBaseline string
-
-const (
-	RadialGradientDominantBaselineAlphabetic   RadialGradientDominantBaseline = "alphabetic"
-	RadialGradientDominantBaselineAuto         RadialGradientDominantBaseline = "auto"
-	RadialGradientDominantBaselineCentral      RadialGradientDominantBaseline = "central"
-	RadialGradientDominantBaselineHanging      RadialGradientDominantBaseline = "hanging"
-	RadialGradientDominantBaselineIdeographic  RadialGradientDominantBaseline = "ideographic"
-	RadialGradientDominantBaselineMathematical RadialGradientDominantBaseline = "mathematical"
-	RadialGradientDominantBaselineMiddle       RadialGradientDominantBaseline = "middle"
-	RadialGradientDominantBaselineTextBottom   RadialGradientDominantBaseline = "text-bottom"
-	RadialGradientDominantBaselineTextTop      RadialGradientDominantBaseline = "text-top"
-)
-
-type RadialGradientFillRule string
-
-const (
-	RadialGradientFillRuleEvenodd RadialGradientFillRule = "evenodd"
-	RadialGradientFillRuleNonzero RadialGradientFillRule = "nonzero"
-)
-
-type RadialGradientFontStyle string
-
-const (
-	RadialGradientFontStyleItalic  RadialGradientFontStyle = "italic"
-	RadialGradientFontStyleNormal  RadialGradientFontStyle = "normal"
-	RadialGradientFontStyleOblique RadialGradientFontStyle = "oblique"
-)
-
-type RadialGradientImageRendering string
-
-const (
-	RadialGradientImageRenderingAuto            RadialGradientImageRendering = "auto"
-	RadialGradientImageRenderingCrispEdges      RadialGradientImageRendering = "crisp-edges"
-	RadialGradientImageRenderingHighQuality     RadialGradientImageRendering = "high-quality"
-	RadialGradientImageRenderingOptimizeQuality RadialGradientImageRendering = "optimizeQuality"
-	RadialGradientImageRenderingOptimizeSpeed   RadialGradientImageRendering = "optimizeSpeed"
-	RadialGradientImageRenderingPixelated       RadialGradientImageRendering = "pixelated"
-	RadialGradientImageRenderingSmooth          RadialGradientImageRendering = "smooth"
-)
-
-type RadialGradientOverflow string
-
-const (
-	RadialGradientOverflowAuto    RadialGradientOverflow = "auto"
-	RadialGradientOverflowClip    RadialGradientOverflow = "clip"
-	RadialGradientOverflowHidden  RadialGradientOverflow = "hidden"
-	RadialGradientOverflowScroll  RadialGradientOverflow = "scroll"
-	RadialGradientOverflowVisible RadialGradientOverflow = "visible"
-)
-
-type RadialGradientPointerEvents string
-
-const (
-	RadialGradientPointerEventsAll            RadialGradientPointerEvents = "all"
-	RadialGradientPointerEventsAuto           RadialGradientPointerEvents = "auto"
-	RadialGradientPointerEventsBoundingBox    RadialGradientPointerEvents = "bounding-box"
-	RadialGradientPointerEventsFill           RadialGradientPointerEvents = "fill"
-	RadialGradientPointerEventsNone           RadialGradientPointerEvents = "none"
-	RadialGradientPointerEventsPainted        RadialGradientPointerEvents = "painted"
-	RadialGradientPointerEventsStroke         RadialGradientPointerEvents = "stroke"
-	RadialGradientPointerEventsVisible        RadialGradientPointerEvents = "visible"
-	RadialGradientPointerEventsVisibleFill    RadialGradientPointerEvents = "visibleFill"
-	RadialGradientPointerEventsVisiblePainted RadialGradientPointerEvents = "visiblePainted"
-	RadialGradientPointerEventsVisibleStroke  RadialGradientPointerEvents = "visibleStroke"
-)
-
-type RadialGradientShapeRendering string
-
-const (
-	RadialGradientShapeRenderingAuto               RadialGradientShapeRendering = "auto"
-	RadialGradientShapeRenderingCrispEdges         RadialGradientShapeRendering = "crispEdges"
-	RadialGradientShapeRenderingGeometricPrecision RadialGradientShapeRendering = "geometricPrecision"
-	RadialGradientShapeRenderingOptimizeSpeed      RadialGradientShapeRendering = "optimizeSpeed"
-)
-
-type RadialGradientStrokeLinecap string
-
-const (
-	RadialGradientStrokeLinecapButt   RadialGradientStrokeLinecap = "butt"
-	RadialGradientStrokeLinecapRound  RadialGradientStrokeLinecap = "round"
-	RadialGradientStrokeLinecapSquare RadialGradientStrokeLinecap = "square"
-)
-
-type RadialGradientStrokeLinejoin string
-
-const (
-	RadialGradientStrokeLinejoinArcs      RadialGradientStrokeLinejoin = "arcs"
-	RadialGradientStrokeLinejoinBevel     RadialGradientStrokeLinejoin = "bevel"
-	RadialGradientStrokeLinejoinMiter     RadialGradientStrokeLinejoin = "miter"
-	RadialGradientStrokeLinejoinMiterClip RadialGradientStrokeLinejoin = "miter-clip"
-	RadialGradientStrokeLinejoinRound     RadialGradientStrokeLinejoin = "round"
-)
-
-type RadialGradientTextAnchor string
-
-const (
-	RadialGradientTextAnchorEnd    RadialGradientTextAnchor = "end"
-	RadialGradientTextAnchorMiddle RadialGradientTextAnchor = "middle"
-	RadialGradientTextAnchorStart  RadialGradientTextAnchor = "start"
-)
-
-type RadialGradientTextRendering string
-
-const (
-	RadialGradientTextRenderingAuto               RadialGradientTextRendering = "auto"
-	RadialGradientTextRenderingGeometricPrecision RadialGradientTextRendering = "geometricPrecision"
-	RadialGradientTextRenderingOptimizeLegibility RadialGradientTextRendering = "optimizeLegibility"
-	RadialGradientTextRenderingOptimizeSpeed      RadialGradientTextRendering = "optimizeSpeed"
-)
-
-type RadialGradientTransformBox string
-
-const (
-	RadialGradientTransformBoxBorderBox  RadialGradientTransformBox = "border-box"
-	RadialGradientTransformBoxContentBox RadialGradientTransformBox = "content-box"
-	RadialGradientTransformBoxFillBox    RadialGradientTransformBox = "fill-box"
-	RadialGradientTransformBoxStrokeBox  RadialGradientTransformBox = "stroke-box"
-	RadialGradientTransformBoxViewBox    RadialGradientTransformBox = "view-box"
-)
-
-type RadialGradientVectorEffect string
-
-const (
-	RadialGradientVectorEffectFixedPosition    RadialGradientVectorEffect = "fixed-position"
-	RadialGradientVectorEffectNonRotation      RadialGradientVectorEffect = "non-rotation"
-	RadialGradientVectorEffectNonScalingSize   RadialGradientVectorEffect = "non-scaling-size"
-	RadialGradientVectorEffectNonScalingStroke RadialGradientVectorEffect = "non-scaling-stroke"
-	RadialGradientVectorEffectNone             RadialGradientVectorEffect = "none"
-)
-
-type RadialGradientVisibility string
-
-const (
-	RadialGradientVisibilityCollapse RadialGradientVisibility = "collapse"
-	RadialGradientVisibilityHidden   RadialGradientVisibility = "hidden"
-	RadialGradientVisibilityVisible  RadialGradientVisibility = "visible"
-)
-
-type RadialGradientWritingMode string
-
-const (
-	RadialGradientWritingModeHorizontalTb RadialGradientWritingMode = "horizontal-tb"
-	RadialGradientWritingModeLr           RadialGradientWritingMode = "lr"
-	RadialGradientWritingModeLrTb         RadialGradientWritingMode = "lr-tb"
-	RadialGradientWritingModeRl           RadialGradientWritingMode = "rl"
-	RadialGradientWritingModeRlTb         RadialGradientWritingMode = "rl-tb"
-	RadialGradientWritingModeSidewaysLr   RadialGradientWritingMode = "sideways-lr"
-	RadialGradientWritingModeSidewaysRl   RadialGradientWritingMode = "sideways-rl"
-	RadialGradientWritingModeTb           RadialGradientWritingMode = "tb"
-	RadialGradientWritingModeTbRl         RadialGradientWritingMode = "tb-rl"
-	RadialGradientWritingModeVerticalLr   RadialGradientWritingMode = "vertical-lr"
-	RadialGradientWritingModeVerticalRl   RadialGradientWritingMode = "vertical-rl"
-)
-
-type RadialGradientXmlSpace string
-
-const (
-	RadialGradientXmlSpaceDefault  RadialGradientXmlSpace = "default"
-	RadialGradientXmlSpacePreserve RadialGradientXmlSpace = "preserve"
-)
+// SVGContent marks <radialGradient> as a permitted child (Content).
+func (*RadialGradientElement) SVGContent() {}
 
 func (e *RadialGradientElement) Cx(s string) *RadialGradientElement {
 	e.attributes.Set("cx", s)
@@ -429,7 +205,7 @@ func (e *RadialGradientElement) GradientTransform(s string) *RadialGradientEleme
 	return e
 }
 
-func (e *RadialGradientElement) GradientUnits(a RadialGradientGradientUnits) *RadialGradientElement {
+func (e *RadialGradientElement) GradientUnits(a GradientUnits) *RadialGradientElement {
 	e.attributes.Set("gradientUnits", string(a))
 
 	return e
@@ -449,7 +225,7 @@ func (e *RadialGradientElement) R(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) SpreadMethod(a RadialGradientSpreadMethod) *RadialGradientElement {
+func (e *RadialGradientElement) SpreadMethod(a SpreadMethod) *RadialGradientElement {
 	e.attributes.Set("spreadMethod", string(a))
 
 	return e
@@ -465,14 +241,10 @@ func (e *RadialGradientElement) XlinkHref(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) AlignmentBaseline(a RadialGradientAlignmentBaseline) *RadialGradientElement {
+func (e *RadialGradientElement) AlignmentBaseline(a AlignmentBaseline) *RadialGradientElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func RadialGradientAlignmentBaselineCustom(s string) RadialGradientAlignmentBaseline {
-	return RadialGradientAlignmentBaseline(s)
 }
 
 func (e *RadialGradientElement) AriaUnsafe(name string, s string) *RadialGradientElement {
@@ -526,14 +298,10 @@ func (e *RadialGradientElement) ClipPath(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) ClipRule(a RadialGradientClipRule) *RadialGradientElement {
+func (e *RadialGradientElement) ClipRule(a ClipRule) *RadialGradientElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func RadialGradientClipRuleCustom(s string) RadialGradientClipRule {
-	return RadialGradientClipRule(s)
 }
 
 func (e *RadialGradientElement) Color(s string) *RadialGradientElement {
@@ -542,24 +310,16 @@ func (e *RadialGradientElement) Color(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) ColorInterpolation(a RadialGradientColorInterpolation) *RadialGradientElement {
+func (e *RadialGradientElement) ColorInterpolation(a ColorInterpolation) *RadialGradientElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func RadialGradientColorInterpolationCustom(s string) RadialGradientColorInterpolation {
-	return RadialGradientColorInterpolation(s)
-}
-
-func (e *RadialGradientElement) ColorInterpolationFilters(a RadialGradientColorInterpolationFilters) *RadialGradientElement {
+func (e *RadialGradientElement) ColorInterpolationFilters(a ColorInterpolationFilters) *RadialGradientElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func RadialGradientColorInterpolationFiltersCustom(s string) RadialGradientColorInterpolationFilters {
-	return RadialGradientColorInterpolationFilters(s)
 }
 
 func (e *RadialGradientElement) Cursor(s string) *RadialGradientElement {
@@ -584,14 +344,10 @@ func (e *RadialGradientElement) Data(name string, s string) *RadialGradientEleme
 	return e
 }
 
-func (e *RadialGradientElement) Direction(a RadialGradientDirection) *RadialGradientElement {
+func (e *RadialGradientElement) Direction(a Direction) *RadialGradientElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func RadialGradientDirectionCustom(s string) RadialGradientDirection {
-	return RadialGradientDirection(s)
 }
 
 func (e *RadialGradientElement) Display(s string) *RadialGradientElement {
@@ -600,14 +356,10 @@ func (e *RadialGradientElement) Display(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) DominantBaseline(a RadialGradientDominantBaseline) *RadialGradientElement {
+func (e *RadialGradientElement) DominantBaseline(a DominantBaseline) *RadialGradientElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func RadialGradientDominantBaselineCustom(s string) RadialGradientDominantBaseline {
-	return RadialGradientDominantBaseline(s)
 }
 
 func (e *RadialGradientElement) Fill(s string) *RadialGradientElement {
@@ -622,14 +374,10 @@ func (e *RadialGradientElement) FillOpacity(f float64) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) FillRule(a RadialGradientFillRule) *RadialGradientElement {
+func (e *RadialGradientElement) FillRule(a FillRule) *RadialGradientElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func RadialGradientFillRuleCustom(s string) RadialGradientFillRule {
-	return RadialGradientFillRule(s)
 }
 
 func (e *RadialGradientElement) Filter(s string) *RadialGradientElement {
@@ -674,14 +422,10 @@ func (e *RadialGradientElement) FontStretch(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) FontStyle(a RadialGradientFontStyle) *RadialGradientElement {
+func (e *RadialGradientElement) FontStyle(a FontStyle) *RadialGradientElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func RadialGradientFontStyleCustom(s string) RadialGradientFontStyle {
-	return RadialGradientFontStyle(s)
 }
 
 func (e *RadialGradientElement) FontVariant(s string) *RadialGradientElement {
@@ -720,14 +464,10 @@ func (e *RadialGradientElement) Id(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) ImageRendering(a RadialGradientImageRendering) *RadialGradientElement {
+func (e *RadialGradientElement) ImageRendering(a ImageRendering) *RadialGradientElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func RadialGradientImageRenderingCustom(s string) RadialGradientImageRendering {
-	return RadialGradientImageRendering(s)
 }
 
 func (e *RadialGradientElement) Lang(s string) *RadialGradientElement {
@@ -778,14 +518,10 @@ func (e *RadialGradientElement) Opacity(f float64) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) Overflow(a RadialGradientOverflow) *RadialGradientElement {
+func (e *RadialGradientElement) Overflow(a Overflow) *RadialGradientElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func RadialGradientOverflowCustom(s string) RadialGradientOverflow {
-	return RadialGradientOverflow(s)
 }
 
 func (e *RadialGradientElement) PaintOrder(s string) *RadialGradientElement {
@@ -794,14 +530,10 @@ func (e *RadialGradientElement) PaintOrder(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) PointerEvents(a RadialGradientPointerEvents) *RadialGradientElement {
+func (e *RadialGradientElement) PointerEvents(a PointerEvents) *RadialGradientElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func RadialGradientPointerEventsCustom(s string) RadialGradientPointerEvents {
-	return RadialGradientPointerEvents(s)
 }
 
 func (e *RadialGradientElement) RequiredExtensions(s string) *RadialGradientElement {
@@ -810,14 +542,10 @@ func (e *RadialGradientElement) RequiredExtensions(s string) *RadialGradientElem
 	return e
 }
 
-func (e *RadialGradientElement) ShapeRendering(a RadialGradientShapeRendering) *RadialGradientElement {
+func (e *RadialGradientElement) ShapeRendering(a ShapeRendering) *RadialGradientElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func RadialGradientShapeRenderingCustom(s string) RadialGradientShapeRendering {
-	return RadialGradientShapeRendering(s)
 }
 
 func (e *RadialGradientElement) StopColor(s string) *RadialGradientElement {
@@ -850,24 +578,16 @@ func (e *RadialGradientElement) StrokeDashoffset(s string) *RadialGradientElemen
 	return e
 }
 
-func (e *RadialGradientElement) StrokeLinecap(a RadialGradientStrokeLinecap) *RadialGradientElement {
+func (e *RadialGradientElement) StrokeLinecap(a StrokeLinecap) *RadialGradientElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func RadialGradientStrokeLinecapCustom(s string) RadialGradientStrokeLinecap {
-	return RadialGradientStrokeLinecap(s)
-}
-
-func (e *RadialGradientElement) StrokeLinejoin(a RadialGradientStrokeLinejoin) *RadialGradientElement {
+func (e *RadialGradientElement) StrokeLinejoin(a StrokeLinejoin) *RadialGradientElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func RadialGradientStrokeLinejoinCustom(s string) RadialGradientStrokeLinejoin {
-	return RadialGradientStrokeLinejoin(s)
 }
 
 func (e *RadialGradientElement) StrokeMiterlimit(f float64) *RadialGradientElement {
@@ -900,14 +620,10 @@ func (e *RadialGradientElement) Tabindex(i int) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) TextAnchor(a RadialGradientTextAnchor) *RadialGradientElement {
+func (e *RadialGradientElement) TextAnchor(a TextAnchor) *RadialGradientElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func RadialGradientTextAnchorCustom(s string) RadialGradientTextAnchor {
-	return RadialGradientTextAnchor(s)
 }
 
 func (e *RadialGradientElement) TextDecoration(s string) *RadialGradientElement {
@@ -922,14 +638,10 @@ func (e *RadialGradientElement) TextOverflow(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) TextRendering(a RadialGradientTextRendering) *RadialGradientElement {
+func (e *RadialGradientElement) TextRendering(a TextRendering) *RadialGradientElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func RadialGradientTextRenderingCustom(s string) RadialGradientTextRendering {
-	return RadialGradientTextRendering(s)
 }
 
 func (e *RadialGradientElement) Transform(s string) *RadialGradientElement {
@@ -938,14 +650,10 @@ func (e *RadialGradientElement) Transform(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) TransformBox(a RadialGradientTransformBox) *RadialGradientElement {
+func (e *RadialGradientElement) TransformBox(a TransformBox) *RadialGradientElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func RadialGradientTransformBoxCustom(s string) RadialGradientTransformBox {
-	return RadialGradientTransformBox(s)
 }
 
 func (e *RadialGradientElement) TransformOrigin(s string) *RadialGradientElement {
@@ -960,24 +668,16 @@ func (e *RadialGradientElement) UnicodeBidi(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) VectorEffect(a RadialGradientVectorEffect) *RadialGradientElement {
+func (e *RadialGradientElement) VectorEffect(a VectorEffect) *RadialGradientElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func RadialGradientVectorEffectCustom(s string) RadialGradientVectorEffect {
-	return RadialGradientVectorEffect(s)
-}
-
-func (e *RadialGradientElement) Visibility(a RadialGradientVisibility) *RadialGradientElement {
+func (e *RadialGradientElement) Visibility(a Visibility) *RadialGradientElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func RadialGradientVisibilityCustom(s string) RadialGradientVisibility {
-	return RadialGradientVisibility(s)
 }
 
 func (e *RadialGradientElement) WhiteSpace(s string) *RadialGradientElement {
@@ -992,14 +692,10 @@ func (e *RadialGradientElement) WordSpacing(s string) *RadialGradientElement {
 	return e
 }
 
-func (e *RadialGradientElement) WritingMode(a RadialGradientWritingMode) *RadialGradientElement {
+func (e *RadialGradientElement) WritingMode(a WritingMode) *RadialGradientElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func RadialGradientWritingModeCustom(s string) RadialGradientWritingMode {
-	return RadialGradientWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1014,7 +710,7 @@ func (e *RadialGradientElement) XmlLang(s string) *RadialGradientElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *RadialGradientElement) XmlSpace(a RadialGradientXmlSpace) *RadialGradientElement {
+func (e *RadialGradientElement) XmlSpace(a XmlSpace) *RadialGradientElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

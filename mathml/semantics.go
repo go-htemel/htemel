@@ -14,15 +14,17 @@ import (
 
 type SemanticsElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Semantics creates a tag <semantics> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Semantics(children ...htemel.Node) *SemanticsElement {
+func Semantics(children ...Content) *SemanticsElement {
 	node := &SemanticsElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Semantics(children ...htemel.Node) *SemanticsElement {
 }
 
 // SemanticsIf creates a tag <semantics> instance that is only rendered when condition is true.
-func SemanticsIf(condition bool, children ...htemel.Node) *SemanticsElement {
+func SemanticsIf(condition bool, children ...Content) *SemanticsElement {
 	if condition {
 		return Semantics(children...)
 	}
@@ -43,7 +45,7 @@ func SemanticsIf(condition bool, children ...htemel.Node) *SemanticsElement {
 }
 
 // SemanticsTernary creates a tag <semantics> containing then when condition is true, otherwise containing otherwise.
-func SemanticsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *SemanticsElement {
+func SemanticsTernary(condition bool, then Content, otherwise Content) *SemanticsElement {
 	if condition {
 		return Semantics(then)
 	}
@@ -51,7 +53,7 @@ func SemanticsTernary(condition bool, then htemel.Node, otherwise htemel.Node) *
 }
 
 // Children appends children to this element.
-func (e *SemanticsElement) Children(children ...htemel.Node) *SemanticsElement {
+func (e *SemanticsElement) Children(children ...Content) *SemanticsElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *SemanticsElement) Textf(format string, args ...any) *SemanticsElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SemanticsElement) If(cond bool, child htemel.Node) *SemanticsElement {
+func (e *SemanticsElement) If(cond bool, child Content) *SemanticsElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *SemanticsElement) If(cond bool, child htemel.Node) *SemanticsElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SemanticsElement) IfElse(cond bool, then, els htemel.Node) *SemanticsElement {
+func (e *SemanticsElement) IfElse(cond bool, then, els Content) *SemanticsElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *SemanticsElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SemanticsDir string
-
-const (
-	SemanticsDirLtr SemanticsDir = "ltr"
-	SemanticsDirRtl SemanticsDir = "rtl"
-)
-
-type SemanticsDisplaystyle string
-
-const (
-	SemanticsDisplaystyleFalse SemanticsDisplaystyle = "false"
-	SemanticsDisplaystyleTrue  SemanticsDisplaystyle = "true"
-)
+// MathMLContent marks <semantics> as a permitted child (Content).
+func (*SemanticsElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *SemanticsElement) Data(name string, s string) *SemanticsElement {
 	return e
 }
 
-func (e *SemanticsElement) Dir(a SemanticsDir) *SemanticsElement {
+func (e *SemanticsElement) Dir(a Dir) *SemanticsElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SemanticsElement) Displaystyle(a SemanticsDisplaystyle) *SemanticsElement {
+func (e *SemanticsElement) Displaystyle(a Displaystyle) *SemanticsElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

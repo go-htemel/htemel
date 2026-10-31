@@ -14,15 +14,17 @@ import (
 
 type ImageElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Image creates a tag <image> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The image element includes a raster or SVG image within the document.
-func Image(children ...htemel.Node) *ImageElement {
+func Image(children ...Content) *ImageElement {
 	node := &ImageElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Image(children ...htemel.Node) *ImageElement {
 }
 
 // ImageIf creates a tag <image> instance that is only rendered when condition is true.
-func ImageIf(condition bool, children ...htemel.Node) *ImageElement {
+func ImageIf(condition bool, children ...Content) *ImageElement {
 	if condition {
 		return Image(children...)
 	}
@@ -43,7 +45,7 @@ func ImageIf(condition bool, children ...htemel.Node) *ImageElement {
 }
 
 // ImageTernary creates a tag <image> containing then when condition is true, otherwise containing otherwise.
-func ImageTernary(condition bool, then htemel.Node, otherwise htemel.Node) *ImageElement {
+func ImageTernary(condition bool, then Content, otherwise Content) *ImageElement {
 	if condition {
 		return Image(then)
 	}
@@ -51,7 +53,7 @@ func ImageTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Imag
 }
 
 // Children appends children to this element.
-func (e *ImageElement) Children(children ...htemel.Node) *ImageElement {
+func (e *ImageElement) Children(children ...Content) *ImageElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *ImageElement) Textf(format string, args ...any) *ImageElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *ImageElement) If(cond bool, child htemel.Node) *ImageElement {
+func (e *ImageElement) If(cond bool, child Content) *ImageElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *ImageElement) If(cond bool, child htemel.Node) *ImageElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *ImageElement) IfElse(cond bool, then, els htemel.Node) *ImageElement {
+func (e *ImageElement) IfElse(cond bool, then, els Content) *ImageElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,240 +166,13 @@ func (e *ImageElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type ImageCrossorigin string
-
-const (
-	ImageCrossoriginAnonymous      ImageCrossorigin = "anonymous"
-	ImageCrossoriginUseCredentials ImageCrossorigin = "use-credentials"
-	ImageCrossoriginEmpty          ImageCrossorigin = ""
-)
-
-type ImageDecoding string
-
-const (
-	ImageDecodingAsync ImageDecoding = "async"
-	ImageDecodingAuto  ImageDecoding = "auto"
-	ImageDecodingSync  ImageDecoding = "sync"
-)
-
-type ImageAlignmentBaseline string
-
-const (
-	ImageAlignmentBaselineAfterEdge      ImageAlignmentBaseline = "after-edge"
-	ImageAlignmentBaselineAlphabetic     ImageAlignmentBaseline = "alphabetic"
-	ImageAlignmentBaselineAuto           ImageAlignmentBaseline = "auto"
-	ImageAlignmentBaselineBaseline       ImageAlignmentBaseline = "baseline"
-	ImageAlignmentBaselineBeforeEdge     ImageAlignmentBaseline = "before-edge"
-	ImageAlignmentBaselineBottom         ImageAlignmentBaseline = "bottom"
-	ImageAlignmentBaselineCenter         ImageAlignmentBaseline = "center"
-	ImageAlignmentBaselineCentral        ImageAlignmentBaseline = "central"
-	ImageAlignmentBaselineHanging        ImageAlignmentBaseline = "hanging"
-	ImageAlignmentBaselineIdeographic    ImageAlignmentBaseline = "ideographic"
-	ImageAlignmentBaselineMathematical   ImageAlignmentBaseline = "mathematical"
-	ImageAlignmentBaselineMiddle         ImageAlignmentBaseline = "middle"
-	ImageAlignmentBaselineTextAfterEdge  ImageAlignmentBaseline = "text-after-edge"
-	ImageAlignmentBaselineTextBeforeEdge ImageAlignmentBaseline = "text-before-edge"
-	ImageAlignmentBaselineTextBottom     ImageAlignmentBaseline = "text-bottom"
-	ImageAlignmentBaselineTextTop        ImageAlignmentBaseline = "text-top"
-	ImageAlignmentBaselineTop            ImageAlignmentBaseline = "top"
-)
-
-type ImageClipRule string
-
-const (
-	ImageClipRuleEvenodd ImageClipRule = "evenodd"
-	ImageClipRuleNonzero ImageClipRule = "nonzero"
-)
-
-type ImageColorInterpolation string
-
-const (
-	ImageColorInterpolationAuto      ImageColorInterpolation = "auto"
-	ImageColorInterpolationLinearRGB ImageColorInterpolation = "linearRGB"
-	ImageColorInterpolationSRGB      ImageColorInterpolation = "sRGB"
-)
-
-type ImageColorInterpolationFilters string
-
-const (
-	ImageColorInterpolationFiltersAuto      ImageColorInterpolationFilters = "auto"
-	ImageColorInterpolationFiltersLinearRGB ImageColorInterpolationFilters = "linearRGB"
-	ImageColorInterpolationFiltersSRGB      ImageColorInterpolationFilters = "sRGB"
-)
-
-type ImageDirection string
-
-const (
-	ImageDirectionLtr ImageDirection = "ltr"
-	ImageDirectionRtl ImageDirection = "rtl"
-)
-
-type ImageDominantBaseline string
-
-const (
-	ImageDominantBaselineAlphabetic   ImageDominantBaseline = "alphabetic"
-	ImageDominantBaselineAuto         ImageDominantBaseline = "auto"
-	ImageDominantBaselineCentral      ImageDominantBaseline = "central"
-	ImageDominantBaselineHanging      ImageDominantBaseline = "hanging"
-	ImageDominantBaselineIdeographic  ImageDominantBaseline = "ideographic"
-	ImageDominantBaselineMathematical ImageDominantBaseline = "mathematical"
-	ImageDominantBaselineMiddle       ImageDominantBaseline = "middle"
-	ImageDominantBaselineTextBottom   ImageDominantBaseline = "text-bottom"
-	ImageDominantBaselineTextTop      ImageDominantBaseline = "text-top"
-)
-
-type ImageFillRule string
-
-const (
-	ImageFillRuleEvenodd ImageFillRule = "evenodd"
-	ImageFillRuleNonzero ImageFillRule = "nonzero"
-)
-
-type ImageFontStyle string
-
-const (
-	ImageFontStyleItalic  ImageFontStyle = "italic"
-	ImageFontStyleNormal  ImageFontStyle = "normal"
-	ImageFontStyleOblique ImageFontStyle = "oblique"
-)
-
-type ImageImageRendering string
-
-const (
-	ImageImageRenderingAuto            ImageImageRendering = "auto"
-	ImageImageRenderingCrispEdges      ImageImageRendering = "crisp-edges"
-	ImageImageRenderingHighQuality     ImageImageRendering = "high-quality"
-	ImageImageRenderingOptimizeQuality ImageImageRendering = "optimizeQuality"
-	ImageImageRenderingOptimizeSpeed   ImageImageRendering = "optimizeSpeed"
-	ImageImageRenderingPixelated       ImageImageRendering = "pixelated"
-	ImageImageRenderingSmooth          ImageImageRendering = "smooth"
-)
-
-type ImageOverflow string
-
-const (
-	ImageOverflowAuto    ImageOverflow = "auto"
-	ImageOverflowClip    ImageOverflow = "clip"
-	ImageOverflowHidden  ImageOverflow = "hidden"
-	ImageOverflowScroll  ImageOverflow = "scroll"
-	ImageOverflowVisible ImageOverflow = "visible"
-)
-
-type ImagePointerEvents string
-
-const (
-	ImagePointerEventsAll            ImagePointerEvents = "all"
-	ImagePointerEventsAuto           ImagePointerEvents = "auto"
-	ImagePointerEventsBoundingBox    ImagePointerEvents = "bounding-box"
-	ImagePointerEventsFill           ImagePointerEvents = "fill"
-	ImagePointerEventsNone           ImagePointerEvents = "none"
-	ImagePointerEventsPainted        ImagePointerEvents = "painted"
-	ImagePointerEventsStroke         ImagePointerEvents = "stroke"
-	ImagePointerEventsVisible        ImagePointerEvents = "visible"
-	ImagePointerEventsVisibleFill    ImagePointerEvents = "visibleFill"
-	ImagePointerEventsVisiblePainted ImagePointerEvents = "visiblePainted"
-	ImagePointerEventsVisibleStroke  ImagePointerEvents = "visibleStroke"
-)
-
-type ImageShapeRendering string
-
-const (
-	ImageShapeRenderingAuto               ImageShapeRendering = "auto"
-	ImageShapeRenderingCrispEdges         ImageShapeRendering = "crispEdges"
-	ImageShapeRenderingGeometricPrecision ImageShapeRendering = "geometricPrecision"
-	ImageShapeRenderingOptimizeSpeed      ImageShapeRendering = "optimizeSpeed"
-)
-
-type ImageStrokeLinecap string
-
-const (
-	ImageStrokeLinecapButt   ImageStrokeLinecap = "butt"
-	ImageStrokeLinecapRound  ImageStrokeLinecap = "round"
-	ImageStrokeLinecapSquare ImageStrokeLinecap = "square"
-)
-
-type ImageStrokeLinejoin string
-
-const (
-	ImageStrokeLinejoinArcs      ImageStrokeLinejoin = "arcs"
-	ImageStrokeLinejoinBevel     ImageStrokeLinejoin = "bevel"
-	ImageStrokeLinejoinMiter     ImageStrokeLinejoin = "miter"
-	ImageStrokeLinejoinMiterClip ImageStrokeLinejoin = "miter-clip"
-	ImageStrokeLinejoinRound     ImageStrokeLinejoin = "round"
-)
-
-type ImageTextAnchor string
-
-const (
-	ImageTextAnchorEnd    ImageTextAnchor = "end"
-	ImageTextAnchorMiddle ImageTextAnchor = "middle"
-	ImageTextAnchorStart  ImageTextAnchor = "start"
-)
-
-type ImageTextRendering string
-
-const (
-	ImageTextRenderingAuto               ImageTextRendering = "auto"
-	ImageTextRenderingGeometricPrecision ImageTextRendering = "geometricPrecision"
-	ImageTextRenderingOptimizeLegibility ImageTextRendering = "optimizeLegibility"
-	ImageTextRenderingOptimizeSpeed      ImageTextRendering = "optimizeSpeed"
-)
-
-type ImageTransformBox string
-
-const (
-	ImageTransformBoxBorderBox  ImageTransformBox = "border-box"
-	ImageTransformBoxContentBox ImageTransformBox = "content-box"
-	ImageTransformBoxFillBox    ImageTransformBox = "fill-box"
-	ImageTransformBoxStrokeBox  ImageTransformBox = "stroke-box"
-	ImageTransformBoxViewBox    ImageTransformBox = "view-box"
-)
-
-type ImageVectorEffect string
-
-const (
-	ImageVectorEffectFixedPosition    ImageVectorEffect = "fixed-position"
-	ImageVectorEffectNonRotation      ImageVectorEffect = "non-rotation"
-	ImageVectorEffectNonScalingSize   ImageVectorEffect = "non-scaling-size"
-	ImageVectorEffectNonScalingStroke ImageVectorEffect = "non-scaling-stroke"
-	ImageVectorEffectNone             ImageVectorEffect = "none"
-)
-
-type ImageVisibility string
-
-const (
-	ImageVisibilityCollapse ImageVisibility = "collapse"
-	ImageVisibilityHidden   ImageVisibility = "hidden"
-	ImageVisibilityVisible  ImageVisibility = "visible"
-)
-
-type ImageWritingMode string
-
-const (
-	ImageWritingModeHorizontalTb ImageWritingMode = "horizontal-tb"
-	ImageWritingModeLr           ImageWritingMode = "lr"
-	ImageWritingModeLrTb         ImageWritingMode = "lr-tb"
-	ImageWritingModeRl           ImageWritingMode = "rl"
-	ImageWritingModeRlTb         ImageWritingMode = "rl-tb"
-	ImageWritingModeSidewaysLr   ImageWritingMode = "sideways-lr"
-	ImageWritingModeSidewaysRl   ImageWritingMode = "sideways-rl"
-	ImageWritingModeTb           ImageWritingMode = "tb"
-	ImageWritingModeTbRl         ImageWritingMode = "tb-rl"
-	ImageWritingModeVerticalLr   ImageWritingMode = "vertical-lr"
-	ImageWritingModeVerticalRl   ImageWritingMode = "vertical-rl"
-)
-
-type ImageXmlSpace string
-
-const (
-	ImageXmlSpaceDefault  ImageXmlSpace = "default"
-	ImageXmlSpacePreserve ImageXmlSpace = "preserve"
-)
+// SVGContent marks <image> as a permitted child (Content).
+func (*ImageElement) SVGContent() {}
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *ImageElement) Crossorigin(v ...ImageCrossorigin) *ImageElement {
-	var val ImageCrossorigin
+func (e *ImageElement) Crossorigin(v ...Crossorigin) *ImageElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -406,7 +181,7 @@ func (e *ImageElement) Crossorigin(v ...ImageCrossorigin) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) Decoding(a ImageDecoding) *ImageElement {
+func (e *ImageElement) Decoding(a Decoding) *ImageElement {
 	e.attributes.Set("decoding", string(a))
 
 	return e
@@ -466,14 +241,10 @@ func (e *ImageElement) Y(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) AlignmentBaseline(a ImageAlignmentBaseline) *ImageElement {
+func (e *ImageElement) AlignmentBaseline(a AlignmentBaseline) *ImageElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func ImageAlignmentBaselineCustom(s string) ImageAlignmentBaseline {
-	return ImageAlignmentBaseline(s)
 }
 
 func (e *ImageElement) AriaUnsafe(name string, s string) *ImageElement {
@@ -527,14 +298,10 @@ func (e *ImageElement) ClipPath(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) ClipRule(a ImageClipRule) *ImageElement {
+func (e *ImageElement) ClipRule(a ClipRule) *ImageElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func ImageClipRuleCustom(s string) ImageClipRule {
-	return ImageClipRule(s)
 }
 
 func (e *ImageElement) Color(s string) *ImageElement {
@@ -543,24 +310,16 @@ func (e *ImageElement) Color(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) ColorInterpolation(a ImageColorInterpolation) *ImageElement {
+func (e *ImageElement) ColorInterpolation(a ColorInterpolation) *ImageElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func ImageColorInterpolationCustom(s string) ImageColorInterpolation {
-	return ImageColorInterpolation(s)
-}
-
-func (e *ImageElement) ColorInterpolationFilters(a ImageColorInterpolationFilters) *ImageElement {
+func (e *ImageElement) ColorInterpolationFilters(a ColorInterpolationFilters) *ImageElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func ImageColorInterpolationFiltersCustom(s string) ImageColorInterpolationFilters {
-	return ImageColorInterpolationFilters(s)
 }
 
 func (e *ImageElement) Cursor(s string) *ImageElement {
@@ -585,14 +344,10 @@ func (e *ImageElement) Data(name string, s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) Direction(a ImageDirection) *ImageElement {
+func (e *ImageElement) Direction(a Direction) *ImageElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func ImageDirectionCustom(s string) ImageDirection {
-	return ImageDirection(s)
 }
 
 func (e *ImageElement) Display(s string) *ImageElement {
@@ -601,14 +356,10 @@ func (e *ImageElement) Display(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) DominantBaseline(a ImageDominantBaseline) *ImageElement {
+func (e *ImageElement) DominantBaseline(a DominantBaseline) *ImageElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func ImageDominantBaselineCustom(s string) ImageDominantBaseline {
-	return ImageDominantBaseline(s)
 }
 
 func (e *ImageElement) Fill(s string) *ImageElement {
@@ -623,14 +374,10 @@ func (e *ImageElement) FillOpacity(f float64) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) FillRule(a ImageFillRule) *ImageElement {
+func (e *ImageElement) FillRule(a FillRule) *ImageElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func ImageFillRuleCustom(s string) ImageFillRule {
-	return ImageFillRule(s)
 }
 
 func (e *ImageElement) Filter(s string) *ImageElement {
@@ -675,14 +422,10 @@ func (e *ImageElement) FontStretch(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) FontStyle(a ImageFontStyle) *ImageElement {
+func (e *ImageElement) FontStyle(a FontStyle) *ImageElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func ImageFontStyleCustom(s string) ImageFontStyle {
-	return ImageFontStyle(s)
 }
 
 func (e *ImageElement) FontVariant(s string) *ImageElement {
@@ -721,14 +464,10 @@ func (e *ImageElement) Id(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) ImageRendering(a ImageImageRendering) *ImageElement {
+func (e *ImageElement) ImageRendering(a ImageRendering) *ImageElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func ImageImageRenderingCustom(s string) ImageImageRendering {
-	return ImageImageRendering(s)
 }
 
 func (e *ImageElement) Lang(s string) *ImageElement {
@@ -779,14 +518,10 @@ func (e *ImageElement) Opacity(f float64) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) Overflow(a ImageOverflow) *ImageElement {
+func (e *ImageElement) Overflow(a Overflow) *ImageElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func ImageOverflowCustom(s string) ImageOverflow {
-	return ImageOverflow(s)
 }
 
 func (e *ImageElement) PaintOrder(s string) *ImageElement {
@@ -795,14 +530,10 @@ func (e *ImageElement) PaintOrder(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) PointerEvents(a ImagePointerEvents) *ImageElement {
+func (e *ImageElement) PointerEvents(a PointerEvents) *ImageElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func ImagePointerEventsCustom(s string) ImagePointerEvents {
-	return ImagePointerEvents(s)
 }
 
 func (e *ImageElement) RequiredExtensions(s string) *ImageElement {
@@ -811,14 +542,10 @@ func (e *ImageElement) RequiredExtensions(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) ShapeRendering(a ImageShapeRendering) *ImageElement {
+func (e *ImageElement) ShapeRendering(a ShapeRendering) *ImageElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func ImageShapeRenderingCustom(s string) ImageShapeRendering {
-	return ImageShapeRendering(s)
 }
 
 func (e *ImageElement) StopColor(s string) *ImageElement {
@@ -851,24 +578,16 @@ func (e *ImageElement) StrokeDashoffset(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) StrokeLinecap(a ImageStrokeLinecap) *ImageElement {
+func (e *ImageElement) StrokeLinecap(a StrokeLinecap) *ImageElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func ImageStrokeLinecapCustom(s string) ImageStrokeLinecap {
-	return ImageStrokeLinecap(s)
-}
-
-func (e *ImageElement) StrokeLinejoin(a ImageStrokeLinejoin) *ImageElement {
+func (e *ImageElement) StrokeLinejoin(a StrokeLinejoin) *ImageElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func ImageStrokeLinejoinCustom(s string) ImageStrokeLinejoin {
-	return ImageStrokeLinejoin(s)
 }
 
 func (e *ImageElement) StrokeMiterlimit(f float64) *ImageElement {
@@ -901,14 +620,10 @@ func (e *ImageElement) Tabindex(i int) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) TextAnchor(a ImageTextAnchor) *ImageElement {
+func (e *ImageElement) TextAnchor(a TextAnchor) *ImageElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func ImageTextAnchorCustom(s string) ImageTextAnchor {
-	return ImageTextAnchor(s)
 }
 
 func (e *ImageElement) TextDecoration(s string) *ImageElement {
@@ -923,14 +638,10 @@ func (e *ImageElement) TextOverflow(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) TextRendering(a ImageTextRendering) *ImageElement {
+func (e *ImageElement) TextRendering(a TextRendering) *ImageElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func ImageTextRenderingCustom(s string) ImageTextRendering {
-	return ImageTextRendering(s)
 }
 
 func (e *ImageElement) Transform(s string) *ImageElement {
@@ -939,14 +650,10 @@ func (e *ImageElement) Transform(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) TransformBox(a ImageTransformBox) *ImageElement {
+func (e *ImageElement) TransformBox(a TransformBox) *ImageElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func ImageTransformBoxCustom(s string) ImageTransformBox {
-	return ImageTransformBox(s)
 }
 
 func (e *ImageElement) TransformOrigin(s string) *ImageElement {
@@ -961,24 +668,16 @@ func (e *ImageElement) UnicodeBidi(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) VectorEffect(a ImageVectorEffect) *ImageElement {
+func (e *ImageElement) VectorEffect(a VectorEffect) *ImageElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func ImageVectorEffectCustom(s string) ImageVectorEffect {
-	return ImageVectorEffect(s)
-}
-
-func (e *ImageElement) Visibility(a ImageVisibility) *ImageElement {
+func (e *ImageElement) Visibility(a Visibility) *ImageElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func ImageVisibilityCustom(s string) ImageVisibility {
-	return ImageVisibility(s)
 }
 
 func (e *ImageElement) WhiteSpace(s string) *ImageElement {
@@ -993,14 +692,10 @@ func (e *ImageElement) WordSpacing(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) WritingMode(a ImageWritingMode) *ImageElement {
+func (e *ImageElement) WritingMode(a WritingMode) *ImageElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func ImageWritingModeCustom(s string) ImageWritingMode {
-	return ImageWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1015,7 +710,7 @@ func (e *ImageElement) XmlLang(s string) *ImageElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *ImageElement) XmlSpace(a ImageXmlSpace) *ImageElement {
+func (e *ImageElement) XmlSpace(a XmlSpace) *ImageElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

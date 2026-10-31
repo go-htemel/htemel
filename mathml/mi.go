@@ -14,15 +14,17 @@ import (
 
 type MiElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mi creates a tag <mi> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mi(children ...htemel.Node) *MiElement {
+func Mi(children ...Content) *MiElement {
 	node := &MiElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mi(children ...htemel.Node) *MiElement {
 }
 
 // MiIf creates a tag <mi> instance that is only rendered when condition is true.
-func MiIf(condition bool, children ...htemel.Node) *MiElement {
+func MiIf(condition bool, children ...Content) *MiElement {
 	if condition {
 		return Mi(children...)
 	}
@@ -43,7 +45,7 @@ func MiIf(condition bool, children ...htemel.Node) *MiElement {
 }
 
 // MiTernary creates a tag <mi> containing then when condition is true, otherwise containing otherwise.
-func MiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MiElement {
+func MiTernary(condition bool, then Content, otherwise Content) *MiElement {
 	if condition {
 		return Mi(then)
 	}
@@ -51,7 +53,7 @@ func MiTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MiEleme
 }
 
 // Children appends children to this element.
-func (e *MiElement) Children(children ...htemel.Node) *MiElement {
+func (e *MiElement) Children(children ...Content) *MiElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MiElement) Textf(format string, args ...any) *MiElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MiElement) If(cond bool, child htemel.Node) *MiElement {
+func (e *MiElement) If(cond bool, child Content) *MiElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MiElement) If(cond bool, child htemel.Node) *MiElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MiElement) IfElse(cond bool, then, els htemel.Node) *MiElement {
+func (e *MiElement) IfElse(cond bool, then, els Content) *MiElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,27 +166,10 @@ func (e *MiElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MiMathvariant string
+// MathMLContent marks <mi> as a permitted child (Content).
+func (*MiElement) MathMLContent() {}
 
-const (
-	MiMathvariantNormal MiMathvariant = "normal"
-)
-
-type MiDir string
-
-const (
-	MiDirLtr MiDir = "ltr"
-	MiDirRtl MiDir = "rtl"
-)
-
-type MiDisplaystyle string
-
-const (
-	MiDisplaystyleFalse MiDisplaystyle = "false"
-	MiDisplaystyleTrue  MiDisplaystyle = "true"
-)
-
-func (e *MiElement) Mathvariant(a MiMathvariant) *MiElement {
+func (e *MiElement) Mathvariant(a Mathvariant) *MiElement {
 	e.attributes.Set("mathvariant", string(a))
 
 	return e
@@ -220,13 +205,13 @@ func (e *MiElement) Data(name string, s string) *MiElement {
 	return e
 }
 
-func (e *MiElement) Dir(a MiDir) *MiElement {
+func (e *MiElement) Dir(a Dir) *MiElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MiElement) Displaystyle(a MiDisplaystyle) *MiElement {
+func (e *MiElement) Displaystyle(a Displaystyle) *MiElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

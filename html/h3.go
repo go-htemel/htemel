@@ -13,16 +13,21 @@ import (
 )
 
 type H3Element struct {
+	htemel.FlowMarker
+	htemel.HeadingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // H3 creates a tag <h3> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: These elements represent headings for their sections.
-func H3(children ...htemel.Node) *H3Element {
+func H3(children ...htemel.PhrasingContent) *H3Element {
 	node := &H3Element{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func H3(children ...htemel.Node) *H3Element {
 }
 
 // H3If creates a tag <h3> instance that is only rendered when condition is true.
-func H3If(condition bool, children ...htemel.Node) *H3Element {
+func H3If(condition bool, children ...htemel.PhrasingContent) *H3Element {
 	if condition {
 		return H3(children...)
 	}
@@ -43,7 +48,7 @@ func H3If(condition bool, children ...htemel.Node) *H3Element {
 }
 
 // H3Ternary creates a tag <h3> containing then when condition is true, otherwise containing otherwise.
-func H3Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H3Element {
+func H3Ternary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *H3Element {
 	if condition {
 		return H3(then)
 	}
@@ -51,7 +56,7 @@ func H3Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H3Eleme
 }
 
 // Children appends children to this element.
-func (e *H3Element) Children(children ...htemel.Node) *H3Element {
+func (e *H3Element) Children(children ...htemel.PhrasingContent) *H3Element {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *H3Element) Textf(format string, args ...any) *H3Element {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *H3Element) If(cond bool, child htemel.Node) *H3Element {
+func (e *H3Element) If(cond bool, child htemel.PhrasingContent) *H3Element {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *H3Element) If(cond bool, child htemel.Node) *H3Element {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *H3Element) IfElse(cond bool, then, els htemel.Node) *H3Element {
+func (e *H3Element) IfElse(cond bool, then, els htemel.PhrasingContent) *H3Element {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +169,8 @@ func (e *H3Element) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type H3Autocapitalize string
-
-const (
-	H3AutocapitalizeCharacters H3Autocapitalize = "characters"
-	H3AutocapitalizeNone       H3Autocapitalize = "none"
-	H3AutocapitalizeOff        H3Autocapitalize = "off"
-	H3AutocapitalizeOn         H3Autocapitalize = "on"
-	H3AutocapitalizeSentences  H3Autocapitalize = "sentences"
-	H3AutocapitalizeWords      H3Autocapitalize = "words"
-)
-
-type H3Autocorrect string
-
-const (
-	H3AutocorrectOff   H3Autocorrect = "off"
-	H3AutocorrectOn    H3Autocorrect = "on"
-	H3AutocorrectEmpty H3Autocorrect = ""
-)
-
-type H3Contenteditable string
-
-const (
-	H3ContenteditableFalse         H3Contenteditable = "false"
-	H3ContenteditablePlaintextOnly H3Contenteditable = "plaintext-only"
-	H3ContenteditableTrue          H3Contenteditable = "true"
-	H3ContenteditableEmpty         H3Contenteditable = ""
-)
-
-type H3Dir string
-
-const (
-	H3DirAuto H3Dir = "auto"
-	H3DirLtr  H3Dir = "ltr"
-	H3DirRtl  H3Dir = "rtl"
-)
-
-type H3Draggable string
-
-const (
-	H3DraggableFalse H3Draggable = "false"
-	H3DraggableTrue  H3Draggable = "true"
-)
-
-type H3Enterkeyhint string
-
-const (
-	H3EnterkeyhintDone     H3Enterkeyhint = "done"
-	H3EnterkeyhintEnter    H3Enterkeyhint = "enter"
-	H3EnterkeyhintGo       H3Enterkeyhint = "go"
-	H3EnterkeyhintNext     H3Enterkeyhint = "next"
-	H3EnterkeyhintPrevious H3Enterkeyhint = "previous"
-	H3EnterkeyhintSearch   H3Enterkeyhint = "search"
-	H3EnterkeyhintSend     H3Enterkeyhint = "send"
-)
-
-type H3Hidden string
-
-const (
-	H3HiddenHidden     H3Hidden = "hidden"
-	H3HiddenUntilFound H3Hidden = "until-found"
-	H3HiddenEmpty      H3Hidden = ""
-)
-
-type H3Inputmode string
-
-const (
-	H3InputmodeDecimal H3Inputmode = "decimal"
-	H3InputmodeEmail   H3Inputmode = "email"
-	H3InputmodeNone    H3Inputmode = "none"
-	H3InputmodeNumeric H3Inputmode = "numeric"
-	H3InputmodeSearch  H3Inputmode = "search"
-	H3InputmodeTel     H3Inputmode = "tel"
-	H3InputmodeText    H3Inputmode = "text"
-	H3InputmodeUrl     H3Inputmode = "url"
-)
-
-type H3Popover string
-
-const (
-	H3PopoverAuto   H3Popover = "auto"
-	H3PopoverHint   H3Popover = "hint"
-	H3PopoverManual H3Popover = "manual"
-	H3PopoverEmpty  H3Popover = ""
-)
-
-type H3Spellcheck string
-
-const (
-	H3SpellcheckFalse H3Spellcheck = "false"
-	H3SpellcheckTrue  H3Spellcheck = "true"
-	H3SpellcheckEmpty H3Spellcheck = ""
-)
-
-type H3Translate string
-
-const (
-	H3TranslateNo    H3Translate = "no"
-	H3TranslateYes   H3Translate = "yes"
-	H3TranslateEmpty H3Translate = ""
-)
-
-type H3Writingsuggestions string
-
-const (
-	H3WritingsuggestionsFalse H3Writingsuggestions = "false"
-	H3WritingsuggestionsTrue  H3Writingsuggestions = "true"
-	H3WritingsuggestionsEmpty H3Writingsuggestions = ""
-)
+// HTMLHgroupChild marks <h3> as a permitted child of <hgroup> (HgroupChild).
+func (*H3Element) HTMLHgroupChild() {}
 
 func (e *H3Element) Accesskey(r rune) *H3Element {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +194,7 @@ func (e *H3Element) Aria(name string, s string) *H3Element {
 	return e
 }
 
-func (e *H3Element) Autocapitalize(a H3Autocapitalize) *H3Element {
+func (e *H3Element) Autocapitalize(a Autocapitalize) *H3Element {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +202,8 @@ func (e *H3Element) Autocapitalize(a H3Autocapitalize) *H3Element {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Autocorrect(v ...H3Autocorrect) *H3Element {
-	var val H3Autocorrect
+func (e *H3Element) Autocorrect(v ...Autocorrect) *H3Element {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +228,8 @@ func (e *H3Element) Class(s ...string) *H3Element {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Contenteditable(v ...H3Contenteditable) *H3Element {
-	var val H3Contenteditable
+func (e *H3Element) Contenteditable(v ...Contenteditable) *H3Element {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +254,19 @@ func (e *H3Element) Data(name string, s string) *H3Element {
 	return e
 }
 
-func (e *H3Element) Dir(a H3Dir) *H3Element {
+func (e *H3Element) Dir(a Dir) *H3Element {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *H3Element) Draggable(a H3Draggable) *H3Element {
+func (e *H3Element) Draggable(a Draggable) *H3Element {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *H3Element) Enterkeyhint(a H3Enterkeyhint) *H3Element {
+func (e *H3Element) Enterkeyhint(a Enterkeyhint) *H3Element {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +294,8 @@ func (e *H3Element) Headingreset(b bool) *H3Element {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Hidden(v ...H3Hidden) *H3Element {
-	var val H3Hidden
+func (e *H3Element) Hidden(v ...Hidden) *H3Element {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +318,7 @@ func (e *H3Element) Inert(b bool) *H3Element {
 	return e
 }
 
-func (e *H3Element) Inputmode(a H3Inputmode) *H3Element {
+func (e *H3Element) Inputmode(a Inputmode) *H3Element {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +384,8 @@ func (e *H3Element) Part(s ...string) *H3Element {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Popover(v ...H3Popover) *H3Element {
-	var val H3Popover
+func (e *H3Element) Popover(v ...Popover) *H3Element {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +408,8 @@ func (e *H3Element) Slot(s string) *H3Element {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Spellcheck(v ...H3Spellcheck) *H3Element {
-	var val H3Spellcheck
+func (e *H3Element) Spellcheck(v ...Spellcheck) *H3Element {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +438,8 @@ func (e *H3Element) Title(s string) *H3Element {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Translate(v ...H3Translate) *H3Element {
-	var val H3Translate
+func (e *H3Element) Translate(v ...Translate) *H3Element {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +450,8 @@ func (e *H3Element) Translate(v ...H3Translate) *H3Element {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H3Element) Writingsuggestions(v ...H3Writingsuggestions) *H3Element {
-	var val H3Writingsuggestions
+func (e *H3Element) Writingsuggestions(v ...Writingsuggestions) *H3Element {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type GElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // G creates a tag <g> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The g element is a container used to group other SVG elements.
-func G(children ...htemel.Node) *GElement {
+func G(children ...Content) *GElement {
 	node := &GElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func G(children ...htemel.Node) *GElement {
 }
 
 // GIf creates a tag <g> instance that is only rendered when condition is true.
-func GIf(condition bool, children ...htemel.Node) *GElement {
+func GIf(condition bool, children ...Content) *GElement {
 	if condition {
 		return G(children...)
 	}
@@ -43,7 +45,7 @@ func GIf(condition bool, children ...htemel.Node) *GElement {
 }
 
 // GTernary creates a tag <g> containing then when condition is true, otherwise containing otherwise.
-func GTernary(condition bool, then htemel.Node, otherwise htemel.Node) *GElement {
+func GTernary(condition bool, then Content, otherwise Content) *GElement {
 	if condition {
 		return G(then)
 	}
@@ -51,7 +53,7 @@ func GTernary(condition bool, then htemel.Node, otherwise htemel.Node) *GElement
 }
 
 // Children appends children to this element.
-func (e *GElement) Children(children ...htemel.Node) *GElement {
+func (e *GElement) Children(children ...Content) *GElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *GElement) Textf(format string, args ...any) *GElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *GElement) If(cond bool, child htemel.Node) *GElement {
+func (e *GElement) If(cond bool, child Content) *GElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *GElement) If(cond bool, child htemel.Node) *GElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *GElement) IfElse(cond bool, then, els htemel.Node) *GElement {
+func (e *GElement) IfElse(cond bool, then, els Content) *GElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *GElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type GAlignmentBaseline string
-
-const (
-	GAlignmentBaselineAfterEdge      GAlignmentBaseline = "after-edge"
-	GAlignmentBaselineAlphabetic     GAlignmentBaseline = "alphabetic"
-	GAlignmentBaselineAuto           GAlignmentBaseline = "auto"
-	GAlignmentBaselineBaseline       GAlignmentBaseline = "baseline"
-	GAlignmentBaselineBeforeEdge     GAlignmentBaseline = "before-edge"
-	GAlignmentBaselineBottom         GAlignmentBaseline = "bottom"
-	GAlignmentBaselineCenter         GAlignmentBaseline = "center"
-	GAlignmentBaselineCentral        GAlignmentBaseline = "central"
-	GAlignmentBaselineHanging        GAlignmentBaseline = "hanging"
-	GAlignmentBaselineIdeographic    GAlignmentBaseline = "ideographic"
-	GAlignmentBaselineMathematical   GAlignmentBaseline = "mathematical"
-	GAlignmentBaselineMiddle         GAlignmentBaseline = "middle"
-	GAlignmentBaselineTextAfterEdge  GAlignmentBaseline = "text-after-edge"
-	GAlignmentBaselineTextBeforeEdge GAlignmentBaseline = "text-before-edge"
-	GAlignmentBaselineTextBottom     GAlignmentBaseline = "text-bottom"
-	GAlignmentBaselineTextTop        GAlignmentBaseline = "text-top"
-	GAlignmentBaselineTop            GAlignmentBaseline = "top"
-)
-
-type GClipRule string
-
-const (
-	GClipRuleEvenodd GClipRule = "evenodd"
-	GClipRuleNonzero GClipRule = "nonzero"
-)
-
-type GColorInterpolation string
-
-const (
-	GColorInterpolationAuto      GColorInterpolation = "auto"
-	GColorInterpolationLinearRGB GColorInterpolation = "linearRGB"
-	GColorInterpolationSRGB      GColorInterpolation = "sRGB"
-)
-
-type GColorInterpolationFilters string
-
-const (
-	GColorInterpolationFiltersAuto      GColorInterpolationFilters = "auto"
-	GColorInterpolationFiltersLinearRGB GColorInterpolationFilters = "linearRGB"
-	GColorInterpolationFiltersSRGB      GColorInterpolationFilters = "sRGB"
-)
-
-type GDirection string
-
-const (
-	GDirectionLtr GDirection = "ltr"
-	GDirectionRtl GDirection = "rtl"
-)
-
-type GDominantBaseline string
-
-const (
-	GDominantBaselineAlphabetic   GDominantBaseline = "alphabetic"
-	GDominantBaselineAuto         GDominantBaseline = "auto"
-	GDominantBaselineCentral      GDominantBaseline = "central"
-	GDominantBaselineHanging      GDominantBaseline = "hanging"
-	GDominantBaselineIdeographic  GDominantBaseline = "ideographic"
-	GDominantBaselineMathematical GDominantBaseline = "mathematical"
-	GDominantBaselineMiddle       GDominantBaseline = "middle"
-	GDominantBaselineTextBottom   GDominantBaseline = "text-bottom"
-	GDominantBaselineTextTop      GDominantBaseline = "text-top"
-)
-
-type GFillRule string
-
-const (
-	GFillRuleEvenodd GFillRule = "evenodd"
-	GFillRuleNonzero GFillRule = "nonzero"
-)
-
-type GFontStyle string
-
-const (
-	GFontStyleItalic  GFontStyle = "italic"
-	GFontStyleNormal  GFontStyle = "normal"
-	GFontStyleOblique GFontStyle = "oblique"
-)
-
-type GImageRendering string
-
-const (
-	GImageRenderingAuto            GImageRendering = "auto"
-	GImageRenderingCrispEdges      GImageRendering = "crisp-edges"
-	GImageRenderingHighQuality     GImageRendering = "high-quality"
-	GImageRenderingOptimizeQuality GImageRendering = "optimizeQuality"
-	GImageRenderingOptimizeSpeed   GImageRendering = "optimizeSpeed"
-	GImageRenderingPixelated       GImageRendering = "pixelated"
-	GImageRenderingSmooth          GImageRendering = "smooth"
-)
-
-type GOverflow string
-
-const (
-	GOverflowAuto    GOverflow = "auto"
-	GOverflowClip    GOverflow = "clip"
-	GOverflowHidden  GOverflow = "hidden"
-	GOverflowScroll  GOverflow = "scroll"
-	GOverflowVisible GOverflow = "visible"
-)
-
-type GPointerEvents string
-
-const (
-	GPointerEventsAll            GPointerEvents = "all"
-	GPointerEventsAuto           GPointerEvents = "auto"
-	GPointerEventsBoundingBox    GPointerEvents = "bounding-box"
-	GPointerEventsFill           GPointerEvents = "fill"
-	GPointerEventsNone           GPointerEvents = "none"
-	GPointerEventsPainted        GPointerEvents = "painted"
-	GPointerEventsStroke         GPointerEvents = "stroke"
-	GPointerEventsVisible        GPointerEvents = "visible"
-	GPointerEventsVisibleFill    GPointerEvents = "visibleFill"
-	GPointerEventsVisiblePainted GPointerEvents = "visiblePainted"
-	GPointerEventsVisibleStroke  GPointerEvents = "visibleStroke"
-)
-
-type GShapeRendering string
-
-const (
-	GShapeRenderingAuto               GShapeRendering = "auto"
-	GShapeRenderingCrispEdges         GShapeRendering = "crispEdges"
-	GShapeRenderingGeometricPrecision GShapeRendering = "geometricPrecision"
-	GShapeRenderingOptimizeSpeed      GShapeRendering = "optimizeSpeed"
-)
-
-type GStrokeLinecap string
-
-const (
-	GStrokeLinecapButt   GStrokeLinecap = "butt"
-	GStrokeLinecapRound  GStrokeLinecap = "round"
-	GStrokeLinecapSquare GStrokeLinecap = "square"
-)
-
-type GStrokeLinejoin string
-
-const (
-	GStrokeLinejoinArcs      GStrokeLinejoin = "arcs"
-	GStrokeLinejoinBevel     GStrokeLinejoin = "bevel"
-	GStrokeLinejoinMiter     GStrokeLinejoin = "miter"
-	GStrokeLinejoinMiterClip GStrokeLinejoin = "miter-clip"
-	GStrokeLinejoinRound     GStrokeLinejoin = "round"
-)
-
-type GTextAnchor string
-
-const (
-	GTextAnchorEnd    GTextAnchor = "end"
-	GTextAnchorMiddle GTextAnchor = "middle"
-	GTextAnchorStart  GTextAnchor = "start"
-)
-
-type GTextRendering string
-
-const (
-	GTextRenderingAuto               GTextRendering = "auto"
-	GTextRenderingGeometricPrecision GTextRendering = "geometricPrecision"
-	GTextRenderingOptimizeLegibility GTextRendering = "optimizeLegibility"
-	GTextRenderingOptimizeSpeed      GTextRendering = "optimizeSpeed"
-)
-
-type GTransformBox string
-
-const (
-	GTransformBoxBorderBox  GTransformBox = "border-box"
-	GTransformBoxContentBox GTransformBox = "content-box"
-	GTransformBoxFillBox    GTransformBox = "fill-box"
-	GTransformBoxStrokeBox  GTransformBox = "stroke-box"
-	GTransformBoxViewBox    GTransformBox = "view-box"
-)
-
-type GVectorEffect string
-
-const (
-	GVectorEffectFixedPosition    GVectorEffect = "fixed-position"
-	GVectorEffectNonRotation      GVectorEffect = "non-rotation"
-	GVectorEffectNonScalingSize   GVectorEffect = "non-scaling-size"
-	GVectorEffectNonScalingStroke GVectorEffect = "non-scaling-stroke"
-	GVectorEffectNone             GVectorEffect = "none"
-)
-
-type GVisibility string
-
-const (
-	GVisibilityCollapse GVisibility = "collapse"
-	GVisibilityHidden   GVisibility = "hidden"
-	GVisibilityVisible  GVisibility = "visible"
-)
-
-type GWritingMode string
-
-const (
-	GWritingModeHorizontalTb GWritingMode = "horizontal-tb"
-	GWritingModeLr           GWritingMode = "lr"
-	GWritingModeLrTb         GWritingMode = "lr-tb"
-	GWritingModeRl           GWritingMode = "rl"
-	GWritingModeRlTb         GWritingMode = "rl-tb"
-	GWritingModeSidewaysLr   GWritingMode = "sideways-lr"
-	GWritingModeSidewaysRl   GWritingMode = "sideways-rl"
-	GWritingModeTb           GWritingMode = "tb"
-	GWritingModeTbRl         GWritingMode = "tb-rl"
-	GWritingModeVerticalLr   GWritingMode = "vertical-lr"
-	GWritingModeVerticalRl   GWritingMode = "vertical-rl"
-)
-
-type GXmlSpace string
-
-const (
-	GXmlSpaceDefault  GXmlSpace = "default"
-	GXmlSpacePreserve GXmlSpace = "preserve"
-)
+// SVGContent marks <g> as a permitted child (Content).
+func (*GElement) SVGContent() {}
 
 func (e *GElement) SystemLanguage(s string) *GElement {
 	e.attributes.Set("systemLanguage", s)
@@ -384,14 +175,10 @@ func (e *GElement) SystemLanguage(s string) *GElement {
 	return e
 }
 
-func (e *GElement) AlignmentBaseline(a GAlignmentBaseline) *GElement {
+func (e *GElement) AlignmentBaseline(a AlignmentBaseline) *GElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func GAlignmentBaselineCustom(s string) GAlignmentBaseline {
-	return GAlignmentBaseline(s)
 }
 
 func (e *GElement) AriaUnsafe(name string, s string) *GElement {
@@ -445,14 +232,10 @@ func (e *GElement) ClipPath(s string) *GElement {
 	return e
 }
 
-func (e *GElement) ClipRule(a GClipRule) *GElement {
+func (e *GElement) ClipRule(a ClipRule) *GElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func GClipRuleCustom(s string) GClipRule {
-	return GClipRule(s)
 }
 
 func (e *GElement) Color(s string) *GElement {
@@ -461,24 +244,16 @@ func (e *GElement) Color(s string) *GElement {
 	return e
 }
 
-func (e *GElement) ColorInterpolation(a GColorInterpolation) *GElement {
+func (e *GElement) ColorInterpolation(a ColorInterpolation) *GElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func GColorInterpolationCustom(s string) GColorInterpolation {
-	return GColorInterpolation(s)
-}
-
-func (e *GElement) ColorInterpolationFilters(a GColorInterpolationFilters) *GElement {
+func (e *GElement) ColorInterpolationFilters(a ColorInterpolationFilters) *GElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func GColorInterpolationFiltersCustom(s string) GColorInterpolationFilters {
-	return GColorInterpolationFilters(s)
 }
 
 func (e *GElement) Cursor(s string) *GElement {
@@ -503,14 +278,10 @@ func (e *GElement) Data(name string, s string) *GElement {
 	return e
 }
 
-func (e *GElement) Direction(a GDirection) *GElement {
+func (e *GElement) Direction(a Direction) *GElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func GDirectionCustom(s string) GDirection {
-	return GDirection(s)
 }
 
 func (e *GElement) Display(s string) *GElement {
@@ -519,14 +290,10 @@ func (e *GElement) Display(s string) *GElement {
 	return e
 }
 
-func (e *GElement) DominantBaseline(a GDominantBaseline) *GElement {
+func (e *GElement) DominantBaseline(a DominantBaseline) *GElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func GDominantBaselineCustom(s string) GDominantBaseline {
-	return GDominantBaseline(s)
 }
 
 func (e *GElement) Fill(s string) *GElement {
@@ -541,14 +308,10 @@ func (e *GElement) FillOpacity(f float64) *GElement {
 	return e
 }
 
-func (e *GElement) FillRule(a GFillRule) *GElement {
+func (e *GElement) FillRule(a FillRule) *GElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func GFillRuleCustom(s string) GFillRule {
-	return GFillRule(s)
 }
 
 func (e *GElement) Filter(s string) *GElement {
@@ -593,14 +356,10 @@ func (e *GElement) FontStretch(s string) *GElement {
 	return e
 }
 
-func (e *GElement) FontStyle(a GFontStyle) *GElement {
+func (e *GElement) FontStyle(a FontStyle) *GElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func GFontStyleCustom(s string) GFontStyle {
-	return GFontStyle(s)
 }
 
 func (e *GElement) FontVariant(s string) *GElement {
@@ -639,14 +398,10 @@ func (e *GElement) Id(s string) *GElement {
 	return e
 }
 
-func (e *GElement) ImageRendering(a GImageRendering) *GElement {
+func (e *GElement) ImageRendering(a ImageRendering) *GElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func GImageRenderingCustom(s string) GImageRendering {
-	return GImageRendering(s)
 }
 
 func (e *GElement) Lang(s string) *GElement {
@@ -697,14 +452,10 @@ func (e *GElement) Opacity(f float64) *GElement {
 	return e
 }
 
-func (e *GElement) Overflow(a GOverflow) *GElement {
+func (e *GElement) Overflow(a Overflow) *GElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func GOverflowCustom(s string) GOverflow {
-	return GOverflow(s)
 }
 
 func (e *GElement) PaintOrder(s string) *GElement {
@@ -713,14 +464,10 @@ func (e *GElement) PaintOrder(s string) *GElement {
 	return e
 }
 
-func (e *GElement) PointerEvents(a GPointerEvents) *GElement {
+func (e *GElement) PointerEvents(a PointerEvents) *GElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func GPointerEventsCustom(s string) GPointerEvents {
-	return GPointerEvents(s)
 }
 
 func (e *GElement) RequiredExtensions(s string) *GElement {
@@ -729,14 +476,10 @@ func (e *GElement) RequiredExtensions(s string) *GElement {
 	return e
 }
 
-func (e *GElement) ShapeRendering(a GShapeRendering) *GElement {
+func (e *GElement) ShapeRendering(a ShapeRendering) *GElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func GShapeRenderingCustom(s string) GShapeRendering {
-	return GShapeRendering(s)
 }
 
 func (e *GElement) StopColor(s string) *GElement {
@@ -769,24 +512,16 @@ func (e *GElement) StrokeDashoffset(s string) *GElement {
 	return e
 }
 
-func (e *GElement) StrokeLinecap(a GStrokeLinecap) *GElement {
+func (e *GElement) StrokeLinecap(a StrokeLinecap) *GElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func GStrokeLinecapCustom(s string) GStrokeLinecap {
-	return GStrokeLinecap(s)
-}
-
-func (e *GElement) StrokeLinejoin(a GStrokeLinejoin) *GElement {
+func (e *GElement) StrokeLinejoin(a StrokeLinejoin) *GElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func GStrokeLinejoinCustom(s string) GStrokeLinejoin {
-	return GStrokeLinejoin(s)
 }
 
 func (e *GElement) StrokeMiterlimit(f float64) *GElement {
@@ -819,14 +554,10 @@ func (e *GElement) Tabindex(i int) *GElement {
 	return e
 }
 
-func (e *GElement) TextAnchor(a GTextAnchor) *GElement {
+func (e *GElement) TextAnchor(a TextAnchor) *GElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func GTextAnchorCustom(s string) GTextAnchor {
-	return GTextAnchor(s)
 }
 
 func (e *GElement) TextDecoration(s string) *GElement {
@@ -841,14 +572,10 @@ func (e *GElement) TextOverflow(s string) *GElement {
 	return e
 }
 
-func (e *GElement) TextRendering(a GTextRendering) *GElement {
+func (e *GElement) TextRendering(a TextRendering) *GElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func GTextRenderingCustom(s string) GTextRendering {
-	return GTextRendering(s)
 }
 
 func (e *GElement) Transform(s string) *GElement {
@@ -857,14 +584,10 @@ func (e *GElement) Transform(s string) *GElement {
 	return e
 }
 
-func (e *GElement) TransformBox(a GTransformBox) *GElement {
+func (e *GElement) TransformBox(a TransformBox) *GElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func GTransformBoxCustom(s string) GTransformBox {
-	return GTransformBox(s)
 }
 
 func (e *GElement) TransformOrigin(s string) *GElement {
@@ -879,24 +602,16 @@ func (e *GElement) UnicodeBidi(s string) *GElement {
 	return e
 }
 
-func (e *GElement) VectorEffect(a GVectorEffect) *GElement {
+func (e *GElement) VectorEffect(a VectorEffect) *GElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func GVectorEffectCustom(s string) GVectorEffect {
-	return GVectorEffect(s)
-}
-
-func (e *GElement) Visibility(a GVisibility) *GElement {
+func (e *GElement) Visibility(a Visibility) *GElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func GVisibilityCustom(s string) GVisibility {
-	return GVisibility(s)
 }
 
 func (e *GElement) WhiteSpace(s string) *GElement {
@@ -911,14 +626,10 @@ func (e *GElement) WordSpacing(s string) *GElement {
 	return e
 }
 
-func (e *GElement) WritingMode(a GWritingMode) *GElement {
+func (e *GElement) WritingMode(a WritingMode) *GElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func GWritingModeCustom(s string) GWritingMode {
-	return GWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -933,7 +644,7 @@ func (e *GElement) XmlLang(s string) *GElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *GElement) XmlSpace(a GXmlSpace) *GElement {
+func (e *GElement) XmlSpace(a XmlSpace) *GElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

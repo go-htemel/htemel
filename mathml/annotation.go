@@ -14,15 +14,17 @@ import (
 
 type AnnotationElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Annotation creates a tag <annotation> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Annotation(children ...htemel.Node) *AnnotationElement {
+func Annotation(children ...Content) *AnnotationElement {
 	node := &AnnotationElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Annotation(children ...htemel.Node) *AnnotationElement {
 }
 
 // AnnotationIf creates a tag <annotation> instance that is only rendered when condition is true.
-func AnnotationIf(condition bool, children ...htemel.Node) *AnnotationElement {
+func AnnotationIf(condition bool, children ...Content) *AnnotationElement {
 	if condition {
 		return Annotation(children...)
 	}
@@ -43,7 +45,7 @@ func AnnotationIf(condition bool, children ...htemel.Node) *AnnotationElement {
 }
 
 // AnnotationTernary creates a tag <annotation> containing then when condition is true, otherwise containing otherwise.
-func AnnotationTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AnnotationElement {
+func AnnotationTernary(condition bool, then Content, otherwise Content) *AnnotationElement {
 	if condition {
 		return Annotation(then)
 	}
@@ -51,7 +53,7 @@ func AnnotationTernary(condition bool, then htemel.Node, otherwise htemel.Node) 
 }
 
 // Children appends children to this element.
-func (e *AnnotationElement) Children(children ...htemel.Node) *AnnotationElement {
+func (e *AnnotationElement) Children(children ...Content) *AnnotationElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *AnnotationElement) Textf(format string, args ...any) *AnnotationElement
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AnnotationElement) If(cond bool, child htemel.Node) *AnnotationElement {
+func (e *AnnotationElement) If(cond bool, child Content) *AnnotationElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *AnnotationElement) If(cond bool, child htemel.Node) *AnnotationElement 
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AnnotationElement) IfElse(cond bool, then, els htemel.Node) *AnnotationElement {
+func (e *AnnotationElement) IfElse(cond bool, then, els Content) *AnnotationElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *AnnotationElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AnnotationDir string
-
-const (
-	AnnotationDirLtr AnnotationDir = "ltr"
-	AnnotationDirRtl AnnotationDir = "rtl"
-)
-
-type AnnotationDisplaystyle string
-
-const (
-	AnnotationDisplaystyleFalse AnnotationDisplaystyle = "false"
-	AnnotationDisplaystyleTrue  AnnotationDisplaystyle = "true"
-)
+// MathMLContent marks <annotation> as a permitted child (Content).
+func (*AnnotationElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *AnnotationElement) Data(name string, s string) *AnnotationElement {
 	return e
 }
 
-func (e *AnnotationElement) Dir(a AnnotationDir) *AnnotationElement {
+func (e *AnnotationElement) Dir(a Dir) *AnnotationElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AnnotationElement) Displaystyle(a AnnotationDisplaystyle) *AnnotationElement {
+func (e *AnnotationElement) Displaystyle(a Displaystyle) *AnnotationElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

@@ -12,17 +12,33 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// OptionChild is a permitted child of <option>: <div>, phrasing content.
+//
+// It is implemented by <a>, <abbr>, <area>, <audio>, <b>, <bdi>, <bdo>, <br>, <button>, <canvas>,
+// <cite>, <code>, <data>, <datalist>, <del>, <dfn>, <div>, <em>, <embed>, <i>, <iframe>, <img>,
+// <input>, <ins>, <kbd>, <label>, <link>, <map>, <mark>, <meta>, <meter>, <noscript>, <object>,
+// <output>, <picture>, <progress>, <q>, <ruby>, <s>, <samp>, <script>, <select>, <slot>, <small>,
+// <span>, <strong>, <sub>, <sup>, <template>, <textarea>, <time>, <u>, <var>, <video>, <wbr>, by
+// text (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.PhrasingMarker and by the
+// unchecked nodes of package htemel (Group, Each, If, Unchecked, ...).
+type OptionChild interface {
+	htemel.Node
+	HTMLOptionChild()
+}
+
 type OptionElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []OptionChild
 	skipRender bool
 }
 
 // Option creates a tag <option> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <div>, phrasing content (OptionChild).
+//
 // Spec Description: The option element represents an option in a select element or as part of a list of suggestions in a datalist element.
-func Option(children ...htemel.Node) *OptionElement {
+func Option(children ...OptionChild) *OptionElement {
 	node := &OptionElement{
 		children: children,
 	}
@@ -31,7 +47,7 @@ func Option(children ...htemel.Node) *OptionElement {
 }
 
 // OptionIf creates a tag <option> instance that is only rendered when condition is true.
-func OptionIf(condition bool, children ...htemel.Node) *OptionElement {
+func OptionIf(condition bool, children ...OptionChild) *OptionElement {
 	if condition {
 		return Option(children...)
 	}
@@ -43,7 +59,7 @@ func OptionIf(condition bool, children ...htemel.Node) *OptionElement {
 }
 
 // OptionTernary creates a tag <option> containing then when condition is true, otherwise containing otherwise.
-func OptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *OptionElement {
+func OptionTernary(condition bool, then OptionChild, otherwise OptionChild) *OptionElement {
 	if condition {
 		return Option(then)
 	}
@@ -51,7 +67,7 @@ func OptionTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Opt
 }
 
 // Children appends children to this element.
-func (e *OptionElement) Children(children ...htemel.Node) *OptionElement {
+func (e *OptionElement) Children(children ...OptionChild) *OptionElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +90,7 @@ func (e *OptionElement) Textf(format string, args ...any) *OptionElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *OptionElement) If(cond bool, child htemel.Node) *OptionElement {
+func (e *OptionElement) If(cond bool, child OptionChild) *OptionElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +98,7 @@ func (e *OptionElement) If(cond bool, child htemel.Node) *OptionElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *OptionElement) IfElse(cond bool, then, els htemel.Node) *OptionElement {
+func (e *OptionElement) IfElse(cond bool, then, els OptionChild) *OptionElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +180,14 @@ func (e *OptionElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type OptionAutocapitalize string
+// HTMLDatalistChild marks <option> as a permitted child of <datalist> (DatalistChild).
+func (*OptionElement) HTMLDatalistChild() {}
 
-const (
-	OptionAutocapitalizeCharacters OptionAutocapitalize = "characters"
-	OptionAutocapitalizeNone       OptionAutocapitalize = "none"
-	OptionAutocapitalizeOff        OptionAutocapitalize = "off"
-	OptionAutocapitalizeOn         OptionAutocapitalize = "on"
-	OptionAutocapitalizeSentences  OptionAutocapitalize = "sentences"
-	OptionAutocapitalizeWords      OptionAutocapitalize = "words"
-)
+// HTMLOptgroupChild marks <option> as a permitted child of <optgroup> (OptgroupChild).
+func (*OptionElement) HTMLOptgroupChild() {}
 
-type OptionAutocorrect string
-
-const (
-	OptionAutocorrectOff   OptionAutocorrect = "off"
-	OptionAutocorrectOn    OptionAutocorrect = "on"
-	OptionAutocorrectEmpty OptionAutocorrect = ""
-)
-
-type OptionContenteditable string
-
-const (
-	OptionContenteditableFalse         OptionContenteditable = "false"
-	OptionContenteditablePlaintextOnly OptionContenteditable = "plaintext-only"
-	OptionContenteditableTrue          OptionContenteditable = "true"
-	OptionContenteditableEmpty         OptionContenteditable = ""
-)
-
-type OptionDir string
-
-const (
-	OptionDirAuto OptionDir = "auto"
-	OptionDirLtr  OptionDir = "ltr"
-	OptionDirRtl  OptionDir = "rtl"
-)
-
-type OptionDraggable string
-
-const (
-	OptionDraggableFalse OptionDraggable = "false"
-	OptionDraggableTrue  OptionDraggable = "true"
-)
-
-type OptionEnterkeyhint string
-
-const (
-	OptionEnterkeyhintDone     OptionEnterkeyhint = "done"
-	OptionEnterkeyhintEnter    OptionEnterkeyhint = "enter"
-	OptionEnterkeyhintGo       OptionEnterkeyhint = "go"
-	OptionEnterkeyhintNext     OptionEnterkeyhint = "next"
-	OptionEnterkeyhintPrevious OptionEnterkeyhint = "previous"
-	OptionEnterkeyhintSearch   OptionEnterkeyhint = "search"
-	OptionEnterkeyhintSend     OptionEnterkeyhint = "send"
-)
-
-type OptionHidden string
-
-const (
-	OptionHiddenHidden     OptionHidden = "hidden"
-	OptionHiddenUntilFound OptionHidden = "until-found"
-	OptionHiddenEmpty      OptionHidden = ""
-)
-
-type OptionInputmode string
-
-const (
-	OptionInputmodeDecimal OptionInputmode = "decimal"
-	OptionInputmodeEmail   OptionInputmode = "email"
-	OptionInputmodeNone    OptionInputmode = "none"
-	OptionInputmodeNumeric OptionInputmode = "numeric"
-	OptionInputmodeSearch  OptionInputmode = "search"
-	OptionInputmodeTel     OptionInputmode = "tel"
-	OptionInputmodeText    OptionInputmode = "text"
-	OptionInputmodeUrl     OptionInputmode = "url"
-)
-
-type OptionPopover string
-
-const (
-	OptionPopoverAuto   OptionPopover = "auto"
-	OptionPopoverHint   OptionPopover = "hint"
-	OptionPopoverManual OptionPopover = "manual"
-	OptionPopoverEmpty  OptionPopover = ""
-)
-
-type OptionSpellcheck string
-
-const (
-	OptionSpellcheckFalse OptionSpellcheck = "false"
-	OptionSpellcheckTrue  OptionSpellcheck = "true"
-	OptionSpellcheckEmpty OptionSpellcheck = ""
-)
-
-type OptionTranslate string
-
-const (
-	OptionTranslateNo    OptionTranslate = "no"
-	OptionTranslateYes   OptionTranslate = "yes"
-	OptionTranslateEmpty OptionTranslate = ""
-)
-
-type OptionWritingsuggestions string
-
-const (
-	OptionWritingsuggestionsFalse OptionWritingsuggestions = "false"
-	OptionWritingsuggestionsTrue  OptionWritingsuggestions = "true"
-	OptionWritingsuggestionsEmpty OptionWritingsuggestions = ""
-)
+// HTMLSelectChild marks <option> as a permitted child of <select> (SelectChild).
+func (*OptionElement) HTMLSelectChild() {}
 
 // Disabled sets the boolean attribute "disabled". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -323,7 +239,7 @@ func (e *OptionElement) Aria(name string, s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Autocapitalize(a OptionAutocapitalize) *OptionElement {
+func (e *OptionElement) Autocapitalize(a Autocapitalize) *OptionElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -331,8 +247,8 @@ func (e *OptionElement) Autocapitalize(a OptionAutocapitalize) *OptionElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Autocorrect(v ...OptionAutocorrect) *OptionElement {
-	var val OptionAutocorrect
+func (e *OptionElement) Autocorrect(v ...Autocorrect) *OptionElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -357,8 +273,8 @@ func (e *OptionElement) Class(s ...string) *OptionElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Contenteditable(v ...OptionContenteditable) *OptionElement {
-	var val OptionContenteditable
+func (e *OptionElement) Contenteditable(v ...Contenteditable) *OptionElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -383,19 +299,19 @@ func (e *OptionElement) Data(name string, s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Dir(a OptionDir) *OptionElement {
+func (e *OptionElement) Dir(a Dir) *OptionElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *OptionElement) Draggable(a OptionDraggable) *OptionElement {
+func (e *OptionElement) Draggable(a Draggable) *OptionElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *OptionElement) Enterkeyhint(a OptionEnterkeyhint) *OptionElement {
+func (e *OptionElement) Enterkeyhint(a Enterkeyhint) *OptionElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -423,8 +339,8 @@ func (e *OptionElement) Headingreset(b bool) *OptionElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Hidden(v ...OptionHidden) *OptionElement {
-	var val OptionHidden
+func (e *OptionElement) Hidden(v ...Hidden) *OptionElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -447,7 +363,7 @@ func (e *OptionElement) Inert(b bool) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Inputmode(a OptionInputmode) *OptionElement {
+func (e *OptionElement) Inputmode(a Inputmode) *OptionElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -513,8 +429,8 @@ func (e *OptionElement) Part(s ...string) *OptionElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Popover(v ...OptionPopover) *OptionElement {
-	var val OptionPopover
+func (e *OptionElement) Popover(v ...Popover) *OptionElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -537,8 +453,8 @@ func (e *OptionElement) Slot(s string) *OptionElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Spellcheck(v ...OptionSpellcheck) *OptionElement {
-	var val OptionSpellcheck
+func (e *OptionElement) Spellcheck(v ...Spellcheck) *OptionElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -567,8 +483,8 @@ func (e *OptionElement) Title(s string) *OptionElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Translate(v ...OptionTranslate) *OptionElement {
-	var val OptionTranslate
+func (e *OptionElement) Translate(v ...Translate) *OptionElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -579,8 +495,8 @@ func (e *OptionElement) Translate(v ...OptionTranslate) *OptionElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *OptionElement) Writingsuggestions(v ...OptionWritingsuggestions) *OptionElement {
-	var val OptionWritingsuggestions
+func (e *OptionElement) Writingsuggestions(v ...Writingsuggestions) *OptionElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

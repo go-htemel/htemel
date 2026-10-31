@@ -14,15 +14,17 @@ import (
 
 type PolygonElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Polygon creates a tag <polygon> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The polygon element draws a closed shape of connected straight line segments.
-func Polygon(children ...htemel.Node) *PolygonElement {
+func Polygon(children ...Content) *PolygonElement {
 	node := &PolygonElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Polygon(children ...htemel.Node) *PolygonElement {
 }
 
 // PolygonIf creates a tag <polygon> instance that is only rendered when condition is true.
-func PolygonIf(condition bool, children ...htemel.Node) *PolygonElement {
+func PolygonIf(condition bool, children ...Content) *PolygonElement {
 	if condition {
 		return Polygon(children...)
 	}
@@ -43,7 +45,7 @@ func PolygonIf(condition bool, children ...htemel.Node) *PolygonElement {
 }
 
 // PolygonTernary creates a tag <polygon> containing then when condition is true, otherwise containing otherwise.
-func PolygonTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PolygonElement {
+func PolygonTernary(condition bool, then Content, otherwise Content) *PolygonElement {
 	if condition {
 		return Polygon(then)
 	}
@@ -51,7 +53,7 @@ func PolygonTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Po
 }
 
 // Children appends children to this element.
-func (e *PolygonElement) Children(children ...htemel.Node) *PolygonElement {
+func (e *PolygonElement) Children(children ...Content) *PolygonElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *PolygonElement) Textf(format string, args ...any) *PolygonElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PolygonElement) If(cond bool, child htemel.Node) *PolygonElement {
+func (e *PolygonElement) If(cond bool, child Content) *PolygonElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *PolygonElement) If(cond bool, child htemel.Node) *PolygonElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PolygonElement) IfElse(cond bool, then, els htemel.Node) *PolygonElement {
+func (e *PolygonElement) IfElse(cond bool, then, els Content) *PolygonElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *PolygonElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PolygonAlignmentBaseline string
-
-const (
-	PolygonAlignmentBaselineAfterEdge      PolygonAlignmentBaseline = "after-edge"
-	PolygonAlignmentBaselineAlphabetic     PolygonAlignmentBaseline = "alphabetic"
-	PolygonAlignmentBaselineAuto           PolygonAlignmentBaseline = "auto"
-	PolygonAlignmentBaselineBaseline       PolygonAlignmentBaseline = "baseline"
-	PolygonAlignmentBaselineBeforeEdge     PolygonAlignmentBaseline = "before-edge"
-	PolygonAlignmentBaselineBottom         PolygonAlignmentBaseline = "bottom"
-	PolygonAlignmentBaselineCenter         PolygonAlignmentBaseline = "center"
-	PolygonAlignmentBaselineCentral        PolygonAlignmentBaseline = "central"
-	PolygonAlignmentBaselineHanging        PolygonAlignmentBaseline = "hanging"
-	PolygonAlignmentBaselineIdeographic    PolygonAlignmentBaseline = "ideographic"
-	PolygonAlignmentBaselineMathematical   PolygonAlignmentBaseline = "mathematical"
-	PolygonAlignmentBaselineMiddle         PolygonAlignmentBaseline = "middle"
-	PolygonAlignmentBaselineTextAfterEdge  PolygonAlignmentBaseline = "text-after-edge"
-	PolygonAlignmentBaselineTextBeforeEdge PolygonAlignmentBaseline = "text-before-edge"
-	PolygonAlignmentBaselineTextBottom     PolygonAlignmentBaseline = "text-bottom"
-	PolygonAlignmentBaselineTextTop        PolygonAlignmentBaseline = "text-top"
-	PolygonAlignmentBaselineTop            PolygonAlignmentBaseline = "top"
-)
-
-type PolygonClipRule string
-
-const (
-	PolygonClipRuleEvenodd PolygonClipRule = "evenodd"
-	PolygonClipRuleNonzero PolygonClipRule = "nonzero"
-)
-
-type PolygonColorInterpolation string
-
-const (
-	PolygonColorInterpolationAuto      PolygonColorInterpolation = "auto"
-	PolygonColorInterpolationLinearRGB PolygonColorInterpolation = "linearRGB"
-	PolygonColorInterpolationSRGB      PolygonColorInterpolation = "sRGB"
-)
-
-type PolygonColorInterpolationFilters string
-
-const (
-	PolygonColorInterpolationFiltersAuto      PolygonColorInterpolationFilters = "auto"
-	PolygonColorInterpolationFiltersLinearRGB PolygonColorInterpolationFilters = "linearRGB"
-	PolygonColorInterpolationFiltersSRGB      PolygonColorInterpolationFilters = "sRGB"
-)
-
-type PolygonDirection string
-
-const (
-	PolygonDirectionLtr PolygonDirection = "ltr"
-	PolygonDirectionRtl PolygonDirection = "rtl"
-)
-
-type PolygonDominantBaseline string
-
-const (
-	PolygonDominantBaselineAlphabetic   PolygonDominantBaseline = "alphabetic"
-	PolygonDominantBaselineAuto         PolygonDominantBaseline = "auto"
-	PolygonDominantBaselineCentral      PolygonDominantBaseline = "central"
-	PolygonDominantBaselineHanging      PolygonDominantBaseline = "hanging"
-	PolygonDominantBaselineIdeographic  PolygonDominantBaseline = "ideographic"
-	PolygonDominantBaselineMathematical PolygonDominantBaseline = "mathematical"
-	PolygonDominantBaselineMiddle       PolygonDominantBaseline = "middle"
-	PolygonDominantBaselineTextBottom   PolygonDominantBaseline = "text-bottom"
-	PolygonDominantBaselineTextTop      PolygonDominantBaseline = "text-top"
-)
-
-type PolygonFillRule string
-
-const (
-	PolygonFillRuleEvenodd PolygonFillRule = "evenodd"
-	PolygonFillRuleNonzero PolygonFillRule = "nonzero"
-)
-
-type PolygonFontStyle string
-
-const (
-	PolygonFontStyleItalic  PolygonFontStyle = "italic"
-	PolygonFontStyleNormal  PolygonFontStyle = "normal"
-	PolygonFontStyleOblique PolygonFontStyle = "oblique"
-)
-
-type PolygonImageRendering string
-
-const (
-	PolygonImageRenderingAuto            PolygonImageRendering = "auto"
-	PolygonImageRenderingCrispEdges      PolygonImageRendering = "crisp-edges"
-	PolygonImageRenderingHighQuality     PolygonImageRendering = "high-quality"
-	PolygonImageRenderingOptimizeQuality PolygonImageRendering = "optimizeQuality"
-	PolygonImageRenderingOptimizeSpeed   PolygonImageRendering = "optimizeSpeed"
-	PolygonImageRenderingPixelated       PolygonImageRendering = "pixelated"
-	PolygonImageRenderingSmooth          PolygonImageRendering = "smooth"
-)
-
-type PolygonOverflow string
-
-const (
-	PolygonOverflowAuto    PolygonOverflow = "auto"
-	PolygonOverflowClip    PolygonOverflow = "clip"
-	PolygonOverflowHidden  PolygonOverflow = "hidden"
-	PolygonOverflowScroll  PolygonOverflow = "scroll"
-	PolygonOverflowVisible PolygonOverflow = "visible"
-)
-
-type PolygonPointerEvents string
-
-const (
-	PolygonPointerEventsAll            PolygonPointerEvents = "all"
-	PolygonPointerEventsAuto           PolygonPointerEvents = "auto"
-	PolygonPointerEventsBoundingBox    PolygonPointerEvents = "bounding-box"
-	PolygonPointerEventsFill           PolygonPointerEvents = "fill"
-	PolygonPointerEventsNone           PolygonPointerEvents = "none"
-	PolygonPointerEventsPainted        PolygonPointerEvents = "painted"
-	PolygonPointerEventsStroke         PolygonPointerEvents = "stroke"
-	PolygonPointerEventsVisible        PolygonPointerEvents = "visible"
-	PolygonPointerEventsVisibleFill    PolygonPointerEvents = "visibleFill"
-	PolygonPointerEventsVisiblePainted PolygonPointerEvents = "visiblePainted"
-	PolygonPointerEventsVisibleStroke  PolygonPointerEvents = "visibleStroke"
-)
-
-type PolygonShapeRendering string
-
-const (
-	PolygonShapeRenderingAuto               PolygonShapeRendering = "auto"
-	PolygonShapeRenderingCrispEdges         PolygonShapeRendering = "crispEdges"
-	PolygonShapeRenderingGeometricPrecision PolygonShapeRendering = "geometricPrecision"
-	PolygonShapeRenderingOptimizeSpeed      PolygonShapeRendering = "optimizeSpeed"
-)
-
-type PolygonStrokeLinecap string
-
-const (
-	PolygonStrokeLinecapButt   PolygonStrokeLinecap = "butt"
-	PolygonStrokeLinecapRound  PolygonStrokeLinecap = "round"
-	PolygonStrokeLinecapSquare PolygonStrokeLinecap = "square"
-)
-
-type PolygonStrokeLinejoin string
-
-const (
-	PolygonStrokeLinejoinArcs      PolygonStrokeLinejoin = "arcs"
-	PolygonStrokeLinejoinBevel     PolygonStrokeLinejoin = "bevel"
-	PolygonStrokeLinejoinMiter     PolygonStrokeLinejoin = "miter"
-	PolygonStrokeLinejoinMiterClip PolygonStrokeLinejoin = "miter-clip"
-	PolygonStrokeLinejoinRound     PolygonStrokeLinejoin = "round"
-)
-
-type PolygonTextAnchor string
-
-const (
-	PolygonTextAnchorEnd    PolygonTextAnchor = "end"
-	PolygonTextAnchorMiddle PolygonTextAnchor = "middle"
-	PolygonTextAnchorStart  PolygonTextAnchor = "start"
-)
-
-type PolygonTextRendering string
-
-const (
-	PolygonTextRenderingAuto               PolygonTextRendering = "auto"
-	PolygonTextRenderingGeometricPrecision PolygonTextRendering = "geometricPrecision"
-	PolygonTextRenderingOptimizeLegibility PolygonTextRendering = "optimizeLegibility"
-	PolygonTextRenderingOptimizeSpeed      PolygonTextRendering = "optimizeSpeed"
-)
-
-type PolygonTransformBox string
-
-const (
-	PolygonTransformBoxBorderBox  PolygonTransformBox = "border-box"
-	PolygonTransformBoxContentBox PolygonTransformBox = "content-box"
-	PolygonTransformBoxFillBox    PolygonTransformBox = "fill-box"
-	PolygonTransformBoxStrokeBox  PolygonTransformBox = "stroke-box"
-	PolygonTransformBoxViewBox    PolygonTransformBox = "view-box"
-)
-
-type PolygonVectorEffect string
-
-const (
-	PolygonVectorEffectFixedPosition    PolygonVectorEffect = "fixed-position"
-	PolygonVectorEffectNonRotation      PolygonVectorEffect = "non-rotation"
-	PolygonVectorEffectNonScalingSize   PolygonVectorEffect = "non-scaling-size"
-	PolygonVectorEffectNonScalingStroke PolygonVectorEffect = "non-scaling-stroke"
-	PolygonVectorEffectNone             PolygonVectorEffect = "none"
-)
-
-type PolygonVisibility string
-
-const (
-	PolygonVisibilityCollapse PolygonVisibility = "collapse"
-	PolygonVisibilityHidden   PolygonVisibility = "hidden"
-	PolygonVisibilityVisible  PolygonVisibility = "visible"
-)
-
-type PolygonWritingMode string
-
-const (
-	PolygonWritingModeHorizontalTb PolygonWritingMode = "horizontal-tb"
-	PolygonWritingModeLr           PolygonWritingMode = "lr"
-	PolygonWritingModeLrTb         PolygonWritingMode = "lr-tb"
-	PolygonWritingModeRl           PolygonWritingMode = "rl"
-	PolygonWritingModeRlTb         PolygonWritingMode = "rl-tb"
-	PolygonWritingModeSidewaysLr   PolygonWritingMode = "sideways-lr"
-	PolygonWritingModeSidewaysRl   PolygonWritingMode = "sideways-rl"
-	PolygonWritingModeTb           PolygonWritingMode = "tb"
-	PolygonWritingModeTbRl         PolygonWritingMode = "tb-rl"
-	PolygonWritingModeVerticalLr   PolygonWritingMode = "vertical-lr"
-	PolygonWritingModeVerticalRl   PolygonWritingMode = "vertical-rl"
-)
-
-type PolygonXmlSpace string
-
-const (
-	PolygonXmlSpaceDefault  PolygonXmlSpace = "default"
-	PolygonXmlSpacePreserve PolygonXmlSpace = "preserve"
-)
+// SVGContent marks <polygon> as a permitted child (Content).
+func (*PolygonElement) SVGContent() {}
 
 func (e *PolygonElement) PathLength(f float64) *PolygonElement {
 	e.attributes.Set("pathLength", strconv.FormatFloat(f, 'g', -1, 64))
@@ -396,14 +187,10 @@ func (e *PolygonElement) SystemLanguage(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) AlignmentBaseline(a PolygonAlignmentBaseline) *PolygonElement {
+func (e *PolygonElement) AlignmentBaseline(a AlignmentBaseline) *PolygonElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func PolygonAlignmentBaselineCustom(s string) PolygonAlignmentBaseline {
-	return PolygonAlignmentBaseline(s)
 }
 
 func (e *PolygonElement) AriaUnsafe(name string, s string) *PolygonElement {
@@ -457,14 +244,10 @@ func (e *PolygonElement) ClipPath(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) ClipRule(a PolygonClipRule) *PolygonElement {
+func (e *PolygonElement) ClipRule(a ClipRule) *PolygonElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func PolygonClipRuleCustom(s string) PolygonClipRule {
-	return PolygonClipRule(s)
 }
 
 func (e *PolygonElement) Color(s string) *PolygonElement {
@@ -473,24 +256,16 @@ func (e *PolygonElement) Color(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) ColorInterpolation(a PolygonColorInterpolation) *PolygonElement {
+func (e *PolygonElement) ColorInterpolation(a ColorInterpolation) *PolygonElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func PolygonColorInterpolationCustom(s string) PolygonColorInterpolation {
-	return PolygonColorInterpolation(s)
-}
-
-func (e *PolygonElement) ColorInterpolationFilters(a PolygonColorInterpolationFilters) *PolygonElement {
+func (e *PolygonElement) ColorInterpolationFilters(a ColorInterpolationFilters) *PolygonElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func PolygonColorInterpolationFiltersCustom(s string) PolygonColorInterpolationFilters {
-	return PolygonColorInterpolationFilters(s)
 }
 
 func (e *PolygonElement) Cursor(s string) *PolygonElement {
@@ -515,14 +290,10 @@ func (e *PolygonElement) Data(name string, s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) Direction(a PolygonDirection) *PolygonElement {
+func (e *PolygonElement) Direction(a Direction) *PolygonElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func PolygonDirectionCustom(s string) PolygonDirection {
-	return PolygonDirection(s)
 }
 
 func (e *PolygonElement) Display(s string) *PolygonElement {
@@ -531,14 +302,10 @@ func (e *PolygonElement) Display(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) DominantBaseline(a PolygonDominantBaseline) *PolygonElement {
+func (e *PolygonElement) DominantBaseline(a DominantBaseline) *PolygonElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func PolygonDominantBaselineCustom(s string) PolygonDominantBaseline {
-	return PolygonDominantBaseline(s)
 }
 
 func (e *PolygonElement) Fill(s string) *PolygonElement {
@@ -553,14 +320,10 @@ func (e *PolygonElement) FillOpacity(f float64) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) FillRule(a PolygonFillRule) *PolygonElement {
+func (e *PolygonElement) FillRule(a FillRule) *PolygonElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func PolygonFillRuleCustom(s string) PolygonFillRule {
-	return PolygonFillRule(s)
 }
 
 func (e *PolygonElement) Filter(s string) *PolygonElement {
@@ -605,14 +368,10 @@ func (e *PolygonElement) FontStretch(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) FontStyle(a PolygonFontStyle) *PolygonElement {
+func (e *PolygonElement) FontStyle(a FontStyle) *PolygonElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func PolygonFontStyleCustom(s string) PolygonFontStyle {
-	return PolygonFontStyle(s)
 }
 
 func (e *PolygonElement) FontVariant(s string) *PolygonElement {
@@ -651,14 +410,10 @@ func (e *PolygonElement) Id(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) ImageRendering(a PolygonImageRendering) *PolygonElement {
+func (e *PolygonElement) ImageRendering(a ImageRendering) *PolygonElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func PolygonImageRenderingCustom(s string) PolygonImageRendering {
-	return PolygonImageRendering(s)
 }
 
 func (e *PolygonElement) Lang(s string) *PolygonElement {
@@ -709,14 +464,10 @@ func (e *PolygonElement) Opacity(f float64) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) Overflow(a PolygonOverflow) *PolygonElement {
+func (e *PolygonElement) Overflow(a Overflow) *PolygonElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func PolygonOverflowCustom(s string) PolygonOverflow {
-	return PolygonOverflow(s)
 }
 
 func (e *PolygonElement) PaintOrder(s string) *PolygonElement {
@@ -725,14 +476,10 @@ func (e *PolygonElement) PaintOrder(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) PointerEvents(a PolygonPointerEvents) *PolygonElement {
+func (e *PolygonElement) PointerEvents(a PointerEvents) *PolygonElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func PolygonPointerEventsCustom(s string) PolygonPointerEvents {
-	return PolygonPointerEvents(s)
 }
 
 func (e *PolygonElement) RequiredExtensions(s string) *PolygonElement {
@@ -741,14 +488,10 @@ func (e *PolygonElement) RequiredExtensions(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) ShapeRendering(a PolygonShapeRendering) *PolygonElement {
+func (e *PolygonElement) ShapeRendering(a ShapeRendering) *PolygonElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func PolygonShapeRenderingCustom(s string) PolygonShapeRendering {
-	return PolygonShapeRendering(s)
 }
 
 func (e *PolygonElement) StopColor(s string) *PolygonElement {
@@ -781,24 +524,16 @@ func (e *PolygonElement) StrokeDashoffset(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) StrokeLinecap(a PolygonStrokeLinecap) *PolygonElement {
+func (e *PolygonElement) StrokeLinecap(a StrokeLinecap) *PolygonElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func PolygonStrokeLinecapCustom(s string) PolygonStrokeLinecap {
-	return PolygonStrokeLinecap(s)
-}
-
-func (e *PolygonElement) StrokeLinejoin(a PolygonStrokeLinejoin) *PolygonElement {
+func (e *PolygonElement) StrokeLinejoin(a StrokeLinejoin) *PolygonElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func PolygonStrokeLinejoinCustom(s string) PolygonStrokeLinejoin {
-	return PolygonStrokeLinejoin(s)
 }
 
 func (e *PolygonElement) StrokeMiterlimit(f float64) *PolygonElement {
@@ -831,14 +566,10 @@ func (e *PolygonElement) Tabindex(i int) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) TextAnchor(a PolygonTextAnchor) *PolygonElement {
+func (e *PolygonElement) TextAnchor(a TextAnchor) *PolygonElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func PolygonTextAnchorCustom(s string) PolygonTextAnchor {
-	return PolygonTextAnchor(s)
 }
 
 func (e *PolygonElement) TextDecoration(s string) *PolygonElement {
@@ -853,14 +584,10 @@ func (e *PolygonElement) TextOverflow(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) TextRendering(a PolygonTextRendering) *PolygonElement {
+func (e *PolygonElement) TextRendering(a TextRendering) *PolygonElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func PolygonTextRenderingCustom(s string) PolygonTextRendering {
-	return PolygonTextRendering(s)
 }
 
 func (e *PolygonElement) Transform(s string) *PolygonElement {
@@ -869,14 +596,10 @@ func (e *PolygonElement) Transform(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) TransformBox(a PolygonTransformBox) *PolygonElement {
+func (e *PolygonElement) TransformBox(a TransformBox) *PolygonElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func PolygonTransformBoxCustom(s string) PolygonTransformBox {
-	return PolygonTransformBox(s)
 }
 
 func (e *PolygonElement) TransformOrigin(s string) *PolygonElement {
@@ -891,24 +614,16 @@ func (e *PolygonElement) UnicodeBidi(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) VectorEffect(a PolygonVectorEffect) *PolygonElement {
+func (e *PolygonElement) VectorEffect(a VectorEffect) *PolygonElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func PolygonVectorEffectCustom(s string) PolygonVectorEffect {
-	return PolygonVectorEffect(s)
-}
-
-func (e *PolygonElement) Visibility(a PolygonVisibility) *PolygonElement {
+func (e *PolygonElement) Visibility(a Visibility) *PolygonElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func PolygonVisibilityCustom(s string) PolygonVisibility {
-	return PolygonVisibility(s)
 }
 
 func (e *PolygonElement) WhiteSpace(s string) *PolygonElement {
@@ -923,14 +638,10 @@ func (e *PolygonElement) WordSpacing(s string) *PolygonElement {
 	return e
 }
 
-func (e *PolygonElement) WritingMode(a PolygonWritingMode) *PolygonElement {
+func (e *PolygonElement) WritingMode(a WritingMode) *PolygonElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func PolygonWritingModeCustom(s string) PolygonWritingMode {
-	return PolygonWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -945,7 +656,7 @@ func (e *PolygonElement) XmlLang(s string) *PolygonElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *PolygonElement) XmlSpace(a PolygonXmlSpace) *PolygonElement {
+func (e *PolygonElement) XmlSpace(a XmlSpace) *PolygonElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

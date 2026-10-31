@@ -12,17 +12,43 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// AudioChild is a permitted child of <audio>: <source>, <track>, flow content.
+//
+// It is implemented by <a>, <abbr>, <address>, <area>, <article>, <aside>, <audio>, <b>, <bdi>,
+// <bdo>, <blockquote>, <br>, <button>, <canvas>, <cite>, <code>, <data>, <datalist>, <del>,
+// <details>, <dfn>, <dialog>, <div>, <dl>, <em>, <embed>, <fieldset>, <figure>, <footer>, <form>,
+// <h1>, <h2>, <h3>, <h4>, <h5>, <h6>, <header>, <hgroup>, <hr>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <link>, <main>, <map>, <mark>, <menu>, <meta>, <meter>, <nav>,
+// <noscript>, <object>, <ol>, <output>, <p>, <picture>, <pre>, <progress>, <q>, <ruby>, <s>,
+// <samp>, <script>, <search>, <section>, <select>, <slot>, <small>, <source>, <span>, <strong>,
+// <style>, <sub>, <sup>, <table>, <template>, <textarea>, <time>, <track>, <u>, <ul>, <var>,
+// <video>, <wbr>, by text (htemel.Text, htemel.TextUnsafe), by any type embedding
+// htemel.FlowMarker and by the unchecked nodes of package htemel (Group, Each, If, Unchecked,
+// ...).
+type AudioChild interface {
+	htemel.Node
+	HTMLAudioChild()
+}
+
 type AudioElement struct {
+	htemel.PhrasingMarker
+	htemel.EmbeddedMarker
+	htemel.InteractiveMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []AudioChild
 	skipRender bool
 }
 
 // Audio creates a tag <audio> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <audio> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content plus <source>, <track> (AudioChild); make sure its
+// content is also valid in the parent.
+//
 // Spec Description: An audio element represents a sound or audio stream.
-func Audio(children ...htemel.Node) *AudioElement {
+func Audio(children ...AudioChild) *AudioElement {
 	node := &AudioElement{
 		children: children,
 	}
@@ -31,7 +57,7 @@ func Audio(children ...htemel.Node) *AudioElement {
 }
 
 // AudioIf creates a tag <audio> instance that is only rendered when condition is true.
-func AudioIf(condition bool, children ...htemel.Node) *AudioElement {
+func AudioIf(condition bool, children ...AudioChild) *AudioElement {
 	if condition {
 		return Audio(children...)
 	}
@@ -43,7 +69,7 @@ func AudioIf(condition bool, children ...htemel.Node) *AudioElement {
 }
 
 // AudioTernary creates a tag <audio> containing then when condition is true, otherwise containing otherwise.
-func AudioTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AudioElement {
+func AudioTernary(condition bool, then AudioChild, otherwise AudioChild) *AudioElement {
 	if condition {
 		return Audio(then)
 	}
@@ -51,7 +77,7 @@ func AudioTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Audi
 }
 
 // Children appends children to this element.
-func (e *AudioElement) Children(children ...htemel.Node) *AudioElement {
+func (e *AudioElement) Children(children ...AudioChild) *AudioElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +100,7 @@ func (e *AudioElement) Textf(format string, args ...any) *AudioElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AudioElement) If(cond bool, child htemel.Node) *AudioElement {
+func (e *AudioElement) If(cond bool, child AudioChild) *AudioElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +108,7 @@ func (e *AudioElement) If(cond bool, child htemel.Node) *AudioElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AudioElement) IfElse(cond bool, then, els htemel.Node) *AudioElement {
+func (e *AudioElement) IfElse(cond bool, then, els AudioChild) *AudioElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,139 +190,6 @@ func (e *AudioElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AudioCrossorigin string
-
-const (
-	AudioCrossoriginAnonymous      AudioCrossorigin = "anonymous"
-	AudioCrossoriginUseCredentials AudioCrossorigin = "use-credentials"
-	AudioCrossoriginEmpty          AudioCrossorigin = ""
-)
-
-type AudioLoading string
-
-const (
-	AudioLoadingEager AudioLoading = "eager"
-	AudioLoadingLazy  AudioLoading = "lazy"
-)
-
-type AudioPreload string
-
-const (
-	AudioPreloadAuto     AudioPreload = "auto"
-	AudioPreloadMetadata AudioPreload = "metadata"
-	AudioPreloadNone     AudioPreload = "none"
-	AudioPreloadEmpty    AudioPreload = ""
-)
-
-type AudioAutocapitalize string
-
-const (
-	AudioAutocapitalizeCharacters AudioAutocapitalize = "characters"
-	AudioAutocapitalizeNone       AudioAutocapitalize = "none"
-	AudioAutocapitalizeOff        AudioAutocapitalize = "off"
-	AudioAutocapitalizeOn         AudioAutocapitalize = "on"
-	AudioAutocapitalizeSentences  AudioAutocapitalize = "sentences"
-	AudioAutocapitalizeWords      AudioAutocapitalize = "words"
-)
-
-type AudioAutocorrect string
-
-const (
-	AudioAutocorrectOff   AudioAutocorrect = "off"
-	AudioAutocorrectOn    AudioAutocorrect = "on"
-	AudioAutocorrectEmpty AudioAutocorrect = ""
-)
-
-type AudioContenteditable string
-
-const (
-	AudioContenteditableFalse         AudioContenteditable = "false"
-	AudioContenteditablePlaintextOnly AudioContenteditable = "plaintext-only"
-	AudioContenteditableTrue          AudioContenteditable = "true"
-	AudioContenteditableEmpty         AudioContenteditable = ""
-)
-
-type AudioDir string
-
-const (
-	AudioDirAuto AudioDir = "auto"
-	AudioDirLtr  AudioDir = "ltr"
-	AudioDirRtl  AudioDir = "rtl"
-)
-
-type AudioDraggable string
-
-const (
-	AudioDraggableFalse AudioDraggable = "false"
-	AudioDraggableTrue  AudioDraggable = "true"
-)
-
-type AudioEnterkeyhint string
-
-const (
-	AudioEnterkeyhintDone     AudioEnterkeyhint = "done"
-	AudioEnterkeyhintEnter    AudioEnterkeyhint = "enter"
-	AudioEnterkeyhintGo       AudioEnterkeyhint = "go"
-	AudioEnterkeyhintNext     AudioEnterkeyhint = "next"
-	AudioEnterkeyhintPrevious AudioEnterkeyhint = "previous"
-	AudioEnterkeyhintSearch   AudioEnterkeyhint = "search"
-	AudioEnterkeyhintSend     AudioEnterkeyhint = "send"
-)
-
-type AudioHidden string
-
-const (
-	AudioHiddenHidden     AudioHidden = "hidden"
-	AudioHiddenUntilFound AudioHidden = "until-found"
-	AudioHiddenEmpty      AudioHidden = ""
-)
-
-type AudioInputmode string
-
-const (
-	AudioInputmodeDecimal AudioInputmode = "decimal"
-	AudioInputmodeEmail   AudioInputmode = "email"
-	AudioInputmodeNone    AudioInputmode = "none"
-	AudioInputmodeNumeric AudioInputmode = "numeric"
-	AudioInputmodeSearch  AudioInputmode = "search"
-	AudioInputmodeTel     AudioInputmode = "tel"
-	AudioInputmodeText    AudioInputmode = "text"
-	AudioInputmodeUrl     AudioInputmode = "url"
-)
-
-type AudioPopover string
-
-const (
-	AudioPopoverAuto   AudioPopover = "auto"
-	AudioPopoverHint   AudioPopover = "hint"
-	AudioPopoverManual AudioPopover = "manual"
-	AudioPopoverEmpty  AudioPopover = ""
-)
-
-type AudioSpellcheck string
-
-const (
-	AudioSpellcheckFalse AudioSpellcheck = "false"
-	AudioSpellcheckTrue  AudioSpellcheck = "true"
-	AudioSpellcheckEmpty AudioSpellcheck = ""
-)
-
-type AudioTranslate string
-
-const (
-	AudioTranslateNo    AudioTranslate = "no"
-	AudioTranslateYes   AudioTranslate = "yes"
-	AudioTranslateEmpty AudioTranslate = ""
-)
-
-type AudioWritingsuggestions string
-
-const (
-	AudioWritingsuggestionsFalse AudioWritingsuggestions = "false"
-	AudioWritingsuggestionsTrue  AudioWritingsuggestions = "true"
-	AudioWritingsuggestionsEmpty AudioWritingsuggestions = ""
-)
-
 // Autoplay sets the boolean attribute "autoplay". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
 func (e *AudioElement) Autoplay(b bool) *AudioElement {
@@ -321,8 +214,8 @@ func (e *AudioElement) Controlslist(s ...string) *AudioElement {
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Crossorigin(v ...AudioCrossorigin) *AudioElement {
-	var val AudioCrossorigin
+func (e *AudioElement) Crossorigin(v ...Crossorigin) *AudioElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -339,7 +232,7 @@ func (e *AudioElement) Disableremoteplayback(b bool) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Loading(a AudioLoading) *AudioElement {
+func (e *AudioElement) Loading(a Loading) *AudioElement {
 	e.attributes.Set("loading", string(a))
 
 	return e
@@ -363,8 +256,8 @@ func (e *AudioElement) Muted(b bool) *AudioElement {
 
 // Preload sets the "preload" attribute. Called with no argument, Preload() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Preload(v ...AudioPreload) *AudioElement {
-	var val AudioPreload
+func (e *AudioElement) Preload(v ...Preload) *AudioElement {
+	var val Preload
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -403,7 +296,7 @@ func (e *AudioElement) Aria(name string, s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Autocapitalize(a AudioAutocapitalize) *AudioElement {
+func (e *AudioElement) Autocapitalize(a Autocapitalize) *AudioElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -411,8 +304,8 @@ func (e *AudioElement) Autocapitalize(a AudioAutocapitalize) *AudioElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Autocorrect(v ...AudioAutocorrect) *AudioElement {
-	var val AudioAutocorrect
+func (e *AudioElement) Autocorrect(v ...Autocorrect) *AudioElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -437,8 +330,8 @@ func (e *AudioElement) Class(s ...string) *AudioElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Contenteditable(v ...AudioContenteditable) *AudioElement {
-	var val AudioContenteditable
+func (e *AudioElement) Contenteditable(v ...Contenteditable) *AudioElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -463,19 +356,19 @@ func (e *AudioElement) Data(name string, s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Dir(a AudioDir) *AudioElement {
+func (e *AudioElement) Dir(a Dir) *AudioElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AudioElement) Draggable(a AudioDraggable) *AudioElement {
+func (e *AudioElement) Draggable(a Draggable) *AudioElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AudioElement) Enterkeyhint(a AudioEnterkeyhint) *AudioElement {
+func (e *AudioElement) Enterkeyhint(a Enterkeyhint) *AudioElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -503,8 +396,8 @@ func (e *AudioElement) Headingreset(b bool) *AudioElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Hidden(v ...AudioHidden) *AudioElement {
-	var val AudioHidden
+func (e *AudioElement) Hidden(v ...Hidden) *AudioElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -527,7 +420,7 @@ func (e *AudioElement) Inert(b bool) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Inputmode(a AudioInputmode) *AudioElement {
+func (e *AudioElement) Inputmode(a Inputmode) *AudioElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -593,8 +486,8 @@ func (e *AudioElement) Part(s ...string) *AudioElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Popover(v ...AudioPopover) *AudioElement {
-	var val AudioPopover
+func (e *AudioElement) Popover(v ...Popover) *AudioElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -617,8 +510,8 @@ func (e *AudioElement) Slot(s string) *AudioElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Spellcheck(v ...AudioSpellcheck) *AudioElement {
-	var val AudioSpellcheck
+func (e *AudioElement) Spellcheck(v ...Spellcheck) *AudioElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -647,8 +540,8 @@ func (e *AudioElement) Title(s string) *AudioElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Translate(v ...AudioTranslate) *AudioElement {
-	var val AudioTranslate
+func (e *AudioElement) Translate(v ...Translate) *AudioElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -659,8 +552,8 @@ func (e *AudioElement) Translate(v ...AudioTranslate) *AudioElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AudioElement) Writingsuggestions(v ...AudioWritingsuggestions) *AudioElement {
-	var val AudioWritingsuggestions
+func (e *AudioElement) Writingsuggestions(v ...Writingsuggestions) *AudioElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

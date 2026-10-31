@@ -13,16 +13,20 @@ import (
 )
 
 type QElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Q creates a tag <q> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The q element represents some phrasing content quoted from another source.
-func Q(children ...htemel.Node) *QElement {
+func Q(children ...htemel.PhrasingContent) *QElement {
 	node := &QElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Q(children ...htemel.Node) *QElement {
 }
 
 // QIf creates a tag <q> instance that is only rendered when condition is true.
-func QIf(condition bool, children ...htemel.Node) *QElement {
+func QIf(condition bool, children ...htemel.PhrasingContent) *QElement {
 	if condition {
 		return Q(children...)
 	}
@@ -43,7 +47,7 @@ func QIf(condition bool, children ...htemel.Node) *QElement {
 }
 
 // QTernary creates a tag <q> containing then when condition is true, otherwise containing otherwise.
-func QTernary(condition bool, then htemel.Node, otherwise htemel.Node) *QElement {
+func QTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *QElement {
 	if condition {
 		return Q(then)
 	}
@@ -51,7 +55,7 @@ func QTernary(condition bool, then htemel.Node, otherwise htemel.Node) *QElement
 }
 
 // Children appends children to this element.
-func (e *QElement) Children(children ...htemel.Node) *QElement {
+func (e *QElement) Children(children ...htemel.PhrasingContent) *QElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *QElement) Textf(format string, args ...any) *QElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *QElement) If(cond bool, child htemel.Node) *QElement {
+func (e *QElement) If(cond bool, child htemel.PhrasingContent) *QElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *QElement) If(cond bool, child htemel.Node) *QElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *QElement) IfElse(cond bool, then, els htemel.Node) *QElement {
+func (e *QElement) IfElse(cond bool, then, els htemel.PhrasingContent) *QElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *QElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type QAutocapitalize string
-
-const (
-	QAutocapitalizeCharacters QAutocapitalize = "characters"
-	QAutocapitalizeNone       QAutocapitalize = "none"
-	QAutocapitalizeOff        QAutocapitalize = "off"
-	QAutocapitalizeOn         QAutocapitalize = "on"
-	QAutocapitalizeSentences  QAutocapitalize = "sentences"
-	QAutocapitalizeWords      QAutocapitalize = "words"
-)
-
-type QAutocorrect string
-
-const (
-	QAutocorrectOff   QAutocorrect = "off"
-	QAutocorrectOn    QAutocorrect = "on"
-	QAutocorrectEmpty QAutocorrect = ""
-)
-
-type QContenteditable string
-
-const (
-	QContenteditableFalse         QContenteditable = "false"
-	QContenteditablePlaintextOnly QContenteditable = "plaintext-only"
-	QContenteditableTrue          QContenteditable = "true"
-	QContenteditableEmpty         QContenteditable = ""
-)
-
-type QDir string
-
-const (
-	QDirAuto QDir = "auto"
-	QDirLtr  QDir = "ltr"
-	QDirRtl  QDir = "rtl"
-)
-
-type QDraggable string
-
-const (
-	QDraggableFalse QDraggable = "false"
-	QDraggableTrue  QDraggable = "true"
-)
-
-type QEnterkeyhint string
-
-const (
-	QEnterkeyhintDone     QEnterkeyhint = "done"
-	QEnterkeyhintEnter    QEnterkeyhint = "enter"
-	QEnterkeyhintGo       QEnterkeyhint = "go"
-	QEnterkeyhintNext     QEnterkeyhint = "next"
-	QEnterkeyhintPrevious QEnterkeyhint = "previous"
-	QEnterkeyhintSearch   QEnterkeyhint = "search"
-	QEnterkeyhintSend     QEnterkeyhint = "send"
-)
-
-type QHidden string
-
-const (
-	QHiddenHidden     QHidden = "hidden"
-	QHiddenUntilFound QHidden = "until-found"
-	QHiddenEmpty      QHidden = ""
-)
-
-type QInputmode string
-
-const (
-	QInputmodeDecimal QInputmode = "decimal"
-	QInputmodeEmail   QInputmode = "email"
-	QInputmodeNone    QInputmode = "none"
-	QInputmodeNumeric QInputmode = "numeric"
-	QInputmodeSearch  QInputmode = "search"
-	QInputmodeTel     QInputmode = "tel"
-	QInputmodeText    QInputmode = "text"
-	QInputmodeUrl     QInputmode = "url"
-)
-
-type QPopover string
-
-const (
-	QPopoverAuto   QPopover = "auto"
-	QPopoverHint   QPopover = "hint"
-	QPopoverManual QPopover = "manual"
-	QPopoverEmpty  QPopover = ""
-)
-
-type QSpellcheck string
-
-const (
-	QSpellcheckFalse QSpellcheck = "false"
-	QSpellcheckTrue  QSpellcheck = "true"
-	QSpellcheckEmpty QSpellcheck = ""
-)
-
-type QTranslate string
-
-const (
-	QTranslateNo    QTranslate = "no"
-	QTranslateYes   QTranslate = "yes"
-	QTranslateEmpty QTranslate = ""
-)
-
-type QWritingsuggestions string
-
-const (
-	QWritingsuggestionsFalse QWritingsuggestions = "false"
-	QWritingsuggestionsTrue  QWritingsuggestions = "true"
-	QWritingsuggestionsEmpty QWritingsuggestions = ""
-)
-
 // Cite sets the "cite" attribute.
 // Value is a URL; validate untrusted input with htemel.URL.
 func (e *QElement) Cite(s string) *QElement {
@@ -303,7 +198,7 @@ func (e *QElement) Aria(name string, s string) *QElement {
 	return e
 }
 
-func (e *QElement) Autocapitalize(a QAutocapitalize) *QElement {
+func (e *QElement) Autocapitalize(a Autocapitalize) *QElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -311,8 +206,8 @@ func (e *QElement) Autocapitalize(a QAutocapitalize) *QElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Autocorrect(v ...QAutocorrect) *QElement {
-	var val QAutocorrect
+func (e *QElement) Autocorrect(v ...Autocorrect) *QElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -337,8 +232,8 @@ func (e *QElement) Class(s ...string) *QElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Contenteditable(v ...QContenteditable) *QElement {
-	var val QContenteditable
+func (e *QElement) Contenteditable(v ...Contenteditable) *QElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -363,19 +258,19 @@ func (e *QElement) Data(name string, s string) *QElement {
 	return e
 }
 
-func (e *QElement) Dir(a QDir) *QElement {
+func (e *QElement) Dir(a Dir) *QElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *QElement) Draggable(a QDraggable) *QElement {
+func (e *QElement) Draggable(a Draggable) *QElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *QElement) Enterkeyhint(a QEnterkeyhint) *QElement {
+func (e *QElement) Enterkeyhint(a Enterkeyhint) *QElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -403,8 +298,8 @@ func (e *QElement) Headingreset(b bool) *QElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Hidden(v ...QHidden) *QElement {
-	var val QHidden
+func (e *QElement) Hidden(v ...Hidden) *QElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -427,7 +322,7 @@ func (e *QElement) Inert(b bool) *QElement {
 	return e
 }
 
-func (e *QElement) Inputmode(a QInputmode) *QElement {
+func (e *QElement) Inputmode(a Inputmode) *QElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -493,8 +388,8 @@ func (e *QElement) Part(s ...string) *QElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Popover(v ...QPopover) *QElement {
-	var val QPopover
+func (e *QElement) Popover(v ...Popover) *QElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -517,8 +412,8 @@ func (e *QElement) Slot(s string) *QElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Spellcheck(v ...QSpellcheck) *QElement {
-	var val QSpellcheck
+func (e *QElement) Spellcheck(v ...Spellcheck) *QElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -547,8 +442,8 @@ func (e *QElement) Title(s string) *QElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Translate(v ...QTranslate) *QElement {
-	var val QTranslate
+func (e *QElement) Translate(v ...Translate) *QElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -559,8 +454,8 @@ func (e *QElement) Translate(v ...QTranslate) *QElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *QElement) Writingsuggestions(v ...QWritingsuggestions) *QElement {
-	var val QWritingsuggestions
+func (e *QElement) Writingsuggestions(v ...Writingsuggestions) *QElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

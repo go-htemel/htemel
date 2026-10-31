@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -14,15 +13,17 @@ import (
 
 type HeadElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.MetadataContent
 	skipRender bool
 }
 
 // Head creates a tag <head> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: metadata content (htemel.MetadataContent).
+//
 // Spec Description: The head element represents a collection of metadata for the Document.
-func Head(children ...htemel.Node) *HeadElement {
+func Head(children ...htemel.MetadataContent) *HeadElement {
 	node := &HeadElement{
 		children: children,
 	}
@@ -31,7 +32,7 @@ func Head(children ...htemel.Node) *HeadElement {
 }
 
 // HeadIf creates a tag <head> instance that is only rendered when condition is true.
-func HeadIf(condition bool, children ...htemel.Node) *HeadElement {
+func HeadIf(condition bool, children ...htemel.MetadataContent) *HeadElement {
 	if condition {
 		return Head(children...)
 	}
@@ -43,7 +44,7 @@ func HeadIf(condition bool, children ...htemel.Node) *HeadElement {
 }
 
 // HeadTernary creates a tag <head> containing then when condition is true, otherwise containing otherwise.
-func HeadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HeadElement {
+func HeadTernary(condition bool, then htemel.MetadataContent, otherwise htemel.MetadataContent) *HeadElement {
 	if condition {
 		return Head(then)
 	}
@@ -51,7 +52,7 @@ func HeadTernary(condition bool, then htemel.Node, otherwise htemel.Node) *HeadE
 }
 
 // Children appends children to this element.
-func (e *HeadElement) Children(children ...htemel.Node) *HeadElement {
+func (e *HeadElement) Children(children ...htemel.MetadataContent) *HeadElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +63,8 @@ func (e *HeadElement) With(fn func(*HeadElement)) *HeadElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *HeadElement) Text(text string) *HeadElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *HeadElement) Textf(format string, args ...any) *HeadElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *HeadElement) If(cond bool, child htemel.Node) *HeadElement {
+func (e *HeadElement) If(cond bool, child htemel.MetadataContent) *HeadElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +72,7 @@ func (e *HeadElement) If(cond bool, child htemel.Node) *HeadElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *HeadElement) IfElse(cond bool, then, els htemel.Node) *HeadElement {
+func (e *HeadElement) IfElse(cond bool, then, els htemel.MetadataContent) *HeadElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +154,8 @@ func (e *HeadElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type HeadAutocapitalize string
-
-const (
-	HeadAutocapitalizeCharacters HeadAutocapitalize = "characters"
-	HeadAutocapitalizeNone       HeadAutocapitalize = "none"
-	HeadAutocapitalizeOff        HeadAutocapitalize = "off"
-	HeadAutocapitalizeOn         HeadAutocapitalize = "on"
-	HeadAutocapitalizeSentences  HeadAutocapitalize = "sentences"
-	HeadAutocapitalizeWords      HeadAutocapitalize = "words"
-)
-
-type HeadAutocorrect string
-
-const (
-	HeadAutocorrectOff   HeadAutocorrect = "off"
-	HeadAutocorrectOn    HeadAutocorrect = "on"
-	HeadAutocorrectEmpty HeadAutocorrect = ""
-)
-
-type HeadContenteditable string
-
-const (
-	HeadContenteditableFalse         HeadContenteditable = "false"
-	HeadContenteditablePlaintextOnly HeadContenteditable = "plaintext-only"
-	HeadContenteditableTrue          HeadContenteditable = "true"
-	HeadContenteditableEmpty         HeadContenteditable = ""
-)
-
-type HeadDir string
-
-const (
-	HeadDirAuto HeadDir = "auto"
-	HeadDirLtr  HeadDir = "ltr"
-	HeadDirRtl  HeadDir = "rtl"
-)
-
-type HeadDraggable string
-
-const (
-	HeadDraggableFalse HeadDraggable = "false"
-	HeadDraggableTrue  HeadDraggable = "true"
-)
-
-type HeadEnterkeyhint string
-
-const (
-	HeadEnterkeyhintDone     HeadEnterkeyhint = "done"
-	HeadEnterkeyhintEnter    HeadEnterkeyhint = "enter"
-	HeadEnterkeyhintGo       HeadEnterkeyhint = "go"
-	HeadEnterkeyhintNext     HeadEnterkeyhint = "next"
-	HeadEnterkeyhintPrevious HeadEnterkeyhint = "previous"
-	HeadEnterkeyhintSearch   HeadEnterkeyhint = "search"
-	HeadEnterkeyhintSend     HeadEnterkeyhint = "send"
-)
-
-type HeadHidden string
-
-const (
-	HeadHiddenHidden     HeadHidden = "hidden"
-	HeadHiddenUntilFound HeadHidden = "until-found"
-	HeadHiddenEmpty      HeadHidden = ""
-)
-
-type HeadInputmode string
-
-const (
-	HeadInputmodeDecimal HeadInputmode = "decimal"
-	HeadInputmodeEmail   HeadInputmode = "email"
-	HeadInputmodeNone    HeadInputmode = "none"
-	HeadInputmodeNumeric HeadInputmode = "numeric"
-	HeadInputmodeSearch  HeadInputmode = "search"
-	HeadInputmodeTel     HeadInputmode = "tel"
-	HeadInputmodeText    HeadInputmode = "text"
-	HeadInputmodeUrl     HeadInputmode = "url"
-)
-
-type HeadPopover string
-
-const (
-	HeadPopoverAuto   HeadPopover = "auto"
-	HeadPopoverHint   HeadPopover = "hint"
-	HeadPopoverManual HeadPopover = "manual"
-	HeadPopoverEmpty  HeadPopover = ""
-)
-
-type HeadSpellcheck string
-
-const (
-	HeadSpellcheckFalse HeadSpellcheck = "false"
-	HeadSpellcheckTrue  HeadSpellcheck = "true"
-	HeadSpellcheckEmpty HeadSpellcheck = ""
-)
-
-type HeadTranslate string
-
-const (
-	HeadTranslateNo    HeadTranslate = "no"
-	HeadTranslateYes   HeadTranslate = "yes"
-	HeadTranslateEmpty HeadTranslate = ""
-)
-
-type HeadWritingsuggestions string
-
-const (
-	HeadWritingsuggestionsFalse HeadWritingsuggestions = "false"
-	HeadWritingsuggestionsTrue  HeadWritingsuggestions = "true"
-	HeadWritingsuggestionsEmpty HeadWritingsuggestions = ""
-)
+// HTMLHtmlChild marks <head> as a permitted child of <html> (HtmlChild).
+func (*HeadElement) HTMLHtmlChild() {}
 
 func (e *HeadElement) Accesskey(r rune) *HeadElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +179,7 @@ func (e *HeadElement) Aria(name string, s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Autocapitalize(a HeadAutocapitalize) *HeadElement {
+func (e *HeadElement) Autocapitalize(a Autocapitalize) *HeadElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +187,8 @@ func (e *HeadElement) Autocapitalize(a HeadAutocapitalize) *HeadElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Autocorrect(v ...HeadAutocorrect) *HeadElement {
-	var val HeadAutocorrect
+func (e *HeadElement) Autocorrect(v ...Autocorrect) *HeadElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +213,8 @@ func (e *HeadElement) Class(s ...string) *HeadElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Contenteditable(v ...HeadContenteditable) *HeadElement {
-	var val HeadContenteditable
+func (e *HeadElement) Contenteditable(v ...Contenteditable) *HeadElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +239,19 @@ func (e *HeadElement) Data(name string, s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Dir(a HeadDir) *HeadElement {
+func (e *HeadElement) Dir(a Dir) *HeadElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *HeadElement) Draggable(a HeadDraggable) *HeadElement {
+func (e *HeadElement) Draggable(a Draggable) *HeadElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *HeadElement) Enterkeyhint(a HeadEnterkeyhint) *HeadElement {
+func (e *HeadElement) Enterkeyhint(a Enterkeyhint) *HeadElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +279,8 @@ func (e *HeadElement) Headingreset(b bool) *HeadElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Hidden(v ...HeadHidden) *HeadElement {
-	var val HeadHidden
+func (e *HeadElement) Hidden(v ...Hidden) *HeadElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +303,7 @@ func (e *HeadElement) Inert(b bool) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Inputmode(a HeadInputmode) *HeadElement {
+func (e *HeadElement) Inputmode(a Inputmode) *HeadElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +369,8 @@ func (e *HeadElement) Part(s ...string) *HeadElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Popover(v ...HeadPopover) *HeadElement {
-	var val HeadPopover
+func (e *HeadElement) Popover(v ...Popover) *HeadElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +393,8 @@ func (e *HeadElement) Slot(s string) *HeadElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Spellcheck(v ...HeadSpellcheck) *HeadElement {
-	var val HeadSpellcheck
+func (e *HeadElement) Spellcheck(v ...Spellcheck) *HeadElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +423,8 @@ func (e *HeadElement) Title(s string) *HeadElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Translate(v ...HeadTranslate) *HeadElement {
-	var val HeadTranslate
+func (e *HeadElement) Translate(v ...Translate) *HeadElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +435,8 @@ func (e *HeadElement) Translate(v ...HeadTranslate) *HeadElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HeadElement) Writingsuggestions(v ...HeadWritingsuggestions) *HeadElement {
-	var val HeadWritingsuggestions
+func (e *HeadElement) Writingsuggestions(v ...Writingsuggestions) *HeadElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

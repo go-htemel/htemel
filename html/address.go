@@ -13,16 +13,20 @@ import (
 )
 
 type AddressElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Address creates a tag <address> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The address element represents the contact information for its nearest article or body element ancestor. If that is the body element, then the contact information applies to the document as a whole.
-func Address(children ...htemel.Node) *AddressElement {
+func Address(children ...htemel.FlowContent) *AddressElement {
 	node := &AddressElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Address(children ...htemel.Node) *AddressElement {
 }
 
 // AddressIf creates a tag <address> instance that is only rendered when condition is true.
-func AddressIf(condition bool, children ...htemel.Node) *AddressElement {
+func AddressIf(condition bool, children ...htemel.FlowContent) *AddressElement {
 	if condition {
 		return Address(children...)
 	}
@@ -43,7 +47,7 @@ func AddressIf(condition bool, children ...htemel.Node) *AddressElement {
 }
 
 // AddressTernary creates a tag <address> containing then when condition is true, otherwise containing otherwise.
-func AddressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *AddressElement {
+func AddressTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *AddressElement {
 	if condition {
 		return Address(then)
 	}
@@ -51,7 +55,7 @@ func AddressTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Ad
 }
 
 // Children appends children to this element.
-func (e *AddressElement) Children(children ...htemel.Node) *AddressElement {
+func (e *AddressElement) Children(children ...htemel.FlowContent) *AddressElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *AddressElement) Textf(format string, args ...any) *AddressElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *AddressElement) If(cond bool, child htemel.Node) *AddressElement {
+func (e *AddressElement) If(cond bool, child htemel.FlowContent) *AddressElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *AddressElement) If(cond bool, child htemel.Node) *AddressElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *AddressElement) IfElse(cond bool, then, els htemel.Node) *AddressElement {
+func (e *AddressElement) IfElse(cond bool, then, els htemel.FlowContent) *AddressElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *AddressElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AddressAutocapitalize string
-
-const (
-	AddressAutocapitalizeCharacters AddressAutocapitalize = "characters"
-	AddressAutocapitalizeNone       AddressAutocapitalize = "none"
-	AddressAutocapitalizeOff        AddressAutocapitalize = "off"
-	AddressAutocapitalizeOn         AddressAutocapitalize = "on"
-	AddressAutocapitalizeSentences  AddressAutocapitalize = "sentences"
-	AddressAutocapitalizeWords      AddressAutocapitalize = "words"
-)
-
-type AddressAutocorrect string
-
-const (
-	AddressAutocorrectOff   AddressAutocorrect = "off"
-	AddressAutocorrectOn    AddressAutocorrect = "on"
-	AddressAutocorrectEmpty AddressAutocorrect = ""
-)
-
-type AddressContenteditable string
-
-const (
-	AddressContenteditableFalse         AddressContenteditable = "false"
-	AddressContenteditablePlaintextOnly AddressContenteditable = "plaintext-only"
-	AddressContenteditableTrue          AddressContenteditable = "true"
-	AddressContenteditableEmpty         AddressContenteditable = ""
-)
-
-type AddressDir string
-
-const (
-	AddressDirAuto AddressDir = "auto"
-	AddressDirLtr  AddressDir = "ltr"
-	AddressDirRtl  AddressDir = "rtl"
-)
-
-type AddressDraggable string
-
-const (
-	AddressDraggableFalse AddressDraggable = "false"
-	AddressDraggableTrue  AddressDraggable = "true"
-)
-
-type AddressEnterkeyhint string
-
-const (
-	AddressEnterkeyhintDone     AddressEnterkeyhint = "done"
-	AddressEnterkeyhintEnter    AddressEnterkeyhint = "enter"
-	AddressEnterkeyhintGo       AddressEnterkeyhint = "go"
-	AddressEnterkeyhintNext     AddressEnterkeyhint = "next"
-	AddressEnterkeyhintPrevious AddressEnterkeyhint = "previous"
-	AddressEnterkeyhintSearch   AddressEnterkeyhint = "search"
-	AddressEnterkeyhintSend     AddressEnterkeyhint = "send"
-)
-
-type AddressHidden string
-
-const (
-	AddressHiddenHidden     AddressHidden = "hidden"
-	AddressHiddenUntilFound AddressHidden = "until-found"
-	AddressHiddenEmpty      AddressHidden = ""
-)
-
-type AddressInputmode string
-
-const (
-	AddressInputmodeDecimal AddressInputmode = "decimal"
-	AddressInputmodeEmail   AddressInputmode = "email"
-	AddressInputmodeNone    AddressInputmode = "none"
-	AddressInputmodeNumeric AddressInputmode = "numeric"
-	AddressInputmodeSearch  AddressInputmode = "search"
-	AddressInputmodeTel     AddressInputmode = "tel"
-	AddressInputmodeText    AddressInputmode = "text"
-	AddressInputmodeUrl     AddressInputmode = "url"
-)
-
-type AddressPopover string
-
-const (
-	AddressPopoverAuto   AddressPopover = "auto"
-	AddressPopoverHint   AddressPopover = "hint"
-	AddressPopoverManual AddressPopover = "manual"
-	AddressPopoverEmpty  AddressPopover = ""
-)
-
-type AddressSpellcheck string
-
-const (
-	AddressSpellcheckFalse AddressSpellcheck = "false"
-	AddressSpellcheckTrue  AddressSpellcheck = "true"
-	AddressSpellcheckEmpty AddressSpellcheck = ""
-)
-
-type AddressTranslate string
-
-const (
-	AddressTranslateNo    AddressTranslate = "no"
-	AddressTranslateYes   AddressTranslate = "yes"
-	AddressTranslateEmpty AddressTranslate = ""
-)
-
-type AddressWritingsuggestions string
-
-const (
-	AddressWritingsuggestionsFalse AddressWritingsuggestions = "false"
-	AddressWritingsuggestionsTrue  AddressWritingsuggestions = "true"
-	AddressWritingsuggestionsEmpty AddressWritingsuggestions = ""
-)
-
 func (e *AddressElement) Accesskey(r rune) *AddressElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *AddressElement) Aria(name string, s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Autocapitalize(a AddressAutocapitalize) *AddressElement {
+func (e *AddressElement) Autocapitalize(a Autocapitalize) *AddressElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *AddressElement) Autocapitalize(a AddressAutocapitalize) *AddressElement
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Autocorrect(v ...AddressAutocorrect) *AddressElement {
-	var val AddressAutocorrect
+func (e *AddressElement) Autocorrect(v ...Autocorrect) *AddressElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *AddressElement) Class(s ...string) *AddressElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Contenteditable(v ...AddressContenteditable) *AddressElement {
-	var val AddressContenteditable
+func (e *AddressElement) Contenteditable(v ...Contenteditable) *AddressElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *AddressElement) Data(name string, s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Dir(a AddressDir) *AddressElement {
+func (e *AddressElement) Dir(a Dir) *AddressElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AddressElement) Draggable(a AddressDraggable) *AddressElement {
+func (e *AddressElement) Draggable(a Draggable) *AddressElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AddressElement) Enterkeyhint(a AddressEnterkeyhint) *AddressElement {
+func (e *AddressElement) Enterkeyhint(a Enterkeyhint) *AddressElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *AddressElement) Headingreset(b bool) *AddressElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Hidden(v ...AddressHidden) *AddressElement {
-	var val AddressHidden
+func (e *AddressElement) Hidden(v ...Hidden) *AddressElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *AddressElement) Inert(b bool) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Inputmode(a AddressInputmode) *AddressElement {
+func (e *AddressElement) Inputmode(a Inputmode) *AddressElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *AddressElement) Part(s ...string) *AddressElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Popover(v ...AddressPopover) *AddressElement {
-	var val AddressPopover
+func (e *AddressElement) Popover(v ...Popover) *AddressElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *AddressElement) Slot(s string) *AddressElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Spellcheck(v ...AddressSpellcheck) *AddressElement {
-	var val AddressSpellcheck
+func (e *AddressElement) Spellcheck(v ...Spellcheck) *AddressElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *AddressElement) Title(s string) *AddressElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Translate(v ...AddressTranslate) *AddressElement {
-	var val AddressTranslate
+func (e *AddressElement) Translate(v ...Translate) *AddressElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *AddressElement) Translate(v ...AddressTranslate) *AddressElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AddressElement) Writingsuggestions(v ...AddressWritingsuggestions) *AddressElement {
-	var val AddressWritingsuggestions
+func (e *AddressElement) Writingsuggestions(v ...Writingsuggestions) *AddressElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

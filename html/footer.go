@@ -13,16 +13,20 @@ import (
 )
 
 type FooterElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Footer creates a tag <footer> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The footer element represents a footer for its nearest ancestor sectioning content element, or for the body element if there is no such ancestor. A footer typically contains information about its section such as who wrote it, links to related documents, copyright data, and the like.
-func Footer(children ...htemel.Node) *FooterElement {
+func Footer(children ...htemel.FlowContent) *FooterElement {
 	node := &FooterElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Footer(children ...htemel.Node) *FooterElement {
 }
 
 // FooterIf creates a tag <footer> instance that is only rendered when condition is true.
-func FooterIf(condition bool, children ...htemel.Node) *FooterElement {
+func FooterIf(condition bool, children ...htemel.FlowContent) *FooterElement {
 	if condition {
 		return Footer(children...)
 	}
@@ -43,7 +47,7 @@ func FooterIf(condition bool, children ...htemel.Node) *FooterElement {
 }
 
 // FooterTernary creates a tag <footer> containing then when condition is true, otherwise containing otherwise.
-func FooterTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FooterElement {
+func FooterTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *FooterElement {
 	if condition {
 		return Footer(then)
 	}
@@ -51,7 +55,7 @@ func FooterTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Foo
 }
 
 // Children appends children to this element.
-func (e *FooterElement) Children(children ...htemel.Node) *FooterElement {
+func (e *FooterElement) Children(children ...htemel.FlowContent) *FooterElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *FooterElement) Textf(format string, args ...any) *FooterElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FooterElement) If(cond bool, child htemel.Node) *FooterElement {
+func (e *FooterElement) If(cond bool, child htemel.FlowContent) *FooterElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *FooterElement) If(cond bool, child htemel.Node) *FooterElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FooterElement) IfElse(cond bool, then, els htemel.Node) *FooterElement {
+func (e *FooterElement) IfElse(cond bool, then, els htemel.FlowContent) *FooterElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *FooterElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FooterAutocapitalize string
-
-const (
-	FooterAutocapitalizeCharacters FooterAutocapitalize = "characters"
-	FooterAutocapitalizeNone       FooterAutocapitalize = "none"
-	FooterAutocapitalizeOff        FooterAutocapitalize = "off"
-	FooterAutocapitalizeOn         FooterAutocapitalize = "on"
-	FooterAutocapitalizeSentences  FooterAutocapitalize = "sentences"
-	FooterAutocapitalizeWords      FooterAutocapitalize = "words"
-)
-
-type FooterAutocorrect string
-
-const (
-	FooterAutocorrectOff   FooterAutocorrect = "off"
-	FooterAutocorrectOn    FooterAutocorrect = "on"
-	FooterAutocorrectEmpty FooterAutocorrect = ""
-)
-
-type FooterContenteditable string
-
-const (
-	FooterContenteditableFalse         FooterContenteditable = "false"
-	FooterContenteditablePlaintextOnly FooterContenteditable = "plaintext-only"
-	FooterContenteditableTrue          FooterContenteditable = "true"
-	FooterContenteditableEmpty         FooterContenteditable = ""
-)
-
-type FooterDir string
-
-const (
-	FooterDirAuto FooterDir = "auto"
-	FooterDirLtr  FooterDir = "ltr"
-	FooterDirRtl  FooterDir = "rtl"
-)
-
-type FooterDraggable string
-
-const (
-	FooterDraggableFalse FooterDraggable = "false"
-	FooterDraggableTrue  FooterDraggable = "true"
-)
-
-type FooterEnterkeyhint string
-
-const (
-	FooterEnterkeyhintDone     FooterEnterkeyhint = "done"
-	FooterEnterkeyhintEnter    FooterEnterkeyhint = "enter"
-	FooterEnterkeyhintGo       FooterEnterkeyhint = "go"
-	FooterEnterkeyhintNext     FooterEnterkeyhint = "next"
-	FooterEnterkeyhintPrevious FooterEnterkeyhint = "previous"
-	FooterEnterkeyhintSearch   FooterEnterkeyhint = "search"
-	FooterEnterkeyhintSend     FooterEnterkeyhint = "send"
-)
-
-type FooterHidden string
-
-const (
-	FooterHiddenHidden     FooterHidden = "hidden"
-	FooterHiddenUntilFound FooterHidden = "until-found"
-	FooterHiddenEmpty      FooterHidden = ""
-)
-
-type FooterInputmode string
-
-const (
-	FooterInputmodeDecimal FooterInputmode = "decimal"
-	FooterInputmodeEmail   FooterInputmode = "email"
-	FooterInputmodeNone    FooterInputmode = "none"
-	FooterInputmodeNumeric FooterInputmode = "numeric"
-	FooterInputmodeSearch  FooterInputmode = "search"
-	FooterInputmodeTel     FooterInputmode = "tel"
-	FooterInputmodeText    FooterInputmode = "text"
-	FooterInputmodeUrl     FooterInputmode = "url"
-)
-
-type FooterPopover string
-
-const (
-	FooterPopoverAuto   FooterPopover = "auto"
-	FooterPopoverHint   FooterPopover = "hint"
-	FooterPopoverManual FooterPopover = "manual"
-	FooterPopoverEmpty  FooterPopover = ""
-)
-
-type FooterSpellcheck string
-
-const (
-	FooterSpellcheckFalse FooterSpellcheck = "false"
-	FooterSpellcheckTrue  FooterSpellcheck = "true"
-	FooterSpellcheckEmpty FooterSpellcheck = ""
-)
-
-type FooterTranslate string
-
-const (
-	FooterTranslateNo    FooterTranslate = "no"
-	FooterTranslateYes   FooterTranslate = "yes"
-	FooterTranslateEmpty FooterTranslate = ""
-)
-
-type FooterWritingsuggestions string
-
-const (
-	FooterWritingsuggestionsFalse FooterWritingsuggestions = "false"
-	FooterWritingsuggestionsTrue  FooterWritingsuggestions = "true"
-	FooterWritingsuggestionsEmpty FooterWritingsuggestions = ""
-)
-
 func (e *FooterElement) Accesskey(r rune) *FooterElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *FooterElement) Aria(name string, s string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Autocapitalize(a FooterAutocapitalize) *FooterElement {
+func (e *FooterElement) Autocapitalize(a Autocapitalize) *FooterElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *FooterElement) Autocapitalize(a FooterAutocapitalize) *FooterElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Autocorrect(v ...FooterAutocorrect) *FooterElement {
-	var val FooterAutocorrect
+func (e *FooterElement) Autocorrect(v ...Autocorrect) *FooterElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *FooterElement) Class(s ...string) *FooterElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Contenteditable(v ...FooterContenteditable) *FooterElement {
-	var val FooterContenteditable
+func (e *FooterElement) Contenteditable(v ...Contenteditable) *FooterElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *FooterElement) Data(name string, s string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Dir(a FooterDir) *FooterElement {
+func (e *FooterElement) Dir(a Dir) *FooterElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *FooterElement) Draggable(a FooterDraggable) *FooterElement {
+func (e *FooterElement) Draggable(a Draggable) *FooterElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *FooterElement) Enterkeyhint(a FooterEnterkeyhint) *FooterElement {
+func (e *FooterElement) Enterkeyhint(a Enterkeyhint) *FooterElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *FooterElement) Headingreset(b bool) *FooterElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Hidden(v ...FooterHidden) *FooterElement {
-	var val FooterHidden
+func (e *FooterElement) Hidden(v ...Hidden) *FooterElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *FooterElement) Inert(b bool) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Inputmode(a FooterInputmode) *FooterElement {
+func (e *FooterElement) Inputmode(a Inputmode) *FooterElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *FooterElement) Part(s ...string) *FooterElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Popover(v ...FooterPopover) *FooterElement {
-	var val FooterPopover
+func (e *FooterElement) Popover(v ...Popover) *FooterElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *FooterElement) Slot(s string) *FooterElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Spellcheck(v ...FooterSpellcheck) *FooterElement {
-	var val FooterSpellcheck
+func (e *FooterElement) Spellcheck(v ...Spellcheck) *FooterElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *FooterElement) Title(s string) *FooterElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Translate(v ...FooterTranslate) *FooterElement {
-	var val FooterTranslate
+func (e *FooterElement) Translate(v ...Translate) *FooterElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *FooterElement) Translate(v ...FooterTranslate) *FooterElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FooterElement) Writingsuggestions(v ...FooterWritingsuggestions) *FooterElement {
-	var val FooterWritingsuggestions
+func (e *FooterElement) Writingsuggestions(v ...Writingsuggestions) *FooterElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

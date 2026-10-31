@@ -13,16 +13,20 @@ import (
 )
 
 type MarkElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // Mark creates a tag <mark> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The mark element represents a run of text in one document marked or highlighted for reference purposes, due to its relevance in another context. When used in a quotation or other block of text referred to from the prose, it indicates a highlight that was not originally present but which has been added to bring the reader's attention to a part of the text that might not have been considered important by the original author when the block was originally written, but which is now under previously unexpected scrutiny. When used in the main prose of a document, it indicates a part of the document that has been highlighted due to its likely relevance to the user's current activity.
-func Mark(children ...htemel.Node) *MarkElement {
+func Mark(children ...htemel.PhrasingContent) *MarkElement {
 	node := &MarkElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Mark(children ...htemel.Node) *MarkElement {
 }
 
 // MarkIf creates a tag <mark> instance that is only rendered when condition is true.
-func MarkIf(condition bool, children ...htemel.Node) *MarkElement {
+func MarkIf(condition bool, children ...htemel.PhrasingContent) *MarkElement {
 	if condition {
 		return Mark(children...)
 	}
@@ -43,7 +47,7 @@ func MarkIf(condition bool, children ...htemel.Node) *MarkElement {
 }
 
 // MarkTernary creates a tag <mark> containing then when condition is true, otherwise containing otherwise.
-func MarkTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MarkElement {
+func MarkTernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *MarkElement {
 	if condition {
 		return Mark(then)
 	}
@@ -51,7 +55,7 @@ func MarkTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MarkE
 }
 
 // Children appends children to this element.
-func (e *MarkElement) Children(children ...htemel.Node) *MarkElement {
+func (e *MarkElement) Children(children ...htemel.PhrasingContent) *MarkElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *MarkElement) Textf(format string, args ...any) *MarkElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MarkElement) If(cond bool, child htemel.Node) *MarkElement {
+func (e *MarkElement) If(cond bool, child htemel.PhrasingContent) *MarkElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *MarkElement) If(cond bool, child htemel.Node) *MarkElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MarkElement) IfElse(cond bool, then, els htemel.Node) *MarkElement {
+func (e *MarkElement) IfElse(cond bool, then, els htemel.PhrasingContent) *MarkElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *MarkElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MarkAutocapitalize string
-
-const (
-	MarkAutocapitalizeCharacters MarkAutocapitalize = "characters"
-	MarkAutocapitalizeNone       MarkAutocapitalize = "none"
-	MarkAutocapitalizeOff        MarkAutocapitalize = "off"
-	MarkAutocapitalizeOn         MarkAutocapitalize = "on"
-	MarkAutocapitalizeSentences  MarkAutocapitalize = "sentences"
-	MarkAutocapitalizeWords      MarkAutocapitalize = "words"
-)
-
-type MarkAutocorrect string
-
-const (
-	MarkAutocorrectOff   MarkAutocorrect = "off"
-	MarkAutocorrectOn    MarkAutocorrect = "on"
-	MarkAutocorrectEmpty MarkAutocorrect = ""
-)
-
-type MarkContenteditable string
-
-const (
-	MarkContenteditableFalse         MarkContenteditable = "false"
-	MarkContenteditablePlaintextOnly MarkContenteditable = "plaintext-only"
-	MarkContenteditableTrue          MarkContenteditable = "true"
-	MarkContenteditableEmpty         MarkContenteditable = ""
-)
-
-type MarkDir string
-
-const (
-	MarkDirAuto MarkDir = "auto"
-	MarkDirLtr  MarkDir = "ltr"
-	MarkDirRtl  MarkDir = "rtl"
-)
-
-type MarkDraggable string
-
-const (
-	MarkDraggableFalse MarkDraggable = "false"
-	MarkDraggableTrue  MarkDraggable = "true"
-)
-
-type MarkEnterkeyhint string
-
-const (
-	MarkEnterkeyhintDone     MarkEnterkeyhint = "done"
-	MarkEnterkeyhintEnter    MarkEnterkeyhint = "enter"
-	MarkEnterkeyhintGo       MarkEnterkeyhint = "go"
-	MarkEnterkeyhintNext     MarkEnterkeyhint = "next"
-	MarkEnterkeyhintPrevious MarkEnterkeyhint = "previous"
-	MarkEnterkeyhintSearch   MarkEnterkeyhint = "search"
-	MarkEnterkeyhintSend     MarkEnterkeyhint = "send"
-)
-
-type MarkHidden string
-
-const (
-	MarkHiddenHidden     MarkHidden = "hidden"
-	MarkHiddenUntilFound MarkHidden = "until-found"
-	MarkHiddenEmpty      MarkHidden = ""
-)
-
-type MarkInputmode string
-
-const (
-	MarkInputmodeDecimal MarkInputmode = "decimal"
-	MarkInputmodeEmail   MarkInputmode = "email"
-	MarkInputmodeNone    MarkInputmode = "none"
-	MarkInputmodeNumeric MarkInputmode = "numeric"
-	MarkInputmodeSearch  MarkInputmode = "search"
-	MarkInputmodeTel     MarkInputmode = "tel"
-	MarkInputmodeText    MarkInputmode = "text"
-	MarkInputmodeUrl     MarkInputmode = "url"
-)
-
-type MarkPopover string
-
-const (
-	MarkPopoverAuto   MarkPopover = "auto"
-	MarkPopoverHint   MarkPopover = "hint"
-	MarkPopoverManual MarkPopover = "manual"
-	MarkPopoverEmpty  MarkPopover = ""
-)
-
-type MarkSpellcheck string
-
-const (
-	MarkSpellcheckFalse MarkSpellcheck = "false"
-	MarkSpellcheckTrue  MarkSpellcheck = "true"
-	MarkSpellcheckEmpty MarkSpellcheck = ""
-)
-
-type MarkTranslate string
-
-const (
-	MarkTranslateNo    MarkTranslate = "no"
-	MarkTranslateYes   MarkTranslate = "yes"
-	MarkTranslateEmpty MarkTranslate = ""
-)
-
-type MarkWritingsuggestions string
-
-const (
-	MarkWritingsuggestionsFalse MarkWritingsuggestions = "false"
-	MarkWritingsuggestionsTrue  MarkWritingsuggestions = "true"
-	MarkWritingsuggestionsEmpty MarkWritingsuggestions = ""
-)
-
 func (e *MarkElement) Accesskey(r rune) *MarkElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *MarkElement) Aria(name string, s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Autocapitalize(a MarkAutocapitalize) *MarkElement {
+func (e *MarkElement) Autocapitalize(a Autocapitalize) *MarkElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *MarkElement) Autocapitalize(a MarkAutocapitalize) *MarkElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Autocorrect(v ...MarkAutocorrect) *MarkElement {
-	var val MarkAutocorrect
+func (e *MarkElement) Autocorrect(v ...Autocorrect) *MarkElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *MarkElement) Class(s ...string) *MarkElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Contenteditable(v ...MarkContenteditable) *MarkElement {
-	var val MarkContenteditable
+func (e *MarkElement) Contenteditable(v ...Contenteditable) *MarkElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *MarkElement) Data(name string, s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Dir(a MarkDir) *MarkElement {
+func (e *MarkElement) Dir(a Dir) *MarkElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MarkElement) Draggable(a MarkDraggable) *MarkElement {
+func (e *MarkElement) Draggable(a Draggable) *MarkElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MarkElement) Enterkeyhint(a MarkEnterkeyhint) *MarkElement {
+func (e *MarkElement) Enterkeyhint(a Enterkeyhint) *MarkElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *MarkElement) Headingreset(b bool) *MarkElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Hidden(v ...MarkHidden) *MarkElement {
-	var val MarkHidden
+func (e *MarkElement) Hidden(v ...Hidden) *MarkElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *MarkElement) Inert(b bool) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Inputmode(a MarkInputmode) *MarkElement {
+func (e *MarkElement) Inputmode(a Inputmode) *MarkElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *MarkElement) Part(s ...string) *MarkElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Popover(v ...MarkPopover) *MarkElement {
-	var val MarkPopover
+func (e *MarkElement) Popover(v ...Popover) *MarkElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *MarkElement) Slot(s string) *MarkElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Spellcheck(v ...MarkSpellcheck) *MarkElement {
-	var val MarkSpellcheck
+func (e *MarkElement) Spellcheck(v ...Spellcheck) *MarkElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *MarkElement) Title(s string) *MarkElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Translate(v ...MarkTranslate) *MarkElement {
-	var val MarkTranslate
+func (e *MarkElement) Translate(v ...Translate) *MarkElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *MarkElement) Translate(v ...MarkTranslate) *MarkElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MarkElement) Writingsuggestions(v ...MarkWritingsuggestions) *MarkElement {
-	var val MarkWritingsuggestions
+func (e *MarkElement) Writingsuggestions(v ...Writingsuggestions) *MarkElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -12,6 +12,7 @@ import (
 )
 
 type HrElement struct {
+	htemel.FlowMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +42,14 @@ func HrIf(condition bool) *HrElement {
 // With allows passing a function to modify the element via a closure.
 func (e *HrElement) With(fn func(*HrElement)) *HrElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *HrElement) IfThen(cond bool, fn func(*HrElement)) *HrElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,114 +118,8 @@ func (e *HrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type HrAutocapitalize string
-
-const (
-	HrAutocapitalizeCharacters HrAutocapitalize = "characters"
-	HrAutocapitalizeNone       HrAutocapitalize = "none"
-	HrAutocapitalizeOff        HrAutocapitalize = "off"
-	HrAutocapitalizeOn         HrAutocapitalize = "on"
-	HrAutocapitalizeSentences  HrAutocapitalize = "sentences"
-	HrAutocapitalizeWords      HrAutocapitalize = "words"
-)
-
-type HrAutocorrect string
-
-const (
-	HrAutocorrectOff   HrAutocorrect = "off"
-	HrAutocorrectOn    HrAutocorrect = "on"
-	HrAutocorrectEmpty HrAutocorrect = ""
-)
-
-type HrContenteditable string
-
-const (
-	HrContenteditableFalse         HrContenteditable = "false"
-	HrContenteditablePlaintextOnly HrContenteditable = "plaintext-only"
-	HrContenteditableTrue          HrContenteditable = "true"
-	HrContenteditableEmpty         HrContenteditable = ""
-)
-
-type HrDir string
-
-const (
-	HrDirAuto HrDir = "auto"
-	HrDirLtr  HrDir = "ltr"
-	HrDirRtl  HrDir = "rtl"
-)
-
-type HrDraggable string
-
-const (
-	HrDraggableFalse HrDraggable = "false"
-	HrDraggableTrue  HrDraggable = "true"
-)
-
-type HrEnterkeyhint string
-
-const (
-	HrEnterkeyhintDone     HrEnterkeyhint = "done"
-	HrEnterkeyhintEnter    HrEnterkeyhint = "enter"
-	HrEnterkeyhintGo       HrEnterkeyhint = "go"
-	HrEnterkeyhintNext     HrEnterkeyhint = "next"
-	HrEnterkeyhintPrevious HrEnterkeyhint = "previous"
-	HrEnterkeyhintSearch   HrEnterkeyhint = "search"
-	HrEnterkeyhintSend     HrEnterkeyhint = "send"
-)
-
-type HrHidden string
-
-const (
-	HrHiddenHidden     HrHidden = "hidden"
-	HrHiddenUntilFound HrHidden = "until-found"
-	HrHiddenEmpty      HrHidden = ""
-)
-
-type HrInputmode string
-
-const (
-	HrInputmodeDecimal HrInputmode = "decimal"
-	HrInputmodeEmail   HrInputmode = "email"
-	HrInputmodeNone    HrInputmode = "none"
-	HrInputmodeNumeric HrInputmode = "numeric"
-	HrInputmodeSearch  HrInputmode = "search"
-	HrInputmodeTel     HrInputmode = "tel"
-	HrInputmodeText    HrInputmode = "text"
-	HrInputmodeUrl     HrInputmode = "url"
-)
-
-type HrPopover string
-
-const (
-	HrPopoverAuto   HrPopover = "auto"
-	HrPopoverHint   HrPopover = "hint"
-	HrPopoverManual HrPopover = "manual"
-	HrPopoverEmpty  HrPopover = ""
-)
-
-type HrSpellcheck string
-
-const (
-	HrSpellcheckFalse HrSpellcheck = "false"
-	HrSpellcheckTrue  HrSpellcheck = "true"
-	HrSpellcheckEmpty HrSpellcheck = ""
-)
-
-type HrTranslate string
-
-const (
-	HrTranslateNo    HrTranslate = "no"
-	HrTranslateYes   HrTranslate = "yes"
-	HrTranslateEmpty HrTranslate = ""
-)
-
-type HrWritingsuggestions string
-
-const (
-	HrWritingsuggestionsFalse HrWritingsuggestions = "false"
-	HrWritingsuggestionsTrue  HrWritingsuggestions = "true"
-	HrWritingsuggestionsEmpty HrWritingsuggestions = ""
-)
+// HTMLSelectChild marks <hr> as a permitted child of <select> (SelectChild).
+func (*HrElement) HTMLSelectChild() {}
 
 func (e *HrElement) Accesskey(r rune) *HrElement {
 	e.attributes.Set("accesskey", string(r))
@@ -240,7 +143,7 @@ func (e *HrElement) Aria(name string, s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Autocapitalize(a HrAutocapitalize) *HrElement {
+func (e *HrElement) Autocapitalize(a Autocapitalize) *HrElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -248,8 +151,8 @@ func (e *HrElement) Autocapitalize(a HrAutocapitalize) *HrElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Autocorrect(v ...HrAutocorrect) *HrElement {
-	var val HrAutocorrect
+func (e *HrElement) Autocorrect(v ...Autocorrect) *HrElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -274,8 +177,8 @@ func (e *HrElement) Class(s ...string) *HrElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Contenteditable(v ...HrContenteditable) *HrElement {
-	var val HrContenteditable
+func (e *HrElement) Contenteditable(v ...Contenteditable) *HrElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -300,19 +203,19 @@ func (e *HrElement) Data(name string, s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Dir(a HrDir) *HrElement {
+func (e *HrElement) Dir(a Dir) *HrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *HrElement) Draggable(a HrDraggable) *HrElement {
+func (e *HrElement) Draggable(a Draggable) *HrElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *HrElement) Enterkeyhint(a HrEnterkeyhint) *HrElement {
+func (e *HrElement) Enterkeyhint(a Enterkeyhint) *HrElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -340,8 +243,8 @@ func (e *HrElement) Headingreset(b bool) *HrElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Hidden(v ...HrHidden) *HrElement {
-	var val HrHidden
+func (e *HrElement) Hidden(v ...Hidden) *HrElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -364,7 +267,7 @@ func (e *HrElement) Inert(b bool) *HrElement {
 	return e
 }
 
-func (e *HrElement) Inputmode(a HrInputmode) *HrElement {
+func (e *HrElement) Inputmode(a Inputmode) *HrElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -430,8 +333,8 @@ func (e *HrElement) Part(s ...string) *HrElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Popover(v ...HrPopover) *HrElement {
-	var val HrPopover
+func (e *HrElement) Popover(v ...Popover) *HrElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -454,8 +357,8 @@ func (e *HrElement) Slot(s string) *HrElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Spellcheck(v ...HrSpellcheck) *HrElement {
-	var val HrSpellcheck
+func (e *HrElement) Spellcheck(v ...Spellcheck) *HrElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -484,8 +387,8 @@ func (e *HrElement) Title(s string) *HrElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Translate(v ...HrTranslate) *HrElement {
-	var val HrTranslate
+func (e *HrElement) Translate(v ...Translate) *HrElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -496,8 +399,8 @@ func (e *HrElement) Translate(v ...HrTranslate) *HrElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *HrElement) Writingsuggestions(v ...HrWritingsuggestions) *HrElement {
-	var val HrWritingsuggestions
+func (e *HrElement) Writingsuggestions(v ...Writingsuggestions) *HrElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,31 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// DlChild is a permitted child of <dl>: <dd>, <div>, <dt>, script-supporting elements.
+//
+// It is implemented by <dd>, <div>, <dt>, <script>, <template>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type DlChild interface {
+	htemel.Node
+	HTMLDlChild()
+}
+
 type DlElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []DlChild
 	skipRender bool
 }
 
 // Dl creates a tag <dl> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <dd>, <div>, <dt>, script-supporting elements (DlChild).
+//
 // Spec Description: The dl element represents an association list consisting of zero or more name-value groups (a description list). A name-value group consists of one or more names (dt elements, possibly as children of a div element child) followed by one or more values (dd elements, possibly as children of a div element child), ignoring any nodes other than dt and dd element children, and dt and dd elements that are children of div element children. Within a single dl element, there should not be more than one dt element for each name.
-func Dl(children ...htemel.Node) *DlElement {
+func Dl(children ...DlChild) *DlElement {
 	node := &DlElement{
 		children: children,
 	}
@@ -31,7 +44,7 @@ func Dl(children ...htemel.Node) *DlElement {
 }
 
 // DlIf creates a tag <dl> instance that is only rendered when condition is true.
-func DlIf(condition bool, children ...htemel.Node) *DlElement {
+func DlIf(condition bool, children ...DlChild) *DlElement {
 	if condition {
 		return Dl(children...)
 	}
@@ -43,7 +56,7 @@ func DlIf(condition bool, children ...htemel.Node) *DlElement {
 }
 
 // DlTernary creates a tag <dl> containing then when condition is true, otherwise containing otherwise.
-func DlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DlElement {
+func DlTernary(condition bool, then DlChild, otherwise DlChild) *DlElement {
 	if condition {
 		return Dl(then)
 	}
@@ -51,7 +64,7 @@ func DlTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DlEleme
 }
 
 // Children appends children to this element.
-func (e *DlElement) Children(children ...htemel.Node) *DlElement {
+func (e *DlElement) Children(children ...DlChild) *DlElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +75,8 @@ func (e *DlElement) With(fn func(*DlElement)) *DlElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *DlElement) Text(text string) *DlElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *DlElement) Textf(format string, args ...any) *DlElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DlElement) If(cond bool, child htemel.Node) *DlElement {
+func (e *DlElement) If(cond bool, child DlChild) *DlElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *DlElement) If(cond bool, child htemel.Node) *DlElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DlElement) IfElse(cond bool, then, els htemel.Node) *DlElement {
+func (e *DlElement) IfElse(cond bool, then, els DlChild) *DlElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +166,6 @@ func (e *DlElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DlAutocapitalize string
-
-const (
-	DlAutocapitalizeCharacters DlAutocapitalize = "characters"
-	DlAutocapitalizeNone       DlAutocapitalize = "none"
-	DlAutocapitalizeOff        DlAutocapitalize = "off"
-	DlAutocapitalizeOn         DlAutocapitalize = "on"
-	DlAutocapitalizeSentences  DlAutocapitalize = "sentences"
-	DlAutocapitalizeWords      DlAutocapitalize = "words"
-)
-
-type DlAutocorrect string
-
-const (
-	DlAutocorrectOff   DlAutocorrect = "off"
-	DlAutocorrectOn    DlAutocorrect = "on"
-	DlAutocorrectEmpty DlAutocorrect = ""
-)
-
-type DlContenteditable string
-
-const (
-	DlContenteditableFalse         DlContenteditable = "false"
-	DlContenteditablePlaintextOnly DlContenteditable = "plaintext-only"
-	DlContenteditableTrue          DlContenteditable = "true"
-	DlContenteditableEmpty         DlContenteditable = ""
-)
-
-type DlDir string
-
-const (
-	DlDirAuto DlDir = "auto"
-	DlDirLtr  DlDir = "ltr"
-	DlDirRtl  DlDir = "rtl"
-)
-
-type DlDraggable string
-
-const (
-	DlDraggableFalse DlDraggable = "false"
-	DlDraggableTrue  DlDraggable = "true"
-)
-
-type DlEnterkeyhint string
-
-const (
-	DlEnterkeyhintDone     DlEnterkeyhint = "done"
-	DlEnterkeyhintEnter    DlEnterkeyhint = "enter"
-	DlEnterkeyhintGo       DlEnterkeyhint = "go"
-	DlEnterkeyhintNext     DlEnterkeyhint = "next"
-	DlEnterkeyhintPrevious DlEnterkeyhint = "previous"
-	DlEnterkeyhintSearch   DlEnterkeyhint = "search"
-	DlEnterkeyhintSend     DlEnterkeyhint = "send"
-)
-
-type DlHidden string
-
-const (
-	DlHiddenHidden     DlHidden = "hidden"
-	DlHiddenUntilFound DlHidden = "until-found"
-	DlHiddenEmpty      DlHidden = ""
-)
-
-type DlInputmode string
-
-const (
-	DlInputmodeDecimal DlInputmode = "decimal"
-	DlInputmodeEmail   DlInputmode = "email"
-	DlInputmodeNone    DlInputmode = "none"
-	DlInputmodeNumeric DlInputmode = "numeric"
-	DlInputmodeSearch  DlInputmode = "search"
-	DlInputmodeTel     DlInputmode = "tel"
-	DlInputmodeText    DlInputmode = "text"
-	DlInputmodeUrl     DlInputmode = "url"
-)
-
-type DlPopover string
-
-const (
-	DlPopoverAuto   DlPopover = "auto"
-	DlPopoverHint   DlPopover = "hint"
-	DlPopoverManual DlPopover = "manual"
-	DlPopoverEmpty  DlPopover = ""
-)
-
-type DlSpellcheck string
-
-const (
-	DlSpellcheckFalse DlSpellcheck = "false"
-	DlSpellcheckTrue  DlSpellcheck = "true"
-	DlSpellcheckEmpty DlSpellcheck = ""
-)
-
-type DlTranslate string
-
-const (
-	DlTranslateNo    DlTranslate = "no"
-	DlTranslateYes   DlTranslate = "yes"
-	DlTranslateEmpty DlTranslate = ""
-)
-
-type DlWritingsuggestions string
-
-const (
-	DlWritingsuggestionsFalse DlWritingsuggestions = "false"
-	DlWritingsuggestionsTrue  DlWritingsuggestions = "true"
-	DlWritingsuggestionsEmpty DlWritingsuggestions = ""
-)
-
 func (e *DlElement) Accesskey(r rune) *DlElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +188,7 @@ func (e *DlElement) Aria(name string, s string) *DlElement {
 	return e
 }
 
-func (e *DlElement) Autocapitalize(a DlAutocapitalize) *DlElement {
+func (e *DlElement) Autocapitalize(a Autocapitalize) *DlElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +196,8 @@ func (e *DlElement) Autocapitalize(a DlAutocapitalize) *DlElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Autocorrect(v ...DlAutocorrect) *DlElement {
-	var val DlAutocorrect
+func (e *DlElement) Autocorrect(v ...Autocorrect) *DlElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +222,8 @@ func (e *DlElement) Class(s ...string) *DlElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Contenteditable(v ...DlContenteditable) *DlElement {
-	var val DlContenteditable
+func (e *DlElement) Contenteditable(v ...Contenteditable) *DlElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +248,19 @@ func (e *DlElement) Data(name string, s string) *DlElement {
 	return e
 }
 
-func (e *DlElement) Dir(a DlDir) *DlElement {
+func (e *DlElement) Dir(a Dir) *DlElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DlElement) Draggable(a DlDraggable) *DlElement {
+func (e *DlElement) Draggable(a Draggable) *DlElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DlElement) Enterkeyhint(a DlEnterkeyhint) *DlElement {
+func (e *DlElement) Enterkeyhint(a Enterkeyhint) *DlElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +288,8 @@ func (e *DlElement) Headingreset(b bool) *DlElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Hidden(v ...DlHidden) *DlElement {
-	var val DlHidden
+func (e *DlElement) Hidden(v ...Hidden) *DlElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +312,7 @@ func (e *DlElement) Inert(b bool) *DlElement {
 	return e
 }
 
-func (e *DlElement) Inputmode(a DlInputmode) *DlElement {
+func (e *DlElement) Inputmode(a Inputmode) *DlElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +378,8 @@ func (e *DlElement) Part(s ...string) *DlElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Popover(v ...DlPopover) *DlElement {
-	var val DlPopover
+func (e *DlElement) Popover(v ...Popover) *DlElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +402,8 @@ func (e *DlElement) Slot(s string) *DlElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Spellcheck(v ...DlSpellcheck) *DlElement {
-	var val DlSpellcheck
+func (e *DlElement) Spellcheck(v ...Spellcheck) *DlElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +432,8 @@ func (e *DlElement) Title(s string) *DlElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Translate(v ...DlTranslate) *DlElement {
-	var val DlTranslate
+func (e *DlElement) Translate(v ...Translate) *DlElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +444,8 @@ func (e *DlElement) Translate(v ...DlTranslate) *DlElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DlElement) Writingsuggestions(v ...DlWritingsuggestions) *DlElement {
-	var val DlWritingsuggestions
+func (e *DlElement) Writingsuggestions(v ...Writingsuggestions) *DlElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

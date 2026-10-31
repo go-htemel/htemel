@@ -5,7 +5,7 @@ import (
 	. "github.com/go-htemel/htemel/html"
 )
 
-func Index() Node {
+func Index() FlowContent {
 	return PageContent("htemel Example WebApp",
 		P().Text("Welcome to the htemel example webapp."),
 		P().Text("Click on the links above to navigate."),

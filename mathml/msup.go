@@ -14,15 +14,17 @@ import (
 
 type MsupElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Msup creates a tag <msup> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Msup(children ...htemel.Node) *MsupElement {
+func Msup(children ...Content) *MsupElement {
 	node := &MsupElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Msup(children ...htemel.Node) *MsupElement {
 }
 
 // MsupIf creates a tag <msup> instance that is only rendered when condition is true.
-func MsupIf(condition bool, children ...htemel.Node) *MsupElement {
+func MsupIf(condition bool, children ...Content) *MsupElement {
 	if condition {
 		return Msup(children...)
 	}
@@ -43,7 +45,7 @@ func MsupIf(condition bool, children ...htemel.Node) *MsupElement {
 }
 
 // MsupTernary creates a tag <msup> containing then when condition is true, otherwise containing otherwise.
-func MsupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MsupElement {
+func MsupTernary(condition bool, then Content, otherwise Content) *MsupElement {
 	if condition {
 		return Msup(then)
 	}
@@ -51,7 +53,7 @@ func MsupTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MsupE
 }
 
 // Children appends children to this element.
-func (e *MsupElement) Children(children ...htemel.Node) *MsupElement {
+func (e *MsupElement) Children(children ...Content) *MsupElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MsupElement) Textf(format string, args ...any) *MsupElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MsupElement) If(cond bool, child htemel.Node) *MsupElement {
+func (e *MsupElement) If(cond bool, child Content) *MsupElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MsupElement) If(cond bool, child htemel.Node) *MsupElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MsupElement) IfElse(cond bool, then, els htemel.Node) *MsupElement {
+func (e *MsupElement) IfElse(cond bool, then, els Content) *MsupElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MsupElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MsupDir string
-
-const (
-	MsupDirLtr MsupDir = "ltr"
-	MsupDirRtl MsupDir = "rtl"
-)
-
-type MsupDisplaystyle string
-
-const (
-	MsupDisplaystyleFalse MsupDisplaystyle = "false"
-	MsupDisplaystyleTrue  MsupDisplaystyle = "true"
-)
+// MathMLContent marks <msup> as a permitted child (Content).
+func (*MsupElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MsupElement) Data(name string, s string) *MsupElement {
 	return e
 }
 
-func (e *MsupElement) Dir(a MsupDir) *MsupElement {
+func (e *MsupElement) Dir(a Dir) *MsupElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MsupElement) Displaystyle(a MsupDisplaystyle) *MsupElement {
+func (e *MsupElement) Displaystyle(a Displaystyle) *MsupElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

@@ -13,16 +13,19 @@ import (
 )
 
 type TitleElement struct {
+	htemel.MetadataMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.TextContent
 	skipRender bool
 }
 
 // Title creates a tag <title> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: text only (htemel.TextContent).
+//
 // Spec Description: The title element represents the document's title or name. Authors should use titles that identify their documents even when they are used out of context, for example in a user's history or bookmarks, or in search results. The document's title is often different from its first heading, since the first heading does not have to stand alone when taken out of context.
-func Title(children ...htemel.Node) *TitleElement {
+func Title(children ...htemel.TextContent) *TitleElement {
 	node := &TitleElement{
 		children: children,
 	}
@@ -31,7 +34,7 @@ func Title(children ...htemel.Node) *TitleElement {
 }
 
 // TitleIf creates a tag <title> instance that is only rendered when condition is true.
-func TitleIf(condition bool, children ...htemel.Node) *TitleElement {
+func TitleIf(condition bool, children ...htemel.TextContent) *TitleElement {
 	if condition {
 		return Title(children...)
 	}
@@ -43,7 +46,7 @@ func TitleIf(condition bool, children ...htemel.Node) *TitleElement {
 }
 
 // TitleTernary creates a tag <title> containing then when condition is true, otherwise containing otherwise.
-func TitleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TitleElement {
+func TitleTernary(condition bool, then htemel.TextContent, otherwise htemel.TextContent) *TitleElement {
 	if condition {
 		return Title(then)
 	}
@@ -51,7 +54,7 @@ func TitleTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Titl
 }
 
 // Children appends children to this element.
-func (e *TitleElement) Children(children ...htemel.Node) *TitleElement {
+func (e *TitleElement) Children(children ...htemel.TextContent) *TitleElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +77,7 @@ func (e *TitleElement) Textf(format string, args ...any) *TitleElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TitleElement) If(cond bool, child htemel.Node) *TitleElement {
+func (e *TitleElement) If(cond bool, child htemel.TextContent) *TitleElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +85,7 @@ func (e *TitleElement) If(cond bool, child htemel.Node) *TitleElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TitleElement) IfElse(cond bool, then, els htemel.Node) *TitleElement {
+func (e *TitleElement) IfElse(cond bool, then, els htemel.TextContent) *TitleElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +167,6 @@ func (e *TitleElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TitleAutocapitalize string
-
-const (
-	TitleAutocapitalizeCharacters TitleAutocapitalize = "characters"
-	TitleAutocapitalizeNone       TitleAutocapitalize = "none"
-	TitleAutocapitalizeOff        TitleAutocapitalize = "off"
-	TitleAutocapitalizeOn         TitleAutocapitalize = "on"
-	TitleAutocapitalizeSentences  TitleAutocapitalize = "sentences"
-	TitleAutocapitalizeWords      TitleAutocapitalize = "words"
-)
-
-type TitleAutocorrect string
-
-const (
-	TitleAutocorrectOff   TitleAutocorrect = "off"
-	TitleAutocorrectOn    TitleAutocorrect = "on"
-	TitleAutocorrectEmpty TitleAutocorrect = ""
-)
-
-type TitleContenteditable string
-
-const (
-	TitleContenteditableFalse         TitleContenteditable = "false"
-	TitleContenteditablePlaintextOnly TitleContenteditable = "plaintext-only"
-	TitleContenteditableTrue          TitleContenteditable = "true"
-	TitleContenteditableEmpty         TitleContenteditable = ""
-)
-
-type TitleDir string
-
-const (
-	TitleDirAuto TitleDir = "auto"
-	TitleDirLtr  TitleDir = "ltr"
-	TitleDirRtl  TitleDir = "rtl"
-)
-
-type TitleDraggable string
-
-const (
-	TitleDraggableFalse TitleDraggable = "false"
-	TitleDraggableTrue  TitleDraggable = "true"
-)
-
-type TitleEnterkeyhint string
-
-const (
-	TitleEnterkeyhintDone     TitleEnterkeyhint = "done"
-	TitleEnterkeyhintEnter    TitleEnterkeyhint = "enter"
-	TitleEnterkeyhintGo       TitleEnterkeyhint = "go"
-	TitleEnterkeyhintNext     TitleEnterkeyhint = "next"
-	TitleEnterkeyhintPrevious TitleEnterkeyhint = "previous"
-	TitleEnterkeyhintSearch   TitleEnterkeyhint = "search"
-	TitleEnterkeyhintSend     TitleEnterkeyhint = "send"
-)
-
-type TitleHidden string
-
-const (
-	TitleHiddenHidden     TitleHidden = "hidden"
-	TitleHiddenUntilFound TitleHidden = "until-found"
-	TitleHiddenEmpty      TitleHidden = ""
-)
-
-type TitleInputmode string
-
-const (
-	TitleInputmodeDecimal TitleInputmode = "decimal"
-	TitleInputmodeEmail   TitleInputmode = "email"
-	TitleInputmodeNone    TitleInputmode = "none"
-	TitleInputmodeNumeric TitleInputmode = "numeric"
-	TitleInputmodeSearch  TitleInputmode = "search"
-	TitleInputmodeTel     TitleInputmode = "tel"
-	TitleInputmodeText    TitleInputmode = "text"
-	TitleInputmodeUrl     TitleInputmode = "url"
-)
-
-type TitlePopover string
-
-const (
-	TitlePopoverAuto   TitlePopover = "auto"
-	TitlePopoverHint   TitlePopover = "hint"
-	TitlePopoverManual TitlePopover = "manual"
-	TitlePopoverEmpty  TitlePopover = ""
-)
-
-type TitleSpellcheck string
-
-const (
-	TitleSpellcheckFalse TitleSpellcheck = "false"
-	TitleSpellcheckTrue  TitleSpellcheck = "true"
-	TitleSpellcheckEmpty TitleSpellcheck = ""
-)
-
-type TitleTranslate string
-
-const (
-	TitleTranslateNo    TitleTranslate = "no"
-	TitleTranslateYes   TitleTranslate = "yes"
-	TitleTranslateEmpty TitleTranslate = ""
-)
-
-type TitleWritingsuggestions string
-
-const (
-	TitleWritingsuggestionsFalse TitleWritingsuggestions = "false"
-	TitleWritingsuggestionsTrue  TitleWritingsuggestions = "true"
-	TitleWritingsuggestionsEmpty TitleWritingsuggestions = ""
-)
-
 func (e *TitleElement) Accesskey(r rune) *TitleElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +189,7 @@ func (e *TitleElement) Aria(name string, s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Autocapitalize(a TitleAutocapitalize) *TitleElement {
+func (e *TitleElement) Autocapitalize(a Autocapitalize) *TitleElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *TitleElement) Autocapitalize(a TitleAutocapitalize) *TitleElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Autocorrect(v ...TitleAutocorrect) *TitleElement {
-	var val TitleAutocorrect
+func (e *TitleElement) Autocorrect(v ...Autocorrect) *TitleElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *TitleElement) Class(s ...string) *TitleElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Contenteditable(v ...TitleContenteditable) *TitleElement {
-	var val TitleContenteditable
+func (e *TitleElement) Contenteditable(v ...Contenteditable) *TitleElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *TitleElement) Data(name string, s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Dir(a TitleDir) *TitleElement {
+func (e *TitleElement) Dir(a Dir) *TitleElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TitleElement) Draggable(a TitleDraggable) *TitleElement {
+func (e *TitleElement) Draggable(a Draggable) *TitleElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TitleElement) Enterkeyhint(a TitleEnterkeyhint) *TitleElement {
+func (e *TitleElement) Enterkeyhint(a Enterkeyhint) *TitleElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *TitleElement) Headingreset(b bool) *TitleElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Hidden(v ...TitleHidden) *TitleElement {
-	var val TitleHidden
+func (e *TitleElement) Hidden(v ...Hidden) *TitleElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *TitleElement) Inert(b bool) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Inputmode(a TitleInputmode) *TitleElement {
+func (e *TitleElement) Inputmode(a Inputmode) *TitleElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *TitleElement) Part(s ...string) *TitleElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Popover(v ...TitlePopover) *TitleElement {
-	var val TitlePopover
+func (e *TitleElement) Popover(v ...Popover) *TitleElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *TitleElement) Slot(s string) *TitleElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Spellcheck(v ...TitleSpellcheck) *TitleElement {
-	var val TitleSpellcheck
+func (e *TitleElement) Spellcheck(v ...Spellcheck) *TitleElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *TitleElement) Title(s string) *TitleElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Translate(v ...TitleTranslate) *TitleElement {
-	var val TitleTranslate
+func (e *TitleElement) Translate(v ...Translate) *TitleElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *TitleElement) Translate(v ...TitleTranslate) *TitleElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TitleElement) Writingsuggestions(v ...TitleWritingsuggestions) *TitleElement {
-	var val TitleWritingsuggestions
+func (e *TitleElement) Writingsuggestions(v ...Writingsuggestions) *TitleElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

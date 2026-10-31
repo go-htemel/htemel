@@ -13,16 +13,20 @@ import (
 )
 
 type SElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // S creates a tag <s> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: The s element represents contents that are no longer accurate or no longer relevant.
-func S(children ...htemel.Node) *SElement {
+func S(children ...htemel.PhrasingContent) *SElement {
 	node := &SElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func S(children ...htemel.Node) *SElement {
 }
 
 // SIf creates a tag <s> instance that is only rendered when condition is true.
-func SIf(condition bool, children ...htemel.Node) *SElement {
+func SIf(condition bool, children ...htemel.PhrasingContent) *SElement {
 	if condition {
 		return S(children...)
 	}
@@ -43,7 +47,7 @@ func SIf(condition bool, children ...htemel.Node) *SElement {
 }
 
 // STernary creates a tag <s> containing then when condition is true, otherwise containing otherwise.
-func STernary(condition bool, then htemel.Node, otherwise htemel.Node) *SElement {
+func STernary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *SElement {
 	if condition {
 		return S(then)
 	}
@@ -51,7 +55,7 @@ func STernary(condition bool, then htemel.Node, otherwise htemel.Node) *SElement
 }
 
 // Children appends children to this element.
-func (e *SElement) Children(children ...htemel.Node) *SElement {
+func (e *SElement) Children(children ...htemel.PhrasingContent) *SElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *SElement) Textf(format string, args ...any) *SElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *SElement) If(cond bool, child htemel.Node) *SElement {
+func (e *SElement) If(cond bool, child htemel.PhrasingContent) *SElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *SElement) If(cond bool, child htemel.Node) *SElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *SElement) IfElse(cond bool, then, els htemel.Node) *SElement {
+func (e *SElement) IfElse(cond bool, then, els htemel.PhrasingContent) *SElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +168,6 @@ func (e *SElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type SAutocapitalize string
-
-const (
-	SAutocapitalizeCharacters SAutocapitalize = "characters"
-	SAutocapitalizeNone       SAutocapitalize = "none"
-	SAutocapitalizeOff        SAutocapitalize = "off"
-	SAutocapitalizeOn         SAutocapitalize = "on"
-	SAutocapitalizeSentences  SAutocapitalize = "sentences"
-	SAutocapitalizeWords      SAutocapitalize = "words"
-)
-
-type SAutocorrect string
-
-const (
-	SAutocorrectOff   SAutocorrect = "off"
-	SAutocorrectOn    SAutocorrect = "on"
-	SAutocorrectEmpty SAutocorrect = ""
-)
-
-type SContenteditable string
-
-const (
-	SContenteditableFalse         SContenteditable = "false"
-	SContenteditablePlaintextOnly SContenteditable = "plaintext-only"
-	SContenteditableTrue          SContenteditable = "true"
-	SContenteditableEmpty         SContenteditable = ""
-)
-
-type SDir string
-
-const (
-	SDirAuto SDir = "auto"
-	SDirLtr  SDir = "ltr"
-	SDirRtl  SDir = "rtl"
-)
-
-type SDraggable string
-
-const (
-	SDraggableFalse SDraggable = "false"
-	SDraggableTrue  SDraggable = "true"
-)
-
-type SEnterkeyhint string
-
-const (
-	SEnterkeyhintDone     SEnterkeyhint = "done"
-	SEnterkeyhintEnter    SEnterkeyhint = "enter"
-	SEnterkeyhintGo       SEnterkeyhint = "go"
-	SEnterkeyhintNext     SEnterkeyhint = "next"
-	SEnterkeyhintPrevious SEnterkeyhint = "previous"
-	SEnterkeyhintSearch   SEnterkeyhint = "search"
-	SEnterkeyhintSend     SEnterkeyhint = "send"
-)
-
-type SHidden string
-
-const (
-	SHiddenHidden     SHidden = "hidden"
-	SHiddenUntilFound SHidden = "until-found"
-	SHiddenEmpty      SHidden = ""
-)
-
-type SInputmode string
-
-const (
-	SInputmodeDecimal SInputmode = "decimal"
-	SInputmodeEmail   SInputmode = "email"
-	SInputmodeNone    SInputmode = "none"
-	SInputmodeNumeric SInputmode = "numeric"
-	SInputmodeSearch  SInputmode = "search"
-	SInputmodeTel     SInputmode = "tel"
-	SInputmodeText    SInputmode = "text"
-	SInputmodeUrl     SInputmode = "url"
-)
-
-type SPopover string
-
-const (
-	SPopoverAuto   SPopover = "auto"
-	SPopoverHint   SPopover = "hint"
-	SPopoverManual SPopover = "manual"
-	SPopoverEmpty  SPopover = ""
-)
-
-type SSpellcheck string
-
-const (
-	SSpellcheckFalse SSpellcheck = "false"
-	SSpellcheckTrue  SSpellcheck = "true"
-	SSpellcheckEmpty SSpellcheck = ""
-)
-
-type STranslate string
-
-const (
-	STranslateNo    STranslate = "no"
-	STranslateYes   STranslate = "yes"
-	STranslateEmpty STranslate = ""
-)
-
-type SWritingsuggestions string
-
-const (
-	SWritingsuggestionsFalse SWritingsuggestions = "false"
-	SWritingsuggestionsTrue  SWritingsuggestions = "true"
-	SWritingsuggestionsEmpty SWritingsuggestions = ""
-)
-
 func (e *SElement) Accesskey(r rune) *SElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +190,7 @@ func (e *SElement) Aria(name string, s string) *SElement {
 	return e
 }
 
-func (e *SElement) Autocapitalize(a SAutocapitalize) *SElement {
+func (e *SElement) Autocapitalize(a Autocapitalize) *SElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +198,8 @@ func (e *SElement) Autocapitalize(a SAutocapitalize) *SElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Autocorrect(v ...SAutocorrect) *SElement {
-	var val SAutocorrect
+func (e *SElement) Autocorrect(v ...Autocorrect) *SElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +224,8 @@ func (e *SElement) Class(s ...string) *SElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Contenteditable(v ...SContenteditable) *SElement {
-	var val SContenteditable
+func (e *SElement) Contenteditable(v ...Contenteditable) *SElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +250,19 @@ func (e *SElement) Data(name string, s string) *SElement {
 	return e
 }
 
-func (e *SElement) Dir(a SDir) *SElement {
+func (e *SElement) Dir(a Dir) *SElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *SElement) Draggable(a SDraggable) *SElement {
+func (e *SElement) Draggable(a Draggable) *SElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *SElement) Enterkeyhint(a SEnterkeyhint) *SElement {
+func (e *SElement) Enterkeyhint(a Enterkeyhint) *SElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +290,8 @@ func (e *SElement) Headingreset(b bool) *SElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Hidden(v ...SHidden) *SElement {
-	var val SHidden
+func (e *SElement) Hidden(v ...Hidden) *SElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +314,7 @@ func (e *SElement) Inert(b bool) *SElement {
 	return e
 }
 
-func (e *SElement) Inputmode(a SInputmode) *SElement {
+func (e *SElement) Inputmode(a Inputmode) *SElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +380,8 @@ func (e *SElement) Part(s ...string) *SElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Popover(v ...SPopover) *SElement {
-	var val SPopover
+func (e *SElement) Popover(v ...Popover) *SElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +404,8 @@ func (e *SElement) Slot(s string) *SElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Spellcheck(v ...SSpellcheck) *SElement {
-	var val SSpellcheck
+func (e *SElement) Spellcheck(v ...Spellcheck) *SElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +434,8 @@ func (e *SElement) Title(s string) *SElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Translate(v ...STranslate) *SElement {
-	var val STranslate
+func (e *SElement) Translate(v ...Translate) *SElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +446,8 @@ func (e *SElement) Translate(v ...STranslate) *SElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *SElement) Writingsuggestions(v ...SWritingsuggestions) *SElement {
-	var val SWritingsuggestions
+func (e *SElement) Writingsuggestions(v ...Writingsuggestions) *SElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type MrootElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mroot creates a tag <mroot> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mroot(children ...htemel.Node) *MrootElement {
+func Mroot(children ...Content) *MrootElement {
 	node := &MrootElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mroot(children ...htemel.Node) *MrootElement {
 }
 
 // MrootIf creates a tag <mroot> instance that is only rendered when condition is true.
-func MrootIf(condition bool, children ...htemel.Node) *MrootElement {
+func MrootIf(condition bool, children ...Content) *MrootElement {
 	if condition {
 		return Mroot(children...)
 	}
@@ -43,7 +45,7 @@ func MrootIf(condition bool, children ...htemel.Node) *MrootElement {
 }
 
 // MrootTernary creates a tag <mroot> containing then when condition is true, otherwise containing otherwise.
-func MrootTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MrootElement {
+func MrootTernary(condition bool, then Content, otherwise Content) *MrootElement {
 	if condition {
 		return Mroot(then)
 	}
@@ -51,7 +53,7 @@ func MrootTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mroo
 }
 
 // Children appends children to this element.
-func (e *MrootElement) Children(children ...htemel.Node) *MrootElement {
+func (e *MrootElement) Children(children ...Content) *MrootElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MrootElement) Textf(format string, args ...any) *MrootElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MrootElement) If(cond bool, child htemel.Node) *MrootElement {
+func (e *MrootElement) If(cond bool, child Content) *MrootElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MrootElement) If(cond bool, child htemel.Node) *MrootElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MrootElement) IfElse(cond bool, then, els htemel.Node) *MrootElement {
+func (e *MrootElement) IfElse(cond bool, then, els Content) *MrootElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MrootElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MrootDir string
-
-const (
-	MrootDirLtr MrootDir = "ltr"
-	MrootDirRtl MrootDir = "rtl"
-)
-
-type MrootDisplaystyle string
-
-const (
-	MrootDisplaystyleFalse MrootDisplaystyle = "false"
-	MrootDisplaystyleTrue  MrootDisplaystyle = "true"
-)
+// MathMLContent marks <mroot> as a permitted child (Content).
+func (*MrootElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MrootElement) Data(name string, s string) *MrootElement {
 	return e
 }
 
-func (e *MrootElement) Dir(a MrootDir) *MrootElement {
+func (e *MrootElement) Dir(a Dir) *MrootElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MrootElement) Displaystyle(a MrootDisplaystyle) *MrootElement {
+func (e *MrootElement) Displaystyle(a Displaystyle) *MrootElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

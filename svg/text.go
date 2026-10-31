@@ -14,15 +14,17 @@ import (
 
 type TextElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Text creates a tag <text> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The text element draws a graphics element consisting of text.
-func Text(children ...htemel.Node) *TextElement {
+func Text(children ...Content) *TextElement {
 	node := &TextElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Text(children ...htemel.Node) *TextElement {
 }
 
 // TextIf creates a tag <text> instance that is only rendered when condition is true.
-func TextIf(condition bool, children ...htemel.Node) *TextElement {
+func TextIf(condition bool, children ...Content) *TextElement {
 	if condition {
 		return Text(children...)
 	}
@@ -43,7 +45,7 @@ func TextIf(condition bool, children ...htemel.Node) *TextElement {
 }
 
 // TextTernary creates a tag <text> containing then when condition is true, otherwise containing otherwise.
-func TextTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TextElement {
+func TextTernary(condition bool, then Content, otherwise Content) *TextElement {
 	if condition {
 		return Text(then)
 	}
@@ -51,7 +53,7 @@ func TextTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TextE
 }
 
 // Children appends children to this element.
-func (e *TextElement) Children(children ...htemel.Node) *TextElement {
+func (e *TextElement) Children(children ...Content) *TextElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *TextElement) Textf(format string, args ...any) *TextElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TextElement) If(cond bool, child htemel.Node) *TextElement {
+func (e *TextElement) If(cond bool, child Content) *TextElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *TextElement) If(cond bool, child htemel.Node) *TextElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TextElement) IfElse(cond bool, then, els htemel.Node) *TextElement {
+func (e *TextElement) IfElse(cond bool, then, els Content) *TextElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,226 +166,8 @@ func (e *TextElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TextLengthAdjust string
-
-const (
-	TextLengthAdjustSpacing          TextLengthAdjust = "spacing"
-	TextLengthAdjustSpacingAndGlyphs TextLengthAdjust = "spacingAndGlyphs"
-)
-
-type TextAlignmentBaseline string
-
-const (
-	TextAlignmentBaselineAfterEdge      TextAlignmentBaseline = "after-edge"
-	TextAlignmentBaselineAlphabetic     TextAlignmentBaseline = "alphabetic"
-	TextAlignmentBaselineAuto           TextAlignmentBaseline = "auto"
-	TextAlignmentBaselineBaseline       TextAlignmentBaseline = "baseline"
-	TextAlignmentBaselineBeforeEdge     TextAlignmentBaseline = "before-edge"
-	TextAlignmentBaselineBottom         TextAlignmentBaseline = "bottom"
-	TextAlignmentBaselineCenter         TextAlignmentBaseline = "center"
-	TextAlignmentBaselineCentral        TextAlignmentBaseline = "central"
-	TextAlignmentBaselineHanging        TextAlignmentBaseline = "hanging"
-	TextAlignmentBaselineIdeographic    TextAlignmentBaseline = "ideographic"
-	TextAlignmentBaselineMathematical   TextAlignmentBaseline = "mathematical"
-	TextAlignmentBaselineMiddle         TextAlignmentBaseline = "middle"
-	TextAlignmentBaselineTextAfterEdge  TextAlignmentBaseline = "text-after-edge"
-	TextAlignmentBaselineTextBeforeEdge TextAlignmentBaseline = "text-before-edge"
-	TextAlignmentBaselineTextBottom     TextAlignmentBaseline = "text-bottom"
-	TextAlignmentBaselineTextTop        TextAlignmentBaseline = "text-top"
-	TextAlignmentBaselineTop            TextAlignmentBaseline = "top"
-)
-
-type TextClipRule string
-
-const (
-	TextClipRuleEvenodd TextClipRule = "evenodd"
-	TextClipRuleNonzero TextClipRule = "nonzero"
-)
-
-type TextColorInterpolation string
-
-const (
-	TextColorInterpolationAuto      TextColorInterpolation = "auto"
-	TextColorInterpolationLinearRGB TextColorInterpolation = "linearRGB"
-	TextColorInterpolationSRGB      TextColorInterpolation = "sRGB"
-)
-
-type TextColorInterpolationFilters string
-
-const (
-	TextColorInterpolationFiltersAuto      TextColorInterpolationFilters = "auto"
-	TextColorInterpolationFiltersLinearRGB TextColorInterpolationFilters = "linearRGB"
-	TextColorInterpolationFiltersSRGB      TextColorInterpolationFilters = "sRGB"
-)
-
-type TextDirection string
-
-const (
-	TextDirectionLtr TextDirection = "ltr"
-	TextDirectionRtl TextDirection = "rtl"
-)
-
-type TextDominantBaseline string
-
-const (
-	TextDominantBaselineAlphabetic   TextDominantBaseline = "alphabetic"
-	TextDominantBaselineAuto         TextDominantBaseline = "auto"
-	TextDominantBaselineCentral      TextDominantBaseline = "central"
-	TextDominantBaselineHanging      TextDominantBaseline = "hanging"
-	TextDominantBaselineIdeographic  TextDominantBaseline = "ideographic"
-	TextDominantBaselineMathematical TextDominantBaseline = "mathematical"
-	TextDominantBaselineMiddle       TextDominantBaseline = "middle"
-	TextDominantBaselineTextBottom   TextDominantBaseline = "text-bottom"
-	TextDominantBaselineTextTop      TextDominantBaseline = "text-top"
-)
-
-type TextFillRule string
-
-const (
-	TextFillRuleEvenodd TextFillRule = "evenodd"
-	TextFillRuleNonzero TextFillRule = "nonzero"
-)
-
-type TextFontStyle string
-
-const (
-	TextFontStyleItalic  TextFontStyle = "italic"
-	TextFontStyleNormal  TextFontStyle = "normal"
-	TextFontStyleOblique TextFontStyle = "oblique"
-)
-
-type TextImageRendering string
-
-const (
-	TextImageRenderingAuto            TextImageRendering = "auto"
-	TextImageRenderingCrispEdges      TextImageRendering = "crisp-edges"
-	TextImageRenderingHighQuality     TextImageRendering = "high-quality"
-	TextImageRenderingOptimizeQuality TextImageRendering = "optimizeQuality"
-	TextImageRenderingOptimizeSpeed   TextImageRendering = "optimizeSpeed"
-	TextImageRenderingPixelated       TextImageRendering = "pixelated"
-	TextImageRenderingSmooth          TextImageRendering = "smooth"
-)
-
-type TextOverflow string
-
-const (
-	TextOverflowAuto    TextOverflow = "auto"
-	TextOverflowClip    TextOverflow = "clip"
-	TextOverflowHidden  TextOverflow = "hidden"
-	TextOverflowScroll  TextOverflow = "scroll"
-	TextOverflowVisible TextOverflow = "visible"
-)
-
-type TextPointerEvents string
-
-const (
-	TextPointerEventsAll            TextPointerEvents = "all"
-	TextPointerEventsAuto           TextPointerEvents = "auto"
-	TextPointerEventsBoundingBox    TextPointerEvents = "bounding-box"
-	TextPointerEventsFill           TextPointerEvents = "fill"
-	TextPointerEventsNone           TextPointerEvents = "none"
-	TextPointerEventsPainted        TextPointerEvents = "painted"
-	TextPointerEventsStroke         TextPointerEvents = "stroke"
-	TextPointerEventsVisible        TextPointerEvents = "visible"
-	TextPointerEventsVisibleFill    TextPointerEvents = "visibleFill"
-	TextPointerEventsVisiblePainted TextPointerEvents = "visiblePainted"
-	TextPointerEventsVisibleStroke  TextPointerEvents = "visibleStroke"
-)
-
-type TextShapeRendering string
-
-const (
-	TextShapeRenderingAuto               TextShapeRendering = "auto"
-	TextShapeRenderingCrispEdges         TextShapeRendering = "crispEdges"
-	TextShapeRenderingGeometricPrecision TextShapeRendering = "geometricPrecision"
-	TextShapeRenderingOptimizeSpeed      TextShapeRendering = "optimizeSpeed"
-)
-
-type TextStrokeLinecap string
-
-const (
-	TextStrokeLinecapButt   TextStrokeLinecap = "butt"
-	TextStrokeLinecapRound  TextStrokeLinecap = "round"
-	TextStrokeLinecapSquare TextStrokeLinecap = "square"
-)
-
-type TextStrokeLinejoin string
-
-const (
-	TextStrokeLinejoinArcs      TextStrokeLinejoin = "arcs"
-	TextStrokeLinejoinBevel     TextStrokeLinejoin = "bevel"
-	TextStrokeLinejoinMiter     TextStrokeLinejoin = "miter"
-	TextStrokeLinejoinMiterClip TextStrokeLinejoin = "miter-clip"
-	TextStrokeLinejoinRound     TextStrokeLinejoin = "round"
-)
-
-type TextTextAnchor string
-
-const (
-	TextTextAnchorEnd    TextTextAnchor = "end"
-	TextTextAnchorMiddle TextTextAnchor = "middle"
-	TextTextAnchorStart  TextTextAnchor = "start"
-)
-
-type TextTextRendering string
-
-const (
-	TextTextRenderingAuto               TextTextRendering = "auto"
-	TextTextRenderingGeometricPrecision TextTextRendering = "geometricPrecision"
-	TextTextRenderingOptimizeLegibility TextTextRendering = "optimizeLegibility"
-	TextTextRenderingOptimizeSpeed      TextTextRendering = "optimizeSpeed"
-)
-
-type TextTransformBox string
-
-const (
-	TextTransformBoxBorderBox  TextTransformBox = "border-box"
-	TextTransformBoxContentBox TextTransformBox = "content-box"
-	TextTransformBoxFillBox    TextTransformBox = "fill-box"
-	TextTransformBoxStrokeBox  TextTransformBox = "stroke-box"
-	TextTransformBoxViewBox    TextTransformBox = "view-box"
-)
-
-type TextVectorEffect string
-
-const (
-	TextVectorEffectFixedPosition    TextVectorEffect = "fixed-position"
-	TextVectorEffectNonRotation      TextVectorEffect = "non-rotation"
-	TextVectorEffectNonScalingSize   TextVectorEffect = "non-scaling-size"
-	TextVectorEffectNonScalingStroke TextVectorEffect = "non-scaling-stroke"
-	TextVectorEffectNone             TextVectorEffect = "none"
-)
-
-type TextVisibility string
-
-const (
-	TextVisibilityCollapse TextVisibility = "collapse"
-	TextVisibilityHidden   TextVisibility = "hidden"
-	TextVisibilityVisible  TextVisibility = "visible"
-)
-
-type TextWritingMode string
-
-const (
-	TextWritingModeHorizontalTb TextWritingMode = "horizontal-tb"
-	TextWritingModeLr           TextWritingMode = "lr"
-	TextWritingModeLrTb         TextWritingMode = "lr-tb"
-	TextWritingModeRl           TextWritingMode = "rl"
-	TextWritingModeRlTb         TextWritingMode = "rl-tb"
-	TextWritingModeSidewaysLr   TextWritingMode = "sideways-lr"
-	TextWritingModeSidewaysRl   TextWritingMode = "sideways-rl"
-	TextWritingModeTb           TextWritingMode = "tb"
-	TextWritingModeTbRl         TextWritingMode = "tb-rl"
-	TextWritingModeVerticalLr   TextWritingMode = "vertical-lr"
-	TextWritingModeVerticalRl   TextWritingMode = "vertical-rl"
-)
-
-type TextXmlSpace string
-
-const (
-	TextXmlSpaceDefault  TextXmlSpace = "default"
-	TextXmlSpacePreserve TextXmlSpace = "preserve"
-)
+// SVGContent marks <text> as a permitted child (Content).
+func (*TextElement) SVGContent() {}
 
 func (e *TextElement) Dx(s string) *TextElement {
 	e.attributes.Set("dx", s)
@@ -397,7 +181,7 @@ func (e *TextElement) Dy(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) LengthAdjust(a TextLengthAdjust) *TextElement {
+func (e *TextElement) LengthAdjust(a LengthAdjust) *TextElement {
 	e.attributes.Set("lengthAdjust", string(a))
 
 	return e
@@ -433,14 +217,10 @@ func (e *TextElement) Y(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) AlignmentBaseline(a TextAlignmentBaseline) *TextElement {
+func (e *TextElement) AlignmentBaseline(a AlignmentBaseline) *TextElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func TextAlignmentBaselineCustom(s string) TextAlignmentBaseline {
-	return TextAlignmentBaseline(s)
 }
 
 func (e *TextElement) AriaUnsafe(name string, s string) *TextElement {
@@ -494,14 +274,10 @@ func (e *TextElement) ClipPath(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) ClipRule(a TextClipRule) *TextElement {
+func (e *TextElement) ClipRule(a ClipRule) *TextElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func TextClipRuleCustom(s string) TextClipRule {
-	return TextClipRule(s)
 }
 
 func (e *TextElement) Color(s string) *TextElement {
@@ -510,24 +286,16 @@ func (e *TextElement) Color(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) ColorInterpolation(a TextColorInterpolation) *TextElement {
+func (e *TextElement) ColorInterpolation(a ColorInterpolation) *TextElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func TextColorInterpolationCustom(s string) TextColorInterpolation {
-	return TextColorInterpolation(s)
-}
-
-func (e *TextElement) ColorInterpolationFilters(a TextColorInterpolationFilters) *TextElement {
+func (e *TextElement) ColorInterpolationFilters(a ColorInterpolationFilters) *TextElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func TextColorInterpolationFiltersCustom(s string) TextColorInterpolationFilters {
-	return TextColorInterpolationFilters(s)
 }
 
 func (e *TextElement) Cursor(s string) *TextElement {
@@ -552,14 +320,10 @@ func (e *TextElement) Data(name string, s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) Direction(a TextDirection) *TextElement {
+func (e *TextElement) Direction(a Direction) *TextElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func TextDirectionCustom(s string) TextDirection {
-	return TextDirection(s)
 }
 
 func (e *TextElement) Display(s string) *TextElement {
@@ -568,14 +332,10 @@ func (e *TextElement) Display(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) DominantBaseline(a TextDominantBaseline) *TextElement {
+func (e *TextElement) DominantBaseline(a DominantBaseline) *TextElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func TextDominantBaselineCustom(s string) TextDominantBaseline {
-	return TextDominantBaseline(s)
 }
 
 func (e *TextElement) Fill(s string) *TextElement {
@@ -590,14 +350,10 @@ func (e *TextElement) FillOpacity(f float64) *TextElement {
 	return e
 }
 
-func (e *TextElement) FillRule(a TextFillRule) *TextElement {
+func (e *TextElement) FillRule(a FillRule) *TextElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func TextFillRuleCustom(s string) TextFillRule {
-	return TextFillRule(s)
 }
 
 func (e *TextElement) Filter(s string) *TextElement {
@@ -642,14 +398,10 @@ func (e *TextElement) FontStretch(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) FontStyle(a TextFontStyle) *TextElement {
+func (e *TextElement) FontStyle(a FontStyle) *TextElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func TextFontStyleCustom(s string) TextFontStyle {
-	return TextFontStyle(s)
 }
 
 func (e *TextElement) FontVariant(s string) *TextElement {
@@ -688,14 +440,10 @@ func (e *TextElement) Id(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) ImageRendering(a TextImageRendering) *TextElement {
+func (e *TextElement) ImageRendering(a ImageRendering) *TextElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func TextImageRenderingCustom(s string) TextImageRendering {
-	return TextImageRendering(s)
 }
 
 func (e *TextElement) Lang(s string) *TextElement {
@@ -746,14 +494,10 @@ func (e *TextElement) Opacity(f float64) *TextElement {
 	return e
 }
 
-func (e *TextElement) Overflow(a TextOverflow) *TextElement {
+func (e *TextElement) Overflow(a Overflow) *TextElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func TextOverflowCustom(s string) TextOverflow {
-	return TextOverflow(s)
 }
 
 func (e *TextElement) PaintOrder(s string) *TextElement {
@@ -762,14 +506,10 @@ func (e *TextElement) PaintOrder(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) PointerEvents(a TextPointerEvents) *TextElement {
+func (e *TextElement) PointerEvents(a PointerEvents) *TextElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func TextPointerEventsCustom(s string) TextPointerEvents {
-	return TextPointerEvents(s)
 }
 
 func (e *TextElement) RequiredExtensions(s string) *TextElement {
@@ -778,14 +518,10 @@ func (e *TextElement) RequiredExtensions(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) ShapeRendering(a TextShapeRendering) *TextElement {
+func (e *TextElement) ShapeRendering(a ShapeRendering) *TextElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func TextShapeRenderingCustom(s string) TextShapeRendering {
-	return TextShapeRendering(s)
 }
 
 func (e *TextElement) StopColor(s string) *TextElement {
@@ -818,24 +554,16 @@ func (e *TextElement) StrokeDashoffset(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) StrokeLinecap(a TextStrokeLinecap) *TextElement {
+func (e *TextElement) StrokeLinecap(a StrokeLinecap) *TextElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func TextStrokeLinecapCustom(s string) TextStrokeLinecap {
-	return TextStrokeLinecap(s)
-}
-
-func (e *TextElement) StrokeLinejoin(a TextStrokeLinejoin) *TextElement {
+func (e *TextElement) StrokeLinejoin(a StrokeLinejoin) *TextElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func TextStrokeLinejoinCustom(s string) TextStrokeLinejoin {
-	return TextStrokeLinejoin(s)
 }
 
 func (e *TextElement) StrokeMiterlimit(f float64) *TextElement {
@@ -868,14 +596,10 @@ func (e *TextElement) Tabindex(i int) *TextElement {
 	return e
 }
 
-func (e *TextElement) TextAnchor(a TextTextAnchor) *TextElement {
+func (e *TextElement) TextAnchor(a TextAnchor) *TextElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func TextTextAnchorCustom(s string) TextTextAnchor {
-	return TextTextAnchor(s)
 }
 
 func (e *TextElement) TextDecoration(s string) *TextElement {
@@ -890,14 +614,10 @@ func (e *TextElement) TextOverflow(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) TextRendering(a TextTextRendering) *TextElement {
+func (e *TextElement) TextRendering(a TextRendering) *TextElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func TextTextRenderingCustom(s string) TextTextRendering {
-	return TextTextRendering(s)
 }
 
 func (e *TextElement) Transform(s string) *TextElement {
@@ -906,14 +626,10 @@ func (e *TextElement) Transform(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) TransformBox(a TextTransformBox) *TextElement {
+func (e *TextElement) TransformBox(a TransformBox) *TextElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func TextTransformBoxCustom(s string) TextTransformBox {
-	return TextTransformBox(s)
 }
 
 func (e *TextElement) TransformOrigin(s string) *TextElement {
@@ -928,24 +644,16 @@ func (e *TextElement) UnicodeBidi(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) VectorEffect(a TextVectorEffect) *TextElement {
+func (e *TextElement) VectorEffect(a VectorEffect) *TextElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func TextVectorEffectCustom(s string) TextVectorEffect {
-	return TextVectorEffect(s)
-}
-
-func (e *TextElement) Visibility(a TextVisibility) *TextElement {
+func (e *TextElement) Visibility(a Visibility) *TextElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func TextVisibilityCustom(s string) TextVisibility {
-	return TextVisibility(s)
 }
 
 func (e *TextElement) WhiteSpace(s string) *TextElement {
@@ -960,14 +668,10 @@ func (e *TextElement) WordSpacing(s string) *TextElement {
 	return e
 }
 
-func (e *TextElement) WritingMode(a TextWritingMode) *TextElement {
+func (e *TextElement) WritingMode(a WritingMode) *TextElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func TextWritingModeCustom(s string) TextWritingMode {
-	return TextWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -982,7 +686,7 @@ func (e *TextElement) XmlLang(s string) *TextElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *TextElement) XmlSpace(a TextXmlSpace) *TextElement {
+func (e *TextElement) XmlSpace(a XmlSpace) *TextElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

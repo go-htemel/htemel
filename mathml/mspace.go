@@ -14,15 +14,17 @@ import (
 
 type MspaceElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mspace creates a tag <mspace> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mspace(children ...htemel.Node) *MspaceElement {
+func Mspace(children ...Content) *MspaceElement {
 	node := &MspaceElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mspace(children ...htemel.Node) *MspaceElement {
 }
 
 // MspaceIf creates a tag <mspace> instance that is only rendered when condition is true.
-func MspaceIf(condition bool, children ...htemel.Node) *MspaceElement {
+func MspaceIf(condition bool, children ...Content) *MspaceElement {
 	if condition {
 		return Mspace(children...)
 	}
@@ -43,7 +45,7 @@ func MspaceIf(condition bool, children ...htemel.Node) *MspaceElement {
 }
 
 // MspaceTernary creates a tag <mspace> containing then when condition is true, otherwise containing otherwise.
-func MspaceTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MspaceElement {
+func MspaceTernary(condition bool, then Content, otherwise Content) *MspaceElement {
 	if condition {
 		return Mspace(then)
 	}
@@ -51,7 +53,7 @@ func MspaceTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Msp
 }
 
 // Children appends children to this element.
-func (e *MspaceElement) Children(children ...htemel.Node) *MspaceElement {
+func (e *MspaceElement) Children(children ...Content) *MspaceElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MspaceElement) Textf(format string, args ...any) *MspaceElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MspaceElement) If(cond bool, child htemel.Node) *MspaceElement {
+func (e *MspaceElement) If(cond bool, child Content) *MspaceElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MspaceElement) If(cond bool, child htemel.Node) *MspaceElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MspaceElement) IfElse(cond bool, then, els htemel.Node) *MspaceElement {
+func (e *MspaceElement) IfElse(cond bool, then, els Content) *MspaceElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MspaceElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MspaceDir string
-
-const (
-	MspaceDirLtr MspaceDir = "ltr"
-	MspaceDirRtl MspaceDir = "rtl"
-)
-
-type MspaceDisplaystyle string
-
-const (
-	MspaceDisplaystyleFalse MspaceDisplaystyle = "false"
-	MspaceDisplaystyleTrue  MspaceDisplaystyle = "true"
-)
+// MathMLContent marks <mspace> as a permitted child (Content).
+func (*MspaceElement) MathMLContent() {}
 
 func (e *MspaceElement) Depth(s string) *MspaceElement {
 	e.attributes.Set("depth", s)
@@ -226,13 +217,13 @@ func (e *MspaceElement) Data(name string, s string) *MspaceElement {
 	return e
 }
 
-func (e *MspaceElement) Dir(a MspaceDir) *MspaceElement {
+func (e *MspaceElement) Dir(a Dir) *MspaceElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MspaceElement) Displaystyle(a MspaceDisplaystyle) *MspaceElement {
+func (e *MspaceElement) Displaystyle(a Displaystyle) *MspaceElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

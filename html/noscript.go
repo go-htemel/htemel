@@ -13,16 +13,22 @@ import (
 )
 
 type NoscriptElement struct {
+	htemel.PhrasingMarker
+	htemel.MetadataMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Noscript creates a tag <noscript> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <noscript> takes the content model of its parent, which a type
+// cannot follow, so it accepts any flow content (htemel.FlowContent); make sure its content is
+// also valid in the parent.
+//
 // Spec Description: The noscript element represents nothing if scripting is enabled, and represents its children if scripting is disabled. It is used to present different markup to user agents that support scripting and those that don't support scripting, by affecting how the document is parsed.
-func Noscript(children ...htemel.Node) *NoscriptElement {
+func Noscript(children ...htemel.FlowContent) *NoscriptElement {
 	node := &NoscriptElement{
 		children: children,
 	}
@@ -31,7 +37,7 @@ func Noscript(children ...htemel.Node) *NoscriptElement {
 }
 
 // NoscriptIf creates a tag <noscript> instance that is only rendered when condition is true.
-func NoscriptIf(condition bool, children ...htemel.Node) *NoscriptElement {
+func NoscriptIf(condition bool, children ...htemel.FlowContent) *NoscriptElement {
 	if condition {
 		return Noscript(children...)
 	}
@@ -43,7 +49,7 @@ func NoscriptIf(condition bool, children ...htemel.Node) *NoscriptElement {
 }
 
 // NoscriptTernary creates a tag <noscript> containing then when condition is true, otherwise containing otherwise.
-func NoscriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *NoscriptElement {
+func NoscriptTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *NoscriptElement {
 	if condition {
 		return Noscript(then)
 	}
@@ -51,7 +57,7 @@ func NoscriptTernary(condition bool, then htemel.Node, otherwise htemel.Node) *N
 }
 
 // Children appends children to this element.
-func (e *NoscriptElement) Children(children ...htemel.Node) *NoscriptElement {
+func (e *NoscriptElement) Children(children ...htemel.FlowContent) *NoscriptElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +80,7 @@ func (e *NoscriptElement) Textf(format string, args ...any) *NoscriptElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *NoscriptElement) If(cond bool, child htemel.Node) *NoscriptElement {
+func (e *NoscriptElement) If(cond bool, child htemel.FlowContent) *NoscriptElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +88,7 @@ func (e *NoscriptElement) If(cond bool, child htemel.Node) *NoscriptElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *NoscriptElement) IfElse(cond bool, then, els htemel.Node) *NoscriptElement {
+func (e *NoscriptElement) IfElse(cond bool, then, els htemel.FlowContent) *NoscriptElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +170,11 @@ func (e *NoscriptElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type NoscriptAutocapitalize string
+// HTMLOptgroupChild marks <noscript> as a permitted child of <optgroup> (OptgroupChild).
+func (*NoscriptElement) HTMLOptgroupChild() {}
 
-const (
-	NoscriptAutocapitalizeCharacters NoscriptAutocapitalize = "characters"
-	NoscriptAutocapitalizeNone       NoscriptAutocapitalize = "none"
-	NoscriptAutocapitalizeOff        NoscriptAutocapitalize = "off"
-	NoscriptAutocapitalizeOn         NoscriptAutocapitalize = "on"
-	NoscriptAutocapitalizeSentences  NoscriptAutocapitalize = "sentences"
-	NoscriptAutocapitalizeWords      NoscriptAutocapitalize = "words"
-)
-
-type NoscriptAutocorrect string
-
-const (
-	NoscriptAutocorrectOff   NoscriptAutocorrect = "off"
-	NoscriptAutocorrectOn    NoscriptAutocorrect = "on"
-	NoscriptAutocorrectEmpty NoscriptAutocorrect = ""
-)
-
-type NoscriptContenteditable string
-
-const (
-	NoscriptContenteditableFalse         NoscriptContenteditable = "false"
-	NoscriptContenteditablePlaintextOnly NoscriptContenteditable = "plaintext-only"
-	NoscriptContenteditableTrue          NoscriptContenteditable = "true"
-	NoscriptContenteditableEmpty         NoscriptContenteditable = ""
-)
-
-type NoscriptDir string
-
-const (
-	NoscriptDirAuto NoscriptDir = "auto"
-	NoscriptDirLtr  NoscriptDir = "ltr"
-	NoscriptDirRtl  NoscriptDir = "rtl"
-)
-
-type NoscriptDraggable string
-
-const (
-	NoscriptDraggableFalse NoscriptDraggable = "false"
-	NoscriptDraggableTrue  NoscriptDraggable = "true"
-)
-
-type NoscriptEnterkeyhint string
-
-const (
-	NoscriptEnterkeyhintDone     NoscriptEnterkeyhint = "done"
-	NoscriptEnterkeyhintEnter    NoscriptEnterkeyhint = "enter"
-	NoscriptEnterkeyhintGo       NoscriptEnterkeyhint = "go"
-	NoscriptEnterkeyhintNext     NoscriptEnterkeyhint = "next"
-	NoscriptEnterkeyhintPrevious NoscriptEnterkeyhint = "previous"
-	NoscriptEnterkeyhintSearch   NoscriptEnterkeyhint = "search"
-	NoscriptEnterkeyhintSend     NoscriptEnterkeyhint = "send"
-)
-
-type NoscriptHidden string
-
-const (
-	NoscriptHiddenHidden     NoscriptHidden = "hidden"
-	NoscriptHiddenUntilFound NoscriptHidden = "until-found"
-	NoscriptHiddenEmpty      NoscriptHidden = ""
-)
-
-type NoscriptInputmode string
-
-const (
-	NoscriptInputmodeDecimal NoscriptInputmode = "decimal"
-	NoscriptInputmodeEmail   NoscriptInputmode = "email"
-	NoscriptInputmodeNone    NoscriptInputmode = "none"
-	NoscriptInputmodeNumeric NoscriptInputmode = "numeric"
-	NoscriptInputmodeSearch  NoscriptInputmode = "search"
-	NoscriptInputmodeTel     NoscriptInputmode = "tel"
-	NoscriptInputmodeText    NoscriptInputmode = "text"
-	NoscriptInputmodeUrl     NoscriptInputmode = "url"
-)
-
-type NoscriptPopover string
-
-const (
-	NoscriptPopoverAuto   NoscriptPopover = "auto"
-	NoscriptPopoverHint   NoscriptPopover = "hint"
-	NoscriptPopoverManual NoscriptPopover = "manual"
-	NoscriptPopoverEmpty  NoscriptPopover = ""
-)
-
-type NoscriptSpellcheck string
-
-const (
-	NoscriptSpellcheckFalse NoscriptSpellcheck = "false"
-	NoscriptSpellcheckTrue  NoscriptSpellcheck = "true"
-	NoscriptSpellcheckEmpty NoscriptSpellcheck = ""
-)
-
-type NoscriptTranslate string
-
-const (
-	NoscriptTranslateNo    NoscriptTranslate = "no"
-	NoscriptTranslateYes   NoscriptTranslate = "yes"
-	NoscriptTranslateEmpty NoscriptTranslate = ""
-)
-
-type NoscriptWritingsuggestions string
-
-const (
-	NoscriptWritingsuggestionsFalse NoscriptWritingsuggestions = "false"
-	NoscriptWritingsuggestionsTrue  NoscriptWritingsuggestions = "true"
-	NoscriptWritingsuggestionsEmpty NoscriptWritingsuggestions = ""
-)
+// HTMLSelectChild marks <noscript> as a permitted child of <select> (SelectChild).
+func (*NoscriptElement) HTMLSelectChild() {}
 
 func (e *NoscriptElement) Accesskey(r rune) *NoscriptElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +198,7 @@ func (e *NoscriptElement) Aria(name string, s string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Autocapitalize(a NoscriptAutocapitalize) *NoscriptElement {
+func (e *NoscriptElement) Autocapitalize(a Autocapitalize) *NoscriptElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +206,8 @@ func (e *NoscriptElement) Autocapitalize(a NoscriptAutocapitalize) *NoscriptElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Autocorrect(v ...NoscriptAutocorrect) *NoscriptElement {
-	var val NoscriptAutocorrect
+func (e *NoscriptElement) Autocorrect(v ...Autocorrect) *NoscriptElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +232,8 @@ func (e *NoscriptElement) Class(s ...string) *NoscriptElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Contenteditable(v ...NoscriptContenteditable) *NoscriptElement {
-	var val NoscriptContenteditable
+func (e *NoscriptElement) Contenteditable(v ...Contenteditable) *NoscriptElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +258,19 @@ func (e *NoscriptElement) Data(name string, s string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Dir(a NoscriptDir) *NoscriptElement {
+func (e *NoscriptElement) Dir(a Dir) *NoscriptElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *NoscriptElement) Draggable(a NoscriptDraggable) *NoscriptElement {
+func (e *NoscriptElement) Draggable(a Draggable) *NoscriptElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *NoscriptElement) Enterkeyhint(a NoscriptEnterkeyhint) *NoscriptElement {
+func (e *NoscriptElement) Enterkeyhint(a Enterkeyhint) *NoscriptElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +298,8 @@ func (e *NoscriptElement) Headingreset(b bool) *NoscriptElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Hidden(v ...NoscriptHidden) *NoscriptElement {
-	var val NoscriptHidden
+func (e *NoscriptElement) Hidden(v ...Hidden) *NoscriptElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +322,7 @@ func (e *NoscriptElement) Inert(b bool) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Inputmode(a NoscriptInputmode) *NoscriptElement {
+func (e *NoscriptElement) Inputmode(a Inputmode) *NoscriptElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +388,8 @@ func (e *NoscriptElement) Part(s ...string) *NoscriptElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Popover(v ...NoscriptPopover) *NoscriptElement {
-	var val NoscriptPopover
+func (e *NoscriptElement) Popover(v ...Popover) *NoscriptElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +412,8 @@ func (e *NoscriptElement) Slot(s string) *NoscriptElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Spellcheck(v ...NoscriptSpellcheck) *NoscriptElement {
-	var val NoscriptSpellcheck
+func (e *NoscriptElement) Spellcheck(v ...Spellcheck) *NoscriptElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +442,8 @@ func (e *NoscriptElement) Title(s string) *NoscriptElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Translate(v ...NoscriptTranslate) *NoscriptElement {
-	var val NoscriptTranslate
+func (e *NoscriptElement) Translate(v ...Translate) *NoscriptElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +454,8 @@ func (e *NoscriptElement) Translate(v ...NoscriptTranslate) *NoscriptElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *NoscriptElement) Writingsuggestions(v ...NoscriptWritingsuggestions) *NoscriptElement {
-	var val NoscriptWritingsuggestions
+func (e *NoscriptElement) Writingsuggestions(v ...Writingsuggestions) *NoscriptElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

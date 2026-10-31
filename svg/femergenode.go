@@ -14,15 +14,17 @@ import (
 
 type FeMergeNodeElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeMergeNode creates a tag <feMergeNode> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feMergeNode element supplies one input layer to a parent feMerge.
-func FeMergeNode(children ...htemel.Node) *FeMergeNodeElement {
+func FeMergeNode(children ...Content) *FeMergeNodeElement {
 	node := &FeMergeNodeElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeMergeNode(children ...htemel.Node) *FeMergeNodeElement {
 }
 
 // FeMergeNodeIf creates a tag <feMergeNode> instance that is only rendered when condition is true.
-func FeMergeNodeIf(condition bool, children ...htemel.Node) *FeMergeNodeElement {
+func FeMergeNodeIf(condition bool, children ...Content) *FeMergeNodeElement {
 	if condition {
 		return FeMergeNode(children...)
 	}
@@ -43,7 +45,7 @@ func FeMergeNodeIf(condition bool, children ...htemel.Node) *FeMergeNodeElement 
 }
 
 // FeMergeNodeTernary creates a tag <feMergeNode> containing then when condition is true, otherwise containing otherwise.
-func FeMergeNodeTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeMergeNodeElement {
+func FeMergeNodeTernary(condition bool, then Content, otherwise Content) *FeMergeNodeElement {
 	if condition {
 		return FeMergeNode(then)
 	}
@@ -51,7 +53,7 @@ func FeMergeNodeTernary(condition bool, then htemel.Node, otherwise htemel.Node)
 }
 
 // Children appends children to this element.
-func (e *FeMergeNodeElement) Children(children ...htemel.Node) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) Children(children ...Content) *FeMergeNodeElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeMergeNodeElement) Textf(format string, args ...any) *FeMergeNodeEleme
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeMergeNodeElement) If(cond bool, child htemel.Node) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) If(cond bool, child Content) *FeMergeNodeElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeMergeNodeElement) If(cond bool, child htemel.Node) *FeMergeNodeElemen
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeMergeNodeElement) IfElse(cond bool, then, els htemel.Node) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) IfElse(cond bool, then, els Content) *FeMergeNodeElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,219 +166,8 @@ func (e *FeMergeNodeElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeMergeNodeAlignmentBaseline string
-
-const (
-	FeMergeNodeAlignmentBaselineAfterEdge      FeMergeNodeAlignmentBaseline = "after-edge"
-	FeMergeNodeAlignmentBaselineAlphabetic     FeMergeNodeAlignmentBaseline = "alphabetic"
-	FeMergeNodeAlignmentBaselineAuto           FeMergeNodeAlignmentBaseline = "auto"
-	FeMergeNodeAlignmentBaselineBaseline       FeMergeNodeAlignmentBaseline = "baseline"
-	FeMergeNodeAlignmentBaselineBeforeEdge     FeMergeNodeAlignmentBaseline = "before-edge"
-	FeMergeNodeAlignmentBaselineBottom         FeMergeNodeAlignmentBaseline = "bottom"
-	FeMergeNodeAlignmentBaselineCenter         FeMergeNodeAlignmentBaseline = "center"
-	FeMergeNodeAlignmentBaselineCentral        FeMergeNodeAlignmentBaseline = "central"
-	FeMergeNodeAlignmentBaselineHanging        FeMergeNodeAlignmentBaseline = "hanging"
-	FeMergeNodeAlignmentBaselineIdeographic    FeMergeNodeAlignmentBaseline = "ideographic"
-	FeMergeNodeAlignmentBaselineMathematical   FeMergeNodeAlignmentBaseline = "mathematical"
-	FeMergeNodeAlignmentBaselineMiddle         FeMergeNodeAlignmentBaseline = "middle"
-	FeMergeNodeAlignmentBaselineTextAfterEdge  FeMergeNodeAlignmentBaseline = "text-after-edge"
-	FeMergeNodeAlignmentBaselineTextBeforeEdge FeMergeNodeAlignmentBaseline = "text-before-edge"
-	FeMergeNodeAlignmentBaselineTextBottom     FeMergeNodeAlignmentBaseline = "text-bottom"
-	FeMergeNodeAlignmentBaselineTextTop        FeMergeNodeAlignmentBaseline = "text-top"
-	FeMergeNodeAlignmentBaselineTop            FeMergeNodeAlignmentBaseline = "top"
-)
-
-type FeMergeNodeClipRule string
-
-const (
-	FeMergeNodeClipRuleEvenodd FeMergeNodeClipRule = "evenodd"
-	FeMergeNodeClipRuleNonzero FeMergeNodeClipRule = "nonzero"
-)
-
-type FeMergeNodeColorInterpolation string
-
-const (
-	FeMergeNodeColorInterpolationAuto      FeMergeNodeColorInterpolation = "auto"
-	FeMergeNodeColorInterpolationLinearRGB FeMergeNodeColorInterpolation = "linearRGB"
-	FeMergeNodeColorInterpolationSRGB      FeMergeNodeColorInterpolation = "sRGB"
-)
-
-type FeMergeNodeColorInterpolationFilters string
-
-const (
-	FeMergeNodeColorInterpolationFiltersAuto      FeMergeNodeColorInterpolationFilters = "auto"
-	FeMergeNodeColorInterpolationFiltersLinearRGB FeMergeNodeColorInterpolationFilters = "linearRGB"
-	FeMergeNodeColorInterpolationFiltersSRGB      FeMergeNodeColorInterpolationFilters = "sRGB"
-)
-
-type FeMergeNodeDirection string
-
-const (
-	FeMergeNodeDirectionLtr FeMergeNodeDirection = "ltr"
-	FeMergeNodeDirectionRtl FeMergeNodeDirection = "rtl"
-)
-
-type FeMergeNodeDominantBaseline string
-
-const (
-	FeMergeNodeDominantBaselineAlphabetic   FeMergeNodeDominantBaseline = "alphabetic"
-	FeMergeNodeDominantBaselineAuto         FeMergeNodeDominantBaseline = "auto"
-	FeMergeNodeDominantBaselineCentral      FeMergeNodeDominantBaseline = "central"
-	FeMergeNodeDominantBaselineHanging      FeMergeNodeDominantBaseline = "hanging"
-	FeMergeNodeDominantBaselineIdeographic  FeMergeNodeDominantBaseline = "ideographic"
-	FeMergeNodeDominantBaselineMathematical FeMergeNodeDominantBaseline = "mathematical"
-	FeMergeNodeDominantBaselineMiddle       FeMergeNodeDominantBaseline = "middle"
-	FeMergeNodeDominantBaselineTextBottom   FeMergeNodeDominantBaseline = "text-bottom"
-	FeMergeNodeDominantBaselineTextTop      FeMergeNodeDominantBaseline = "text-top"
-)
-
-type FeMergeNodeFillRule string
-
-const (
-	FeMergeNodeFillRuleEvenodd FeMergeNodeFillRule = "evenodd"
-	FeMergeNodeFillRuleNonzero FeMergeNodeFillRule = "nonzero"
-)
-
-type FeMergeNodeFontStyle string
-
-const (
-	FeMergeNodeFontStyleItalic  FeMergeNodeFontStyle = "italic"
-	FeMergeNodeFontStyleNormal  FeMergeNodeFontStyle = "normal"
-	FeMergeNodeFontStyleOblique FeMergeNodeFontStyle = "oblique"
-)
-
-type FeMergeNodeImageRendering string
-
-const (
-	FeMergeNodeImageRenderingAuto            FeMergeNodeImageRendering = "auto"
-	FeMergeNodeImageRenderingCrispEdges      FeMergeNodeImageRendering = "crisp-edges"
-	FeMergeNodeImageRenderingHighQuality     FeMergeNodeImageRendering = "high-quality"
-	FeMergeNodeImageRenderingOptimizeQuality FeMergeNodeImageRendering = "optimizeQuality"
-	FeMergeNodeImageRenderingOptimizeSpeed   FeMergeNodeImageRendering = "optimizeSpeed"
-	FeMergeNodeImageRenderingPixelated       FeMergeNodeImageRendering = "pixelated"
-	FeMergeNodeImageRenderingSmooth          FeMergeNodeImageRendering = "smooth"
-)
-
-type FeMergeNodeOverflow string
-
-const (
-	FeMergeNodeOverflowAuto    FeMergeNodeOverflow = "auto"
-	FeMergeNodeOverflowClip    FeMergeNodeOverflow = "clip"
-	FeMergeNodeOverflowHidden  FeMergeNodeOverflow = "hidden"
-	FeMergeNodeOverflowScroll  FeMergeNodeOverflow = "scroll"
-	FeMergeNodeOverflowVisible FeMergeNodeOverflow = "visible"
-)
-
-type FeMergeNodePointerEvents string
-
-const (
-	FeMergeNodePointerEventsAll            FeMergeNodePointerEvents = "all"
-	FeMergeNodePointerEventsAuto           FeMergeNodePointerEvents = "auto"
-	FeMergeNodePointerEventsBoundingBox    FeMergeNodePointerEvents = "bounding-box"
-	FeMergeNodePointerEventsFill           FeMergeNodePointerEvents = "fill"
-	FeMergeNodePointerEventsNone           FeMergeNodePointerEvents = "none"
-	FeMergeNodePointerEventsPainted        FeMergeNodePointerEvents = "painted"
-	FeMergeNodePointerEventsStroke         FeMergeNodePointerEvents = "stroke"
-	FeMergeNodePointerEventsVisible        FeMergeNodePointerEvents = "visible"
-	FeMergeNodePointerEventsVisibleFill    FeMergeNodePointerEvents = "visibleFill"
-	FeMergeNodePointerEventsVisiblePainted FeMergeNodePointerEvents = "visiblePainted"
-	FeMergeNodePointerEventsVisibleStroke  FeMergeNodePointerEvents = "visibleStroke"
-)
-
-type FeMergeNodeShapeRendering string
-
-const (
-	FeMergeNodeShapeRenderingAuto               FeMergeNodeShapeRendering = "auto"
-	FeMergeNodeShapeRenderingCrispEdges         FeMergeNodeShapeRendering = "crispEdges"
-	FeMergeNodeShapeRenderingGeometricPrecision FeMergeNodeShapeRendering = "geometricPrecision"
-	FeMergeNodeShapeRenderingOptimizeSpeed      FeMergeNodeShapeRendering = "optimizeSpeed"
-)
-
-type FeMergeNodeStrokeLinecap string
-
-const (
-	FeMergeNodeStrokeLinecapButt   FeMergeNodeStrokeLinecap = "butt"
-	FeMergeNodeStrokeLinecapRound  FeMergeNodeStrokeLinecap = "round"
-	FeMergeNodeStrokeLinecapSquare FeMergeNodeStrokeLinecap = "square"
-)
-
-type FeMergeNodeStrokeLinejoin string
-
-const (
-	FeMergeNodeStrokeLinejoinArcs      FeMergeNodeStrokeLinejoin = "arcs"
-	FeMergeNodeStrokeLinejoinBevel     FeMergeNodeStrokeLinejoin = "bevel"
-	FeMergeNodeStrokeLinejoinMiter     FeMergeNodeStrokeLinejoin = "miter"
-	FeMergeNodeStrokeLinejoinMiterClip FeMergeNodeStrokeLinejoin = "miter-clip"
-	FeMergeNodeStrokeLinejoinRound     FeMergeNodeStrokeLinejoin = "round"
-)
-
-type FeMergeNodeTextAnchor string
-
-const (
-	FeMergeNodeTextAnchorEnd    FeMergeNodeTextAnchor = "end"
-	FeMergeNodeTextAnchorMiddle FeMergeNodeTextAnchor = "middle"
-	FeMergeNodeTextAnchorStart  FeMergeNodeTextAnchor = "start"
-)
-
-type FeMergeNodeTextRendering string
-
-const (
-	FeMergeNodeTextRenderingAuto               FeMergeNodeTextRendering = "auto"
-	FeMergeNodeTextRenderingGeometricPrecision FeMergeNodeTextRendering = "geometricPrecision"
-	FeMergeNodeTextRenderingOptimizeLegibility FeMergeNodeTextRendering = "optimizeLegibility"
-	FeMergeNodeTextRenderingOptimizeSpeed      FeMergeNodeTextRendering = "optimizeSpeed"
-)
-
-type FeMergeNodeTransformBox string
-
-const (
-	FeMergeNodeTransformBoxBorderBox  FeMergeNodeTransformBox = "border-box"
-	FeMergeNodeTransformBoxContentBox FeMergeNodeTransformBox = "content-box"
-	FeMergeNodeTransformBoxFillBox    FeMergeNodeTransformBox = "fill-box"
-	FeMergeNodeTransformBoxStrokeBox  FeMergeNodeTransformBox = "stroke-box"
-	FeMergeNodeTransformBoxViewBox    FeMergeNodeTransformBox = "view-box"
-)
-
-type FeMergeNodeVectorEffect string
-
-const (
-	FeMergeNodeVectorEffectFixedPosition    FeMergeNodeVectorEffect = "fixed-position"
-	FeMergeNodeVectorEffectNonRotation      FeMergeNodeVectorEffect = "non-rotation"
-	FeMergeNodeVectorEffectNonScalingSize   FeMergeNodeVectorEffect = "non-scaling-size"
-	FeMergeNodeVectorEffectNonScalingStroke FeMergeNodeVectorEffect = "non-scaling-stroke"
-	FeMergeNodeVectorEffectNone             FeMergeNodeVectorEffect = "none"
-)
-
-type FeMergeNodeVisibility string
-
-const (
-	FeMergeNodeVisibilityCollapse FeMergeNodeVisibility = "collapse"
-	FeMergeNodeVisibilityHidden   FeMergeNodeVisibility = "hidden"
-	FeMergeNodeVisibilityVisible  FeMergeNodeVisibility = "visible"
-)
-
-type FeMergeNodeWritingMode string
-
-const (
-	FeMergeNodeWritingModeHorizontalTb FeMergeNodeWritingMode = "horizontal-tb"
-	FeMergeNodeWritingModeLr           FeMergeNodeWritingMode = "lr"
-	FeMergeNodeWritingModeLrTb         FeMergeNodeWritingMode = "lr-tb"
-	FeMergeNodeWritingModeRl           FeMergeNodeWritingMode = "rl"
-	FeMergeNodeWritingModeRlTb         FeMergeNodeWritingMode = "rl-tb"
-	FeMergeNodeWritingModeSidewaysLr   FeMergeNodeWritingMode = "sideways-lr"
-	FeMergeNodeWritingModeSidewaysRl   FeMergeNodeWritingMode = "sideways-rl"
-	FeMergeNodeWritingModeTb           FeMergeNodeWritingMode = "tb"
-	FeMergeNodeWritingModeTbRl         FeMergeNodeWritingMode = "tb-rl"
-	FeMergeNodeWritingModeVerticalLr   FeMergeNodeWritingMode = "vertical-lr"
-	FeMergeNodeWritingModeVerticalRl   FeMergeNodeWritingMode = "vertical-rl"
-)
-
-type FeMergeNodeXmlSpace string
-
-const (
-	FeMergeNodeXmlSpaceDefault  FeMergeNodeXmlSpace = "default"
-	FeMergeNodeXmlSpacePreserve FeMergeNodeXmlSpace = "preserve"
-)
+// SVGContent marks <feMergeNode> as a permitted child (Content).
+func (*FeMergeNodeElement) SVGContent() {}
 
 func (e *FeMergeNodeElement) In(s string) *FeMergeNodeElement {
 	e.attributes.Set("in", s)
@@ -384,14 +175,10 @@ func (e *FeMergeNodeElement) In(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) AlignmentBaseline(a FeMergeNodeAlignmentBaseline) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) AlignmentBaseline(a AlignmentBaseline) *FeMergeNodeElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeMergeNodeAlignmentBaselineCustom(s string) FeMergeNodeAlignmentBaseline {
-	return FeMergeNodeAlignmentBaseline(s)
 }
 
 func (e *FeMergeNodeElement) AriaUnsafe(name string, s string) *FeMergeNodeElement {
@@ -445,14 +232,10 @@ func (e *FeMergeNodeElement) ClipPath(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) ClipRule(a FeMergeNodeClipRule) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) ClipRule(a ClipRule) *FeMergeNodeElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeMergeNodeClipRuleCustom(s string) FeMergeNodeClipRule {
-	return FeMergeNodeClipRule(s)
 }
 
 func (e *FeMergeNodeElement) Color(s string) *FeMergeNodeElement {
@@ -461,24 +244,16 @@ func (e *FeMergeNodeElement) Color(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) ColorInterpolation(a FeMergeNodeColorInterpolation) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) ColorInterpolation(a ColorInterpolation) *FeMergeNodeElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeMergeNodeColorInterpolationCustom(s string) FeMergeNodeColorInterpolation {
-	return FeMergeNodeColorInterpolation(s)
-}
-
-func (e *FeMergeNodeElement) ColorInterpolationFilters(a FeMergeNodeColorInterpolationFilters) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeMergeNodeElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeMergeNodeColorInterpolationFiltersCustom(s string) FeMergeNodeColorInterpolationFilters {
-	return FeMergeNodeColorInterpolationFilters(s)
 }
 
 func (e *FeMergeNodeElement) Cursor(s string) *FeMergeNodeElement {
@@ -503,14 +278,10 @@ func (e *FeMergeNodeElement) Data(name string, s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) Direction(a FeMergeNodeDirection) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) Direction(a Direction) *FeMergeNodeElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeMergeNodeDirectionCustom(s string) FeMergeNodeDirection {
-	return FeMergeNodeDirection(s)
 }
 
 func (e *FeMergeNodeElement) Display(s string) *FeMergeNodeElement {
@@ -519,14 +290,10 @@ func (e *FeMergeNodeElement) Display(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) DominantBaseline(a FeMergeNodeDominantBaseline) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) DominantBaseline(a DominantBaseline) *FeMergeNodeElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeMergeNodeDominantBaselineCustom(s string) FeMergeNodeDominantBaseline {
-	return FeMergeNodeDominantBaseline(s)
 }
 
 func (e *FeMergeNodeElement) Fill(s string) *FeMergeNodeElement {
@@ -541,14 +308,10 @@ func (e *FeMergeNodeElement) FillOpacity(f float64) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) FillRule(a FeMergeNodeFillRule) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) FillRule(a FillRule) *FeMergeNodeElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeMergeNodeFillRuleCustom(s string) FeMergeNodeFillRule {
-	return FeMergeNodeFillRule(s)
 }
 
 func (e *FeMergeNodeElement) Filter(s string) *FeMergeNodeElement {
@@ -593,14 +356,10 @@ func (e *FeMergeNodeElement) FontStretch(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) FontStyle(a FeMergeNodeFontStyle) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) FontStyle(a FontStyle) *FeMergeNodeElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeMergeNodeFontStyleCustom(s string) FeMergeNodeFontStyle {
-	return FeMergeNodeFontStyle(s)
 }
 
 func (e *FeMergeNodeElement) FontVariant(s string) *FeMergeNodeElement {
@@ -639,14 +398,10 @@ func (e *FeMergeNodeElement) Id(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) ImageRendering(a FeMergeNodeImageRendering) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) ImageRendering(a ImageRendering) *FeMergeNodeElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeMergeNodeImageRenderingCustom(s string) FeMergeNodeImageRendering {
-	return FeMergeNodeImageRendering(s)
 }
 
 func (e *FeMergeNodeElement) Lang(s string) *FeMergeNodeElement {
@@ -697,14 +452,10 @@ func (e *FeMergeNodeElement) Opacity(f float64) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) Overflow(a FeMergeNodeOverflow) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) Overflow(a Overflow) *FeMergeNodeElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeMergeNodeOverflowCustom(s string) FeMergeNodeOverflow {
-	return FeMergeNodeOverflow(s)
 }
 
 func (e *FeMergeNodeElement) PaintOrder(s string) *FeMergeNodeElement {
@@ -713,14 +464,10 @@ func (e *FeMergeNodeElement) PaintOrder(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) PointerEvents(a FeMergeNodePointerEvents) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) PointerEvents(a PointerEvents) *FeMergeNodeElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeMergeNodePointerEventsCustom(s string) FeMergeNodePointerEvents {
-	return FeMergeNodePointerEvents(s)
 }
 
 func (e *FeMergeNodeElement) RequiredExtensions(s string) *FeMergeNodeElement {
@@ -729,14 +476,10 @@ func (e *FeMergeNodeElement) RequiredExtensions(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) ShapeRendering(a FeMergeNodeShapeRendering) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) ShapeRendering(a ShapeRendering) *FeMergeNodeElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeMergeNodeShapeRenderingCustom(s string) FeMergeNodeShapeRendering {
-	return FeMergeNodeShapeRendering(s)
 }
 
 func (e *FeMergeNodeElement) StopColor(s string) *FeMergeNodeElement {
@@ -769,24 +512,16 @@ func (e *FeMergeNodeElement) StrokeDashoffset(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) StrokeLinecap(a FeMergeNodeStrokeLinecap) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) StrokeLinecap(a StrokeLinecap) *FeMergeNodeElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeMergeNodeStrokeLinecapCustom(s string) FeMergeNodeStrokeLinecap {
-	return FeMergeNodeStrokeLinecap(s)
-}
-
-func (e *FeMergeNodeElement) StrokeLinejoin(a FeMergeNodeStrokeLinejoin) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) StrokeLinejoin(a StrokeLinejoin) *FeMergeNodeElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeMergeNodeStrokeLinejoinCustom(s string) FeMergeNodeStrokeLinejoin {
-	return FeMergeNodeStrokeLinejoin(s)
 }
 
 func (e *FeMergeNodeElement) StrokeMiterlimit(f float64) *FeMergeNodeElement {
@@ -819,14 +554,10 @@ func (e *FeMergeNodeElement) Tabindex(i int) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) TextAnchor(a FeMergeNodeTextAnchor) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) TextAnchor(a TextAnchor) *FeMergeNodeElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeMergeNodeTextAnchorCustom(s string) FeMergeNodeTextAnchor {
-	return FeMergeNodeTextAnchor(s)
 }
 
 func (e *FeMergeNodeElement) TextDecoration(s string) *FeMergeNodeElement {
@@ -841,14 +572,10 @@ func (e *FeMergeNodeElement) TextOverflow(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) TextRendering(a FeMergeNodeTextRendering) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) TextRendering(a TextRendering) *FeMergeNodeElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeMergeNodeTextRenderingCustom(s string) FeMergeNodeTextRendering {
-	return FeMergeNodeTextRendering(s)
 }
 
 func (e *FeMergeNodeElement) Transform(s string) *FeMergeNodeElement {
@@ -857,14 +584,10 @@ func (e *FeMergeNodeElement) Transform(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) TransformBox(a FeMergeNodeTransformBox) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) TransformBox(a TransformBox) *FeMergeNodeElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeMergeNodeTransformBoxCustom(s string) FeMergeNodeTransformBox {
-	return FeMergeNodeTransformBox(s)
 }
 
 func (e *FeMergeNodeElement) TransformOrigin(s string) *FeMergeNodeElement {
@@ -879,24 +602,16 @@ func (e *FeMergeNodeElement) UnicodeBidi(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) VectorEffect(a FeMergeNodeVectorEffect) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) VectorEffect(a VectorEffect) *FeMergeNodeElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeMergeNodeVectorEffectCustom(s string) FeMergeNodeVectorEffect {
-	return FeMergeNodeVectorEffect(s)
-}
-
-func (e *FeMergeNodeElement) Visibility(a FeMergeNodeVisibility) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) Visibility(a Visibility) *FeMergeNodeElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeMergeNodeVisibilityCustom(s string) FeMergeNodeVisibility {
-	return FeMergeNodeVisibility(s)
 }
 
 func (e *FeMergeNodeElement) WhiteSpace(s string) *FeMergeNodeElement {
@@ -911,14 +626,10 @@ func (e *FeMergeNodeElement) WordSpacing(s string) *FeMergeNodeElement {
 	return e
 }
 
-func (e *FeMergeNodeElement) WritingMode(a FeMergeNodeWritingMode) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) WritingMode(a WritingMode) *FeMergeNodeElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeMergeNodeWritingModeCustom(s string) FeMergeNodeWritingMode {
-	return FeMergeNodeWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -933,7 +644,7 @@ func (e *FeMergeNodeElement) XmlLang(s string) *FeMergeNodeElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeMergeNodeElement) XmlSpace(a FeMergeNodeXmlSpace) *FeMergeNodeElement {
+func (e *FeMergeNodeElement) XmlSpace(a XmlSpace) *FeMergeNodeElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

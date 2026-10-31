@@ -13,16 +13,20 @@ import (
 )
 
 type DivElement struct {
+	htemel.FlowMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Div creates a tag <div> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: flow content (htemel.FlowContent).
+//
 // Spec Description: The div element has no special meaning at all. It represents its children. It can be used with the class, lang, and title attributes to mark up semantics common to a group of consecutive elements. It can also be used in a dl element, wrapping groups of dt and dd elements.
-func Div(children ...htemel.Node) *DivElement {
+func Div(children ...htemel.FlowContent) *DivElement {
 	node := &DivElement{
 		children: children,
 	}
@@ -31,7 +35,7 @@ func Div(children ...htemel.Node) *DivElement {
 }
 
 // DivIf creates a tag <div> instance that is only rendered when condition is true.
-func DivIf(condition bool, children ...htemel.Node) *DivElement {
+func DivIf(condition bool, children ...htemel.FlowContent) *DivElement {
 	if condition {
 		return Div(children...)
 	}
@@ -43,7 +47,7 @@ func DivIf(condition bool, children ...htemel.Node) *DivElement {
 }
 
 // DivTernary creates a tag <div> containing then when condition is true, otherwise containing otherwise.
-func DivTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DivElement {
+func DivTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *DivElement {
 	if condition {
 		return Div(then)
 	}
@@ -51,7 +55,7 @@ func DivTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DivEle
 }
 
 // Children appends children to this element.
-func (e *DivElement) Children(children ...htemel.Node) *DivElement {
+func (e *DivElement) Children(children ...htemel.FlowContent) *DivElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +78,7 @@ func (e *DivElement) Textf(format string, args ...any) *DivElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DivElement) If(cond bool, child htemel.Node) *DivElement {
+func (e *DivElement) If(cond bool, child htemel.FlowContent) *DivElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +86,7 @@ func (e *DivElement) If(cond bool, child htemel.Node) *DivElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DivElement) IfElse(cond bool, then, els htemel.Node) *DivElement {
+func (e *DivElement) IfElse(cond bool, then, els htemel.FlowContent) *DivElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +168,17 @@ func (e *DivElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DivAutocapitalize string
+// HTMLDlChild marks <div> as a permitted child of <dl> (DlChild).
+func (*DivElement) HTMLDlChild() {}
 
-const (
-	DivAutocapitalizeCharacters DivAutocapitalize = "characters"
-	DivAutocapitalizeNone       DivAutocapitalize = "none"
-	DivAutocapitalizeOff        DivAutocapitalize = "off"
-	DivAutocapitalizeOn         DivAutocapitalize = "on"
-	DivAutocapitalizeSentences  DivAutocapitalize = "sentences"
-	DivAutocapitalizeWords      DivAutocapitalize = "words"
-)
+// HTMLOptgroupChild marks <div> as a permitted child of <optgroup> (OptgroupChild).
+func (*DivElement) HTMLOptgroupChild() {}
 
-type DivAutocorrect string
+// HTMLOptionChild marks <div> as a permitted child of <option> (OptionChild).
+func (*DivElement) HTMLOptionChild() {}
 
-const (
-	DivAutocorrectOff   DivAutocorrect = "off"
-	DivAutocorrectOn    DivAutocorrect = "on"
-	DivAutocorrectEmpty DivAutocorrect = ""
-)
-
-type DivContenteditable string
-
-const (
-	DivContenteditableFalse         DivContenteditable = "false"
-	DivContenteditablePlaintextOnly DivContenteditable = "plaintext-only"
-	DivContenteditableTrue          DivContenteditable = "true"
-	DivContenteditableEmpty         DivContenteditable = ""
-)
-
-type DivDir string
-
-const (
-	DivDirAuto DivDir = "auto"
-	DivDirLtr  DivDir = "ltr"
-	DivDirRtl  DivDir = "rtl"
-)
-
-type DivDraggable string
-
-const (
-	DivDraggableFalse DivDraggable = "false"
-	DivDraggableTrue  DivDraggable = "true"
-)
-
-type DivEnterkeyhint string
-
-const (
-	DivEnterkeyhintDone     DivEnterkeyhint = "done"
-	DivEnterkeyhintEnter    DivEnterkeyhint = "enter"
-	DivEnterkeyhintGo       DivEnterkeyhint = "go"
-	DivEnterkeyhintNext     DivEnterkeyhint = "next"
-	DivEnterkeyhintPrevious DivEnterkeyhint = "previous"
-	DivEnterkeyhintSearch   DivEnterkeyhint = "search"
-	DivEnterkeyhintSend     DivEnterkeyhint = "send"
-)
-
-type DivHidden string
-
-const (
-	DivHiddenHidden     DivHidden = "hidden"
-	DivHiddenUntilFound DivHidden = "until-found"
-	DivHiddenEmpty      DivHidden = ""
-)
-
-type DivInputmode string
-
-const (
-	DivInputmodeDecimal DivInputmode = "decimal"
-	DivInputmodeEmail   DivInputmode = "email"
-	DivInputmodeNone    DivInputmode = "none"
-	DivInputmodeNumeric DivInputmode = "numeric"
-	DivInputmodeSearch  DivInputmode = "search"
-	DivInputmodeTel     DivInputmode = "tel"
-	DivInputmodeText    DivInputmode = "text"
-	DivInputmodeUrl     DivInputmode = "url"
-)
-
-type DivPopover string
-
-const (
-	DivPopoverAuto   DivPopover = "auto"
-	DivPopoverHint   DivPopover = "hint"
-	DivPopoverManual DivPopover = "manual"
-	DivPopoverEmpty  DivPopover = ""
-)
-
-type DivSpellcheck string
-
-const (
-	DivSpellcheckFalse DivSpellcheck = "false"
-	DivSpellcheckTrue  DivSpellcheck = "true"
-	DivSpellcheckEmpty DivSpellcheck = ""
-)
-
-type DivTranslate string
-
-const (
-	DivTranslateNo    DivTranslate = "no"
-	DivTranslateYes   DivTranslate = "yes"
-	DivTranslateEmpty DivTranslate = ""
-)
-
-type DivWritingsuggestions string
-
-const (
-	DivWritingsuggestionsFalse DivWritingsuggestions = "false"
-	DivWritingsuggestionsTrue  DivWritingsuggestions = "true"
-	DivWritingsuggestionsEmpty DivWritingsuggestions = ""
-)
+// HTMLSelectChild marks <div> as a permitted child of <select> (SelectChild).
+func (*DivElement) HTMLSelectChild() {}
 
 func (e *DivElement) Accesskey(r rune) *DivElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +202,7 @@ func (e *DivElement) Aria(name string, s string) *DivElement {
 	return e
 }
 
-func (e *DivElement) Autocapitalize(a DivAutocapitalize) *DivElement {
+func (e *DivElement) Autocapitalize(a Autocapitalize) *DivElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +210,8 @@ func (e *DivElement) Autocapitalize(a DivAutocapitalize) *DivElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Autocorrect(v ...DivAutocorrect) *DivElement {
-	var val DivAutocorrect
+func (e *DivElement) Autocorrect(v ...Autocorrect) *DivElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +236,8 @@ func (e *DivElement) Class(s ...string) *DivElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Contenteditable(v ...DivContenteditable) *DivElement {
-	var val DivContenteditable
+func (e *DivElement) Contenteditable(v ...Contenteditable) *DivElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +262,19 @@ func (e *DivElement) Data(name string, s string) *DivElement {
 	return e
 }
 
-func (e *DivElement) Dir(a DivDir) *DivElement {
+func (e *DivElement) Dir(a Dir) *DivElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DivElement) Draggable(a DivDraggable) *DivElement {
+func (e *DivElement) Draggable(a Draggable) *DivElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DivElement) Enterkeyhint(a DivEnterkeyhint) *DivElement {
+func (e *DivElement) Enterkeyhint(a Enterkeyhint) *DivElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +302,8 @@ func (e *DivElement) Headingreset(b bool) *DivElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Hidden(v ...DivHidden) *DivElement {
-	var val DivHidden
+func (e *DivElement) Hidden(v ...Hidden) *DivElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +326,7 @@ func (e *DivElement) Inert(b bool) *DivElement {
 	return e
 }
 
-func (e *DivElement) Inputmode(a DivInputmode) *DivElement {
+func (e *DivElement) Inputmode(a Inputmode) *DivElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +392,8 @@ func (e *DivElement) Part(s ...string) *DivElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Popover(v ...DivPopover) *DivElement {
-	var val DivPopover
+func (e *DivElement) Popover(v ...Popover) *DivElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +416,8 @@ func (e *DivElement) Slot(s string) *DivElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Spellcheck(v ...DivSpellcheck) *DivElement {
-	var val DivSpellcheck
+func (e *DivElement) Spellcheck(v ...Spellcheck) *DivElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +446,8 @@ func (e *DivElement) Title(s string) *DivElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Translate(v ...DivTranslate) *DivElement {
-	var val DivTranslate
+func (e *DivElement) Translate(v ...Translate) *DivElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +458,8 @@ func (e *DivElement) Translate(v ...DivTranslate) *DivElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DivElement) Writingsuggestions(v ...DivWritingsuggestions) *DivElement {
-	var val DivWritingsuggestions
+func (e *DivElement) Writingsuggestions(v ...Writingsuggestions) *DivElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

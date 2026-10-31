@@ -2,7 +2,6 @@
 package html
 
 import (
-	"fmt"
 	"io"
 	"slices"
 	"strconv"
@@ -12,17 +11,29 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// TbodyChild is a permitted child of <tbody>: <tr>, script-supporting elements.
+//
+// It is implemented by <script>, <template>, <tr>, by any type embedding
+// htemel.ScriptSupportingMarker and by the unchecked nodes of package htemel (Group, Each, If,
+// Unchecked, ...).
+type TbodyChild interface {
+	htemel.Node
+	HTMLTbodyChild()
+}
+
 type TbodyElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []TbodyChild
 	skipRender bool
 }
 
 // Tbody creates a tag <tbody> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <tr>, script-supporting elements (TbodyChild).
+//
 // Spec Description: The tbody element represents a block of rows that consist of a body of data for the parent table element, if the tbody element has a parent and it is a table.
-func Tbody(children ...htemel.Node) *TbodyElement {
+func Tbody(children ...TbodyChild) *TbodyElement {
 	node := &TbodyElement{
 		children: children,
 	}
@@ -31,7 +42,7 @@ func Tbody(children ...htemel.Node) *TbodyElement {
 }
 
 // TbodyIf creates a tag <tbody> instance that is only rendered when condition is true.
-func TbodyIf(condition bool, children ...htemel.Node) *TbodyElement {
+func TbodyIf(condition bool, children ...TbodyChild) *TbodyElement {
 	if condition {
 		return Tbody(children...)
 	}
@@ -43,7 +54,7 @@ func TbodyIf(condition bool, children ...htemel.Node) *TbodyElement {
 }
 
 // TbodyTernary creates a tag <tbody> containing then when condition is true, otherwise containing otherwise.
-func TbodyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *TbodyElement {
+func TbodyTernary(condition bool, then TbodyChild, otherwise TbodyChild) *TbodyElement {
 	if condition {
 		return Tbody(then)
 	}
@@ -51,7 +62,7 @@ func TbodyTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Tbod
 }
 
 // Children appends children to this element.
-func (e *TbodyElement) Children(children ...htemel.Node) *TbodyElement {
+func (e *TbodyElement) Children(children ...TbodyChild) *TbodyElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -62,19 +73,8 @@ func (e *TbodyElement) With(fn func(*TbodyElement)) *TbodyElement {
 	return e
 }
 
-// Text adds an HTML-escaped text node to the element.
-func (e *TbodyElement) Text(text string) *TbodyElement {
-	return e.Children(htemel.Text(text))
-}
-
-// Textf adds a text node to the element with the given format string and arguments.
-// It follows the same escaping rules as Text.
-func (e *TbodyElement) Textf(format string, args ...any) *TbodyElement {
-	return e.Text(fmt.Sprintf(format, args...))
-}
-
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *TbodyElement) If(cond bool, child htemel.Node) *TbodyElement {
+func (e *TbodyElement) If(cond bool, child TbodyChild) *TbodyElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +82,7 @@ func (e *TbodyElement) If(cond bool, child htemel.Node) *TbodyElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *TbodyElement) IfElse(cond bool, then, els htemel.Node) *TbodyElement {
+func (e *TbodyElement) IfElse(cond bool, then, els TbodyChild) *TbodyElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +164,8 @@ func (e *TbodyElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type TbodyAutocapitalize string
-
-const (
-	TbodyAutocapitalizeCharacters TbodyAutocapitalize = "characters"
-	TbodyAutocapitalizeNone       TbodyAutocapitalize = "none"
-	TbodyAutocapitalizeOff        TbodyAutocapitalize = "off"
-	TbodyAutocapitalizeOn         TbodyAutocapitalize = "on"
-	TbodyAutocapitalizeSentences  TbodyAutocapitalize = "sentences"
-	TbodyAutocapitalizeWords      TbodyAutocapitalize = "words"
-)
-
-type TbodyAutocorrect string
-
-const (
-	TbodyAutocorrectOff   TbodyAutocorrect = "off"
-	TbodyAutocorrectOn    TbodyAutocorrect = "on"
-	TbodyAutocorrectEmpty TbodyAutocorrect = ""
-)
-
-type TbodyContenteditable string
-
-const (
-	TbodyContenteditableFalse         TbodyContenteditable = "false"
-	TbodyContenteditablePlaintextOnly TbodyContenteditable = "plaintext-only"
-	TbodyContenteditableTrue          TbodyContenteditable = "true"
-	TbodyContenteditableEmpty         TbodyContenteditable = ""
-)
-
-type TbodyDir string
-
-const (
-	TbodyDirAuto TbodyDir = "auto"
-	TbodyDirLtr  TbodyDir = "ltr"
-	TbodyDirRtl  TbodyDir = "rtl"
-)
-
-type TbodyDraggable string
-
-const (
-	TbodyDraggableFalse TbodyDraggable = "false"
-	TbodyDraggableTrue  TbodyDraggable = "true"
-)
-
-type TbodyEnterkeyhint string
-
-const (
-	TbodyEnterkeyhintDone     TbodyEnterkeyhint = "done"
-	TbodyEnterkeyhintEnter    TbodyEnterkeyhint = "enter"
-	TbodyEnterkeyhintGo       TbodyEnterkeyhint = "go"
-	TbodyEnterkeyhintNext     TbodyEnterkeyhint = "next"
-	TbodyEnterkeyhintPrevious TbodyEnterkeyhint = "previous"
-	TbodyEnterkeyhintSearch   TbodyEnterkeyhint = "search"
-	TbodyEnterkeyhintSend     TbodyEnterkeyhint = "send"
-)
-
-type TbodyHidden string
-
-const (
-	TbodyHiddenHidden     TbodyHidden = "hidden"
-	TbodyHiddenUntilFound TbodyHidden = "until-found"
-	TbodyHiddenEmpty      TbodyHidden = ""
-)
-
-type TbodyInputmode string
-
-const (
-	TbodyInputmodeDecimal TbodyInputmode = "decimal"
-	TbodyInputmodeEmail   TbodyInputmode = "email"
-	TbodyInputmodeNone    TbodyInputmode = "none"
-	TbodyInputmodeNumeric TbodyInputmode = "numeric"
-	TbodyInputmodeSearch  TbodyInputmode = "search"
-	TbodyInputmodeTel     TbodyInputmode = "tel"
-	TbodyInputmodeText    TbodyInputmode = "text"
-	TbodyInputmodeUrl     TbodyInputmode = "url"
-)
-
-type TbodyPopover string
-
-const (
-	TbodyPopoverAuto   TbodyPopover = "auto"
-	TbodyPopoverHint   TbodyPopover = "hint"
-	TbodyPopoverManual TbodyPopover = "manual"
-	TbodyPopoverEmpty  TbodyPopover = ""
-)
-
-type TbodySpellcheck string
-
-const (
-	TbodySpellcheckFalse TbodySpellcheck = "false"
-	TbodySpellcheckTrue  TbodySpellcheck = "true"
-	TbodySpellcheckEmpty TbodySpellcheck = ""
-)
-
-type TbodyTranslate string
-
-const (
-	TbodyTranslateNo    TbodyTranslate = "no"
-	TbodyTranslateYes   TbodyTranslate = "yes"
-	TbodyTranslateEmpty TbodyTranslate = ""
-)
-
-type TbodyWritingsuggestions string
-
-const (
-	TbodyWritingsuggestionsFalse TbodyWritingsuggestions = "false"
-	TbodyWritingsuggestionsTrue  TbodyWritingsuggestions = "true"
-	TbodyWritingsuggestionsEmpty TbodyWritingsuggestions = ""
-)
+// HTMLTableChild marks <tbody> as a permitted child of <table> (TableChild).
+func (*TbodyElement) HTMLTableChild() {}
 
 func (e *TbodyElement) Accesskey(r rune) *TbodyElement {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +189,7 @@ func (e *TbodyElement) Aria(name string, s string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Autocapitalize(a TbodyAutocapitalize) *TbodyElement {
+func (e *TbodyElement) Autocapitalize(a Autocapitalize) *TbodyElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +197,8 @@ func (e *TbodyElement) Autocapitalize(a TbodyAutocapitalize) *TbodyElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Autocorrect(v ...TbodyAutocorrect) *TbodyElement {
-	var val TbodyAutocorrect
+func (e *TbodyElement) Autocorrect(v ...Autocorrect) *TbodyElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +223,8 @@ func (e *TbodyElement) Class(s ...string) *TbodyElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Contenteditable(v ...TbodyContenteditable) *TbodyElement {
-	var val TbodyContenteditable
+func (e *TbodyElement) Contenteditable(v ...Contenteditable) *TbodyElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +249,19 @@ func (e *TbodyElement) Data(name string, s string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Dir(a TbodyDir) *TbodyElement {
+func (e *TbodyElement) Dir(a Dir) *TbodyElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *TbodyElement) Draggable(a TbodyDraggable) *TbodyElement {
+func (e *TbodyElement) Draggable(a Draggable) *TbodyElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *TbodyElement) Enterkeyhint(a TbodyEnterkeyhint) *TbodyElement {
+func (e *TbodyElement) Enterkeyhint(a Enterkeyhint) *TbodyElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +289,8 @@ func (e *TbodyElement) Headingreset(b bool) *TbodyElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Hidden(v ...TbodyHidden) *TbodyElement {
-	var val TbodyHidden
+func (e *TbodyElement) Hidden(v ...Hidden) *TbodyElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +313,7 @@ func (e *TbodyElement) Inert(b bool) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Inputmode(a TbodyInputmode) *TbodyElement {
+func (e *TbodyElement) Inputmode(a Inputmode) *TbodyElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +379,8 @@ func (e *TbodyElement) Part(s ...string) *TbodyElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Popover(v ...TbodyPopover) *TbodyElement {
-	var val TbodyPopover
+func (e *TbodyElement) Popover(v ...Popover) *TbodyElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +403,8 @@ func (e *TbodyElement) Slot(s string) *TbodyElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Spellcheck(v ...TbodySpellcheck) *TbodyElement {
-	var val TbodySpellcheck
+func (e *TbodyElement) Spellcheck(v ...Spellcheck) *TbodyElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +433,8 @@ func (e *TbodyElement) Title(s string) *TbodyElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Translate(v ...TbodyTranslate) *TbodyElement {
-	var val TbodyTranslate
+func (e *TbodyElement) Translate(v ...Translate) *TbodyElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +445,8 @@ func (e *TbodyElement) Translate(v ...TbodyTranslate) *TbodyElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *TbodyElement) Writingsuggestions(v ...TbodyWritingsuggestions) *TbodyElement {
-	var val TbodyWritingsuggestions
+func (e *TbodyElement) Writingsuggestions(v ...Writingsuggestions) *TbodyElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

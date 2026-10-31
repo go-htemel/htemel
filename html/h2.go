@@ -13,16 +13,21 @@ import (
 )
 
 type H2Element struct {
+	htemel.FlowMarker
+	htemel.HeadingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.PhrasingContent
 	skipRender bool
 }
 
 // H2 creates a tag <h2> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: phrasing content (htemel.PhrasingContent).
+//
 // Spec Description: These elements represent headings for their sections.
-func H2(children ...htemel.Node) *H2Element {
+func H2(children ...htemel.PhrasingContent) *H2Element {
 	node := &H2Element{
 		children: children,
 	}
@@ -31,7 +36,7 @@ func H2(children ...htemel.Node) *H2Element {
 }
 
 // H2If creates a tag <h2> instance that is only rendered when condition is true.
-func H2If(condition bool, children ...htemel.Node) *H2Element {
+func H2If(condition bool, children ...htemel.PhrasingContent) *H2Element {
 	if condition {
 		return H2(children...)
 	}
@@ -43,7 +48,7 @@ func H2If(condition bool, children ...htemel.Node) *H2Element {
 }
 
 // H2Ternary creates a tag <h2> containing then when condition is true, otherwise containing otherwise.
-func H2Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H2Element {
+func H2Ternary(condition bool, then htemel.PhrasingContent, otherwise htemel.PhrasingContent) *H2Element {
 	if condition {
 		return H2(then)
 	}
@@ -51,7 +56,7 @@ func H2Ternary(condition bool, then htemel.Node, otherwise htemel.Node) *H2Eleme
 }
 
 // Children appends children to this element.
-func (e *H2Element) Children(children ...htemel.Node) *H2Element {
+func (e *H2Element) Children(children ...htemel.PhrasingContent) *H2Element {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +79,7 @@ func (e *H2Element) Textf(format string, args ...any) *H2Element {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *H2Element) If(cond bool, child htemel.Node) *H2Element {
+func (e *H2Element) If(cond bool, child htemel.PhrasingContent) *H2Element {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +87,7 @@ func (e *H2Element) If(cond bool, child htemel.Node) *H2Element {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *H2Element) IfElse(cond bool, then, els htemel.Node) *H2Element {
+func (e *H2Element) IfElse(cond bool, then, els htemel.PhrasingContent) *H2Element {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,114 +169,8 @@ func (e *H2Element) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type H2Autocapitalize string
-
-const (
-	H2AutocapitalizeCharacters H2Autocapitalize = "characters"
-	H2AutocapitalizeNone       H2Autocapitalize = "none"
-	H2AutocapitalizeOff        H2Autocapitalize = "off"
-	H2AutocapitalizeOn         H2Autocapitalize = "on"
-	H2AutocapitalizeSentences  H2Autocapitalize = "sentences"
-	H2AutocapitalizeWords      H2Autocapitalize = "words"
-)
-
-type H2Autocorrect string
-
-const (
-	H2AutocorrectOff   H2Autocorrect = "off"
-	H2AutocorrectOn    H2Autocorrect = "on"
-	H2AutocorrectEmpty H2Autocorrect = ""
-)
-
-type H2Contenteditable string
-
-const (
-	H2ContenteditableFalse         H2Contenteditable = "false"
-	H2ContenteditablePlaintextOnly H2Contenteditable = "plaintext-only"
-	H2ContenteditableTrue          H2Contenteditable = "true"
-	H2ContenteditableEmpty         H2Contenteditable = ""
-)
-
-type H2Dir string
-
-const (
-	H2DirAuto H2Dir = "auto"
-	H2DirLtr  H2Dir = "ltr"
-	H2DirRtl  H2Dir = "rtl"
-)
-
-type H2Draggable string
-
-const (
-	H2DraggableFalse H2Draggable = "false"
-	H2DraggableTrue  H2Draggable = "true"
-)
-
-type H2Enterkeyhint string
-
-const (
-	H2EnterkeyhintDone     H2Enterkeyhint = "done"
-	H2EnterkeyhintEnter    H2Enterkeyhint = "enter"
-	H2EnterkeyhintGo       H2Enterkeyhint = "go"
-	H2EnterkeyhintNext     H2Enterkeyhint = "next"
-	H2EnterkeyhintPrevious H2Enterkeyhint = "previous"
-	H2EnterkeyhintSearch   H2Enterkeyhint = "search"
-	H2EnterkeyhintSend     H2Enterkeyhint = "send"
-)
-
-type H2Hidden string
-
-const (
-	H2HiddenHidden     H2Hidden = "hidden"
-	H2HiddenUntilFound H2Hidden = "until-found"
-	H2HiddenEmpty      H2Hidden = ""
-)
-
-type H2Inputmode string
-
-const (
-	H2InputmodeDecimal H2Inputmode = "decimal"
-	H2InputmodeEmail   H2Inputmode = "email"
-	H2InputmodeNone    H2Inputmode = "none"
-	H2InputmodeNumeric H2Inputmode = "numeric"
-	H2InputmodeSearch  H2Inputmode = "search"
-	H2InputmodeTel     H2Inputmode = "tel"
-	H2InputmodeText    H2Inputmode = "text"
-	H2InputmodeUrl     H2Inputmode = "url"
-)
-
-type H2Popover string
-
-const (
-	H2PopoverAuto   H2Popover = "auto"
-	H2PopoverHint   H2Popover = "hint"
-	H2PopoverManual H2Popover = "manual"
-	H2PopoverEmpty  H2Popover = ""
-)
-
-type H2Spellcheck string
-
-const (
-	H2SpellcheckFalse H2Spellcheck = "false"
-	H2SpellcheckTrue  H2Spellcheck = "true"
-	H2SpellcheckEmpty H2Spellcheck = ""
-)
-
-type H2Translate string
-
-const (
-	H2TranslateNo    H2Translate = "no"
-	H2TranslateYes   H2Translate = "yes"
-	H2TranslateEmpty H2Translate = ""
-)
-
-type H2Writingsuggestions string
-
-const (
-	H2WritingsuggestionsFalse H2Writingsuggestions = "false"
-	H2WritingsuggestionsTrue  H2Writingsuggestions = "true"
-	H2WritingsuggestionsEmpty H2Writingsuggestions = ""
-)
+// HTMLHgroupChild marks <h2> as a permitted child of <hgroup> (HgroupChild).
+func (*H2Element) HTMLHgroupChild() {}
 
 func (e *H2Element) Accesskey(r rune) *H2Element {
 	e.attributes.Set("accesskey", string(r))
@@ -295,7 +194,7 @@ func (e *H2Element) Aria(name string, s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Autocapitalize(a H2Autocapitalize) *H2Element {
+func (e *H2Element) Autocapitalize(a Autocapitalize) *H2Element {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +202,8 @@ func (e *H2Element) Autocapitalize(a H2Autocapitalize) *H2Element {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Autocorrect(v ...H2Autocorrect) *H2Element {
-	var val H2Autocorrect
+func (e *H2Element) Autocorrect(v ...Autocorrect) *H2Element {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +228,8 @@ func (e *H2Element) Class(s ...string) *H2Element {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Contenteditable(v ...H2Contenteditable) *H2Element {
-	var val H2Contenteditable
+func (e *H2Element) Contenteditable(v ...Contenteditable) *H2Element {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +254,19 @@ func (e *H2Element) Data(name string, s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Dir(a H2Dir) *H2Element {
+func (e *H2Element) Dir(a Dir) *H2Element {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *H2Element) Draggable(a H2Draggable) *H2Element {
+func (e *H2Element) Draggable(a Draggable) *H2Element {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *H2Element) Enterkeyhint(a H2Enterkeyhint) *H2Element {
+func (e *H2Element) Enterkeyhint(a Enterkeyhint) *H2Element {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +294,8 @@ func (e *H2Element) Headingreset(b bool) *H2Element {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Hidden(v ...H2Hidden) *H2Element {
-	var val H2Hidden
+func (e *H2Element) Hidden(v ...Hidden) *H2Element {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +318,7 @@ func (e *H2Element) Inert(b bool) *H2Element {
 	return e
 }
 
-func (e *H2Element) Inputmode(a H2Inputmode) *H2Element {
+func (e *H2Element) Inputmode(a Inputmode) *H2Element {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +384,8 @@ func (e *H2Element) Part(s ...string) *H2Element {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Popover(v ...H2Popover) *H2Element {
-	var val H2Popover
+func (e *H2Element) Popover(v ...Popover) *H2Element {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +408,8 @@ func (e *H2Element) Slot(s string) *H2Element {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Spellcheck(v ...H2Spellcheck) *H2Element {
-	var val H2Spellcheck
+func (e *H2Element) Spellcheck(v ...Spellcheck) *H2Element {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +438,8 @@ func (e *H2Element) Title(s string) *H2Element {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Translate(v ...H2Translate) *H2Element {
-	var val H2Translate
+func (e *H2Element) Translate(v ...Translate) *H2Element {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +450,8 @@ func (e *H2Element) Translate(v ...H2Translate) *H2Element {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *H2Element) Writingsuggestions(v ...H2Writingsuggestions) *H2Element {
-	var val H2Writingsuggestions
+func (e *H2Element) Writingsuggestions(v ...Writingsuggestions) *H2Element {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

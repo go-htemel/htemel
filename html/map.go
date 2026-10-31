@@ -13,16 +13,22 @@ import (
 )
 
 type MapElement struct {
+	htemel.PhrasingMarker
+	htemel.PalpableMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []htemel.FlowContent
 	skipRender bool
 }
 
 // Map creates a tag <map> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Content model: transparent. <map> takes the content model of its parent, which a type cannot
+// follow, so it accepts any flow content (htemel.FlowContent); make sure its content is also valid
+// in the parent.
+//
 // Spec Description: The map element, in conjunction with an img element and any area element descendants, defines an image map. The element represents its children.
-func Map(children ...htemel.Node) *MapElement {
+func Map(children ...htemel.FlowContent) *MapElement {
 	node := &MapElement{
 		children: children,
 	}
@@ -31,7 +37,7 @@ func Map(children ...htemel.Node) *MapElement {
 }
 
 // MapIf creates a tag <map> instance that is only rendered when condition is true.
-func MapIf(condition bool, children ...htemel.Node) *MapElement {
+func MapIf(condition bool, children ...htemel.FlowContent) *MapElement {
 	if condition {
 		return Map(children...)
 	}
@@ -43,7 +49,7 @@ func MapIf(condition bool, children ...htemel.Node) *MapElement {
 }
 
 // MapTernary creates a tag <map> containing then when condition is true, otherwise containing otherwise.
-func MapTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MapElement {
+func MapTernary(condition bool, then htemel.FlowContent, otherwise htemel.FlowContent) *MapElement {
 	if condition {
 		return Map(then)
 	}
@@ -51,7 +57,7 @@ func MapTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MapEle
 }
 
 // Children appends children to this element.
-func (e *MapElement) Children(children ...htemel.Node) *MapElement {
+func (e *MapElement) Children(children ...htemel.FlowContent) *MapElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +80,7 @@ func (e *MapElement) Textf(format string, args ...any) *MapElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MapElement) If(cond bool, child htemel.Node) *MapElement {
+func (e *MapElement) If(cond bool, child htemel.FlowContent) *MapElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +88,7 @@ func (e *MapElement) If(cond bool, child htemel.Node) *MapElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MapElement) IfElse(cond bool, then, els htemel.Node) *MapElement {
+func (e *MapElement) IfElse(cond bool, then, els htemel.FlowContent) *MapElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +170,6 @@ func (e *MapElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MapAutocapitalize string
-
-const (
-	MapAutocapitalizeCharacters MapAutocapitalize = "characters"
-	MapAutocapitalizeNone       MapAutocapitalize = "none"
-	MapAutocapitalizeOff        MapAutocapitalize = "off"
-	MapAutocapitalizeOn         MapAutocapitalize = "on"
-	MapAutocapitalizeSentences  MapAutocapitalize = "sentences"
-	MapAutocapitalizeWords      MapAutocapitalize = "words"
-)
-
-type MapAutocorrect string
-
-const (
-	MapAutocorrectOff   MapAutocorrect = "off"
-	MapAutocorrectOn    MapAutocorrect = "on"
-	MapAutocorrectEmpty MapAutocorrect = ""
-)
-
-type MapContenteditable string
-
-const (
-	MapContenteditableFalse         MapContenteditable = "false"
-	MapContenteditablePlaintextOnly MapContenteditable = "plaintext-only"
-	MapContenteditableTrue          MapContenteditable = "true"
-	MapContenteditableEmpty         MapContenteditable = ""
-)
-
-type MapDir string
-
-const (
-	MapDirAuto MapDir = "auto"
-	MapDirLtr  MapDir = "ltr"
-	MapDirRtl  MapDir = "rtl"
-)
-
-type MapDraggable string
-
-const (
-	MapDraggableFalse MapDraggable = "false"
-	MapDraggableTrue  MapDraggable = "true"
-)
-
-type MapEnterkeyhint string
-
-const (
-	MapEnterkeyhintDone     MapEnterkeyhint = "done"
-	MapEnterkeyhintEnter    MapEnterkeyhint = "enter"
-	MapEnterkeyhintGo       MapEnterkeyhint = "go"
-	MapEnterkeyhintNext     MapEnterkeyhint = "next"
-	MapEnterkeyhintPrevious MapEnterkeyhint = "previous"
-	MapEnterkeyhintSearch   MapEnterkeyhint = "search"
-	MapEnterkeyhintSend     MapEnterkeyhint = "send"
-)
-
-type MapHidden string
-
-const (
-	MapHiddenHidden     MapHidden = "hidden"
-	MapHiddenUntilFound MapHidden = "until-found"
-	MapHiddenEmpty      MapHidden = ""
-)
-
-type MapInputmode string
-
-const (
-	MapInputmodeDecimal MapInputmode = "decimal"
-	MapInputmodeEmail   MapInputmode = "email"
-	MapInputmodeNone    MapInputmode = "none"
-	MapInputmodeNumeric MapInputmode = "numeric"
-	MapInputmodeSearch  MapInputmode = "search"
-	MapInputmodeTel     MapInputmode = "tel"
-	MapInputmodeText    MapInputmode = "text"
-	MapInputmodeUrl     MapInputmode = "url"
-)
-
-type MapPopover string
-
-const (
-	MapPopoverAuto   MapPopover = "auto"
-	MapPopoverHint   MapPopover = "hint"
-	MapPopoverManual MapPopover = "manual"
-	MapPopoverEmpty  MapPopover = ""
-)
-
-type MapSpellcheck string
-
-const (
-	MapSpellcheckFalse MapSpellcheck = "false"
-	MapSpellcheckTrue  MapSpellcheck = "true"
-	MapSpellcheckEmpty MapSpellcheck = ""
-)
-
-type MapTranslate string
-
-const (
-	MapTranslateNo    MapTranslate = "no"
-	MapTranslateYes   MapTranslate = "yes"
-	MapTranslateEmpty MapTranslate = ""
-)
-
-type MapWritingsuggestions string
-
-const (
-	MapWritingsuggestionsFalse MapWritingsuggestions = "false"
-	MapWritingsuggestionsTrue  MapWritingsuggestions = "true"
-	MapWritingsuggestionsEmpty MapWritingsuggestions = ""
-)
-
 func (e *MapElement) Name(s string) *MapElement {
 	e.attributes.Set("name", s)
 
@@ -301,7 +198,7 @@ func (e *MapElement) Aria(name string, s string) *MapElement {
 	return e
 }
 
-func (e *MapElement) Autocapitalize(a MapAutocapitalize) *MapElement {
+func (e *MapElement) Autocapitalize(a Autocapitalize) *MapElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -309,8 +206,8 @@ func (e *MapElement) Autocapitalize(a MapAutocapitalize) *MapElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Autocorrect(v ...MapAutocorrect) *MapElement {
-	var val MapAutocorrect
+func (e *MapElement) Autocorrect(v ...Autocorrect) *MapElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -335,8 +232,8 @@ func (e *MapElement) Class(s ...string) *MapElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Contenteditable(v ...MapContenteditable) *MapElement {
-	var val MapContenteditable
+func (e *MapElement) Contenteditable(v ...Contenteditable) *MapElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -361,19 +258,19 @@ func (e *MapElement) Data(name string, s string) *MapElement {
 	return e
 }
 
-func (e *MapElement) Dir(a MapDir) *MapElement {
+func (e *MapElement) Dir(a Dir) *MapElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MapElement) Draggable(a MapDraggable) *MapElement {
+func (e *MapElement) Draggable(a Draggable) *MapElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *MapElement) Enterkeyhint(a MapEnterkeyhint) *MapElement {
+func (e *MapElement) Enterkeyhint(a Enterkeyhint) *MapElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -401,8 +298,8 @@ func (e *MapElement) Headingreset(b bool) *MapElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Hidden(v ...MapHidden) *MapElement {
-	var val MapHidden
+func (e *MapElement) Hidden(v ...Hidden) *MapElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -425,7 +322,7 @@ func (e *MapElement) Inert(b bool) *MapElement {
 	return e
 }
 
-func (e *MapElement) Inputmode(a MapInputmode) *MapElement {
+func (e *MapElement) Inputmode(a Inputmode) *MapElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -491,8 +388,8 @@ func (e *MapElement) Part(s ...string) *MapElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Popover(v ...MapPopover) *MapElement {
-	var val MapPopover
+func (e *MapElement) Popover(v ...Popover) *MapElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -515,8 +412,8 @@ func (e *MapElement) Slot(s string) *MapElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Spellcheck(v ...MapSpellcheck) *MapElement {
-	var val MapSpellcheck
+func (e *MapElement) Spellcheck(v ...Spellcheck) *MapElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -545,8 +442,8 @@ func (e *MapElement) Title(s string) *MapElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Translate(v ...MapTranslate) *MapElement {
-	var val MapTranslate
+func (e *MapElement) Translate(v ...Translate) *MapElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -557,8 +454,8 @@ func (e *MapElement) Translate(v ...MapTranslate) *MapElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *MapElement) Writingsuggestions(v ...MapWritingsuggestions) *MapElement {
-	var val MapWritingsuggestions
+func (e *MapElement) Writingsuggestions(v ...Writingsuggestions) *MapElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

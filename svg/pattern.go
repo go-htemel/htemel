@@ -14,15 +14,17 @@ import (
 
 type PatternElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Pattern creates a tag <pattern> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The pattern element defines a graphics object that can be tiled to fill or stroke shapes.
-func Pattern(children ...htemel.Node) *PatternElement {
+func Pattern(children ...Content) *PatternElement {
 	node := &PatternElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Pattern(children ...htemel.Node) *PatternElement {
 }
 
 // PatternIf creates a tag <pattern> instance that is only rendered when condition is true.
-func PatternIf(condition bool, children ...htemel.Node) *PatternElement {
+func PatternIf(condition bool, children ...Content) *PatternElement {
 	if condition {
 		return Pattern(children...)
 	}
@@ -43,7 +45,7 @@ func PatternIf(condition bool, children ...htemel.Node) *PatternElement {
 }
 
 // PatternTernary creates a tag <pattern> containing then when condition is true, otherwise containing otherwise.
-func PatternTernary(condition bool, then htemel.Node, otherwise htemel.Node) *PatternElement {
+func PatternTernary(condition bool, then Content, otherwise Content) *PatternElement {
 	if condition {
 		return Pattern(then)
 	}
@@ -51,7 +53,7 @@ func PatternTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Pa
 }
 
 // Children appends children to this element.
-func (e *PatternElement) Children(children ...htemel.Node) *PatternElement {
+func (e *PatternElement) Children(children ...Content) *PatternElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *PatternElement) Textf(format string, args ...any) *PatternElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *PatternElement) If(cond bool, child htemel.Node) *PatternElement {
+func (e *PatternElement) If(cond bool, child Content) *PatternElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *PatternElement) If(cond bool, child htemel.Node) *PatternElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *PatternElement) IfElse(cond bool, then, els htemel.Node) *PatternElement {
+func (e *PatternElement) IfElse(cond bool, then, els Content) *PatternElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,233 +166,8 @@ func (e *PatternElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type PatternPatternContentUnits string
-
-const (
-	PatternPatternContentUnitsObjectBoundingBox PatternPatternContentUnits = "objectBoundingBox"
-	PatternPatternContentUnitsUserSpaceOnUse    PatternPatternContentUnits = "userSpaceOnUse"
-)
-
-type PatternPatternUnits string
-
-const (
-	PatternPatternUnitsObjectBoundingBox PatternPatternUnits = "objectBoundingBox"
-	PatternPatternUnitsUserSpaceOnUse    PatternPatternUnits = "userSpaceOnUse"
-)
-
-type PatternAlignmentBaseline string
-
-const (
-	PatternAlignmentBaselineAfterEdge      PatternAlignmentBaseline = "after-edge"
-	PatternAlignmentBaselineAlphabetic     PatternAlignmentBaseline = "alphabetic"
-	PatternAlignmentBaselineAuto           PatternAlignmentBaseline = "auto"
-	PatternAlignmentBaselineBaseline       PatternAlignmentBaseline = "baseline"
-	PatternAlignmentBaselineBeforeEdge     PatternAlignmentBaseline = "before-edge"
-	PatternAlignmentBaselineBottom         PatternAlignmentBaseline = "bottom"
-	PatternAlignmentBaselineCenter         PatternAlignmentBaseline = "center"
-	PatternAlignmentBaselineCentral        PatternAlignmentBaseline = "central"
-	PatternAlignmentBaselineHanging        PatternAlignmentBaseline = "hanging"
-	PatternAlignmentBaselineIdeographic    PatternAlignmentBaseline = "ideographic"
-	PatternAlignmentBaselineMathematical   PatternAlignmentBaseline = "mathematical"
-	PatternAlignmentBaselineMiddle         PatternAlignmentBaseline = "middle"
-	PatternAlignmentBaselineTextAfterEdge  PatternAlignmentBaseline = "text-after-edge"
-	PatternAlignmentBaselineTextBeforeEdge PatternAlignmentBaseline = "text-before-edge"
-	PatternAlignmentBaselineTextBottom     PatternAlignmentBaseline = "text-bottom"
-	PatternAlignmentBaselineTextTop        PatternAlignmentBaseline = "text-top"
-	PatternAlignmentBaselineTop            PatternAlignmentBaseline = "top"
-)
-
-type PatternClipRule string
-
-const (
-	PatternClipRuleEvenodd PatternClipRule = "evenodd"
-	PatternClipRuleNonzero PatternClipRule = "nonzero"
-)
-
-type PatternColorInterpolation string
-
-const (
-	PatternColorInterpolationAuto      PatternColorInterpolation = "auto"
-	PatternColorInterpolationLinearRGB PatternColorInterpolation = "linearRGB"
-	PatternColorInterpolationSRGB      PatternColorInterpolation = "sRGB"
-)
-
-type PatternColorInterpolationFilters string
-
-const (
-	PatternColorInterpolationFiltersAuto      PatternColorInterpolationFilters = "auto"
-	PatternColorInterpolationFiltersLinearRGB PatternColorInterpolationFilters = "linearRGB"
-	PatternColorInterpolationFiltersSRGB      PatternColorInterpolationFilters = "sRGB"
-)
-
-type PatternDirection string
-
-const (
-	PatternDirectionLtr PatternDirection = "ltr"
-	PatternDirectionRtl PatternDirection = "rtl"
-)
-
-type PatternDominantBaseline string
-
-const (
-	PatternDominantBaselineAlphabetic   PatternDominantBaseline = "alphabetic"
-	PatternDominantBaselineAuto         PatternDominantBaseline = "auto"
-	PatternDominantBaselineCentral      PatternDominantBaseline = "central"
-	PatternDominantBaselineHanging      PatternDominantBaseline = "hanging"
-	PatternDominantBaselineIdeographic  PatternDominantBaseline = "ideographic"
-	PatternDominantBaselineMathematical PatternDominantBaseline = "mathematical"
-	PatternDominantBaselineMiddle       PatternDominantBaseline = "middle"
-	PatternDominantBaselineTextBottom   PatternDominantBaseline = "text-bottom"
-	PatternDominantBaselineTextTop      PatternDominantBaseline = "text-top"
-)
-
-type PatternFillRule string
-
-const (
-	PatternFillRuleEvenodd PatternFillRule = "evenodd"
-	PatternFillRuleNonzero PatternFillRule = "nonzero"
-)
-
-type PatternFontStyle string
-
-const (
-	PatternFontStyleItalic  PatternFontStyle = "italic"
-	PatternFontStyleNormal  PatternFontStyle = "normal"
-	PatternFontStyleOblique PatternFontStyle = "oblique"
-)
-
-type PatternImageRendering string
-
-const (
-	PatternImageRenderingAuto            PatternImageRendering = "auto"
-	PatternImageRenderingCrispEdges      PatternImageRendering = "crisp-edges"
-	PatternImageRenderingHighQuality     PatternImageRendering = "high-quality"
-	PatternImageRenderingOptimizeQuality PatternImageRendering = "optimizeQuality"
-	PatternImageRenderingOptimizeSpeed   PatternImageRendering = "optimizeSpeed"
-	PatternImageRenderingPixelated       PatternImageRendering = "pixelated"
-	PatternImageRenderingSmooth          PatternImageRendering = "smooth"
-)
-
-type PatternOverflow string
-
-const (
-	PatternOverflowAuto    PatternOverflow = "auto"
-	PatternOverflowClip    PatternOverflow = "clip"
-	PatternOverflowHidden  PatternOverflow = "hidden"
-	PatternOverflowScroll  PatternOverflow = "scroll"
-	PatternOverflowVisible PatternOverflow = "visible"
-)
-
-type PatternPointerEvents string
-
-const (
-	PatternPointerEventsAll            PatternPointerEvents = "all"
-	PatternPointerEventsAuto           PatternPointerEvents = "auto"
-	PatternPointerEventsBoundingBox    PatternPointerEvents = "bounding-box"
-	PatternPointerEventsFill           PatternPointerEvents = "fill"
-	PatternPointerEventsNone           PatternPointerEvents = "none"
-	PatternPointerEventsPainted        PatternPointerEvents = "painted"
-	PatternPointerEventsStroke         PatternPointerEvents = "stroke"
-	PatternPointerEventsVisible        PatternPointerEvents = "visible"
-	PatternPointerEventsVisibleFill    PatternPointerEvents = "visibleFill"
-	PatternPointerEventsVisiblePainted PatternPointerEvents = "visiblePainted"
-	PatternPointerEventsVisibleStroke  PatternPointerEvents = "visibleStroke"
-)
-
-type PatternShapeRendering string
-
-const (
-	PatternShapeRenderingAuto               PatternShapeRendering = "auto"
-	PatternShapeRenderingCrispEdges         PatternShapeRendering = "crispEdges"
-	PatternShapeRenderingGeometricPrecision PatternShapeRendering = "geometricPrecision"
-	PatternShapeRenderingOptimizeSpeed      PatternShapeRendering = "optimizeSpeed"
-)
-
-type PatternStrokeLinecap string
-
-const (
-	PatternStrokeLinecapButt   PatternStrokeLinecap = "butt"
-	PatternStrokeLinecapRound  PatternStrokeLinecap = "round"
-	PatternStrokeLinecapSquare PatternStrokeLinecap = "square"
-)
-
-type PatternStrokeLinejoin string
-
-const (
-	PatternStrokeLinejoinArcs      PatternStrokeLinejoin = "arcs"
-	PatternStrokeLinejoinBevel     PatternStrokeLinejoin = "bevel"
-	PatternStrokeLinejoinMiter     PatternStrokeLinejoin = "miter"
-	PatternStrokeLinejoinMiterClip PatternStrokeLinejoin = "miter-clip"
-	PatternStrokeLinejoinRound     PatternStrokeLinejoin = "round"
-)
-
-type PatternTextAnchor string
-
-const (
-	PatternTextAnchorEnd    PatternTextAnchor = "end"
-	PatternTextAnchorMiddle PatternTextAnchor = "middle"
-	PatternTextAnchorStart  PatternTextAnchor = "start"
-)
-
-type PatternTextRendering string
-
-const (
-	PatternTextRenderingAuto               PatternTextRendering = "auto"
-	PatternTextRenderingGeometricPrecision PatternTextRendering = "geometricPrecision"
-	PatternTextRenderingOptimizeLegibility PatternTextRendering = "optimizeLegibility"
-	PatternTextRenderingOptimizeSpeed      PatternTextRendering = "optimizeSpeed"
-)
-
-type PatternTransformBox string
-
-const (
-	PatternTransformBoxBorderBox  PatternTransformBox = "border-box"
-	PatternTransformBoxContentBox PatternTransformBox = "content-box"
-	PatternTransformBoxFillBox    PatternTransformBox = "fill-box"
-	PatternTransformBoxStrokeBox  PatternTransformBox = "stroke-box"
-	PatternTransformBoxViewBox    PatternTransformBox = "view-box"
-)
-
-type PatternVectorEffect string
-
-const (
-	PatternVectorEffectFixedPosition    PatternVectorEffect = "fixed-position"
-	PatternVectorEffectNonRotation      PatternVectorEffect = "non-rotation"
-	PatternVectorEffectNonScalingSize   PatternVectorEffect = "non-scaling-size"
-	PatternVectorEffectNonScalingStroke PatternVectorEffect = "non-scaling-stroke"
-	PatternVectorEffectNone             PatternVectorEffect = "none"
-)
-
-type PatternVisibility string
-
-const (
-	PatternVisibilityCollapse PatternVisibility = "collapse"
-	PatternVisibilityHidden   PatternVisibility = "hidden"
-	PatternVisibilityVisible  PatternVisibility = "visible"
-)
-
-type PatternWritingMode string
-
-const (
-	PatternWritingModeHorizontalTb PatternWritingMode = "horizontal-tb"
-	PatternWritingModeLr           PatternWritingMode = "lr"
-	PatternWritingModeLrTb         PatternWritingMode = "lr-tb"
-	PatternWritingModeRl           PatternWritingMode = "rl"
-	PatternWritingModeRlTb         PatternWritingMode = "rl-tb"
-	PatternWritingModeSidewaysLr   PatternWritingMode = "sideways-lr"
-	PatternWritingModeSidewaysRl   PatternWritingMode = "sideways-rl"
-	PatternWritingModeTb           PatternWritingMode = "tb"
-	PatternWritingModeTbRl         PatternWritingMode = "tb-rl"
-	PatternWritingModeVerticalLr   PatternWritingMode = "vertical-lr"
-	PatternWritingModeVerticalRl   PatternWritingMode = "vertical-rl"
-)
-
-type PatternXmlSpace string
-
-const (
-	PatternXmlSpaceDefault  PatternXmlSpace = "default"
-	PatternXmlSpacePreserve PatternXmlSpace = "preserve"
-)
+// SVGContent marks <pattern> as a permitted child (Content).
+func (*PatternElement) SVGContent() {}
 
 func (e *PatternElement) Height(s string) *PatternElement {
 	e.attributes.Set("height", s)
@@ -406,7 +183,7 @@ func (e *PatternElement) Href(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) PatternContentUnits(a PatternPatternContentUnits) *PatternElement {
+func (e *PatternElement) PatternContentUnits(a PatternContentUnits) *PatternElement {
 	e.attributes.Set("patternContentUnits", string(a))
 
 	return e
@@ -418,7 +195,7 @@ func (e *PatternElement) PatternTransform(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) PatternUnits(a PatternPatternUnits) *PatternElement {
+func (e *PatternElement) PatternUnits(a PatternUnits) *PatternElement {
 	e.attributes.Set("patternUnits", string(a))
 
 	return e
@@ -470,14 +247,10 @@ func (e *PatternElement) Y(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) AlignmentBaseline(a PatternAlignmentBaseline) *PatternElement {
+func (e *PatternElement) AlignmentBaseline(a AlignmentBaseline) *PatternElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func PatternAlignmentBaselineCustom(s string) PatternAlignmentBaseline {
-	return PatternAlignmentBaseline(s)
 }
 
 func (e *PatternElement) AriaUnsafe(name string, s string) *PatternElement {
@@ -531,14 +304,10 @@ func (e *PatternElement) ClipPath(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) ClipRule(a PatternClipRule) *PatternElement {
+func (e *PatternElement) ClipRule(a ClipRule) *PatternElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func PatternClipRuleCustom(s string) PatternClipRule {
-	return PatternClipRule(s)
 }
 
 func (e *PatternElement) Color(s string) *PatternElement {
@@ -547,24 +316,16 @@ func (e *PatternElement) Color(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) ColorInterpolation(a PatternColorInterpolation) *PatternElement {
+func (e *PatternElement) ColorInterpolation(a ColorInterpolation) *PatternElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func PatternColorInterpolationCustom(s string) PatternColorInterpolation {
-	return PatternColorInterpolation(s)
-}
-
-func (e *PatternElement) ColorInterpolationFilters(a PatternColorInterpolationFilters) *PatternElement {
+func (e *PatternElement) ColorInterpolationFilters(a ColorInterpolationFilters) *PatternElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func PatternColorInterpolationFiltersCustom(s string) PatternColorInterpolationFilters {
-	return PatternColorInterpolationFilters(s)
 }
 
 func (e *PatternElement) Cursor(s string) *PatternElement {
@@ -589,14 +350,10 @@ func (e *PatternElement) Data(name string, s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) Direction(a PatternDirection) *PatternElement {
+func (e *PatternElement) Direction(a Direction) *PatternElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func PatternDirectionCustom(s string) PatternDirection {
-	return PatternDirection(s)
 }
 
 func (e *PatternElement) Display(s string) *PatternElement {
@@ -605,14 +362,10 @@ func (e *PatternElement) Display(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) DominantBaseline(a PatternDominantBaseline) *PatternElement {
+func (e *PatternElement) DominantBaseline(a DominantBaseline) *PatternElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func PatternDominantBaselineCustom(s string) PatternDominantBaseline {
-	return PatternDominantBaseline(s)
 }
 
 func (e *PatternElement) Fill(s string) *PatternElement {
@@ -627,14 +380,10 @@ func (e *PatternElement) FillOpacity(f float64) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) FillRule(a PatternFillRule) *PatternElement {
+func (e *PatternElement) FillRule(a FillRule) *PatternElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func PatternFillRuleCustom(s string) PatternFillRule {
-	return PatternFillRule(s)
 }
 
 func (e *PatternElement) Filter(s string) *PatternElement {
@@ -679,14 +428,10 @@ func (e *PatternElement) FontStretch(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) FontStyle(a PatternFontStyle) *PatternElement {
+func (e *PatternElement) FontStyle(a FontStyle) *PatternElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func PatternFontStyleCustom(s string) PatternFontStyle {
-	return PatternFontStyle(s)
 }
 
 func (e *PatternElement) FontVariant(s string) *PatternElement {
@@ -725,14 +470,10 @@ func (e *PatternElement) Id(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) ImageRendering(a PatternImageRendering) *PatternElement {
+func (e *PatternElement) ImageRendering(a ImageRendering) *PatternElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func PatternImageRenderingCustom(s string) PatternImageRendering {
-	return PatternImageRendering(s)
 }
 
 func (e *PatternElement) Lang(s string) *PatternElement {
@@ -783,14 +524,10 @@ func (e *PatternElement) Opacity(f float64) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) Overflow(a PatternOverflow) *PatternElement {
+func (e *PatternElement) Overflow(a Overflow) *PatternElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func PatternOverflowCustom(s string) PatternOverflow {
-	return PatternOverflow(s)
 }
 
 func (e *PatternElement) PaintOrder(s string) *PatternElement {
@@ -799,14 +536,10 @@ func (e *PatternElement) PaintOrder(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) PointerEvents(a PatternPointerEvents) *PatternElement {
+func (e *PatternElement) PointerEvents(a PointerEvents) *PatternElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func PatternPointerEventsCustom(s string) PatternPointerEvents {
-	return PatternPointerEvents(s)
 }
 
 func (e *PatternElement) RequiredExtensions(s string) *PatternElement {
@@ -815,14 +548,10 @@ func (e *PatternElement) RequiredExtensions(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) ShapeRendering(a PatternShapeRendering) *PatternElement {
+func (e *PatternElement) ShapeRendering(a ShapeRendering) *PatternElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func PatternShapeRenderingCustom(s string) PatternShapeRendering {
-	return PatternShapeRendering(s)
 }
 
 func (e *PatternElement) StopColor(s string) *PatternElement {
@@ -855,24 +584,16 @@ func (e *PatternElement) StrokeDashoffset(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) StrokeLinecap(a PatternStrokeLinecap) *PatternElement {
+func (e *PatternElement) StrokeLinecap(a StrokeLinecap) *PatternElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func PatternStrokeLinecapCustom(s string) PatternStrokeLinecap {
-	return PatternStrokeLinecap(s)
-}
-
-func (e *PatternElement) StrokeLinejoin(a PatternStrokeLinejoin) *PatternElement {
+func (e *PatternElement) StrokeLinejoin(a StrokeLinejoin) *PatternElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func PatternStrokeLinejoinCustom(s string) PatternStrokeLinejoin {
-	return PatternStrokeLinejoin(s)
 }
 
 func (e *PatternElement) StrokeMiterlimit(f float64) *PatternElement {
@@ -905,14 +626,10 @@ func (e *PatternElement) Tabindex(i int) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) TextAnchor(a PatternTextAnchor) *PatternElement {
+func (e *PatternElement) TextAnchor(a TextAnchor) *PatternElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func PatternTextAnchorCustom(s string) PatternTextAnchor {
-	return PatternTextAnchor(s)
 }
 
 func (e *PatternElement) TextDecoration(s string) *PatternElement {
@@ -927,14 +644,10 @@ func (e *PatternElement) TextOverflow(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) TextRendering(a PatternTextRendering) *PatternElement {
+func (e *PatternElement) TextRendering(a TextRendering) *PatternElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func PatternTextRenderingCustom(s string) PatternTextRendering {
-	return PatternTextRendering(s)
 }
 
 func (e *PatternElement) Transform(s string) *PatternElement {
@@ -943,14 +656,10 @@ func (e *PatternElement) Transform(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) TransformBox(a PatternTransformBox) *PatternElement {
+func (e *PatternElement) TransformBox(a TransformBox) *PatternElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func PatternTransformBoxCustom(s string) PatternTransformBox {
-	return PatternTransformBox(s)
 }
 
 func (e *PatternElement) TransformOrigin(s string) *PatternElement {
@@ -965,24 +674,16 @@ func (e *PatternElement) UnicodeBidi(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) VectorEffect(a PatternVectorEffect) *PatternElement {
+func (e *PatternElement) VectorEffect(a VectorEffect) *PatternElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func PatternVectorEffectCustom(s string) PatternVectorEffect {
-	return PatternVectorEffect(s)
-}
-
-func (e *PatternElement) Visibility(a PatternVisibility) *PatternElement {
+func (e *PatternElement) Visibility(a Visibility) *PatternElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func PatternVisibilityCustom(s string) PatternVisibility {
-	return PatternVisibility(s)
 }
 
 func (e *PatternElement) WhiteSpace(s string) *PatternElement {
@@ -997,14 +698,10 @@ func (e *PatternElement) WordSpacing(s string) *PatternElement {
 	return e
 }
 
-func (e *PatternElement) WritingMode(a PatternWritingMode) *PatternElement {
+func (e *PatternElement) WritingMode(a WritingMode) *PatternElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func PatternWritingModeCustom(s string) PatternWritingMode {
-	return PatternWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1019,7 +716,7 @@ func (e *PatternElement) XmlLang(s string) *PatternElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *PatternElement) XmlSpace(a PatternXmlSpace) *PatternElement {
+func (e *PatternElement) XmlSpace(a XmlSpace) *PatternElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e

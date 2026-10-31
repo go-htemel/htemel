@@ -14,15 +14,17 @@ import (
 
 type MpaddedElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mpadded creates a tag <mpadded> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mpadded(children ...htemel.Node) *MpaddedElement {
+func Mpadded(children ...Content) *MpaddedElement {
 	node := &MpaddedElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mpadded(children ...htemel.Node) *MpaddedElement {
 }
 
 // MpaddedIf creates a tag <mpadded> instance that is only rendered when condition is true.
-func MpaddedIf(condition bool, children ...htemel.Node) *MpaddedElement {
+func MpaddedIf(condition bool, children ...Content) *MpaddedElement {
 	if condition {
 		return Mpadded(children...)
 	}
@@ -43,7 +45,7 @@ func MpaddedIf(condition bool, children ...htemel.Node) *MpaddedElement {
 }
 
 // MpaddedTernary creates a tag <mpadded> containing then when condition is true, otherwise containing otherwise.
-func MpaddedTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MpaddedElement {
+func MpaddedTernary(condition bool, then Content, otherwise Content) *MpaddedElement {
 	if condition {
 		return Mpadded(then)
 	}
@@ -51,7 +53,7 @@ func MpaddedTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Mp
 }
 
 // Children appends children to this element.
-func (e *MpaddedElement) Children(children ...htemel.Node) *MpaddedElement {
+func (e *MpaddedElement) Children(children ...Content) *MpaddedElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MpaddedElement) Textf(format string, args ...any) *MpaddedElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MpaddedElement) If(cond bool, child htemel.Node) *MpaddedElement {
+func (e *MpaddedElement) If(cond bool, child Content) *MpaddedElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MpaddedElement) If(cond bool, child htemel.Node) *MpaddedElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MpaddedElement) IfElse(cond bool, then, els htemel.Node) *MpaddedElement {
+func (e *MpaddedElement) IfElse(cond bool, then, els Content) *MpaddedElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MpaddedElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MpaddedDir string
-
-const (
-	MpaddedDirLtr MpaddedDir = "ltr"
-	MpaddedDirRtl MpaddedDir = "rtl"
-)
-
-type MpaddedDisplaystyle string
-
-const (
-	MpaddedDisplaystyleFalse MpaddedDisplaystyle = "false"
-	MpaddedDisplaystyleTrue  MpaddedDisplaystyle = "true"
-)
+// MathMLContent marks <mpadded> as a permitted child (Content).
+func (*MpaddedElement) MathMLContent() {}
 
 func (e *MpaddedElement) Depth(s string) *MpaddedElement {
 	e.attributes.Set("depth", s)
@@ -238,13 +229,13 @@ func (e *MpaddedElement) Data(name string, s string) *MpaddedElement {
 	return e
 }
 
-func (e *MpaddedElement) Dir(a MpaddedDir) *MpaddedElement {
+func (e *MpaddedElement) Dir(a Dir) *MpaddedElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MpaddedElement) Displaystyle(a MpaddedDisplaystyle) *MpaddedElement {
+func (e *MpaddedElement) Displaystyle(a Displaystyle) *MpaddedElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

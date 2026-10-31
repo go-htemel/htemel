@@ -14,15 +14,17 @@ import (
 
 type MphantomElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mphantom creates a tag <mphantom> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mphantom(children ...htemel.Node) *MphantomElement {
+func Mphantom(children ...Content) *MphantomElement {
 	node := &MphantomElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mphantom(children ...htemel.Node) *MphantomElement {
 }
 
 // MphantomIf creates a tag <mphantom> instance that is only rendered when condition is true.
-func MphantomIf(condition bool, children ...htemel.Node) *MphantomElement {
+func MphantomIf(condition bool, children ...Content) *MphantomElement {
 	if condition {
 		return Mphantom(children...)
 	}
@@ -43,7 +45,7 @@ func MphantomIf(condition bool, children ...htemel.Node) *MphantomElement {
 }
 
 // MphantomTernary creates a tag <mphantom> containing then when condition is true, otherwise containing otherwise.
-func MphantomTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MphantomElement {
+func MphantomTernary(condition bool, then Content, otherwise Content) *MphantomElement {
 	if condition {
 		return Mphantom(then)
 	}
@@ -51,7 +53,7 @@ func MphantomTernary(condition bool, then htemel.Node, otherwise htemel.Node) *M
 }
 
 // Children appends children to this element.
-func (e *MphantomElement) Children(children ...htemel.Node) *MphantomElement {
+func (e *MphantomElement) Children(children ...Content) *MphantomElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MphantomElement) Textf(format string, args ...any) *MphantomElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MphantomElement) If(cond bool, child htemel.Node) *MphantomElement {
+func (e *MphantomElement) If(cond bool, child Content) *MphantomElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MphantomElement) If(cond bool, child htemel.Node) *MphantomElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MphantomElement) IfElse(cond bool, then, els htemel.Node) *MphantomElement {
+func (e *MphantomElement) IfElse(cond bool, then, els Content) *MphantomElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MphantomElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MphantomDir string
-
-const (
-	MphantomDirLtr MphantomDir = "ltr"
-	MphantomDirRtl MphantomDir = "rtl"
-)
-
-type MphantomDisplaystyle string
-
-const (
-	MphantomDisplaystyleFalse MphantomDisplaystyle = "false"
-	MphantomDisplaystyleTrue  MphantomDisplaystyle = "true"
-)
+// MathMLContent marks <mphantom> as a permitted child (Content).
+func (*MphantomElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MphantomElement) Data(name string, s string) *MphantomElement {
 	return e
 }
 
-func (e *MphantomElement) Dir(a MphantomDir) *MphantomElement {
+func (e *MphantomElement) Dir(a Dir) *MphantomElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MphantomElement) Displaystyle(a MphantomDisplaystyle) *MphantomElement {
+func (e *MphantomElement) Displaystyle(a Displaystyle) *MphantomElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

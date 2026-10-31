@@ -12,17 +12,34 @@ import (
 	"github.com/go-htemel/htemel/internal/render"
 )
 
+// DatalistChild is a permitted child of <datalist>: <option>, phrasing content.
+//
+// It is implemented by <a>, <abbr>, <area>, <audio>, <b>, <bdi>, <bdo>, <br>, <button>, <canvas>,
+// <cite>, <code>, <data>, <datalist>, <del>, <dfn>, <em>, <embed>, <i>, <iframe>, <img>, <input>,
+// <ins>, <kbd>, <label>, <link>, <map>, <mark>, <meta>, <meter>, <noscript>, <object>, <option>,
+// <output>, <picture>, <progress>, <q>, <ruby>, <s>, <samp>, <script>, <select>, <slot>, <small>,
+// <span>, <strong>, <sub>, <sup>, <template>, <textarea>, <time>, <u>, <var>, <video>, <wbr>, by
+// text (htemel.Text, htemel.TextUnsafe), by any type embedding htemel.PhrasingMarker and by the
+// unchecked nodes of package htemel (Group, Each, If, Unchecked, ...).
+type DatalistChild interface {
+	htemel.Node
+	HTMLDatalistChild()
+}
+
 type DatalistElement struct {
+	htemel.PhrasingMarker
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []DatalistChild
 	skipRender bool
 }
 
 // Datalist creates a tag <datalist> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: <option>, phrasing content (DatalistChild).
+//
 // Spec Description: The datalist element represents a set of option elements that represent predefined options for other controls. In the rendering, the datalist element represents nothing and it, along with its children, should be hidden.
-func Datalist(children ...htemel.Node) *DatalistElement {
+func Datalist(children ...DatalistChild) *DatalistElement {
 	node := &DatalistElement{
 		children: children,
 	}
@@ -31,7 +48,7 @@ func Datalist(children ...htemel.Node) *DatalistElement {
 }
 
 // DatalistIf creates a tag <datalist> instance that is only rendered when condition is true.
-func DatalistIf(condition bool, children ...htemel.Node) *DatalistElement {
+func DatalistIf(condition bool, children ...DatalistChild) *DatalistElement {
 	if condition {
 		return Datalist(children...)
 	}
@@ -43,7 +60,7 @@ func DatalistIf(condition bool, children ...htemel.Node) *DatalistElement {
 }
 
 // DatalistTernary creates a tag <datalist> containing then when condition is true, otherwise containing otherwise.
-func DatalistTernary(condition bool, then htemel.Node, otherwise htemel.Node) *DatalistElement {
+func DatalistTernary(condition bool, then DatalistChild, otherwise DatalistChild) *DatalistElement {
 	if condition {
 		return Datalist(then)
 	}
@@ -51,7 +68,7 @@ func DatalistTernary(condition bool, then htemel.Node, otherwise htemel.Node) *D
 }
 
 // Children appends children to this element.
-func (e *DatalistElement) Children(children ...htemel.Node) *DatalistElement {
+func (e *DatalistElement) Children(children ...DatalistChild) *DatalistElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +91,7 @@ func (e *DatalistElement) Textf(format string, args ...any) *DatalistElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *DatalistElement) If(cond bool, child htemel.Node) *DatalistElement {
+func (e *DatalistElement) If(cond bool, child DatalistChild) *DatalistElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +99,7 @@ func (e *DatalistElement) If(cond bool, child htemel.Node) *DatalistElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *DatalistElement) IfElse(cond bool, then, els htemel.Node) *DatalistElement {
+func (e *DatalistElement) IfElse(cond bool, then, els DatalistChild) *DatalistElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,115 +181,6 @@ func (e *DatalistElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type DatalistAutocapitalize string
-
-const (
-	DatalistAutocapitalizeCharacters DatalistAutocapitalize = "characters"
-	DatalistAutocapitalizeNone       DatalistAutocapitalize = "none"
-	DatalistAutocapitalizeOff        DatalistAutocapitalize = "off"
-	DatalistAutocapitalizeOn         DatalistAutocapitalize = "on"
-	DatalistAutocapitalizeSentences  DatalistAutocapitalize = "sentences"
-	DatalistAutocapitalizeWords      DatalistAutocapitalize = "words"
-)
-
-type DatalistAutocorrect string
-
-const (
-	DatalistAutocorrectOff   DatalistAutocorrect = "off"
-	DatalistAutocorrectOn    DatalistAutocorrect = "on"
-	DatalistAutocorrectEmpty DatalistAutocorrect = ""
-)
-
-type DatalistContenteditable string
-
-const (
-	DatalistContenteditableFalse         DatalistContenteditable = "false"
-	DatalistContenteditablePlaintextOnly DatalistContenteditable = "plaintext-only"
-	DatalistContenteditableTrue          DatalistContenteditable = "true"
-	DatalistContenteditableEmpty         DatalistContenteditable = ""
-)
-
-type DatalistDir string
-
-const (
-	DatalistDirAuto DatalistDir = "auto"
-	DatalistDirLtr  DatalistDir = "ltr"
-	DatalistDirRtl  DatalistDir = "rtl"
-)
-
-type DatalistDraggable string
-
-const (
-	DatalistDraggableFalse DatalistDraggable = "false"
-	DatalistDraggableTrue  DatalistDraggable = "true"
-)
-
-type DatalistEnterkeyhint string
-
-const (
-	DatalistEnterkeyhintDone     DatalistEnterkeyhint = "done"
-	DatalistEnterkeyhintEnter    DatalistEnterkeyhint = "enter"
-	DatalistEnterkeyhintGo       DatalistEnterkeyhint = "go"
-	DatalistEnterkeyhintNext     DatalistEnterkeyhint = "next"
-	DatalistEnterkeyhintPrevious DatalistEnterkeyhint = "previous"
-	DatalistEnterkeyhintSearch   DatalistEnterkeyhint = "search"
-	DatalistEnterkeyhintSend     DatalistEnterkeyhint = "send"
-)
-
-type DatalistHidden string
-
-const (
-	DatalistHiddenHidden     DatalistHidden = "hidden"
-	DatalistHiddenUntilFound DatalistHidden = "until-found"
-	DatalistHiddenEmpty      DatalistHidden = ""
-)
-
-type DatalistInputmode string
-
-const (
-	DatalistInputmodeDecimal DatalistInputmode = "decimal"
-	DatalistInputmodeEmail   DatalistInputmode = "email"
-	DatalistInputmodeNone    DatalistInputmode = "none"
-	DatalistInputmodeNumeric DatalistInputmode = "numeric"
-	DatalistInputmodeSearch  DatalistInputmode = "search"
-	DatalistInputmodeTel     DatalistInputmode = "tel"
-	DatalistInputmodeText    DatalistInputmode = "text"
-	DatalistInputmodeUrl     DatalistInputmode = "url"
-)
-
-type DatalistPopover string
-
-const (
-	DatalistPopoverAuto   DatalistPopover = "auto"
-	DatalistPopoverHint   DatalistPopover = "hint"
-	DatalistPopoverManual DatalistPopover = "manual"
-	DatalistPopoverEmpty  DatalistPopover = ""
-)
-
-type DatalistSpellcheck string
-
-const (
-	DatalistSpellcheckFalse DatalistSpellcheck = "false"
-	DatalistSpellcheckTrue  DatalistSpellcheck = "true"
-	DatalistSpellcheckEmpty DatalistSpellcheck = ""
-)
-
-type DatalistTranslate string
-
-const (
-	DatalistTranslateNo    DatalistTranslate = "no"
-	DatalistTranslateYes   DatalistTranslate = "yes"
-	DatalistTranslateEmpty DatalistTranslate = ""
-)
-
-type DatalistWritingsuggestions string
-
-const (
-	DatalistWritingsuggestionsFalse DatalistWritingsuggestions = "false"
-	DatalistWritingsuggestionsTrue  DatalistWritingsuggestions = "true"
-	DatalistWritingsuggestionsEmpty DatalistWritingsuggestions = ""
-)
-
 func (e *DatalistElement) Accesskey(r rune) *DatalistElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -295,7 +203,7 @@ func (e *DatalistElement) Aria(name string, s string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Autocapitalize(a DatalistAutocapitalize) *DatalistElement {
+func (e *DatalistElement) Autocapitalize(a Autocapitalize) *DatalistElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -303,8 +211,8 @@ func (e *DatalistElement) Autocapitalize(a DatalistAutocapitalize) *DatalistElem
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Autocorrect(v ...DatalistAutocorrect) *DatalistElement {
-	var val DatalistAutocorrect
+func (e *DatalistElement) Autocorrect(v ...Autocorrect) *DatalistElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -329,8 +237,8 @@ func (e *DatalistElement) Class(s ...string) *DatalistElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Contenteditable(v ...DatalistContenteditable) *DatalistElement {
-	var val DatalistContenteditable
+func (e *DatalistElement) Contenteditable(v ...Contenteditable) *DatalistElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -355,19 +263,19 @@ func (e *DatalistElement) Data(name string, s string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Dir(a DatalistDir) *DatalistElement {
+func (e *DatalistElement) Dir(a Dir) *DatalistElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *DatalistElement) Draggable(a DatalistDraggable) *DatalistElement {
+func (e *DatalistElement) Draggable(a Draggable) *DatalistElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *DatalistElement) Enterkeyhint(a DatalistEnterkeyhint) *DatalistElement {
+func (e *DatalistElement) Enterkeyhint(a Enterkeyhint) *DatalistElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -395,8 +303,8 @@ func (e *DatalistElement) Headingreset(b bool) *DatalistElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Hidden(v ...DatalistHidden) *DatalistElement {
-	var val DatalistHidden
+func (e *DatalistElement) Hidden(v ...Hidden) *DatalistElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -419,7 +327,7 @@ func (e *DatalistElement) Inert(b bool) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Inputmode(a DatalistInputmode) *DatalistElement {
+func (e *DatalistElement) Inputmode(a Inputmode) *DatalistElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -485,8 +393,8 @@ func (e *DatalistElement) Part(s ...string) *DatalistElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Popover(v ...DatalistPopover) *DatalistElement {
-	var val DatalistPopover
+func (e *DatalistElement) Popover(v ...Popover) *DatalistElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -509,8 +417,8 @@ func (e *DatalistElement) Slot(s string) *DatalistElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Spellcheck(v ...DatalistSpellcheck) *DatalistElement {
-	var val DatalistSpellcheck
+func (e *DatalistElement) Spellcheck(v ...Spellcheck) *DatalistElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -539,8 +447,8 @@ func (e *DatalistElement) Title(s string) *DatalistElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Translate(v ...DatalistTranslate) *DatalistElement {
-	var val DatalistTranslate
+func (e *DatalistElement) Translate(v ...Translate) *DatalistElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -551,8 +459,8 @@ func (e *DatalistElement) Translate(v ...DatalistTranslate) *DatalistElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *DatalistElement) Writingsuggestions(v ...DatalistWritingsuggestions) *DatalistElement {
-	var val DatalistWritingsuggestions
+func (e *DatalistElement) Writingsuggestions(v ...Writingsuggestions) *DatalistElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

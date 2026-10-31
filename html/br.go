@@ -12,6 +12,7 @@ import (
 )
 
 type BrElement struct {
+	htemel.PhrasingMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +42,14 @@ func BrIf(condition bool) *BrElement {
 // With allows passing a function to modify the element via a closure.
 func (e *BrElement) With(fn func(*BrElement)) *BrElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *BrElement) IfThen(cond bool, fn func(*BrElement)) *BrElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,115 +118,6 @@ func (e *BrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type BrAutocapitalize string
-
-const (
-	BrAutocapitalizeCharacters BrAutocapitalize = "characters"
-	BrAutocapitalizeNone       BrAutocapitalize = "none"
-	BrAutocapitalizeOff        BrAutocapitalize = "off"
-	BrAutocapitalizeOn         BrAutocapitalize = "on"
-	BrAutocapitalizeSentences  BrAutocapitalize = "sentences"
-	BrAutocapitalizeWords      BrAutocapitalize = "words"
-)
-
-type BrAutocorrect string
-
-const (
-	BrAutocorrectOff   BrAutocorrect = "off"
-	BrAutocorrectOn    BrAutocorrect = "on"
-	BrAutocorrectEmpty BrAutocorrect = ""
-)
-
-type BrContenteditable string
-
-const (
-	BrContenteditableFalse         BrContenteditable = "false"
-	BrContenteditablePlaintextOnly BrContenteditable = "plaintext-only"
-	BrContenteditableTrue          BrContenteditable = "true"
-	BrContenteditableEmpty         BrContenteditable = ""
-)
-
-type BrDir string
-
-const (
-	BrDirAuto BrDir = "auto"
-	BrDirLtr  BrDir = "ltr"
-	BrDirRtl  BrDir = "rtl"
-)
-
-type BrDraggable string
-
-const (
-	BrDraggableFalse BrDraggable = "false"
-	BrDraggableTrue  BrDraggable = "true"
-)
-
-type BrEnterkeyhint string
-
-const (
-	BrEnterkeyhintDone     BrEnterkeyhint = "done"
-	BrEnterkeyhintEnter    BrEnterkeyhint = "enter"
-	BrEnterkeyhintGo       BrEnterkeyhint = "go"
-	BrEnterkeyhintNext     BrEnterkeyhint = "next"
-	BrEnterkeyhintPrevious BrEnterkeyhint = "previous"
-	BrEnterkeyhintSearch   BrEnterkeyhint = "search"
-	BrEnterkeyhintSend     BrEnterkeyhint = "send"
-)
-
-type BrHidden string
-
-const (
-	BrHiddenHidden     BrHidden = "hidden"
-	BrHiddenUntilFound BrHidden = "until-found"
-	BrHiddenEmpty      BrHidden = ""
-)
-
-type BrInputmode string
-
-const (
-	BrInputmodeDecimal BrInputmode = "decimal"
-	BrInputmodeEmail   BrInputmode = "email"
-	BrInputmodeNone    BrInputmode = "none"
-	BrInputmodeNumeric BrInputmode = "numeric"
-	BrInputmodeSearch  BrInputmode = "search"
-	BrInputmodeTel     BrInputmode = "tel"
-	BrInputmodeText    BrInputmode = "text"
-	BrInputmodeUrl     BrInputmode = "url"
-)
-
-type BrPopover string
-
-const (
-	BrPopoverAuto   BrPopover = "auto"
-	BrPopoverHint   BrPopover = "hint"
-	BrPopoverManual BrPopover = "manual"
-	BrPopoverEmpty  BrPopover = ""
-)
-
-type BrSpellcheck string
-
-const (
-	BrSpellcheckFalse BrSpellcheck = "false"
-	BrSpellcheckTrue  BrSpellcheck = "true"
-	BrSpellcheckEmpty BrSpellcheck = ""
-)
-
-type BrTranslate string
-
-const (
-	BrTranslateNo    BrTranslate = "no"
-	BrTranslateYes   BrTranslate = "yes"
-	BrTranslateEmpty BrTranslate = ""
-)
-
-type BrWritingsuggestions string
-
-const (
-	BrWritingsuggestionsFalse BrWritingsuggestions = "false"
-	BrWritingsuggestionsTrue  BrWritingsuggestions = "true"
-	BrWritingsuggestionsEmpty BrWritingsuggestions = ""
-)
-
 func (e *BrElement) Accesskey(r rune) *BrElement {
 	e.attributes.Set("accesskey", string(r))
 
@@ -240,7 +140,7 @@ func (e *BrElement) Aria(name string, s string) *BrElement {
 	return e
 }
 
-func (e *BrElement) Autocapitalize(a BrAutocapitalize) *BrElement {
+func (e *BrElement) Autocapitalize(a Autocapitalize) *BrElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -248,8 +148,8 @@ func (e *BrElement) Autocapitalize(a BrAutocapitalize) *BrElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Autocorrect(v ...BrAutocorrect) *BrElement {
-	var val BrAutocorrect
+func (e *BrElement) Autocorrect(v ...Autocorrect) *BrElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -274,8 +174,8 @@ func (e *BrElement) Class(s ...string) *BrElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Contenteditable(v ...BrContenteditable) *BrElement {
-	var val BrContenteditable
+func (e *BrElement) Contenteditable(v ...Contenteditable) *BrElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -300,19 +200,19 @@ func (e *BrElement) Data(name string, s string) *BrElement {
 	return e
 }
 
-func (e *BrElement) Dir(a BrDir) *BrElement {
+func (e *BrElement) Dir(a Dir) *BrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *BrElement) Draggable(a BrDraggable) *BrElement {
+func (e *BrElement) Draggable(a Draggable) *BrElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *BrElement) Enterkeyhint(a BrEnterkeyhint) *BrElement {
+func (e *BrElement) Enterkeyhint(a Enterkeyhint) *BrElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -340,8 +240,8 @@ func (e *BrElement) Headingreset(b bool) *BrElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Hidden(v ...BrHidden) *BrElement {
-	var val BrHidden
+func (e *BrElement) Hidden(v ...Hidden) *BrElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -364,7 +264,7 @@ func (e *BrElement) Inert(b bool) *BrElement {
 	return e
 }
 
-func (e *BrElement) Inputmode(a BrInputmode) *BrElement {
+func (e *BrElement) Inputmode(a Inputmode) *BrElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -430,8 +330,8 @@ func (e *BrElement) Part(s ...string) *BrElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Popover(v ...BrPopover) *BrElement {
-	var val BrPopover
+func (e *BrElement) Popover(v ...Popover) *BrElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -454,8 +354,8 @@ func (e *BrElement) Slot(s string) *BrElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Spellcheck(v ...BrSpellcheck) *BrElement {
-	var val BrSpellcheck
+func (e *BrElement) Spellcheck(v ...Spellcheck) *BrElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -484,8 +384,8 @@ func (e *BrElement) Title(s string) *BrElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Translate(v ...BrTranslate) *BrElement {
-	var val BrTranslate
+func (e *BrElement) Translate(v ...Translate) *BrElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -496,8 +396,8 @@ func (e *BrElement) Translate(v ...BrTranslate) *BrElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *BrElement) Writingsuggestions(v ...BrWritingsuggestions) *BrElement {
-	var val BrWritingsuggestions
+func (e *BrElement) Writingsuggestions(v ...Writingsuggestions) *BrElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

@@ -14,15 +14,17 @@ import (
 
 type MtrElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // Mtr creates a tag <mtr> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description:
-func Mtr(children ...htemel.Node) *MtrElement {
+func Mtr(children ...Content) *MtrElement {
 	node := &MtrElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func Mtr(children ...htemel.Node) *MtrElement {
 }
 
 // MtrIf creates a tag <mtr> instance that is only rendered when condition is true.
-func MtrIf(condition bool, children ...htemel.Node) *MtrElement {
+func MtrIf(condition bool, children ...Content) *MtrElement {
 	if condition {
 		return Mtr(children...)
 	}
@@ -43,7 +45,7 @@ func MtrIf(condition bool, children ...htemel.Node) *MtrElement {
 }
 
 // MtrTernary creates a tag <mtr> containing then when condition is true, otherwise containing otherwise.
-func MtrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MtrElement {
+func MtrTernary(condition bool, then Content, otherwise Content) *MtrElement {
 	if condition {
 		return Mtr(then)
 	}
@@ -51,7 +53,7 @@ func MtrTernary(condition bool, then htemel.Node, otherwise htemel.Node) *MtrEle
 }
 
 // Children appends children to this element.
-func (e *MtrElement) Children(children ...htemel.Node) *MtrElement {
+func (e *MtrElement) Children(children ...Content) *MtrElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *MtrElement) Textf(format string, args ...any) *MtrElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *MtrElement) If(cond bool, child htemel.Node) *MtrElement {
+func (e *MtrElement) If(cond bool, child Content) *MtrElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *MtrElement) If(cond bool, child htemel.Node) *MtrElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *MtrElement) IfElse(cond bool, then, els htemel.Node) *MtrElement {
+func (e *MtrElement) IfElse(cond bool, then, els Content) *MtrElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,19 +166,8 @@ func (e *MtrElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type MtrDir string
-
-const (
-	MtrDirLtr MtrDir = "ltr"
-	MtrDirRtl MtrDir = "rtl"
-)
-
-type MtrDisplaystyle string
-
-const (
-	MtrDisplaystyleFalse MtrDisplaystyle = "false"
-	MtrDisplaystyleTrue  MtrDisplaystyle = "true"
-)
+// MathMLContent marks <mtr> as a permitted child (Content).
+func (*MtrElement) MathMLContent() {}
 
 // Autofocus sets the boolean attribute "autofocus". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
@@ -208,13 +199,13 @@ func (e *MtrElement) Data(name string, s string) *MtrElement {
 	return e
 }
 
-func (e *MtrElement) Dir(a MtrDir) *MtrElement {
+func (e *MtrElement) Dir(a Dir) *MtrElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *MtrElement) Displaystyle(a MtrDisplaystyle) *MtrElement {
+func (e *MtrElement) Displaystyle(a Displaystyle) *MtrElement {
 	e.attributes.Set("displaystyle", string(a))
 
 	return e

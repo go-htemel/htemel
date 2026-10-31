@@ -12,6 +12,7 @@ import (
 )
 
 type AreaElement struct {
+	htemel.PhrasingMarker
 	attributes render.Attrs
 
 	skipRender bool
@@ -41,6 +42,14 @@ func AreaIf(condition bool) *AreaElement {
 // With allows passing a function to modify the element via a closure.
 func (e *AreaElement) With(fn func(*AreaElement)) *AreaElement {
 	fn(e)
+	return e
+}
+
+// IfThen conditionally calls the given function with the element if the condition is true, otherwise it is a no-op.
+func (e *AreaElement) IfThen(cond bool, fn func(*AreaElement)) *AreaElement {
+	if cond {
+		fn(e)
+	}
 	return e
 }
 
@@ -109,144 +118,6 @@ func (e *AreaElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type AreaDownload string
-
-const (
-	AreaDownloadEmpty AreaDownload = ""
-)
-
-type AreaReferrerpolicy string
-
-const (
-	AreaReferrerpolicyNoReferrer                  AreaReferrerpolicy = "no-referrer"
-	AreaReferrerpolicyNoReferrerWhenDowngrade     AreaReferrerpolicy = "no-referrer-when-downgrade"
-	AreaReferrerpolicyOrigin                      AreaReferrerpolicy = "origin"
-	AreaReferrerpolicyOriginWhenCrossOrigin       AreaReferrerpolicy = "origin-when-cross-origin"
-	AreaReferrerpolicySameOrigin                  AreaReferrerpolicy = "same-origin"
-	AreaReferrerpolicyStrictOrigin                AreaReferrerpolicy = "strict-origin"
-	AreaReferrerpolicyStrictOriginWhenCrossOrigin AreaReferrerpolicy = "strict-origin-when-cross-origin"
-	AreaReferrerpolicyUnsafeUrl                   AreaReferrerpolicy = "unsafe-url"
-	AreaReferrerpolicyEmpty                       AreaReferrerpolicy = ""
-)
-
-type AreaShape string
-
-const (
-	AreaShapeCircle  AreaShape = "circle"
-	AreaShapeDefault AreaShape = "default"
-	AreaShapePoly    AreaShape = "poly"
-	AreaShapeRect    AreaShape = "rect"
-)
-
-type AreaAutocapitalize string
-
-const (
-	AreaAutocapitalizeCharacters AreaAutocapitalize = "characters"
-	AreaAutocapitalizeNone       AreaAutocapitalize = "none"
-	AreaAutocapitalizeOff        AreaAutocapitalize = "off"
-	AreaAutocapitalizeOn         AreaAutocapitalize = "on"
-	AreaAutocapitalizeSentences  AreaAutocapitalize = "sentences"
-	AreaAutocapitalizeWords      AreaAutocapitalize = "words"
-)
-
-type AreaAutocorrect string
-
-const (
-	AreaAutocorrectOff   AreaAutocorrect = "off"
-	AreaAutocorrectOn    AreaAutocorrect = "on"
-	AreaAutocorrectEmpty AreaAutocorrect = ""
-)
-
-type AreaContenteditable string
-
-const (
-	AreaContenteditableFalse         AreaContenteditable = "false"
-	AreaContenteditablePlaintextOnly AreaContenteditable = "plaintext-only"
-	AreaContenteditableTrue          AreaContenteditable = "true"
-	AreaContenteditableEmpty         AreaContenteditable = ""
-)
-
-type AreaDir string
-
-const (
-	AreaDirAuto AreaDir = "auto"
-	AreaDirLtr  AreaDir = "ltr"
-	AreaDirRtl  AreaDir = "rtl"
-)
-
-type AreaDraggable string
-
-const (
-	AreaDraggableFalse AreaDraggable = "false"
-	AreaDraggableTrue  AreaDraggable = "true"
-)
-
-type AreaEnterkeyhint string
-
-const (
-	AreaEnterkeyhintDone     AreaEnterkeyhint = "done"
-	AreaEnterkeyhintEnter    AreaEnterkeyhint = "enter"
-	AreaEnterkeyhintGo       AreaEnterkeyhint = "go"
-	AreaEnterkeyhintNext     AreaEnterkeyhint = "next"
-	AreaEnterkeyhintPrevious AreaEnterkeyhint = "previous"
-	AreaEnterkeyhintSearch   AreaEnterkeyhint = "search"
-	AreaEnterkeyhintSend     AreaEnterkeyhint = "send"
-)
-
-type AreaHidden string
-
-const (
-	AreaHiddenHidden     AreaHidden = "hidden"
-	AreaHiddenUntilFound AreaHidden = "until-found"
-	AreaHiddenEmpty      AreaHidden = ""
-)
-
-type AreaInputmode string
-
-const (
-	AreaInputmodeDecimal AreaInputmode = "decimal"
-	AreaInputmodeEmail   AreaInputmode = "email"
-	AreaInputmodeNone    AreaInputmode = "none"
-	AreaInputmodeNumeric AreaInputmode = "numeric"
-	AreaInputmodeSearch  AreaInputmode = "search"
-	AreaInputmodeTel     AreaInputmode = "tel"
-	AreaInputmodeText    AreaInputmode = "text"
-	AreaInputmodeUrl     AreaInputmode = "url"
-)
-
-type AreaPopover string
-
-const (
-	AreaPopoverAuto   AreaPopover = "auto"
-	AreaPopoverHint   AreaPopover = "hint"
-	AreaPopoverManual AreaPopover = "manual"
-	AreaPopoverEmpty  AreaPopover = ""
-)
-
-type AreaSpellcheck string
-
-const (
-	AreaSpellcheckFalse AreaSpellcheck = "false"
-	AreaSpellcheckTrue  AreaSpellcheck = "true"
-	AreaSpellcheckEmpty AreaSpellcheck = ""
-)
-
-type AreaTranslate string
-
-const (
-	AreaTranslateNo    AreaTranslate = "no"
-	AreaTranslateYes   AreaTranslate = "yes"
-	AreaTranslateEmpty AreaTranslate = ""
-)
-
-type AreaWritingsuggestions string
-
-const (
-	AreaWritingsuggestionsFalse AreaWritingsuggestions = "false"
-	AreaWritingsuggestionsTrue  AreaWritingsuggestions = "true"
-	AreaWritingsuggestionsEmpty AreaWritingsuggestions = ""
-)
-
 func (e *AreaElement) Alt(s string) *AreaElement {
 	e.attributes.Set("alt", s)
 
@@ -261,18 +132,14 @@ func (e *AreaElement) Coords(s string) *AreaElement {
 
 // Download sets the "download" attribute. Called with no argument, Download() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Download(v ...AreaDownload) *AreaElement {
-	var val AreaDownload
+func (e *AreaElement) Download(v ...Download) *AreaElement {
+	var val Download
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
 	e.attributes.Set("download", string(val))
 
 	return e
-}
-
-func AreaDownloadCustom(s string) AreaDownload {
-	return AreaDownload(s)
 }
 
 // Href sets the "href" attribute.
@@ -297,8 +164,8 @@ func (e *AreaElement) Ping(s ...string) *AreaElement {
 
 // Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Referrerpolicy(v ...AreaReferrerpolicy) *AreaElement {
-	var val AreaReferrerpolicy
+func (e *AreaElement) Referrerpolicy(v ...Referrerpolicy) *AreaElement {
+	var val Referrerpolicy
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -313,7 +180,7 @@ func (e *AreaElement) Rel(s ...string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Shape(a AreaShape) *AreaElement {
+func (e *AreaElement) Shape(a Shape) *AreaElement {
 	e.attributes.Set("shape", string(a))
 
 	return e
@@ -353,7 +220,7 @@ func (e *AreaElement) Aria(name string, s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Autocapitalize(a AreaAutocapitalize) *AreaElement {
+func (e *AreaElement) Autocapitalize(a Autocapitalize) *AreaElement {
 	e.attributes.Set("autocapitalize", string(a))
 
 	return e
@@ -361,8 +228,8 @@ func (e *AreaElement) Autocapitalize(a AreaAutocapitalize) *AreaElement {
 
 // Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Autocorrect(v ...AreaAutocorrect) *AreaElement {
-	var val AreaAutocorrect
+func (e *AreaElement) Autocorrect(v ...Autocorrect) *AreaElement {
+	var val Autocorrect
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -387,8 +254,8 @@ func (e *AreaElement) Class(s ...string) *AreaElement {
 
 // Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Contenteditable(v ...AreaContenteditable) *AreaElement {
-	var val AreaContenteditable
+func (e *AreaElement) Contenteditable(v ...Contenteditable) *AreaElement {
+	var val Contenteditable
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -413,19 +280,19 @@ func (e *AreaElement) Data(name string, s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Dir(a AreaDir) *AreaElement {
+func (e *AreaElement) Dir(a Dir) *AreaElement {
 	e.attributes.Set("dir", string(a))
 
 	return e
 }
 
-func (e *AreaElement) Draggable(a AreaDraggable) *AreaElement {
+func (e *AreaElement) Draggable(a Draggable) *AreaElement {
 	e.attributes.Set("draggable", string(a))
 
 	return e
 }
 
-func (e *AreaElement) Enterkeyhint(a AreaEnterkeyhint) *AreaElement {
+func (e *AreaElement) Enterkeyhint(a Enterkeyhint) *AreaElement {
 	e.attributes.Set("enterkeyhint", string(a))
 
 	return e
@@ -453,8 +320,8 @@ func (e *AreaElement) Headingreset(b bool) *AreaElement {
 
 // Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Hidden(v ...AreaHidden) *AreaElement {
-	var val AreaHidden
+func (e *AreaElement) Hidden(v ...Hidden) *AreaElement {
+	var val Hidden
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -477,7 +344,7 @@ func (e *AreaElement) Inert(b bool) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Inputmode(a AreaInputmode) *AreaElement {
+func (e *AreaElement) Inputmode(a Inputmode) *AreaElement {
 	e.attributes.Set("inputmode", string(a))
 
 	return e
@@ -543,8 +410,8 @@ func (e *AreaElement) Part(s ...string) *AreaElement {
 
 // Popover sets the "popover" attribute. Called with no argument, Popover() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Popover(v ...AreaPopover) *AreaElement {
-	var val AreaPopover
+func (e *AreaElement) Popover(v ...Popover) *AreaElement {
+	var val Popover
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -567,8 +434,8 @@ func (e *AreaElement) Slot(s string) *AreaElement {
 
 // Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Spellcheck(v ...AreaSpellcheck) *AreaElement {
-	var val AreaSpellcheck
+func (e *AreaElement) Spellcheck(v ...Spellcheck) *AreaElement {
+	var val Spellcheck
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -597,8 +464,8 @@ func (e *AreaElement) Title(s string) *AreaElement {
 
 // Translate sets the "translate" attribute. Called with no argument, Translate() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Translate(v ...AreaTranslate) *AreaElement {
-	var val AreaTranslate
+func (e *AreaElement) Translate(v ...Translate) *AreaElement {
+	var val Translate
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -609,8 +476,8 @@ func (e *AreaElement) Translate(v ...AreaTranslate) *AreaElement {
 
 // Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *AreaElement) Writingsuggestions(v ...AreaWritingsuggestions) *AreaElement {
-	var val AreaWritingsuggestions
+func (e *AreaElement) Writingsuggestions(v ...Writingsuggestions) *AreaElement {
+	var val Writingsuggestions
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}

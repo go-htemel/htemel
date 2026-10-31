@@ -14,15 +14,17 @@ import (
 
 type FeImageElement struct {
 	attributes render.Attrs
-	children   []htemel.Node
+	children   []Content
 	skipRender bool
 }
 
 // FeImage creates a tag <feImage> instance and returns it for further modification.
 // Any children passed will be nested within the tag.
 //
+// Children: any element of this package, or text (Content).
+//
 // Spec Description: The feImage filter primitive fetches an image or element reference and uses it as filter input.
-func FeImage(children ...htemel.Node) *FeImageElement {
+func FeImage(children ...Content) *FeImageElement {
 	node := &FeImageElement{
 		children: children,
 	}
@@ -31,7 +33,7 @@ func FeImage(children ...htemel.Node) *FeImageElement {
 }
 
 // FeImageIf creates a tag <feImage> instance that is only rendered when condition is true.
-func FeImageIf(condition bool, children ...htemel.Node) *FeImageElement {
+func FeImageIf(condition bool, children ...Content) *FeImageElement {
 	if condition {
 		return FeImage(children...)
 	}
@@ -43,7 +45,7 @@ func FeImageIf(condition bool, children ...htemel.Node) *FeImageElement {
 }
 
 // FeImageTernary creates a tag <feImage> containing then when condition is true, otherwise containing otherwise.
-func FeImageTernary(condition bool, then htemel.Node, otherwise htemel.Node) *FeImageElement {
+func FeImageTernary(condition bool, then Content, otherwise Content) *FeImageElement {
 	if condition {
 		return FeImage(then)
 	}
@@ -51,7 +53,7 @@ func FeImageTernary(condition bool, then htemel.Node, otherwise htemel.Node) *Fe
 }
 
 // Children appends children to this element.
-func (e *FeImageElement) Children(children ...htemel.Node) *FeImageElement {
+func (e *FeImageElement) Children(children ...Content) *FeImageElement {
 	e.children = append(e.children, children...)
 	return e
 }
@@ -74,7 +76,7 @@ func (e *FeImageElement) Textf(format string, args ...any) *FeImageElement {
 }
 
 // If conditionally adds a child node to the element if the condition is true, otherwise it is a no-op.
-func (e *FeImageElement) If(cond bool, child htemel.Node) *FeImageElement {
+func (e *FeImageElement) If(cond bool, child Content) *FeImageElement {
 	if cond {
 		return e.Children(child)
 	}
@@ -82,7 +84,7 @@ func (e *FeImageElement) If(cond bool, child htemel.Node) *FeImageElement {
 }
 
 // IfElse adds then as a child if cond is true, otherwise adds els.
-func (e *FeImageElement) IfElse(cond bool, then, els htemel.Node) *FeImageElement {
+func (e *FeImageElement) IfElse(cond bool, then, els Content) *FeImageElement {
 	if cond {
 		e.Children(then)
 	} else {
@@ -164,232 +166,13 @@ func (e *FeImageElement) SetAttrUnsafe(name, value string) {
 	e.attributes.SetUnsafe(name, value)
 }
 
-type FeImageCrossorigin string
-
-const (
-	FeImageCrossoriginAnonymous      FeImageCrossorigin = "anonymous"
-	FeImageCrossoriginUseCredentials FeImageCrossorigin = "use-credentials"
-	FeImageCrossoriginEmpty          FeImageCrossorigin = ""
-)
-
-type FeImageAlignmentBaseline string
-
-const (
-	FeImageAlignmentBaselineAfterEdge      FeImageAlignmentBaseline = "after-edge"
-	FeImageAlignmentBaselineAlphabetic     FeImageAlignmentBaseline = "alphabetic"
-	FeImageAlignmentBaselineAuto           FeImageAlignmentBaseline = "auto"
-	FeImageAlignmentBaselineBaseline       FeImageAlignmentBaseline = "baseline"
-	FeImageAlignmentBaselineBeforeEdge     FeImageAlignmentBaseline = "before-edge"
-	FeImageAlignmentBaselineBottom         FeImageAlignmentBaseline = "bottom"
-	FeImageAlignmentBaselineCenter         FeImageAlignmentBaseline = "center"
-	FeImageAlignmentBaselineCentral        FeImageAlignmentBaseline = "central"
-	FeImageAlignmentBaselineHanging        FeImageAlignmentBaseline = "hanging"
-	FeImageAlignmentBaselineIdeographic    FeImageAlignmentBaseline = "ideographic"
-	FeImageAlignmentBaselineMathematical   FeImageAlignmentBaseline = "mathematical"
-	FeImageAlignmentBaselineMiddle         FeImageAlignmentBaseline = "middle"
-	FeImageAlignmentBaselineTextAfterEdge  FeImageAlignmentBaseline = "text-after-edge"
-	FeImageAlignmentBaselineTextBeforeEdge FeImageAlignmentBaseline = "text-before-edge"
-	FeImageAlignmentBaselineTextBottom     FeImageAlignmentBaseline = "text-bottom"
-	FeImageAlignmentBaselineTextTop        FeImageAlignmentBaseline = "text-top"
-	FeImageAlignmentBaselineTop            FeImageAlignmentBaseline = "top"
-)
-
-type FeImageClipRule string
-
-const (
-	FeImageClipRuleEvenodd FeImageClipRule = "evenodd"
-	FeImageClipRuleNonzero FeImageClipRule = "nonzero"
-)
-
-type FeImageColorInterpolation string
-
-const (
-	FeImageColorInterpolationAuto      FeImageColorInterpolation = "auto"
-	FeImageColorInterpolationLinearRGB FeImageColorInterpolation = "linearRGB"
-	FeImageColorInterpolationSRGB      FeImageColorInterpolation = "sRGB"
-)
-
-type FeImageColorInterpolationFilters string
-
-const (
-	FeImageColorInterpolationFiltersAuto      FeImageColorInterpolationFilters = "auto"
-	FeImageColorInterpolationFiltersLinearRGB FeImageColorInterpolationFilters = "linearRGB"
-	FeImageColorInterpolationFiltersSRGB      FeImageColorInterpolationFilters = "sRGB"
-)
-
-type FeImageDirection string
-
-const (
-	FeImageDirectionLtr FeImageDirection = "ltr"
-	FeImageDirectionRtl FeImageDirection = "rtl"
-)
-
-type FeImageDominantBaseline string
-
-const (
-	FeImageDominantBaselineAlphabetic   FeImageDominantBaseline = "alphabetic"
-	FeImageDominantBaselineAuto         FeImageDominantBaseline = "auto"
-	FeImageDominantBaselineCentral      FeImageDominantBaseline = "central"
-	FeImageDominantBaselineHanging      FeImageDominantBaseline = "hanging"
-	FeImageDominantBaselineIdeographic  FeImageDominantBaseline = "ideographic"
-	FeImageDominantBaselineMathematical FeImageDominantBaseline = "mathematical"
-	FeImageDominantBaselineMiddle       FeImageDominantBaseline = "middle"
-	FeImageDominantBaselineTextBottom   FeImageDominantBaseline = "text-bottom"
-	FeImageDominantBaselineTextTop      FeImageDominantBaseline = "text-top"
-)
-
-type FeImageFillRule string
-
-const (
-	FeImageFillRuleEvenodd FeImageFillRule = "evenodd"
-	FeImageFillRuleNonzero FeImageFillRule = "nonzero"
-)
-
-type FeImageFontStyle string
-
-const (
-	FeImageFontStyleItalic  FeImageFontStyle = "italic"
-	FeImageFontStyleNormal  FeImageFontStyle = "normal"
-	FeImageFontStyleOblique FeImageFontStyle = "oblique"
-)
-
-type FeImageImageRendering string
-
-const (
-	FeImageImageRenderingAuto            FeImageImageRendering = "auto"
-	FeImageImageRenderingCrispEdges      FeImageImageRendering = "crisp-edges"
-	FeImageImageRenderingHighQuality     FeImageImageRendering = "high-quality"
-	FeImageImageRenderingOptimizeQuality FeImageImageRendering = "optimizeQuality"
-	FeImageImageRenderingOptimizeSpeed   FeImageImageRendering = "optimizeSpeed"
-	FeImageImageRenderingPixelated       FeImageImageRendering = "pixelated"
-	FeImageImageRenderingSmooth          FeImageImageRendering = "smooth"
-)
-
-type FeImageOverflow string
-
-const (
-	FeImageOverflowAuto    FeImageOverflow = "auto"
-	FeImageOverflowClip    FeImageOverflow = "clip"
-	FeImageOverflowHidden  FeImageOverflow = "hidden"
-	FeImageOverflowScroll  FeImageOverflow = "scroll"
-	FeImageOverflowVisible FeImageOverflow = "visible"
-)
-
-type FeImagePointerEvents string
-
-const (
-	FeImagePointerEventsAll            FeImagePointerEvents = "all"
-	FeImagePointerEventsAuto           FeImagePointerEvents = "auto"
-	FeImagePointerEventsBoundingBox    FeImagePointerEvents = "bounding-box"
-	FeImagePointerEventsFill           FeImagePointerEvents = "fill"
-	FeImagePointerEventsNone           FeImagePointerEvents = "none"
-	FeImagePointerEventsPainted        FeImagePointerEvents = "painted"
-	FeImagePointerEventsStroke         FeImagePointerEvents = "stroke"
-	FeImagePointerEventsVisible        FeImagePointerEvents = "visible"
-	FeImagePointerEventsVisibleFill    FeImagePointerEvents = "visibleFill"
-	FeImagePointerEventsVisiblePainted FeImagePointerEvents = "visiblePainted"
-	FeImagePointerEventsVisibleStroke  FeImagePointerEvents = "visibleStroke"
-)
-
-type FeImageShapeRendering string
-
-const (
-	FeImageShapeRenderingAuto               FeImageShapeRendering = "auto"
-	FeImageShapeRenderingCrispEdges         FeImageShapeRendering = "crispEdges"
-	FeImageShapeRenderingGeometricPrecision FeImageShapeRendering = "geometricPrecision"
-	FeImageShapeRenderingOptimizeSpeed      FeImageShapeRendering = "optimizeSpeed"
-)
-
-type FeImageStrokeLinecap string
-
-const (
-	FeImageStrokeLinecapButt   FeImageStrokeLinecap = "butt"
-	FeImageStrokeLinecapRound  FeImageStrokeLinecap = "round"
-	FeImageStrokeLinecapSquare FeImageStrokeLinecap = "square"
-)
-
-type FeImageStrokeLinejoin string
-
-const (
-	FeImageStrokeLinejoinArcs      FeImageStrokeLinejoin = "arcs"
-	FeImageStrokeLinejoinBevel     FeImageStrokeLinejoin = "bevel"
-	FeImageStrokeLinejoinMiter     FeImageStrokeLinejoin = "miter"
-	FeImageStrokeLinejoinMiterClip FeImageStrokeLinejoin = "miter-clip"
-	FeImageStrokeLinejoinRound     FeImageStrokeLinejoin = "round"
-)
-
-type FeImageTextAnchor string
-
-const (
-	FeImageTextAnchorEnd    FeImageTextAnchor = "end"
-	FeImageTextAnchorMiddle FeImageTextAnchor = "middle"
-	FeImageTextAnchorStart  FeImageTextAnchor = "start"
-)
-
-type FeImageTextRendering string
-
-const (
-	FeImageTextRenderingAuto               FeImageTextRendering = "auto"
-	FeImageTextRenderingGeometricPrecision FeImageTextRendering = "geometricPrecision"
-	FeImageTextRenderingOptimizeLegibility FeImageTextRendering = "optimizeLegibility"
-	FeImageTextRenderingOptimizeSpeed      FeImageTextRendering = "optimizeSpeed"
-)
-
-type FeImageTransformBox string
-
-const (
-	FeImageTransformBoxBorderBox  FeImageTransformBox = "border-box"
-	FeImageTransformBoxContentBox FeImageTransformBox = "content-box"
-	FeImageTransformBoxFillBox    FeImageTransformBox = "fill-box"
-	FeImageTransformBoxStrokeBox  FeImageTransformBox = "stroke-box"
-	FeImageTransformBoxViewBox    FeImageTransformBox = "view-box"
-)
-
-type FeImageVectorEffect string
-
-const (
-	FeImageVectorEffectFixedPosition    FeImageVectorEffect = "fixed-position"
-	FeImageVectorEffectNonRotation      FeImageVectorEffect = "non-rotation"
-	FeImageVectorEffectNonScalingSize   FeImageVectorEffect = "non-scaling-size"
-	FeImageVectorEffectNonScalingStroke FeImageVectorEffect = "non-scaling-stroke"
-	FeImageVectorEffectNone             FeImageVectorEffect = "none"
-)
-
-type FeImageVisibility string
-
-const (
-	FeImageVisibilityCollapse FeImageVisibility = "collapse"
-	FeImageVisibilityHidden   FeImageVisibility = "hidden"
-	FeImageVisibilityVisible  FeImageVisibility = "visible"
-)
-
-type FeImageWritingMode string
-
-const (
-	FeImageWritingModeHorizontalTb FeImageWritingMode = "horizontal-tb"
-	FeImageWritingModeLr           FeImageWritingMode = "lr"
-	FeImageWritingModeLrTb         FeImageWritingMode = "lr-tb"
-	FeImageWritingModeRl           FeImageWritingMode = "rl"
-	FeImageWritingModeRlTb         FeImageWritingMode = "rl-tb"
-	FeImageWritingModeSidewaysLr   FeImageWritingMode = "sideways-lr"
-	FeImageWritingModeSidewaysRl   FeImageWritingMode = "sideways-rl"
-	FeImageWritingModeTb           FeImageWritingMode = "tb"
-	FeImageWritingModeTbRl         FeImageWritingMode = "tb-rl"
-	FeImageWritingModeVerticalLr   FeImageWritingMode = "vertical-lr"
-	FeImageWritingModeVerticalRl   FeImageWritingMode = "vertical-rl"
-)
-
-type FeImageXmlSpace string
-
-const (
-	FeImageXmlSpaceDefault  FeImageXmlSpace = "default"
-	FeImageXmlSpacePreserve FeImageXmlSpace = "preserve"
-)
+// SVGContent marks <feImage> as a permitted child (Content).
+func (*FeImageElement) SVGContent() {}
 
 // Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
 // bare attribute (empty value); with arguments the last one is used.
-func (e *FeImageElement) Crossorigin(v ...FeImageCrossorigin) *FeImageElement {
-	var val FeImageCrossorigin
+func (e *FeImageElement) Crossorigin(v ...Crossorigin) *FeImageElement {
+	var val Crossorigin
 	if len(v) > 0 {
 		val = v[len(v)-1]
 	}
@@ -452,14 +235,10 @@ func (e *FeImageElement) Y(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) AlignmentBaseline(a FeImageAlignmentBaseline) *FeImageElement {
+func (e *FeImageElement) AlignmentBaseline(a AlignmentBaseline) *FeImageElement {
 	e.attributes.Set("alignment-baseline", string(a))
 
 	return e
-}
-
-func FeImageAlignmentBaselineCustom(s string) FeImageAlignmentBaseline {
-	return FeImageAlignmentBaseline(s)
 }
 
 func (e *FeImageElement) AriaUnsafe(name string, s string) *FeImageElement {
@@ -513,14 +292,10 @@ func (e *FeImageElement) ClipPath(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) ClipRule(a FeImageClipRule) *FeImageElement {
+func (e *FeImageElement) ClipRule(a ClipRule) *FeImageElement {
 	e.attributes.Set("clip-rule", string(a))
 
 	return e
-}
-
-func FeImageClipRuleCustom(s string) FeImageClipRule {
-	return FeImageClipRule(s)
 }
 
 func (e *FeImageElement) Color(s string) *FeImageElement {
@@ -529,24 +304,16 @@ func (e *FeImageElement) Color(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) ColorInterpolation(a FeImageColorInterpolation) *FeImageElement {
+func (e *FeImageElement) ColorInterpolation(a ColorInterpolation) *FeImageElement {
 	e.attributes.Set("color-interpolation", string(a))
 
 	return e
 }
 
-func FeImageColorInterpolationCustom(s string) FeImageColorInterpolation {
-	return FeImageColorInterpolation(s)
-}
-
-func (e *FeImageElement) ColorInterpolationFilters(a FeImageColorInterpolationFilters) *FeImageElement {
+func (e *FeImageElement) ColorInterpolationFilters(a ColorInterpolationFilters) *FeImageElement {
 	e.attributes.Set("color-interpolation-filters", string(a))
 
 	return e
-}
-
-func FeImageColorInterpolationFiltersCustom(s string) FeImageColorInterpolationFilters {
-	return FeImageColorInterpolationFilters(s)
 }
 
 func (e *FeImageElement) Cursor(s string) *FeImageElement {
@@ -571,14 +338,10 @@ func (e *FeImageElement) Data(name string, s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) Direction(a FeImageDirection) *FeImageElement {
+func (e *FeImageElement) Direction(a Direction) *FeImageElement {
 	e.attributes.Set("direction", string(a))
 
 	return e
-}
-
-func FeImageDirectionCustom(s string) FeImageDirection {
-	return FeImageDirection(s)
 }
 
 func (e *FeImageElement) Display(s string) *FeImageElement {
@@ -587,14 +350,10 @@ func (e *FeImageElement) Display(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) DominantBaseline(a FeImageDominantBaseline) *FeImageElement {
+func (e *FeImageElement) DominantBaseline(a DominantBaseline) *FeImageElement {
 	e.attributes.Set("dominant-baseline", string(a))
 
 	return e
-}
-
-func FeImageDominantBaselineCustom(s string) FeImageDominantBaseline {
-	return FeImageDominantBaseline(s)
 }
 
 func (e *FeImageElement) Fill(s string) *FeImageElement {
@@ -609,14 +368,10 @@ func (e *FeImageElement) FillOpacity(f float64) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) FillRule(a FeImageFillRule) *FeImageElement {
+func (e *FeImageElement) FillRule(a FillRule) *FeImageElement {
 	e.attributes.Set("fill-rule", string(a))
 
 	return e
-}
-
-func FeImageFillRuleCustom(s string) FeImageFillRule {
-	return FeImageFillRule(s)
 }
 
 func (e *FeImageElement) Filter(s string) *FeImageElement {
@@ -661,14 +416,10 @@ func (e *FeImageElement) FontStretch(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) FontStyle(a FeImageFontStyle) *FeImageElement {
+func (e *FeImageElement) FontStyle(a FontStyle) *FeImageElement {
 	e.attributes.Set("font-style", string(a))
 
 	return e
-}
-
-func FeImageFontStyleCustom(s string) FeImageFontStyle {
-	return FeImageFontStyle(s)
 }
 
 func (e *FeImageElement) FontVariant(s string) *FeImageElement {
@@ -707,14 +458,10 @@ func (e *FeImageElement) Id(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) ImageRendering(a FeImageImageRendering) *FeImageElement {
+func (e *FeImageElement) ImageRendering(a ImageRendering) *FeImageElement {
 	e.attributes.Set("image-rendering", string(a))
 
 	return e
-}
-
-func FeImageImageRenderingCustom(s string) FeImageImageRendering {
-	return FeImageImageRendering(s)
 }
 
 func (e *FeImageElement) Lang(s string) *FeImageElement {
@@ -765,14 +512,10 @@ func (e *FeImageElement) Opacity(f float64) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) Overflow(a FeImageOverflow) *FeImageElement {
+func (e *FeImageElement) Overflow(a Overflow) *FeImageElement {
 	e.attributes.Set("overflow", string(a))
 
 	return e
-}
-
-func FeImageOverflowCustom(s string) FeImageOverflow {
-	return FeImageOverflow(s)
 }
 
 func (e *FeImageElement) PaintOrder(s string) *FeImageElement {
@@ -781,14 +524,10 @@ func (e *FeImageElement) PaintOrder(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) PointerEvents(a FeImagePointerEvents) *FeImageElement {
+func (e *FeImageElement) PointerEvents(a PointerEvents) *FeImageElement {
 	e.attributes.Set("pointer-events", string(a))
 
 	return e
-}
-
-func FeImagePointerEventsCustom(s string) FeImagePointerEvents {
-	return FeImagePointerEvents(s)
 }
 
 func (e *FeImageElement) RequiredExtensions(s string) *FeImageElement {
@@ -797,14 +536,10 @@ func (e *FeImageElement) RequiredExtensions(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) ShapeRendering(a FeImageShapeRendering) *FeImageElement {
+func (e *FeImageElement) ShapeRendering(a ShapeRendering) *FeImageElement {
 	e.attributes.Set("shape-rendering", string(a))
 
 	return e
-}
-
-func FeImageShapeRenderingCustom(s string) FeImageShapeRendering {
-	return FeImageShapeRendering(s)
 }
 
 func (e *FeImageElement) StopColor(s string) *FeImageElement {
@@ -837,24 +572,16 @@ func (e *FeImageElement) StrokeDashoffset(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) StrokeLinecap(a FeImageStrokeLinecap) *FeImageElement {
+func (e *FeImageElement) StrokeLinecap(a StrokeLinecap) *FeImageElement {
 	e.attributes.Set("stroke-linecap", string(a))
 
 	return e
 }
 
-func FeImageStrokeLinecapCustom(s string) FeImageStrokeLinecap {
-	return FeImageStrokeLinecap(s)
-}
-
-func (e *FeImageElement) StrokeLinejoin(a FeImageStrokeLinejoin) *FeImageElement {
+func (e *FeImageElement) StrokeLinejoin(a StrokeLinejoin) *FeImageElement {
 	e.attributes.Set("stroke-linejoin", string(a))
 
 	return e
-}
-
-func FeImageStrokeLinejoinCustom(s string) FeImageStrokeLinejoin {
-	return FeImageStrokeLinejoin(s)
 }
 
 func (e *FeImageElement) StrokeMiterlimit(f float64) *FeImageElement {
@@ -887,14 +614,10 @@ func (e *FeImageElement) Tabindex(i int) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) TextAnchor(a FeImageTextAnchor) *FeImageElement {
+func (e *FeImageElement) TextAnchor(a TextAnchor) *FeImageElement {
 	e.attributes.Set("text-anchor", string(a))
 
 	return e
-}
-
-func FeImageTextAnchorCustom(s string) FeImageTextAnchor {
-	return FeImageTextAnchor(s)
 }
 
 func (e *FeImageElement) TextDecoration(s string) *FeImageElement {
@@ -909,14 +632,10 @@ func (e *FeImageElement) TextOverflow(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) TextRendering(a FeImageTextRendering) *FeImageElement {
+func (e *FeImageElement) TextRendering(a TextRendering) *FeImageElement {
 	e.attributes.Set("text-rendering", string(a))
 
 	return e
-}
-
-func FeImageTextRenderingCustom(s string) FeImageTextRendering {
-	return FeImageTextRendering(s)
 }
 
 func (e *FeImageElement) Transform(s string) *FeImageElement {
@@ -925,14 +644,10 @@ func (e *FeImageElement) Transform(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) TransformBox(a FeImageTransformBox) *FeImageElement {
+func (e *FeImageElement) TransformBox(a TransformBox) *FeImageElement {
 	e.attributes.Set("transform-box", string(a))
 
 	return e
-}
-
-func FeImageTransformBoxCustom(s string) FeImageTransformBox {
-	return FeImageTransformBox(s)
 }
 
 func (e *FeImageElement) TransformOrigin(s string) *FeImageElement {
@@ -947,24 +662,16 @@ func (e *FeImageElement) UnicodeBidi(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) VectorEffect(a FeImageVectorEffect) *FeImageElement {
+func (e *FeImageElement) VectorEffect(a VectorEffect) *FeImageElement {
 	e.attributes.Set("vector-effect", string(a))
 
 	return e
 }
 
-func FeImageVectorEffectCustom(s string) FeImageVectorEffect {
-	return FeImageVectorEffect(s)
-}
-
-func (e *FeImageElement) Visibility(a FeImageVisibility) *FeImageElement {
+func (e *FeImageElement) Visibility(a Visibility) *FeImageElement {
 	e.attributes.Set("visibility", string(a))
 
 	return e
-}
-
-func FeImageVisibilityCustom(s string) FeImageVisibility {
-	return FeImageVisibility(s)
 }
 
 func (e *FeImageElement) WhiteSpace(s string) *FeImageElement {
@@ -979,14 +686,10 @@ func (e *FeImageElement) WordSpacing(s string) *FeImageElement {
 	return e
 }
 
-func (e *FeImageElement) WritingMode(a FeImageWritingMode) *FeImageElement {
+func (e *FeImageElement) WritingMode(a WritingMode) *FeImageElement {
 	e.attributes.Set("writing-mode", string(a))
 
 	return e
-}
-
-func FeImageWritingModeCustom(s string) FeImageWritingMode {
-	return FeImageWritingMode(s)
 }
 
 // XmlLang sets the "xml:lang" attribute.
@@ -1001,7 +704,7 @@ func (e *FeImageElement) XmlLang(s string) *FeImageElement {
 // XmlSpace sets the "xml:space" attribute.
 //
 // Deprecated: the "xml:space" attribute is deprecated or obsolete in its source specification.
-func (e *FeImageElement) XmlSpace(a FeImageXmlSpace) *FeImageElement {
+func (e *FeImageElement) XmlSpace(a XmlSpace) *FeImageElement {
 	e.attributes.Set("xml:space", string(a))
 
 	return e
