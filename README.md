@@ -134,31 +134,76 @@ func Card(title string, children ...Node) Node {
 }
 ```
 
-- Use `With` to build repeated content from a loop. It passes the typed element to a callback, so the loop can add children to it:
+- Use `Each` to build repeated content. It renders a function for each item at render time, so no intermediate slice of nodes is built:
 
   ```go
   func ItemList(items []string) Node {
-      return Ul().Class("list").With(func(ul *UlElement) {
-          for _, item := range items {
-              ul.Children(Li().Text(item))
-          }
-      })
+      return Ul().Class("list").Children(
+          Each(items, func(item string) Node {
+              return Li().Text(item)
+          }),
+      )
   }
   ```
 
+  `EachIndex` also passes the index, `ForEach` and `ForEach2` range over an `iter.Seq` or `iter.Seq2` such as `slices.Values` or `maps.All`, and `If` and `IfElse` choose between nodes without a separate `if` block.
+
 - Use `Group` to return several sibling nodes without a wrapping element.
 
-The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `With`, and a page wrapper that accepts children.
+`With` is still available when you need the typed element itself inside a function. The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `Each`, an inline SVG icon, and a page wrapper that accepts children.
+
+## SVG
+
+The `svg` package generates the SVG elements, with tag and attribute names kept in their SVG case (`viewBox`, `linearGradient`, `feGaussianBlur`). SVG nodes are plain `Node` values, so they nest directly inside HTML elements.
+
+Import `svg` under its package name rather than with a `.` import. It shares names with both `htemel` (`Text`) and `html` (`A`, `Title`, `Style`, `Script`, `Image`), so a dot import would conflict.
+
+```go
+func PlusIcon() Node {
+    return svg.Svg().
+        ViewBox("0 0 24 24").
+        Attr("width", "24").Attr("height", "24").
+        Children(
+            svg.Path().
+                D("M4 12h16M12 4v16").
+                Fill("none").
+                Stroke("currentColor").
+                StrokeWidth("2").
+                StrokeLinecap(svg.PathStrokeLinecapRound),
+        )
+}
+
+// Inside an HTML element:
+Button().Children(PlusIcon(), Text("Add"))
+```
+
+**Output**:
+
+```html
+<button><svg viewBox="0 0 24 24" width="24" height="24"><path d="M4 12h16M12 4v16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Add</button>
+```
+
+- Presentation attributes such as `fill`, `stroke` and `opacity` are available on every element. Animation timing uses `fill="freeze"`, which collides with the paint `fill` method, so set it with `.Attr("fill", "freeze")`.
+- Reference other elements with `svg.Use().Href("#id")`, and define them in `svg.Defs()`.
+- The element and attribute list is hand-curated in `specs/svg.json` and generated into `svg/`.
 
 ## Escaping and Safety
 
 - `Text` HTML-escapes its input, so user data is safe to pass to it. `TextUnsafe` writes its input verbatim and should only receive trusted markup.
 - Attribute values are always escaped. This covers `Attr`, `Data`, `Aria`, the typed setters (such as `Title` or `Href`), and `Generic` attributes. `AttrUnsafe` and `DataUnsafe` skip escaping, so only use them with trusted values.
 - `script` and `style` take raw text through `Text`, with no HTML escaping, so only pass trusted code. The one rewrite is that a `</script` or `</style` sequence (in any case) is changed to `<\/script` or `<\/style`, so the content cannot close the element early.
-- URL attributes such as `href` and `src` are escaped but not scheme-filtered. `Href("javascript:...")` renders as given. Validate untrusted URLs (for example, allow only `http`, `https`, or relative paths) before passing them to `Href`.
+- URL attributes such as `href` and `src` are escaped but not scheme-filtered, so `Href("javascript:...")` renders as given. Pass untrusted URLs through `htemel.URL`, which returns `ErrUnsafeURL` for anything outside the policy: relative references, absolute `http`, `https`, `mailto`, `tel`, `sms`, `ftp` and `blob` URLs, and `data:` URLs for raster `image/*` types (not SVG). `htemel.URLOr` returns a fallback instead of an error, and `htemel.MustURL` panics, so use it only for constants.
 
 ```go
 P().Text(`<img src=x onerror="alert(1)">`) // <p>&lt;img src=x onerror=&#34;alert(1)&#34;&gt;</p>
+
+A().Href(htemel.URLOr(userInput, "#")).Text("Profile")
+```
+
+**Output** (for `userInput` set to `javascript:alert(1)`):
+
+```html
+<a href="#">Profile</a>
 ```
 
 ## Goals
@@ -196,8 +241,10 @@ Thus, **htemel** was created to address these gaps with a focus on type safety a
 
 ## Development
 
-- `go generate ./...` regenerates the `html` package from `specs/html.json`. Files in `html/` are generated, so change the generator or the spec rather than editing them by hand.
-- `go test ./...` runs the test suite.
+- `go generate ./...` regenerates both the `html` package from `specs/html.json` and the `svg` package from `specs/svg.json`. Files in `html/` and `svg/` are generated, so change the generator in `cmd/genelements` or the spec rather than editing them by hand.
+- `make check-generated` regenerates the code and fails if `html/` or `svg/` differ from what is committed, which catches a spec change without its output.
+- `make test` runs `go test -race ./...`.
+- `make lint` runs `golangci-lint` when it is installed, and falls back to `go vet` otherwise.
 
 ## Contributing
 
@@ -210,4 +257,4 @@ Contributions are welcome! Fork the repository and submit a pull request. Please
 1. **HTML Spec Generator**: Pulls from the [Living HTML Standard](https://html.spec.whatwg.org/). Note: The parser is a work in progress, with some hand-crafted attributes to fill gaps.
 2. **Element Generator**: Generates namespaced elements from a provided spec. You can write custom specs for your web components and generate corresponding elements.
 
-Support for additional markup languages like SVG or MathML is planned. Contributions to enhance the generator are encouraged!
+The `svg` package is generated by the same tool. Support for additional markup languages like MathML is planned. Contributions to enhance the generator are encouraged!

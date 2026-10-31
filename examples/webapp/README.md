@@ -40,6 +40,7 @@ The application uses a shared layout (`views.Layout`) that provides:
 - Common HTML structure with DOCTYPE and meta tags
 - Tailwind CSS integration via CDN
 - Responsive navigation bar with active page highlighting
+- An inline SVG logo icon, built with the `svg` package and colored with `currentColor`
 - Dark mode support
 
 ### Routes
@@ -85,6 +86,21 @@ Components can be nested and reused. The `Layout` function accepts child nodes:
 ```go
 Layout(PageData{Title: "Home", Request: r}, Index())
 ```
+
+### Repeated Content
+
+The navigation renders its links with `Each`, which calls a function for each item at render time:
+
+```go
+Each(links, func(link navLink) Node {
+    link.active = currentPage == link.href
+    return NavigationLink(link)
+})
+```
+
+### Inline SVG
+
+`LogoIcon` in `views/layout.go` is an SVG icon built with the `svg` package. It is imported under its package name because `svg` shares names with the `html` package. The icon uses `currentColor`, so it follows the text color of the link around it.
 
 ### Dynamic Styling
 

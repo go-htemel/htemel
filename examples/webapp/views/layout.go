@@ -5,6 +5,7 @@ import (
 
 	. "github.com/go-htemel/htemel"
 	. "github.com/go-htemel/htemel/html"
+	"github.com/go-htemel/htemel/svg"
 )
 
 type PageData struct {
@@ -64,18 +65,43 @@ func Navigation(currentPage string) Node {
 							Div().
 								Class("flex shrink-0").
 								Children(
-									A().Href("/").Text("ExampleApp"),
+									A().Href("/").Class("flex items-center gap-2 text-white").Children(
+										LogoIcon(),
+										Span().Text("ExampleApp"),
+									),
 								),
 							Div().
 								Class("hidden md:flex items-center space-x-8").
-								With(func(div *DivElement) {
-									for _, link := range links {
+								Children(
+									Each(links, func(link navLink) Node {
 										link.active = currentPage == link.href
-										div.Children(NavigationLink(link))
-									}
-								}),
+										return NavigationLink(link)
+									}),
+								),
 						),
 				),
+		)
+}
+
+// LogoIcon is a small inline SVG mark. It uses currentColor, so it takes the text color of the link.
+func LogoIcon() Node {
+	return svg.Svg().
+		Class("size-6 text-red-500").
+		ViewBox("0 0 24 24").
+		Attr("aria-hidden", "true").
+		Children(
+			svg.Path().
+				D("M12 2 2 7l10 5 10-5-10-5Z").
+				Fill("none").
+				Stroke("currentColor").
+				StrokeWidth("2").
+				StrokeLinejoin(svg.PathStrokeLinejoinRound),
+			svg.Path().
+				D("M2 17l10 5 10-5M2 12l10 5 10-5").
+				Fill("none").
+				Stroke("currentColor").
+				StrokeWidth("2").
+				StrokeLinejoin(svg.PathStrokeLinejoinRound),
 		)
 }
 

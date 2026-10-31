@@ -5,7 +5,7 @@ go 1.24
 require golang.org/x/net v0.43.0
 
 require (
-	github.com/go-htemel/spec v0.1.2-0.20261031120948-d600448f8d97
+	github.com/go-htemel/spec v0.2.0
 	golang.org/x/tools v0.35.0
 )
 
