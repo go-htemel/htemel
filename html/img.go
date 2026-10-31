@@ -508,23 +508,31 @@ func (e *ImgElement) Writingsuggestions(a ImgWritingsuggestions) *ImgElement {
 	return e
 }
 
-// Render processes the current element, and writes the initial tag.
-// Then all children are processed and included within the tag.
-// Finally, the tag is closed.
+// Render writes the opening tag and its attributes, then returns: <img> is a void element,
+// so it is self closing and has no children.
 //
-// *Except for void elements as they are self closing and do not contain children.
+// Output is written directly to w as many small writes, with no intermediate buffering.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
 func (e *ImgElement) Render(w io.Writer) error {
 	if e.skipRender {
 		return nil
 	}
 
-	var sb strings.Builder
-	sb.WriteString("<img")
+	if e.attributes.Len() == 0 {
+		if _, err := io.WriteString(w, "<img>"); err != nil {
+			return err
+		}
+	} else {
+		if _, err := io.WriteString(w, "<img"); err != nil {
+			return err
+		}
+		if _, err := e.attributes.WriteTo(w); err != nil {
+			return err
+		}
+		if _, err := io.WriteString(w, ">"); err != nil {
+			return err
+		}
+	}
 
-	e.attributes.WriteTo(&sb)
-
-	sb.WriteByte('>')
-
-	_, err := io.WriteString(w, sb.String())
-	return err
+	return nil
 }

@@ -453,30 +453,37 @@ func (e *PictureElement) Writingsuggestions(a PictureWritingsuggestions) *Pictur
 	return e
 }
 
-// Render processes the current element, and writes the initial tag.
-// Then all children are processed and included within the tag.
-// Finally, the tag is closed.
+// Render writes the opening tag and its attributes, then renders each child, then writes the closing tag.
 //
-// *Except for void elements as they are self closing and do not contain children.
+// Output is written directly to w as many small writes, with no intermediate buffering.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
 func (e *PictureElement) Render(w io.Writer) error {
 	if e.skipRender {
 		return nil
 	}
 
-	var sb strings.Builder
-	sb.WriteString("<picture")
-
-	e.attributes.WriteTo(&sb)
-
-	sb.WriteByte('>')
-	for _, child := range e.children {
-		if err := child.Render(&sb); err != nil {
+	if e.attributes.Len() == 0 {
+		if _, err := io.WriteString(w, "<picture>"); err != nil {
+			return err
+		}
+	} else {
+		if _, err := io.WriteString(w, "<picture"); err != nil {
+			return err
+		}
+		if _, err := e.attributes.WriteTo(w); err != nil {
+			return err
+		}
+		if _, err := io.WriteString(w, ">"); err != nil {
 			return err
 		}
 	}
 
-	sb.WriteString("</picture>")
+	for _, child := range e.children {
+		if err := child.Render(w); err != nil {
+			return err
+		}
+	}
 
-	_, err := io.WriteString(w, sb.String())
+	_, err := io.WriteString(w, "</picture>")
 	return err
 }

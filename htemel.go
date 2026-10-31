@@ -3,10 +3,14 @@ package htemel
 //go:generate go run ./cmd/genelements
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
 	"io"
-	"sort"
+	"slices"
+	"strconv"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/html"
 
@@ -14,8 +18,85 @@ import (
 )
 
 // Node defines the interface that must be implemented in order to render elements.
+//
+// Render writes the node's HTML directly to w as it walks the tree. It does not buffer:
+// a page becomes many small writes, which is cheap for an in-memory writer such as
+// *bytes.Buffer or *strings.Builder but expensive for one where each Write costs a syscall or
+// a network flush, such as an *os.File, os.Stdout or some http.ResponseWriter implementations.
+// Callers who care should use the package-level Render (which buffers and flushes), RenderString
+// or RenderBytes, or pass their own buffered writer (for example a *bufio.Writer they flush).
+//
+// If Render returns an error, part of the output may already have been written to w.
 type Node interface {
 	Render(w io.Writer) error
+}
+
+// bufSize is the size of the pooled bufio.Writers used by Render.
+const bufSize = 8 << 10
+
+// maxPooledBuffer caps the capacity of buffers returned to the pool so one huge page does not
+// pin a large allocation forever.
+const maxPooledBuffer = 1 << 20
+
+var (
+	writerPool = sync.Pool{New: func() any { return bufio.NewWriterSize(nil, bufSize) }}
+	bufferPool = sync.Pool{New: func() any { return new(bytes.Buffer) }}
+)
+
+// Render renders n to w through a pooled buffer and flushes it, so the many small writes made
+// while walking the tree reach w as a few large writes. Use it when w is expensive to write to,
+// such as an http.ResponseWriter, *os.File or os.Stdout.
+//
+// In-memory writers (*bytes.Buffer, *strings.Builder) are written to directly, since buffering
+// them again would only add a copy.
+//
+// If rendering fails, output still held in the buffer is discarded rather than flushed, and the
+// error is returned; output from earlier flushes may already have reached w.
+func Render(w io.Writer, n Node) error {
+	switch w.(type) {
+	case *bytes.Buffer, *strings.Builder:
+		return n.Render(w)
+	}
+
+	bw := writerPool.Get().(*bufio.Writer)
+	bw.Reset(w)
+	err := n.Render(bw)
+	if err == nil {
+		err = bw.Flush()
+	}
+	bw.Reset(nil) // drop the reference to w (and any unflushed output) before pooling
+	writerPool.Put(bw)
+	return err
+}
+
+// renderToBuffer renders n into a pooled buffer and passes its contents to fn before the buffer
+// is returned to the pool.
+func renderToBuffer(n Node, fn func(b []byte)) error {
+	buf := bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	err := n.Render(buf)
+	if err == nil {
+		fn(buf.Bytes())
+	}
+	if buf.Cap() <= maxPooledBuffer {
+		bufferPool.Put(buf)
+	}
+	return err
+}
+
+// RenderString renders n and returns the HTML as a string. It reuses pooled buffers, so the
+// returned string is the only allocation in the common case.
+func RenderString(n Node) (string, error) {
+	var s string
+	err := renderToBuffer(n, func(b []byte) { s = string(b) })
+	return s, err
+}
+
+// RenderBytes renders n and returns the HTML as a newly allocated byte slice owned by the caller.
+func RenderBytes(n Node) ([]byte, error) {
+	var out []byte
+	err := renderToBuffer(n, func(b []byte) { out = bytes.Clone(b) })
+	return out, err
 }
 
 // GroupElement is a struct that backs the Group function.
@@ -78,48 +159,89 @@ func GenericVoid(tag string, attrs map[string]any) *GenericElement {
 //
 // Attributes are rendered in sorted key order (the input is a map, so there is no insertion order to preserve).
 // Values are HTML-escaped. A nil or true value renders a bare attribute; a false value omits it.
-// Other values are formatted with fmt.Sprint.
+// Other values are formatted as fmt.Sprint would format them.
 func (e *GenericElement) Render(w io.Writer) error {
-	var sb strings.Builder
-	sb.WriteString("<" + e.tag)
+	if _, err := io.WriteString(w, "<"); err != nil {
+		return err
+	}
+	if _, err := io.WriteString(w, e.tag); err != nil {
+		return err
+	}
 
 	keys := make([]string, 0, len(e.attrs))
 	for key := range e.attrs {
 		keys = append(keys, key)
 	}
-	sort.Strings(keys)
+	slices.Sort(keys)
 
 	for _, key := range keys {
+		var err error
 		switch val := e.attrs[key].(type) {
 		case nil:
-			render.WriteAttr(&sb, key, "", false)
+			_, err = render.WriteAttr(w, key, "", false)
 		case bool:
 			if val {
-				render.WriteAttr(&sb, key, "", false)
+				_, err = render.WriteAttr(w, key, "", false)
 			}
 		default:
-			str := fmt.Sprint(val)
-			if str == "" {
-				// Keep an explicit empty value distinct from a bare attribute.
-				sb.WriteString(" " + key + `=""`)
-			} else {
-				render.WriteAttr(&sb, key, str, false)
-			}
+			err = writeGenericAttr(w, key, genericValue(val))
+		}
+		if err != nil {
+			return err
 		}
 	}
 
-	sb.WriteByte('>')
-
-	if !e.void {
-		for _, child := range e.children {
-			if err := child.Render(&sb); err != nil {
-				return err
-			}
-		}
-		sb.WriteString("</" + e.tag + ">")
+	if _, err := io.WriteString(w, ">"); err != nil {
+		return err
 	}
 
-	_, err := io.WriteString(w, sb.String())
+	if e.void {
+		return nil
+	}
+
+	for _, child := range e.children {
+		if err := child.Render(w); err != nil {
+			return err
+		}
+	}
+
+	if _, err := io.WriteString(w, "</"); err != nil {
+		return err
+	}
+	if _, err := io.WriteString(w, e.tag); err != nil {
+		return err
+	}
+	_, err := io.WriteString(w, ">")
+	return err
+}
+
+// genericValue formats an attribute value exactly as fmt.Sprint would, skipping fmt for the
+// common string and int cases.
+func genericValue(v any) string {
+	switch v := v.(type) {
+	case string:
+		return v
+	case int:
+		return strconv.Itoa(v)
+	default:
+		return fmt.Sprint(v)
+	}
+}
+
+// writeGenericAttr writes a non-boolean Generic attribute. Unlike render.WriteAttr, an empty
+// value renders as key="" so it stays distinct from a bare attribute.
+func writeGenericAttr(w io.Writer, key, value string) error {
+	if value != "" {
+		_, err := render.WriteAttr(w, key, value, false)
+		return err
+	}
+	if _, err := io.WriteString(w, " "); err != nil {
+		return err
+	}
+	if _, err := io.WriteString(w, key); err != nil {
+		return err
+	}
+	_, err := io.WriteString(w, `=""`)
 	return err
 }
 
@@ -149,7 +271,7 @@ func TextUnsafe(text string, children ...Node) *TextElement {
 	}
 }
 
-// Text renders HTML-escaped text.
+// Text renders HTML-escaped text. The text is escaped once, when the node is built.
 func Text(text string, children ...Node) *TextElement {
 	return &TextElement{
 		text:     html.EscapeString(text),
@@ -157,8 +279,9 @@ func Text(text string, children ...Node) *TextElement {
 	}
 }
 
+// Render implements the Node interface.
 func (e *TextElement) Render(w io.Writer) error {
-	if _, err := w.Write([]byte(e.text)); err != nil {
+	if _, err := io.WriteString(w, e.text); err != nil {
 		return err
 	}
 

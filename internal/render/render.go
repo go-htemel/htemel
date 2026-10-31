@@ -2,9 +2,8 @@
 package render
 
 import (
+	"io"
 	"strings"
-
-	"golang.org/x/net/html"
 )
 
 // attr is a single attribute. Values are stored unescaped; escaping happens at render time
@@ -71,27 +70,97 @@ func (a *Attrs) Remove(key string) {
 	}
 }
 
-// WriteTo writes all attributes, each preceded by a space, in insertion order.
-func (a *Attrs) WriteTo(sb *strings.Builder) {
-	for _, at := range a.list {
-		WriteAttr(sb, at.key, at.value, at.raw)
+// Len reports the number of attributes.
+func (a *Attrs) Len() int { return len(a.list) }
+
+// WriteTo writes all attributes, each preceded by a space, in insertion order, directly to w.
+// It implements io.WriterTo.
+func (a *Attrs) WriteTo(w io.Writer) (int64, error) {
+	var total int64
+	for i := range a.list {
+		at := &a.list[i]
+		n, err := WriteAttr(w, at.key, at.value, at.raw)
+		total += int64(n)
+		if err != nil {
+			return total, err
+		}
 	}
+	return total, nil
 }
 
-// WriteAttr writes a single attribute preceded by a space. Empty values render bare.
-func WriteAttr(sb *strings.Builder, key, value string, raw bool) {
-	sb.WriteByte(' ')
-	sb.WriteString(key)
-	if value == "" {
-		return
+// WriteAttr writes a single attribute preceded by a space directly to w. Empty values render bare.
+// Unless raw is set, the value is escaped exactly as html.EscapeString would, without allocating.
+func WriteAttr(w io.Writer, key, value string, raw bool) (int, error) {
+	total, err := io.WriteString(w, " ")
+	if err != nil {
+		return total, err
 	}
-	sb.WriteString(`="`)
+	n, err := io.WriteString(w, key)
+	total += n
+	if err != nil || value == "" {
+		return total, err
+	}
+	n, err = io.WriteString(w, `="`)
+	total += n
+	if err != nil {
+		return total, err
+	}
 	if raw {
-		sb.WriteString(value)
+		n, err = io.WriteString(w, value)
 	} else {
-		sb.WriteString(html.EscapeString(value))
+		n, err = WriteEscaped(w, value)
 	}
-	sb.WriteByte('"')
+	total += n
+	if err != nil {
+		return total, err
+	}
+	n, err = io.WriteString(w, `"`)
+	return total + n, err
+}
+
+// escapedChars is the set escaped by golang.org/x/net/html.EscapeString (note: it includes '\r').
+const escapedChars = "&'<>\"\r"
+
+// WriteEscaped writes s to w with exactly the escaping of html.EscapeString from
+// golang.org/x/net/html, but streams the unescaped runs and the replacement entities straight to w
+// instead of building a new string. Values with nothing to escape are written in one call.
+func WriteEscaped(w io.Writer, s string) (int, error) {
+	i := strings.IndexAny(s, escapedChars)
+	if i < 0 {
+		return io.WriteString(w, s)
+	}
+	total := 0
+	for i >= 0 {
+		n, err := io.WriteString(w, s[:i])
+		total += n
+		if err != nil {
+			return total, err
+		}
+		var esc string
+		switch s[i] {
+		case '&':
+			esc = "&amp;"
+		case '\'':
+			esc = "&#39;" // matches x/net/html (shorter than &apos;)
+		case '<':
+			esc = "&lt;"
+		case '>':
+			esc = "&gt;"
+		case '"':
+			esc = "&#34;" // matches x/net/html (shorter than &quot;)
+		case '\r':
+			esc = "&#13;"
+		}
+		n, err = io.WriteString(w, esc)
+		total += n
+		if err != nil {
+			return total, err
+		}
+		s = s[i+1:]
+		i = strings.IndexAny(s, escapedChars)
+	}
+	n, err := io.WriteString(w, s)
+	return total + n, err
 }
 
 // RawText prepares text for a raw text element (script, style). The content is not HTML-escaped;

@@ -398,39 +398,47 @@ func RenderFunc() (*template.Template, ImportSet) {
 			"titleCase": titleCase,
 		}).
 		Parse(`
-// Render processes the current element, and writes the initial tag.
-// Then all children are processed and included within the tag.
-// Finally, the tag is closed.
+// Render writes the opening tag and its attributes, then {{ if .Void }}returns: <{{ .Tag }}> is a void element,
+// so it is self closing and has no children.{{ else }}renders each child, then writes the closing tag.{{ end }}
 //
-// *Except for void elements as they are self closing and do not contain children.
+// Output is written directly to w as many small writes, with no intermediate buffering.
+// Pass a buffered writer, or use htemel.Render, when w is expensive to write to.
 func (e *{{ .Tag | titleCase }}Element) Render(w io.Writer) error {
 	if e.skipRender {
 		return nil
 	}
 
-	var sb strings.Builder
-	sb.WriteString("<{{ .Tag }}")
-
-	e.attributes.WriteTo(&sb)
-
-	sb.WriteByte('>')
-
-{{- if not .Void }}
+	if e.attributes.Len() == 0 {
+		if _, err := io.WriteString(w, "<{{ .Tag }}>"); err != nil {
+			return err
+		}
+	} else {
+		if _, err := io.WriteString(w, "<{{ .Tag }}"); err != nil {
+			return err
+		}
+		if _, err := e.attributes.WriteTo(w); err != nil {
+			return err
+		}
+		if _, err := io.WriteString(w, ">"); err != nil {
+			return err
+		}
+	}
+{{ if .Void }}
+	return nil
+{{- else }}
 	for _, child := range e.children {
-		if err := child.Render(&sb); err != nil {
+		if err := child.Render(w); err != nil {
 			return err
 		}
 	}
 
-	sb.WriteString("</{{ .Tag }}>")
-{{- end }}
-
-	_, err := io.WriteString(w, sb.String())
+	_, err := io.WriteString(w, "</{{ .Tag }}>")
 	return err
+{{- end }}
 }
 `))
 
 	is := ImportSet{}
 
-	return tmpl, is.Add("io").Add("strings").Add("github.com/go-htemel/htemel/internal/render")
+	return tmpl, is.Add("io").Add("github.com/go-htemel/htemel/internal/render")
 }
