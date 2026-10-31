@@ -247,6 +247,12 @@ const (
 	UlWritingsuggestionsEmpty UlWritingsuggestions = ""
 )
 
+func (e *UlElement) Accesskey(r rune) *UlElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *UlElement) AriaUnsafe(name string, s string) *UlElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *UlElement) Autocapitalize(a UlAutocapitalize) *UlElement {
 	return e
 }
 
-func (e *UlElement) Autocorrect(a UlAutocorrect) *UlElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Autocorrect(v ...UlAutocorrect) *UlElement {
+	var val UlAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *UlElement) Class(s ...string) *UlElement {
 	return e
 }
 
-func (e *UlElement) Contenteditable(a UlContenteditable) *UlElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Contenteditable(v ...UlContenteditable) *UlElement {
+	var val UlContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *UlElement) Enterkeyhint(a UlEnterkeyhint) *UlElement {
 	return e
 }
 
-func (e *UlElement) Hidden(a UlHidden) *UlElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Hidden(v ...UlHidden) *UlElement {
+	var val UlHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *UlElement) Slot(s string) *UlElement {
 	return e
 }
 
-func (e *UlElement) Spellcheck(a UlSpellcheck) *UlElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Spellcheck(v ...UlSpellcheck) *UlElement {
+	var val UlSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *UlElement) Title(s string) *UlElement {
 	return e
 }
 
-func (e *UlElement) Translate(a UlTranslate) *UlElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Translate(v ...UlTranslate) *UlElement {
+	var val UlTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *UlElement) Writingsuggestions(a UlWritingsuggestions) *UlElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UlElement) Writingsuggestions(v ...UlWritingsuggestions) *UlElement {
+	var val UlWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

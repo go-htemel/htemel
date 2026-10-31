@@ -247,6 +247,12 @@ const (
 	SubWritingsuggestionsEmpty SubWritingsuggestions = ""
 )
 
+func (e *SubElement) Accesskey(r rune) *SubElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SubElement) AriaUnsafe(name string, s string) *SubElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SubElement) Autocapitalize(a SubAutocapitalize) *SubElement {
 	return e
 }
 
-func (e *SubElement) Autocorrect(a SubAutocorrect) *SubElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Autocorrect(v ...SubAutocorrect) *SubElement {
+	var val SubAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SubElement) Class(s ...string) *SubElement {
 	return e
 }
 
-func (e *SubElement) Contenteditable(a SubContenteditable) *SubElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Contenteditable(v ...SubContenteditable) *SubElement {
+	var val SubContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SubElement) Enterkeyhint(a SubEnterkeyhint) *SubElement {
 	return e
 }
 
-func (e *SubElement) Hidden(a SubHidden) *SubElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Hidden(v ...SubHidden) *SubElement {
+	var val SubHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SubElement) Slot(s string) *SubElement {
 	return e
 }
 
-func (e *SubElement) Spellcheck(a SubSpellcheck) *SubElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Spellcheck(v ...SubSpellcheck) *SubElement {
+	var val SubSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SubElement) Title(s string) *SubElement {
 	return e
 }
 
-func (e *SubElement) Translate(a SubTranslate) *SubElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Translate(v ...SubTranslate) *SubElement {
+	var val SubTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SubElement) Writingsuggestions(a SubWritingsuggestions) *SubElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SubElement) Writingsuggestions(v ...SubWritingsuggestions) *SubElement {
+	var val SubWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

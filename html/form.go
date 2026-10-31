@@ -318,6 +318,12 @@ func (e *FormElement) Rel(s ...string) *FormElement {
 	return e
 }
 
+func (e *FormElement) Accesskey(r rune) *FormElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *FormElement) AriaUnsafe(name string, s string) *FormElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -340,8 +346,14 @@ func (e *FormElement) Autocapitalize(a FormAutocapitalize) *FormElement {
 	return e
 }
 
-func (e *FormElement) Autocorrect(a FormAutocorrect) *FormElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Autocorrect(v ...FormAutocorrect) *FormElement {
+	var val FormAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -360,8 +372,14 @@ func (e *FormElement) Class(s ...string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Contenteditable(a FormContenteditable) *FormElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Contenteditable(v ...FormContenteditable) *FormElement {
+	var val FormContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -400,8 +418,14 @@ func (e *FormElement) Enterkeyhint(a FormEnterkeyhint) *FormElement {
 	return e
 }
 
-func (e *FormElement) Hidden(a FormHidden) *FormElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Hidden(v ...FormHidden) *FormElement {
+	var val FormHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -488,8 +512,14 @@ func (e *FormElement) Slot(s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Spellcheck(a FormSpellcheck) *FormElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Spellcheck(v ...FormSpellcheck) *FormElement {
+	var val FormSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -512,14 +542,26 @@ func (e *FormElement) Title(s string) *FormElement {
 	return e
 }
 
-func (e *FormElement) Translate(a FormTranslate) *FormElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Translate(v ...FormTranslate) *FormElement {
+	var val FormTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *FormElement) Writingsuggestions(a FormWritingsuggestions) *FormElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FormElement) Writingsuggestions(v ...FormWritingsuggestions) *FormElement {
+	var val FormWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

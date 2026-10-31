@@ -253,6 +253,12 @@ func (e *ColgroupElement) Span(i int) *ColgroupElement {
 	return e
 }
 
+func (e *ColgroupElement) Accesskey(r rune) *ColgroupElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ColgroupElement) AriaUnsafe(name string, s string) *ColgroupElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *ColgroupElement) Autocapitalize(a ColgroupAutocapitalize) *ColgroupElem
 	return e
 }
 
-func (e *ColgroupElement) Autocorrect(a ColgroupAutocorrect) *ColgroupElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Autocorrect(v ...ColgroupAutocorrect) *ColgroupElement {
+	var val ColgroupAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *ColgroupElement) Class(s ...string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Contenteditable(a ColgroupContenteditable) *ColgroupElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Contenteditable(v ...ColgroupContenteditable) *ColgroupElement {
+	var val ColgroupContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *ColgroupElement) Enterkeyhint(a ColgroupEnterkeyhint) *ColgroupElement 
 	return e
 }
 
-func (e *ColgroupElement) Hidden(a ColgroupHidden) *ColgroupElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Hidden(v ...ColgroupHidden) *ColgroupElement {
+	var val ColgroupHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *ColgroupElement) Slot(s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Spellcheck(a ColgroupSpellcheck) *ColgroupElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Spellcheck(v ...ColgroupSpellcheck) *ColgroupElement {
+	var val ColgroupSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *ColgroupElement) Title(s string) *ColgroupElement {
 	return e
 }
 
-func (e *ColgroupElement) Translate(a ColgroupTranslate) *ColgroupElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Translate(v ...ColgroupTranslate) *ColgroupElement {
+	var val ColgroupTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ColgroupElement) Writingsuggestions(a ColgroupWritingsuggestions) *ColgroupElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColgroupElement) Writingsuggestions(v ...ColgroupWritingsuggestions) *ColgroupElement {
+	var val ColgroupWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

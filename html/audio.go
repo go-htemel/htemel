@@ -270,14 +270,26 @@ func (e *AudioElement) Src(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Crossorigin(a AudioCrossorigin) *AudioElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Crossorigin(v ...AudioCrossorigin) *AudioElement {
+	var val AudioCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }
 
-func (e *AudioElement) Preload(a AudioPreload) *AudioElement {
-	e.attributes.Set("preload", string(a))
+// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Preload(v ...AudioPreload) *AudioElement {
+	var val AudioPreload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("preload", string(val))
 
 	return e
 }
@@ -322,6 +334,12 @@ func (e *AudioElement) Controls(b bool) *AudioElement {
 	return e
 }
 
+func (e *AudioElement) Accesskey(r rune) *AudioElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AudioElement) AriaUnsafe(name string, s string) *AudioElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -344,8 +362,14 @@ func (e *AudioElement) Autocapitalize(a AudioAutocapitalize) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Autocorrect(a AudioAutocorrect) *AudioElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Autocorrect(v ...AudioAutocorrect) *AudioElement {
+	var val AudioAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -364,8 +388,14 @@ func (e *AudioElement) Class(s ...string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Contenteditable(a AudioContenteditable) *AudioElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Contenteditable(v ...AudioContenteditable) *AudioElement {
+	var val AudioContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -404,8 +434,14 @@ func (e *AudioElement) Enterkeyhint(a AudioEnterkeyhint) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Hidden(a AudioHidden) *AudioElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Hidden(v ...AudioHidden) *AudioElement {
+	var val AudioHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -492,8 +528,14 @@ func (e *AudioElement) Slot(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Spellcheck(a AudioSpellcheck) *AudioElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Spellcheck(v ...AudioSpellcheck) *AudioElement {
+	var val AudioSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -516,14 +558,26 @@ func (e *AudioElement) Title(s string) *AudioElement {
 	return e
 }
 
-func (e *AudioElement) Translate(a AudioTranslate) *AudioElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Translate(v ...AudioTranslate) *AudioElement {
+	var val AudioTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AudioElement) Writingsuggestions(a AudioWritingsuggestions) *AudioElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AudioElement) Writingsuggestions(v ...AudioWritingsuggestions) *AudioElement {
+	var val AudioWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

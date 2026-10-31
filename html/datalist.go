@@ -247,6 +247,12 @@ const (
 	DatalistWritingsuggestionsEmpty DatalistWritingsuggestions = ""
 )
 
+func (e *DatalistElement) Accesskey(r rune) *DatalistElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DatalistElement) AriaUnsafe(name string, s string) *DatalistElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *DatalistElement) Autocapitalize(a DatalistAutocapitalize) *DatalistElem
 	return e
 }
 
-func (e *DatalistElement) Autocorrect(a DatalistAutocorrect) *DatalistElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Autocorrect(v ...DatalistAutocorrect) *DatalistElement {
+	var val DatalistAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *DatalistElement) Class(s ...string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Contenteditable(a DatalistContenteditable) *DatalistElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Contenteditable(v ...DatalistContenteditable) *DatalistElement {
+	var val DatalistContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *DatalistElement) Enterkeyhint(a DatalistEnterkeyhint) *DatalistElement 
 	return e
 }
 
-func (e *DatalistElement) Hidden(a DatalistHidden) *DatalistElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Hidden(v ...DatalistHidden) *DatalistElement {
+	var val DatalistHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *DatalistElement) Slot(s string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Spellcheck(a DatalistSpellcheck) *DatalistElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Spellcheck(v ...DatalistSpellcheck) *DatalistElement {
+	var val DatalistSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *DatalistElement) Title(s string) *DatalistElement {
 	return e
 }
 
-func (e *DatalistElement) Translate(a DatalistTranslate) *DatalistElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Translate(v ...DatalistTranslate) *DatalistElement {
+	var val DatalistTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DatalistElement) Writingsuggestions(a DatalistWritingsuggestions) *DatalistElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DatalistElement) Writingsuggestions(v ...DatalistWritingsuggestions) *DatalistElement {
+	var val DatalistWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

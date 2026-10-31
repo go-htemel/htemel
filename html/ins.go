@@ -259,6 +259,12 @@ func (e *InsElement) Datetime(s string) *InsElement {
 	return e
 }
 
+func (e *InsElement) Accesskey(r rune) *InsElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *InsElement) AriaUnsafe(name string, s string) *InsElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -281,8 +287,14 @@ func (e *InsElement) Autocapitalize(a InsAutocapitalize) *InsElement {
 	return e
 }
 
-func (e *InsElement) Autocorrect(a InsAutocorrect) *InsElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Autocorrect(v ...InsAutocorrect) *InsElement {
+	var val InsAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -301,8 +313,14 @@ func (e *InsElement) Class(s ...string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Contenteditable(a InsContenteditable) *InsElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Contenteditable(v ...InsContenteditable) *InsElement {
+	var val InsContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -341,8 +359,14 @@ func (e *InsElement) Enterkeyhint(a InsEnterkeyhint) *InsElement {
 	return e
 }
 
-func (e *InsElement) Hidden(a InsHidden) *InsElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Hidden(v ...InsHidden) *InsElement {
+	var val InsHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -429,8 +453,14 @@ func (e *InsElement) Slot(s string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Spellcheck(a InsSpellcheck) *InsElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Spellcheck(v ...InsSpellcheck) *InsElement {
+	var val InsSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -453,14 +483,26 @@ func (e *InsElement) Title(s string) *InsElement {
 	return e
 }
 
-func (e *InsElement) Translate(a InsTranslate) *InsElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Translate(v ...InsTranslate) *InsElement {
+	var val InsTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *InsElement) Writingsuggestions(a InsWritingsuggestions) *InsElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InsElement) Writingsuggestions(v ...InsWritingsuggestions) *InsElement {
+	var val InsWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

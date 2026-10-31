@@ -247,6 +247,12 @@ const (
 	DtWritingsuggestionsEmpty DtWritingsuggestions = ""
 )
 
+func (e *DtElement) Accesskey(r rune) *DtElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DtElement) AriaUnsafe(name string, s string) *DtElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *DtElement) Autocapitalize(a DtAutocapitalize) *DtElement {
 	return e
 }
 
-func (e *DtElement) Autocorrect(a DtAutocorrect) *DtElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Autocorrect(v ...DtAutocorrect) *DtElement {
+	var val DtAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *DtElement) Class(s ...string) *DtElement {
 	return e
 }
 
-func (e *DtElement) Contenteditable(a DtContenteditable) *DtElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Contenteditable(v ...DtContenteditable) *DtElement {
+	var val DtContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *DtElement) Enterkeyhint(a DtEnterkeyhint) *DtElement {
 	return e
 }
 
-func (e *DtElement) Hidden(a DtHidden) *DtElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Hidden(v ...DtHidden) *DtElement {
+	var val DtHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *DtElement) Slot(s string) *DtElement {
 	return e
 }
 
-func (e *DtElement) Spellcheck(a DtSpellcheck) *DtElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Spellcheck(v ...DtSpellcheck) *DtElement {
+	var val DtSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *DtElement) Title(s string) *DtElement {
 	return e
 }
 
-func (e *DtElement) Translate(a DtTranslate) *DtElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Translate(v ...DtTranslate) *DtElement {
+	var val DtTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DtElement) Writingsuggestions(a DtWritingsuggestions) *DtElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DtElement) Writingsuggestions(v ...DtWritingsuggestions) *DtElement {
+	var val DtWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

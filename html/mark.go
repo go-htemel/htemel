@@ -247,6 +247,12 @@ const (
 	MarkWritingsuggestionsEmpty MarkWritingsuggestions = ""
 )
 
+func (e *MarkElement) Accesskey(r rune) *MarkElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MarkElement) AriaUnsafe(name string, s string) *MarkElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *MarkElement) Autocapitalize(a MarkAutocapitalize) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Autocorrect(a MarkAutocorrect) *MarkElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Autocorrect(v ...MarkAutocorrect) *MarkElement {
+	var val MarkAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *MarkElement) Class(s ...string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Contenteditable(a MarkContenteditable) *MarkElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Contenteditable(v ...MarkContenteditable) *MarkElement {
+	var val MarkContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *MarkElement) Enterkeyhint(a MarkEnterkeyhint) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Hidden(a MarkHidden) *MarkElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Hidden(v ...MarkHidden) *MarkElement {
+	var val MarkHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *MarkElement) Slot(s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Spellcheck(a MarkSpellcheck) *MarkElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Spellcheck(v ...MarkSpellcheck) *MarkElement {
+	var val MarkSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *MarkElement) Title(s string) *MarkElement {
 	return e
 }
 
-func (e *MarkElement) Translate(a MarkTranslate) *MarkElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Translate(v ...MarkTranslate) *MarkElement {
+	var val MarkTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MarkElement) Writingsuggestions(a MarkWritingsuggestions) *MarkElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MarkElement) Writingsuggestions(v ...MarkWritingsuggestions) *MarkElement {
+	var val MarkWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

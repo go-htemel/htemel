@@ -265,6 +265,12 @@ func (e *TdElement) Headers(s ...string) *TdElement {
 	return e
 }
 
+func (e *TdElement) Accesskey(r rune) *TdElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TdElement) AriaUnsafe(name string, s string) *TdElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -287,8 +293,14 @@ func (e *TdElement) Autocapitalize(a TdAutocapitalize) *TdElement {
 	return e
 }
 
-func (e *TdElement) Autocorrect(a TdAutocorrect) *TdElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Autocorrect(v ...TdAutocorrect) *TdElement {
+	var val TdAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -307,8 +319,14 @@ func (e *TdElement) Class(s ...string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Contenteditable(a TdContenteditable) *TdElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Contenteditable(v ...TdContenteditable) *TdElement {
+	var val TdContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -347,8 +365,14 @@ func (e *TdElement) Enterkeyhint(a TdEnterkeyhint) *TdElement {
 	return e
 }
 
-func (e *TdElement) Hidden(a TdHidden) *TdElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Hidden(v ...TdHidden) *TdElement {
+	var val TdHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -435,8 +459,14 @@ func (e *TdElement) Slot(s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Spellcheck(a TdSpellcheck) *TdElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Spellcheck(v ...TdSpellcheck) *TdElement {
+	var val TdSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -459,14 +489,26 @@ func (e *TdElement) Title(s string) *TdElement {
 	return e
 }
 
-func (e *TdElement) Translate(a TdTranslate) *TdElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Translate(v ...TdTranslate) *TdElement {
+	var val TdTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TdElement) Writingsuggestions(a TdWritingsuggestions) *TdElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TdElement) Writingsuggestions(v ...TdWritingsuggestions) *TdElement {
+	var val TdWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -246,8 +246,14 @@ func (e *ImgElement) Sizes(s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Crossorigin(a ImgCrossorigin) *ImgElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Crossorigin(v ...ImgCrossorigin) *ImgElement {
+	var val ImgCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }
@@ -302,6 +308,12 @@ func (e *ImgElement) Fetchpriority(a ImgFetchpriority) *ImgElement {
 	return e
 }
 
+func (e *ImgElement) Accesskey(r rune) *ImgElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ImgElement) AriaUnsafe(name string, s string) *ImgElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -324,8 +336,14 @@ func (e *ImgElement) Autocapitalize(a ImgAutocapitalize) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Autocorrect(a ImgAutocorrect) *ImgElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Autocorrect(v ...ImgAutocorrect) *ImgElement {
+	var val ImgAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -344,8 +362,14 @@ func (e *ImgElement) Class(s ...string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Contenteditable(a ImgContenteditable) *ImgElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Contenteditable(v ...ImgContenteditable) *ImgElement {
+	var val ImgContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -384,8 +408,14 @@ func (e *ImgElement) Enterkeyhint(a ImgEnterkeyhint) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Hidden(a ImgHidden) *ImgElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Hidden(v ...ImgHidden) *ImgElement {
+	var val ImgHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -472,8 +502,14 @@ func (e *ImgElement) Slot(s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Spellcheck(a ImgSpellcheck) *ImgElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Spellcheck(v ...ImgSpellcheck) *ImgElement {
+	var val ImgSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -496,14 +532,26 @@ func (e *ImgElement) Title(s string) *ImgElement {
 	return e
 }
 
-func (e *ImgElement) Translate(a ImgTranslate) *ImgElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Translate(v ...ImgTranslate) *ImgElement {
+	var val ImgTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ImgElement) Writingsuggestions(a ImgWritingsuggestions) *ImgElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImgElement) Writingsuggestions(v ...ImgWritingsuggestions) *ImgElement {
+	var val ImgWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

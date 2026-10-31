@@ -247,6 +247,12 @@ const (
 	H4WritingsuggestionsEmpty H4Writingsuggestions = ""
 )
 
+func (e *H4Element) Accesskey(r rune) *H4Element {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *H4Element) AriaUnsafe(name string, s string) *H4Element {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *H4Element) Autocapitalize(a H4Autocapitalize) *H4Element {
 	return e
 }
 
-func (e *H4Element) Autocorrect(a H4Autocorrect) *H4Element {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Autocorrect(v ...H4Autocorrect) *H4Element {
+	var val H4Autocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *H4Element) Class(s ...string) *H4Element {
 	return e
 }
 
-func (e *H4Element) Contenteditable(a H4Contenteditable) *H4Element {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Contenteditable(v ...H4Contenteditable) *H4Element {
+	var val H4Contenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *H4Element) Enterkeyhint(a H4Enterkeyhint) *H4Element {
 	return e
 }
 
-func (e *H4Element) Hidden(a H4Hidden) *H4Element {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Hidden(v ...H4Hidden) *H4Element {
+	var val H4Hidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *H4Element) Slot(s string) *H4Element {
 	return e
 }
 
-func (e *H4Element) Spellcheck(a H4Spellcheck) *H4Element {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Spellcheck(v ...H4Spellcheck) *H4Element {
+	var val H4Spellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *H4Element) Title(s string) *H4Element {
 	return e
 }
 
-func (e *H4Element) Translate(a H4Translate) *H4Element {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Translate(v ...H4Translate) *H4Element {
+	var val H4Translate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *H4Element) Writingsuggestions(a H4Writingsuggestions) *H4Element {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H4Element) Writingsuggestions(v ...H4Writingsuggestions) *H4Element {
+	var val H4Writingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

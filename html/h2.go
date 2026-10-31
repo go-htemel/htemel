@@ -247,6 +247,12 @@ const (
 	H2WritingsuggestionsEmpty H2Writingsuggestions = ""
 )
 
+func (e *H2Element) Accesskey(r rune) *H2Element {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *H2Element) AriaUnsafe(name string, s string) *H2Element {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *H2Element) Autocapitalize(a H2Autocapitalize) *H2Element {
 	return e
 }
 
-func (e *H2Element) Autocorrect(a H2Autocorrect) *H2Element {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Autocorrect(v ...H2Autocorrect) *H2Element {
+	var val H2Autocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *H2Element) Class(s ...string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Contenteditable(a H2Contenteditable) *H2Element {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Contenteditable(v ...H2Contenteditable) *H2Element {
+	var val H2Contenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *H2Element) Enterkeyhint(a H2Enterkeyhint) *H2Element {
 	return e
 }
 
-func (e *H2Element) Hidden(a H2Hidden) *H2Element {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Hidden(v ...H2Hidden) *H2Element {
+	var val H2Hidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *H2Element) Slot(s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Spellcheck(a H2Spellcheck) *H2Element {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Spellcheck(v ...H2Spellcheck) *H2Element {
+	var val H2Spellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *H2Element) Title(s string) *H2Element {
 	return e
 }
 
-func (e *H2Element) Translate(a H2Translate) *H2Element {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Translate(v ...H2Translate) *H2Element {
+	var val H2Translate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *H2Element) Writingsuggestions(a H2Writingsuggestions) *H2Element {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H2Element) Writingsuggestions(v ...H2Writingsuggestions) *H2Element {
+	var val H2Writingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

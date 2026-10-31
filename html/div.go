@@ -247,6 +247,12 @@ const (
 	DivWritingsuggestionsEmpty DivWritingsuggestions = ""
 )
 
+func (e *DivElement) Accesskey(r rune) *DivElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DivElement) AriaUnsafe(name string, s string) *DivElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *DivElement) Autocapitalize(a DivAutocapitalize) *DivElement {
 	return e
 }
 
-func (e *DivElement) Autocorrect(a DivAutocorrect) *DivElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Autocorrect(v ...DivAutocorrect) *DivElement {
+	var val DivAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *DivElement) Class(s ...string) *DivElement {
 	return e
 }
 
-func (e *DivElement) Contenteditable(a DivContenteditable) *DivElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Contenteditable(v ...DivContenteditable) *DivElement {
+	var val DivContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *DivElement) Enterkeyhint(a DivEnterkeyhint) *DivElement {
 	return e
 }
 
-func (e *DivElement) Hidden(a DivHidden) *DivElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Hidden(v ...DivHidden) *DivElement {
+	var val DivHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *DivElement) Slot(s string) *DivElement {
 	return e
 }
 
-func (e *DivElement) Spellcheck(a DivSpellcheck) *DivElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Spellcheck(v ...DivSpellcheck) *DivElement {
+	var val DivSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *DivElement) Title(s string) *DivElement {
 	return e
 }
 
-func (e *DivElement) Translate(a DivTranslate) *DivElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Translate(v ...DivTranslate) *DivElement {
+	var val DivTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DivElement) Writingsuggestions(a DivWritingsuggestions) *DivElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DivElement) Writingsuggestions(v ...DivWritingsuggestions) *DivElement {
+	var val DivWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -459,6 +459,12 @@ func (e *InputElement) Width(i int) *InputElement {
 	return e
 }
 
+func (e *InputElement) Accesskey(r rune) *InputElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *InputElement) AriaUnsafe(name string, s string) *InputElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -481,8 +487,14 @@ func (e *InputElement) Autocapitalize(a InputAutocapitalize) *InputElement {
 	return e
 }
 
-func (e *InputElement) Autocorrect(a InputAutocorrect) *InputElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Autocorrect(v ...InputAutocorrect) *InputElement {
+	var val InputAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -501,8 +513,14 @@ func (e *InputElement) Class(s ...string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Contenteditable(a InputContenteditable) *InputElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Contenteditable(v ...InputContenteditable) *InputElement {
+	var val InputContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -541,8 +559,14 @@ func (e *InputElement) Enterkeyhint(a InputEnterkeyhint) *InputElement {
 	return e
 }
 
-func (e *InputElement) Hidden(a InputHidden) *InputElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Hidden(v ...InputHidden) *InputElement {
+	var val InputHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -629,8 +653,14 @@ func (e *InputElement) Slot(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Spellcheck(a InputSpellcheck) *InputElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Spellcheck(v ...InputSpellcheck) *InputElement {
+	var val InputSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -653,14 +683,26 @@ func (e *InputElement) Title(s string) *InputElement {
 	return e
 }
 
-func (e *InputElement) Translate(a InputTranslate) *InputElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Translate(v ...InputTranslate) *InputElement {
+	var val InputTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *InputElement) Writingsuggestions(a InputWritingsuggestions) *InputElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *InputElement) Writingsuggestions(v ...InputWritingsuggestions) *InputElement {
+	var val InputWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

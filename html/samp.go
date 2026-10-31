@@ -247,6 +247,12 @@ const (
 	SampWritingsuggestionsEmpty SampWritingsuggestions = ""
 )
 
+func (e *SampElement) Accesskey(r rune) *SampElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SampElement) AriaUnsafe(name string, s string) *SampElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SampElement) Autocapitalize(a SampAutocapitalize) *SampElement {
 	return e
 }
 
-func (e *SampElement) Autocorrect(a SampAutocorrect) *SampElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Autocorrect(v ...SampAutocorrect) *SampElement {
+	var val SampAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SampElement) Class(s ...string) *SampElement {
 	return e
 }
 
-func (e *SampElement) Contenteditable(a SampContenteditable) *SampElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Contenteditable(v ...SampContenteditable) *SampElement {
+	var val SampContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SampElement) Enterkeyhint(a SampEnterkeyhint) *SampElement {
 	return e
 }
 
-func (e *SampElement) Hidden(a SampHidden) *SampElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Hidden(v ...SampHidden) *SampElement {
+	var val SampHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SampElement) Slot(s string) *SampElement {
 	return e
 }
 
-func (e *SampElement) Spellcheck(a SampSpellcheck) *SampElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Spellcheck(v ...SampSpellcheck) *SampElement {
+	var val SampSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SampElement) Title(s string) *SampElement {
 	return e
 }
 
-func (e *SampElement) Translate(a SampTranslate) *SampElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Translate(v ...SampTranslate) *SampElement {
+	var val SampTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SampElement) Writingsuggestions(a SampWritingsuggestions) *SampElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SampElement) Writingsuggestions(v ...SampWritingsuggestions) *SampElement {
+	var val SampWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

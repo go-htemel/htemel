@@ -247,6 +247,12 @@ const (
 	AddressWritingsuggestionsEmpty AddressWritingsuggestions = ""
 )
 
+func (e *AddressElement) Accesskey(r rune) *AddressElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AddressElement) AriaUnsafe(name string, s string) *AddressElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *AddressElement) Autocapitalize(a AddressAutocapitalize) *AddressElement
 	return e
 }
 
-func (e *AddressElement) Autocorrect(a AddressAutocorrect) *AddressElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Autocorrect(v ...AddressAutocorrect) *AddressElement {
+	var val AddressAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *AddressElement) Class(s ...string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Contenteditable(a AddressContenteditable) *AddressElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Contenteditable(v ...AddressContenteditable) *AddressElement {
+	var val AddressContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *AddressElement) Enterkeyhint(a AddressEnterkeyhint) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Hidden(a AddressHidden) *AddressElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Hidden(v ...AddressHidden) *AddressElement {
+	var val AddressHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *AddressElement) Slot(s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Spellcheck(a AddressSpellcheck) *AddressElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Spellcheck(v ...AddressSpellcheck) *AddressElement {
+	var val AddressSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *AddressElement) Title(s string) *AddressElement {
 	return e
 }
 
-func (e *AddressElement) Translate(a AddressTranslate) *AddressElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Translate(v ...AddressTranslate) *AddressElement {
+	var val AddressTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AddressElement) Writingsuggestions(a AddressWritingsuggestions) *AddressElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AddressElement) Writingsuggestions(v ...AddressWritingsuggestions) *AddressElement {
+	var val AddressWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

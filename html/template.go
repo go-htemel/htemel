@@ -292,6 +292,12 @@ func (e *TemplateElement) Shadowrootcustomelementregistry(b bool) *TemplateEleme
 	return e
 }
 
+func (e *TemplateElement) Accesskey(r rune) *TemplateElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TemplateElement) AriaUnsafe(name string, s string) *TemplateElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -314,8 +320,14 @@ func (e *TemplateElement) Autocapitalize(a TemplateAutocapitalize) *TemplateElem
 	return e
 }
 
-func (e *TemplateElement) Autocorrect(a TemplateAutocorrect) *TemplateElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Autocorrect(v ...TemplateAutocorrect) *TemplateElement {
+	var val TemplateAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -334,8 +346,14 @@ func (e *TemplateElement) Class(s ...string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Contenteditable(a TemplateContenteditable) *TemplateElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Contenteditable(v ...TemplateContenteditable) *TemplateElement {
+	var val TemplateContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -374,8 +392,14 @@ func (e *TemplateElement) Enterkeyhint(a TemplateEnterkeyhint) *TemplateElement 
 	return e
 }
 
-func (e *TemplateElement) Hidden(a TemplateHidden) *TemplateElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Hidden(v ...TemplateHidden) *TemplateElement {
+	var val TemplateHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -462,8 +486,14 @@ func (e *TemplateElement) Slot(s string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Spellcheck(a TemplateSpellcheck) *TemplateElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Spellcheck(v ...TemplateSpellcheck) *TemplateElement {
+	var val TemplateSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -486,14 +516,26 @@ func (e *TemplateElement) Title(s string) *TemplateElement {
 	return e
 }
 
-func (e *TemplateElement) Translate(a TemplateTranslate) *TemplateElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Translate(v ...TemplateTranslate) *TemplateElement {
+	var val TemplateTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TemplateElement) Writingsuggestions(a TemplateWritingsuggestions) *TemplateElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TemplateElement) Writingsuggestions(v ...TemplateWritingsuggestions) *TemplateElement {
+	var val TemplateWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

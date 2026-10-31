@@ -267,6 +267,12 @@ func (e *FieldsetElement) Name(s string) *FieldsetElement {
 	return e
 }
 
+func (e *FieldsetElement) Accesskey(r rune) *FieldsetElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *FieldsetElement) AriaUnsafe(name string, s string) *FieldsetElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -289,8 +295,14 @@ func (e *FieldsetElement) Autocapitalize(a FieldsetAutocapitalize) *FieldsetElem
 	return e
 }
 
-func (e *FieldsetElement) Autocorrect(a FieldsetAutocorrect) *FieldsetElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Autocorrect(v ...FieldsetAutocorrect) *FieldsetElement {
+	var val FieldsetAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -309,8 +321,14 @@ func (e *FieldsetElement) Class(s ...string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Contenteditable(a FieldsetContenteditable) *FieldsetElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Contenteditable(v ...FieldsetContenteditable) *FieldsetElement {
+	var val FieldsetContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -349,8 +367,14 @@ func (e *FieldsetElement) Enterkeyhint(a FieldsetEnterkeyhint) *FieldsetElement 
 	return e
 }
 
-func (e *FieldsetElement) Hidden(a FieldsetHidden) *FieldsetElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Hidden(v ...FieldsetHidden) *FieldsetElement {
+	var val FieldsetHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -437,8 +461,14 @@ func (e *FieldsetElement) Slot(s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Spellcheck(a FieldsetSpellcheck) *FieldsetElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Spellcheck(v ...FieldsetSpellcheck) *FieldsetElement {
+	var val FieldsetSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -461,14 +491,26 @@ func (e *FieldsetElement) Title(s string) *FieldsetElement {
 	return e
 }
 
-func (e *FieldsetElement) Translate(a FieldsetTranslate) *FieldsetElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Translate(v ...FieldsetTranslate) *FieldsetElement {
+	var val FieldsetTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *FieldsetElement) Writingsuggestions(a FieldsetWritingsuggestions) *FieldsetElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FieldsetElement) Writingsuggestions(v ...FieldsetWritingsuggestions) *FieldsetElement {
+	var val FieldsetWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

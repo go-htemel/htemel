@@ -94,13 +94,30 @@ func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(b bool) *` + goI
 				}
 				addTypes.WriteString(")\n")
 
-				buf.WriteString(`
+				if a.AllowEmpty {
+					// Variadic: no argument renders the bare attribute; with several, the last wins.
+					buf.WriteString(`
+// ` + goIdent(a.Name) + ` sets the "` + a.Name + `" attribute. Called with no argument, ` + goIdent(a.Name) + `() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(v ...` + typeName + `) *` + goIdent(e.Tag) + `Element {
+	var val ` + typeName + `
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("` + a.Name + `", string(val))
+	
+	return e
+}
+`)
+				} else {
+					buf.WriteString(`
 func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(a ` + typeName + `) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", string(a))
 	
 	return e
 }
 `)
+				}
 				if a.AllowCustom {
 					// Generate func to return a custom attribute value
 					buf.WriteString(`

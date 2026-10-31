@@ -247,6 +247,12 @@ const (
 	BdoWritingsuggestionsEmpty BdoWritingsuggestions = ""
 )
 
+func (e *BdoElement) Accesskey(r rune) *BdoElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BdoElement) AriaUnsafe(name string, s string) *BdoElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *BdoElement) Autocapitalize(a BdoAutocapitalize) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Autocorrect(a BdoAutocorrect) *BdoElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Autocorrect(v ...BdoAutocorrect) *BdoElement {
+	var val BdoAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *BdoElement) Class(s ...string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Contenteditable(a BdoContenteditable) *BdoElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Contenteditable(v ...BdoContenteditable) *BdoElement {
+	var val BdoContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *BdoElement) Enterkeyhint(a BdoEnterkeyhint) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Hidden(a BdoHidden) *BdoElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Hidden(v ...BdoHidden) *BdoElement {
+	var val BdoHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *BdoElement) Slot(s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Spellcheck(a BdoSpellcheck) *BdoElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Spellcheck(v ...BdoSpellcheck) *BdoElement {
+	var val BdoSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *BdoElement) Title(s string) *BdoElement {
 	return e
 }
 
-func (e *BdoElement) Translate(a BdoTranslate) *BdoElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Translate(v ...BdoTranslate) *BdoElement {
+	var val BdoTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BdoElement) Writingsuggestions(a BdoWritingsuggestions) *BdoElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdoElement) Writingsuggestions(v ...BdoWritingsuggestions) *BdoElement {
+	var val BdoWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

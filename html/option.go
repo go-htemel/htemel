@@ -275,6 +275,12 @@ func (e *OptionElement) Value(s string) *OptionElement {
 	return e
 }
 
+func (e *OptionElement) Accesskey(r rune) *OptionElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *OptionElement) AriaUnsafe(name string, s string) *OptionElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -297,8 +303,14 @@ func (e *OptionElement) Autocapitalize(a OptionAutocapitalize) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Autocorrect(a OptionAutocorrect) *OptionElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Autocorrect(v ...OptionAutocorrect) *OptionElement {
+	var val OptionAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -317,8 +329,14 @@ func (e *OptionElement) Class(s ...string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Contenteditable(a OptionContenteditable) *OptionElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Contenteditable(v ...OptionContenteditable) *OptionElement {
+	var val OptionContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -357,8 +375,14 @@ func (e *OptionElement) Enterkeyhint(a OptionEnterkeyhint) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Hidden(a OptionHidden) *OptionElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Hidden(v ...OptionHidden) *OptionElement {
+	var val OptionHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -445,8 +469,14 @@ func (e *OptionElement) Slot(s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Spellcheck(a OptionSpellcheck) *OptionElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Spellcheck(v ...OptionSpellcheck) *OptionElement {
+	var val OptionSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -469,14 +499,26 @@ func (e *OptionElement) Title(s string) *OptionElement {
 	return e
 }
 
-func (e *OptionElement) Translate(a OptionTranslate) *OptionElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Translate(v ...OptionTranslate) *OptionElement {
+	var val OptionTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *OptionElement) Writingsuggestions(a OptionWritingsuggestions) *OptionElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptionElement) Writingsuggestions(v ...OptionWritingsuggestions) *OptionElement {
+	var val OptionWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

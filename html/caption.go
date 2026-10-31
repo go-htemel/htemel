@@ -247,6 +247,12 @@ const (
 	CaptionWritingsuggestionsEmpty CaptionWritingsuggestions = ""
 )
 
+func (e *CaptionElement) Accesskey(r rune) *CaptionElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *CaptionElement) AriaUnsafe(name string, s string) *CaptionElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *CaptionElement) Autocapitalize(a CaptionAutocapitalize) *CaptionElement
 	return e
 }
 
-func (e *CaptionElement) Autocorrect(a CaptionAutocorrect) *CaptionElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Autocorrect(v ...CaptionAutocorrect) *CaptionElement {
+	var val CaptionAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *CaptionElement) Class(s ...string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Contenteditable(a CaptionContenteditable) *CaptionElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Contenteditable(v ...CaptionContenteditable) *CaptionElement {
+	var val CaptionContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *CaptionElement) Enterkeyhint(a CaptionEnterkeyhint) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Hidden(a CaptionHidden) *CaptionElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Hidden(v ...CaptionHidden) *CaptionElement {
+	var val CaptionHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *CaptionElement) Slot(s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Spellcheck(a CaptionSpellcheck) *CaptionElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Spellcheck(v ...CaptionSpellcheck) *CaptionElement {
+	var val CaptionSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *CaptionElement) Title(s string) *CaptionElement {
 	return e
 }
 
-func (e *CaptionElement) Translate(a CaptionTranslate) *CaptionElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Translate(v ...CaptionTranslate) *CaptionElement {
+	var val CaptionTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *CaptionElement) Writingsuggestions(a CaptionWritingsuggestions) *CaptionElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CaptionElement) Writingsuggestions(v ...CaptionWritingsuggestions) *CaptionElement {
+	var val CaptionWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

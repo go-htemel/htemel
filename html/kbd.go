@@ -247,6 +247,12 @@ const (
 	KbdWritingsuggestionsEmpty KbdWritingsuggestions = ""
 )
 
+func (e *KbdElement) Accesskey(r rune) *KbdElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *KbdElement) AriaUnsafe(name string, s string) *KbdElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *KbdElement) Autocapitalize(a KbdAutocapitalize) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Autocorrect(a KbdAutocorrect) *KbdElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Autocorrect(v ...KbdAutocorrect) *KbdElement {
+	var val KbdAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *KbdElement) Class(s ...string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Contenteditable(a KbdContenteditable) *KbdElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Contenteditable(v ...KbdContenteditable) *KbdElement {
+	var val KbdContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *KbdElement) Enterkeyhint(a KbdEnterkeyhint) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Hidden(a KbdHidden) *KbdElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Hidden(v ...KbdHidden) *KbdElement {
+	var val KbdHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *KbdElement) Slot(s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Spellcheck(a KbdSpellcheck) *KbdElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Spellcheck(v ...KbdSpellcheck) *KbdElement {
+	var val KbdSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *KbdElement) Title(s string) *KbdElement {
 	return e
 }
 
-func (e *KbdElement) Translate(a KbdTranslate) *KbdElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Translate(v ...KbdTranslate) *KbdElement {
+	var val KbdTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *KbdElement) Writingsuggestions(a KbdWritingsuggestions) *KbdElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *KbdElement) Writingsuggestions(v ...KbdWritingsuggestions) *KbdElement {
+	var val KbdWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

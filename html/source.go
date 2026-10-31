@@ -233,6 +233,12 @@ func (e *SourceElement) Height(i int) *SourceElement {
 	return e
 }
 
+func (e *SourceElement) Accesskey(r rune) *SourceElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SourceElement) AriaUnsafe(name string, s string) *SourceElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -255,8 +261,14 @@ func (e *SourceElement) Autocapitalize(a SourceAutocapitalize) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Autocorrect(a SourceAutocorrect) *SourceElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Autocorrect(v ...SourceAutocorrect) *SourceElement {
+	var val SourceAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -275,8 +287,14 @@ func (e *SourceElement) Class(s ...string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Contenteditable(a SourceContenteditable) *SourceElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Contenteditable(v ...SourceContenteditable) *SourceElement {
+	var val SourceContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -315,8 +333,14 @@ func (e *SourceElement) Enterkeyhint(a SourceEnterkeyhint) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Hidden(a SourceHidden) *SourceElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Hidden(v ...SourceHidden) *SourceElement {
+	var val SourceHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -403,8 +427,14 @@ func (e *SourceElement) Slot(s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Spellcheck(a SourceSpellcheck) *SourceElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Spellcheck(v ...SourceSpellcheck) *SourceElement {
+	var val SourceSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -427,14 +457,26 @@ func (e *SourceElement) Title(s string) *SourceElement {
 	return e
 }
 
-func (e *SourceElement) Translate(a SourceTranslate) *SourceElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Translate(v ...SourceTranslate) *SourceElement {
+	var val SourceTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SourceElement) Writingsuggestions(a SourceWritingsuggestions) *SourceElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SourceElement) Writingsuggestions(v ...SourceWritingsuggestions) *SourceElement {
+	var val SourceWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

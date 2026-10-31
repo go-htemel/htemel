@@ -247,6 +247,12 @@ const (
 	StrongWritingsuggestionsEmpty StrongWritingsuggestions = ""
 )
 
+func (e *StrongElement) Accesskey(r rune) *StrongElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *StrongElement) AriaUnsafe(name string, s string) *StrongElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *StrongElement) Autocapitalize(a StrongAutocapitalize) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Autocorrect(a StrongAutocorrect) *StrongElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Autocorrect(v ...StrongAutocorrect) *StrongElement {
+	var val StrongAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *StrongElement) Class(s ...string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Contenteditable(a StrongContenteditable) *StrongElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Contenteditable(v ...StrongContenteditable) *StrongElement {
+	var val StrongContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *StrongElement) Enterkeyhint(a StrongEnterkeyhint) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Hidden(a StrongHidden) *StrongElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Hidden(v ...StrongHidden) *StrongElement {
+	var val StrongHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *StrongElement) Slot(s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Spellcheck(a StrongSpellcheck) *StrongElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Spellcheck(v ...StrongSpellcheck) *StrongElement {
+	var val StrongSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *StrongElement) Title(s string) *StrongElement {
 	return e
 }
 
-func (e *StrongElement) Translate(a StrongTranslate) *StrongElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Translate(v ...StrongTranslate) *StrongElement {
+	var val StrongTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *StrongElement) Writingsuggestions(a StrongWritingsuggestions) *StrongElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StrongElement) Writingsuggestions(v ...StrongWritingsuggestions) *StrongElement {
+	var val StrongWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

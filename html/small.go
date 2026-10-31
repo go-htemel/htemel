@@ -247,6 +247,12 @@ const (
 	SmallWritingsuggestionsEmpty SmallWritingsuggestions = ""
 )
 
+func (e *SmallElement) Accesskey(r rune) *SmallElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SmallElement) AriaUnsafe(name string, s string) *SmallElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SmallElement) Autocapitalize(a SmallAutocapitalize) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Autocorrect(a SmallAutocorrect) *SmallElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Autocorrect(v ...SmallAutocorrect) *SmallElement {
+	var val SmallAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SmallElement) Class(s ...string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Contenteditable(a SmallContenteditable) *SmallElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Contenteditable(v ...SmallContenteditable) *SmallElement {
+	var val SmallContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SmallElement) Enterkeyhint(a SmallEnterkeyhint) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Hidden(a SmallHidden) *SmallElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Hidden(v ...SmallHidden) *SmallElement {
+	var val SmallHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SmallElement) Slot(s string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Spellcheck(a SmallSpellcheck) *SmallElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Spellcheck(v ...SmallSpellcheck) *SmallElement {
+	var val SmallSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SmallElement) Title(s string) *SmallElement {
 	return e
 }
 
-func (e *SmallElement) Translate(a SmallTranslate) *SmallElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Translate(v ...SmallTranslate) *SmallElement {
+	var val SmallTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SmallElement) Writingsuggestions(a SmallWritingsuggestions) *SmallElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SmallElement) Writingsuggestions(v ...SmallWritingsuggestions) *SmallElement {
+	var val SmallWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

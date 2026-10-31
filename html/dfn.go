@@ -247,6 +247,12 @@ const (
 	DfnWritingsuggestionsEmpty DfnWritingsuggestions = ""
 )
 
+func (e *DfnElement) Accesskey(r rune) *DfnElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DfnElement) AriaUnsafe(name string, s string) *DfnElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *DfnElement) Autocapitalize(a DfnAutocapitalize) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Autocorrect(a DfnAutocorrect) *DfnElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Autocorrect(v ...DfnAutocorrect) *DfnElement {
+	var val DfnAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *DfnElement) Class(s ...string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Contenteditable(a DfnContenteditable) *DfnElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Contenteditable(v ...DfnContenteditable) *DfnElement {
+	var val DfnContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *DfnElement) Enterkeyhint(a DfnEnterkeyhint) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Hidden(a DfnHidden) *DfnElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Hidden(v ...DfnHidden) *DfnElement {
+	var val DfnHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *DfnElement) Slot(s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Spellcheck(a DfnSpellcheck) *DfnElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Spellcheck(v ...DfnSpellcheck) *DfnElement {
+	var val DfnSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *DfnElement) Title(s string) *DfnElement {
 	return e
 }
 
-func (e *DfnElement) Translate(a DfnTranslate) *DfnElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Translate(v ...DfnTranslate) *DfnElement {
+	var val DfnTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DfnElement) Writingsuggestions(a DfnWritingsuggestions) *DfnElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DfnElement) Writingsuggestions(v ...DfnWritingsuggestions) *DfnElement {
+	var val DfnWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

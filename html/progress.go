@@ -259,6 +259,12 @@ func (e *ProgressElement) Max(f float64) *ProgressElement {
 	return e
 }
 
+func (e *ProgressElement) Accesskey(r rune) *ProgressElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ProgressElement) AriaUnsafe(name string, s string) *ProgressElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -281,8 +287,14 @@ func (e *ProgressElement) Autocapitalize(a ProgressAutocapitalize) *ProgressElem
 	return e
 }
 
-func (e *ProgressElement) Autocorrect(a ProgressAutocorrect) *ProgressElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Autocorrect(v ...ProgressAutocorrect) *ProgressElement {
+	var val ProgressAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -301,8 +313,14 @@ func (e *ProgressElement) Class(s ...string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Contenteditable(a ProgressContenteditable) *ProgressElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Contenteditable(v ...ProgressContenteditable) *ProgressElement {
+	var val ProgressContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -341,8 +359,14 @@ func (e *ProgressElement) Enterkeyhint(a ProgressEnterkeyhint) *ProgressElement 
 	return e
 }
 
-func (e *ProgressElement) Hidden(a ProgressHidden) *ProgressElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Hidden(v ...ProgressHidden) *ProgressElement {
+	var val ProgressHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -429,8 +453,14 @@ func (e *ProgressElement) Slot(s string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Spellcheck(a ProgressSpellcheck) *ProgressElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Spellcheck(v ...ProgressSpellcheck) *ProgressElement {
+	var val ProgressSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -453,14 +483,26 @@ func (e *ProgressElement) Title(s string) *ProgressElement {
 	return e
 }
 
-func (e *ProgressElement) Translate(a ProgressTranslate) *ProgressElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Translate(v ...ProgressTranslate) *ProgressElement {
+	var val ProgressTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ProgressElement) Writingsuggestions(a ProgressWritingsuggestions) *ProgressElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ProgressElement) Writingsuggestions(v ...ProgressWritingsuggestions) *ProgressElement {
+	var val ProgressWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	SummaryWritingsuggestionsEmpty SummaryWritingsuggestions = ""
 )
 
+func (e *SummaryElement) Accesskey(r rune) *SummaryElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SummaryElement) AriaUnsafe(name string, s string) *SummaryElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SummaryElement) Autocapitalize(a SummaryAutocapitalize) *SummaryElement
 	return e
 }
 
-func (e *SummaryElement) Autocorrect(a SummaryAutocorrect) *SummaryElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Autocorrect(v ...SummaryAutocorrect) *SummaryElement {
+	var val SummaryAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SummaryElement) Class(s ...string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Contenteditable(a SummaryContenteditable) *SummaryElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Contenteditable(v ...SummaryContenteditable) *SummaryElement {
+	var val SummaryContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SummaryElement) Enterkeyhint(a SummaryEnterkeyhint) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Hidden(a SummaryHidden) *SummaryElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Hidden(v ...SummaryHidden) *SummaryElement {
+	var val SummaryHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SummaryElement) Slot(s string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Spellcheck(a SummarySpellcheck) *SummaryElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Spellcheck(v ...SummarySpellcheck) *SummaryElement {
+	var val SummarySpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SummaryElement) Title(s string) *SummaryElement {
 	return e
 }
 
-func (e *SummaryElement) Translate(a SummaryTranslate) *SummaryElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Translate(v ...SummaryTranslate) *SummaryElement {
+	var val SummaryTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SummaryElement) Writingsuggestions(a SummaryWritingsuggestions) *SummaryElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SummaryElement) Writingsuggestions(v ...SummaryWritingsuggestions) *SummaryElement {
+	var val SummaryWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

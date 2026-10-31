@@ -191,6 +191,12 @@ const (
 	HrWritingsuggestionsEmpty HrWritingsuggestions = ""
 )
 
+func (e *HrElement) Accesskey(r rune) *HrElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *HrElement) AriaUnsafe(name string, s string) *HrElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -213,8 +219,14 @@ func (e *HrElement) Autocapitalize(a HrAutocapitalize) *HrElement {
 	return e
 }
 
-func (e *HrElement) Autocorrect(a HrAutocorrect) *HrElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Autocorrect(v ...HrAutocorrect) *HrElement {
+	var val HrAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -233,8 +245,14 @@ func (e *HrElement) Class(s ...string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Contenteditable(a HrContenteditable) *HrElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Contenteditable(v ...HrContenteditable) *HrElement {
+	var val HrContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -273,8 +291,14 @@ func (e *HrElement) Enterkeyhint(a HrEnterkeyhint) *HrElement {
 	return e
 }
 
-func (e *HrElement) Hidden(a HrHidden) *HrElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Hidden(v ...HrHidden) *HrElement {
+	var val HrHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -361,8 +385,14 @@ func (e *HrElement) Slot(s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Spellcheck(a HrSpellcheck) *HrElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Spellcheck(v ...HrSpellcheck) *HrElement {
+	var val HrSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -385,14 +415,26 @@ func (e *HrElement) Title(s string) *HrElement {
 	return e
 }
 
-func (e *HrElement) Translate(a HrTranslate) *HrElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Translate(v ...HrTranslate) *HrElement {
+	var val HrTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *HrElement) Writingsuggestions(a HrWritingsuggestions) *HrElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HrElement) Writingsuggestions(v ...HrWritingsuggestions) *HrElement {
+	var val HrWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

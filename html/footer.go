@@ -247,6 +247,12 @@ const (
 	FooterWritingsuggestionsEmpty FooterWritingsuggestions = ""
 )
 
+func (e *FooterElement) Accesskey(r rune) *FooterElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *FooterElement) AriaUnsafe(name string, s string) *FooterElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *FooterElement) Autocapitalize(a FooterAutocapitalize) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Autocorrect(a FooterAutocorrect) *FooterElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Autocorrect(v ...FooterAutocorrect) *FooterElement {
+	var val FooterAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *FooterElement) Class(s ...string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Contenteditable(a FooterContenteditable) *FooterElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Contenteditable(v ...FooterContenteditable) *FooterElement {
+	var val FooterContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *FooterElement) Enterkeyhint(a FooterEnterkeyhint) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Hidden(a FooterHidden) *FooterElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Hidden(v ...FooterHidden) *FooterElement {
+	var val FooterHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *FooterElement) Slot(s string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Spellcheck(a FooterSpellcheck) *FooterElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Spellcheck(v ...FooterSpellcheck) *FooterElement {
+	var val FooterSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *FooterElement) Title(s string) *FooterElement {
 	return e
 }
 
-func (e *FooterElement) Translate(a FooterTranslate) *FooterElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Translate(v ...FooterTranslate) *FooterElement {
+	var val FooterTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *FooterElement) Writingsuggestions(a FooterWritingsuggestions) *FooterElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FooterElement) Writingsuggestions(v ...FooterWritingsuggestions) *FooterElement {
+	var val FooterWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

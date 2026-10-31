@@ -247,6 +247,12 @@ const (
 	ArticleWritingsuggestionsEmpty ArticleWritingsuggestions = ""
 )
 
+func (e *ArticleElement) Accesskey(r rune) *ArticleElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ArticleElement) AriaUnsafe(name string, s string) *ArticleElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *ArticleElement) Autocapitalize(a ArticleAutocapitalize) *ArticleElement
 	return e
 }
 
-func (e *ArticleElement) Autocorrect(a ArticleAutocorrect) *ArticleElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Autocorrect(v ...ArticleAutocorrect) *ArticleElement {
+	var val ArticleAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *ArticleElement) Class(s ...string) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Contenteditable(a ArticleContenteditable) *ArticleElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Contenteditable(v ...ArticleContenteditable) *ArticleElement {
+	var val ArticleContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *ArticleElement) Enterkeyhint(a ArticleEnterkeyhint) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Hidden(a ArticleHidden) *ArticleElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Hidden(v ...ArticleHidden) *ArticleElement {
+	var val ArticleHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *ArticleElement) Slot(s string) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Spellcheck(a ArticleSpellcheck) *ArticleElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Spellcheck(v ...ArticleSpellcheck) *ArticleElement {
+	var val ArticleSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *ArticleElement) Title(s string) *ArticleElement {
 	return e
 }
 
-func (e *ArticleElement) Translate(a ArticleTranslate) *ArticleElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Translate(v ...ArticleTranslate) *ArticleElement {
+	var val ArticleTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ArticleElement) Writingsuggestions(a ArticleWritingsuggestions) *ArticleElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ArticleElement) Writingsuggestions(v ...ArticleWritingsuggestions) *ArticleElement {
+	var val ArticleWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	NoscriptWritingsuggestionsEmpty NoscriptWritingsuggestions = ""
 )
 
+func (e *NoscriptElement) Accesskey(r rune) *NoscriptElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *NoscriptElement) AriaUnsafe(name string, s string) *NoscriptElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *NoscriptElement) Autocapitalize(a NoscriptAutocapitalize) *NoscriptElem
 	return e
 }
 
-func (e *NoscriptElement) Autocorrect(a NoscriptAutocorrect) *NoscriptElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Autocorrect(v ...NoscriptAutocorrect) *NoscriptElement {
+	var val NoscriptAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *NoscriptElement) Class(s ...string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Contenteditable(a NoscriptContenteditable) *NoscriptElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Contenteditable(v ...NoscriptContenteditable) *NoscriptElement {
+	var val NoscriptContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *NoscriptElement) Enterkeyhint(a NoscriptEnterkeyhint) *NoscriptElement 
 	return e
 }
 
-func (e *NoscriptElement) Hidden(a NoscriptHidden) *NoscriptElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Hidden(v ...NoscriptHidden) *NoscriptElement {
+	var val NoscriptHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *NoscriptElement) Slot(s string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Spellcheck(a NoscriptSpellcheck) *NoscriptElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Spellcheck(v ...NoscriptSpellcheck) *NoscriptElement {
+	var val NoscriptSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *NoscriptElement) Title(s string) *NoscriptElement {
 	return e
 }
 
-func (e *NoscriptElement) Translate(a NoscriptTranslate) *NoscriptElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Translate(v ...NoscriptTranslate) *NoscriptElement {
+	var val NoscriptTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *NoscriptElement) Writingsuggestions(a NoscriptWritingsuggestions) *NoscriptElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NoscriptElement) Writingsuggestions(v ...NoscriptWritingsuggestions) *NoscriptElement {
+	var val NoscriptWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

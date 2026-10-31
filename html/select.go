@@ -295,6 +295,12 @@ func (e *SelectElement) Size(i int) *SelectElement {
 	return e
 }
 
+func (e *SelectElement) Accesskey(r rune) *SelectElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SelectElement) AriaUnsafe(name string, s string) *SelectElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -317,8 +323,14 @@ func (e *SelectElement) Autocapitalize(a SelectAutocapitalize) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Autocorrect(a SelectAutocorrect) *SelectElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Autocorrect(v ...SelectAutocorrect) *SelectElement {
+	var val SelectAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -337,8 +349,14 @@ func (e *SelectElement) Class(s ...string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Contenteditable(a SelectContenteditable) *SelectElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Contenteditable(v ...SelectContenteditable) *SelectElement {
+	var val SelectContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -377,8 +395,14 @@ func (e *SelectElement) Enterkeyhint(a SelectEnterkeyhint) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Hidden(a SelectHidden) *SelectElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Hidden(v ...SelectHidden) *SelectElement {
+	var val SelectHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -465,8 +489,14 @@ func (e *SelectElement) Slot(s string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Spellcheck(a SelectSpellcheck) *SelectElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Spellcheck(v ...SelectSpellcheck) *SelectElement {
+	var val SelectSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -489,14 +519,26 @@ func (e *SelectElement) Title(s string) *SelectElement {
 	return e
 }
 
-func (e *SelectElement) Translate(a SelectTranslate) *SelectElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Translate(v ...SelectTranslate) *SelectElement {
+	var val SelectTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SelectElement) Writingsuggestions(a SelectWritingsuggestions) *SelectElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectElement) Writingsuggestions(v ...SelectWritingsuggestions) *SelectElement {
+	var val SelectWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

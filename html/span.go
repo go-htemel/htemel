@@ -247,6 +247,12 @@ const (
 	SpanWritingsuggestionsEmpty SpanWritingsuggestions = ""
 )
 
+func (e *SpanElement) Accesskey(r rune) *SpanElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SpanElement) AriaUnsafe(name string, s string) *SpanElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SpanElement) Autocapitalize(a SpanAutocapitalize) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Autocorrect(a SpanAutocorrect) *SpanElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Autocorrect(v ...SpanAutocorrect) *SpanElement {
+	var val SpanAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SpanElement) Class(s ...string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Contenteditable(a SpanContenteditable) *SpanElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Contenteditable(v ...SpanContenteditable) *SpanElement {
+	var val SpanContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SpanElement) Enterkeyhint(a SpanEnterkeyhint) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Hidden(a SpanHidden) *SpanElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Hidden(v ...SpanHidden) *SpanElement {
+	var val SpanHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SpanElement) Slot(s string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Spellcheck(a SpanSpellcheck) *SpanElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Spellcheck(v ...SpanSpellcheck) *SpanElement {
+	var val SpanSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SpanElement) Title(s string) *SpanElement {
 	return e
 }
 
-func (e *SpanElement) Translate(a SpanTranslate) *SpanElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Translate(v ...SpanTranslate) *SpanElement {
+	var val SpanTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SpanElement) Writingsuggestions(a SpanWritingsuggestions) *SpanElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SpanElement) Writingsuggestions(v ...SpanWritingsuggestions) *SpanElement {
+	var val SpanWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

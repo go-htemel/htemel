@@ -297,6 +297,12 @@ func (e *AElement) Referrerpolicy(s string) *AElement {
 	return e
 }
 
+func (e *AElement) Accesskey(r rune) *AElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AElement) AriaUnsafe(name string, s string) *AElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -319,8 +325,14 @@ func (e *AElement) Autocapitalize(a AAutocapitalize) *AElement {
 	return e
 }
 
-func (e *AElement) Autocorrect(a AAutocorrect) *AElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Autocorrect(v ...AAutocorrect) *AElement {
+	var val AAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -339,8 +351,14 @@ func (e *AElement) Class(s ...string) *AElement {
 	return e
 }
 
-func (e *AElement) Contenteditable(a AContenteditable) *AElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Contenteditable(v ...AContenteditable) *AElement {
+	var val AContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -379,8 +397,14 @@ func (e *AElement) Enterkeyhint(a AEnterkeyhint) *AElement {
 	return e
 }
 
-func (e *AElement) Hidden(a AHidden) *AElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Hidden(v ...AHidden) *AElement {
+	var val AHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -467,8 +491,14 @@ func (e *AElement) Slot(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Spellcheck(a ASpellcheck) *AElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Spellcheck(v ...ASpellcheck) *AElement {
+	var val ASpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -491,14 +521,26 @@ func (e *AElement) Title(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Translate(a ATranslate) *AElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Translate(v ...ATranslate) *AElement {
+	var val ATranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AElement) Writingsuggestions(a AWritingsuggestions) *AElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Writingsuggestions(v ...AWritingsuggestions) *AElement {
+	var val AWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

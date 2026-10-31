@@ -247,6 +247,12 @@ const (
 	SectionWritingsuggestionsEmpty SectionWritingsuggestions = ""
 )
 
+func (e *SectionElement) Accesskey(r rune) *SectionElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SectionElement) AriaUnsafe(name string, s string) *SectionElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SectionElement) Autocapitalize(a SectionAutocapitalize) *SectionElement
 	return e
 }
 
-func (e *SectionElement) Autocorrect(a SectionAutocorrect) *SectionElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Autocorrect(v ...SectionAutocorrect) *SectionElement {
+	var val SectionAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SectionElement) Class(s ...string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Contenteditable(a SectionContenteditable) *SectionElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Contenteditable(v ...SectionContenteditable) *SectionElement {
+	var val SectionContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SectionElement) Enterkeyhint(a SectionEnterkeyhint) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Hidden(a SectionHidden) *SectionElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Hidden(v ...SectionHidden) *SectionElement {
+	var val SectionHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SectionElement) Slot(s string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Spellcheck(a SectionSpellcheck) *SectionElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Spellcheck(v ...SectionSpellcheck) *SectionElement {
+	var val SectionSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SectionElement) Title(s string) *SectionElement {
 	return e
 }
 
-func (e *SectionElement) Translate(a SectionTranslate) *SectionElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Translate(v ...SectionTranslate) *SectionElement {
+	var val SectionTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SectionElement) Writingsuggestions(a SectionWritingsuggestions) *SectionElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SectionElement) Writingsuggestions(v ...SectionWritingsuggestions) *SectionElement {
+	var val SectionWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

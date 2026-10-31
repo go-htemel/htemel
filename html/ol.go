@@ -261,6 +261,18 @@ func (e *OlElement) Start(i int) *OlElement {
 	return e
 }
 
+func (e *OlElement) Type(r rune) *OlElement {
+	e.attributes.Set("type", string(r))
+
+	return e
+}
+
+func (e *OlElement) Accesskey(r rune) *OlElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *OlElement) AriaUnsafe(name string, s string) *OlElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -283,8 +295,14 @@ func (e *OlElement) Autocapitalize(a OlAutocapitalize) *OlElement {
 	return e
 }
 
-func (e *OlElement) Autocorrect(a OlAutocorrect) *OlElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Autocorrect(v ...OlAutocorrect) *OlElement {
+	var val OlAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -303,8 +321,14 @@ func (e *OlElement) Class(s ...string) *OlElement {
 	return e
 }
 
-func (e *OlElement) Contenteditable(a OlContenteditable) *OlElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Contenteditable(v ...OlContenteditable) *OlElement {
+	var val OlContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -343,8 +367,14 @@ func (e *OlElement) Enterkeyhint(a OlEnterkeyhint) *OlElement {
 	return e
 }
 
-func (e *OlElement) Hidden(a OlHidden) *OlElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Hidden(v ...OlHidden) *OlElement {
+	var val OlHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -431,8 +461,14 @@ func (e *OlElement) Slot(s string) *OlElement {
 	return e
 }
 
-func (e *OlElement) Spellcheck(a OlSpellcheck) *OlElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Spellcheck(v ...OlSpellcheck) *OlElement {
+	var val OlSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -455,14 +491,26 @@ func (e *OlElement) Title(s string) *OlElement {
 	return e
 }
 
-func (e *OlElement) Translate(a OlTranslate) *OlElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Translate(v ...OlTranslate) *OlElement {
+	var val OlTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *OlElement) Writingsuggestions(a OlWritingsuggestions) *OlElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OlElement) Writingsuggestions(v ...OlWritingsuggestions) *OlElement {
+	var val OlWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

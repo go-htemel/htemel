@@ -253,6 +253,12 @@ func (e *MapElement) Name(s string) *MapElement {
 	return e
 }
 
+func (e *MapElement) Accesskey(r rune) *MapElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MapElement) AriaUnsafe(name string, s string) *MapElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *MapElement) Autocapitalize(a MapAutocapitalize) *MapElement {
 	return e
 }
 
-func (e *MapElement) Autocorrect(a MapAutocorrect) *MapElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Autocorrect(v ...MapAutocorrect) *MapElement {
+	var val MapAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *MapElement) Class(s ...string) *MapElement {
 	return e
 }
 
-func (e *MapElement) Contenteditable(a MapContenteditable) *MapElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Contenteditable(v ...MapContenteditable) *MapElement {
+	var val MapContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *MapElement) Enterkeyhint(a MapEnterkeyhint) *MapElement {
 	return e
 }
 
-func (e *MapElement) Hidden(a MapHidden) *MapElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Hidden(v ...MapHidden) *MapElement {
+	var val MapHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *MapElement) Slot(s string) *MapElement {
 	return e
 }
 
-func (e *MapElement) Spellcheck(a MapSpellcheck) *MapElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Spellcheck(v ...MapSpellcheck) *MapElement {
+	var val MapSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *MapElement) Title(s string) *MapElement {
 	return e
 }
 
-func (e *MapElement) Translate(a MapTranslate) *MapElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Translate(v ...MapTranslate) *MapElement {
+	var val MapTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MapElement) Writingsuggestions(a MapWritingsuggestions) *MapElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MapElement) Writingsuggestions(v ...MapWritingsuggestions) *MapElement {
+	var val MapWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

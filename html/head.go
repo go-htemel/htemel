@@ -247,6 +247,12 @@ const (
 	HeadWritingsuggestionsEmpty HeadWritingsuggestions = ""
 )
 
+func (e *HeadElement) Accesskey(r rune) *HeadElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *HeadElement) AriaUnsafe(name string, s string) *HeadElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *HeadElement) Autocapitalize(a HeadAutocapitalize) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Autocorrect(a HeadAutocorrect) *HeadElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Autocorrect(v ...HeadAutocorrect) *HeadElement {
+	var val HeadAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *HeadElement) Class(s ...string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Contenteditable(a HeadContenteditable) *HeadElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Contenteditable(v ...HeadContenteditable) *HeadElement {
+	var val HeadContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *HeadElement) Enterkeyhint(a HeadEnterkeyhint) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Hidden(a HeadHidden) *HeadElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Hidden(v ...HeadHidden) *HeadElement {
+	var val HeadHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *HeadElement) Slot(s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Spellcheck(a HeadSpellcheck) *HeadElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Spellcheck(v ...HeadSpellcheck) *HeadElement {
+	var val HeadSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *HeadElement) Title(s string) *HeadElement {
 	return e
 }
 
-func (e *HeadElement) Translate(a HeadTranslate) *HeadElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Translate(v ...HeadTranslate) *HeadElement {
+	var val HeadTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *HeadElement) Writingsuggestions(a HeadWritingsuggestions) *HeadElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HeadElement) Writingsuggestions(v ...HeadWritingsuggestions) *HeadElement {
+	var val HeadWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

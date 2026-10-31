@@ -233,6 +233,12 @@ func (e *MetaElement) Media(s string) *MetaElement {
 	return e
 }
 
+func (e *MetaElement) Accesskey(r rune) *MetaElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MetaElement) AriaUnsafe(name string, s string) *MetaElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -255,8 +261,14 @@ func (e *MetaElement) Autocapitalize(a MetaAutocapitalize) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Autocorrect(a MetaAutocorrect) *MetaElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Autocorrect(v ...MetaAutocorrect) *MetaElement {
+	var val MetaAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -275,8 +287,14 @@ func (e *MetaElement) Class(s ...string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Contenteditable(a MetaContenteditable) *MetaElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Contenteditable(v ...MetaContenteditable) *MetaElement {
+	var val MetaContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -315,8 +333,14 @@ func (e *MetaElement) Enterkeyhint(a MetaEnterkeyhint) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Hidden(a MetaHidden) *MetaElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Hidden(v ...MetaHidden) *MetaElement {
+	var val MetaHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -403,8 +427,14 @@ func (e *MetaElement) Slot(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Spellcheck(a MetaSpellcheck) *MetaElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Spellcheck(v ...MetaSpellcheck) *MetaElement {
+	var val MetaSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -427,14 +457,26 @@ func (e *MetaElement) Title(s string) *MetaElement {
 	return e
 }
 
-func (e *MetaElement) Translate(a MetaTranslate) *MetaElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Translate(v ...MetaTranslate) *MetaElement {
+	var val MetaTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MetaElement) Writingsuggestions(a MetaWritingsuggestions) *MetaElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MetaElement) Writingsuggestions(v ...MetaWritingsuggestions) *MetaElement {
+	var val MetaWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

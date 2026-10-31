@@ -197,6 +197,12 @@ func (e *ColElement) Span(i int) *ColElement {
 	return e
 }
 
+func (e *ColElement) Accesskey(r rune) *ColElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ColElement) AriaUnsafe(name string, s string) *ColElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -219,8 +225,14 @@ func (e *ColElement) Autocapitalize(a ColAutocapitalize) *ColElement {
 	return e
 }
 
-func (e *ColElement) Autocorrect(a ColAutocorrect) *ColElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Autocorrect(v ...ColAutocorrect) *ColElement {
+	var val ColAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -239,8 +251,14 @@ func (e *ColElement) Class(s ...string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Contenteditable(a ColContenteditable) *ColElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Contenteditable(v ...ColContenteditable) *ColElement {
+	var val ColContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -279,8 +297,14 @@ func (e *ColElement) Enterkeyhint(a ColEnterkeyhint) *ColElement {
 	return e
 }
 
-func (e *ColElement) Hidden(a ColHidden) *ColElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Hidden(v ...ColHidden) *ColElement {
+	var val ColHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -367,8 +391,14 @@ func (e *ColElement) Slot(s string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Spellcheck(a ColSpellcheck) *ColElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Spellcheck(v ...ColSpellcheck) *ColElement {
+	var val ColSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -391,14 +421,26 @@ func (e *ColElement) Title(s string) *ColElement {
 	return e
 }
 
-func (e *ColElement) Translate(a ColTranslate) *ColElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Translate(v ...ColTranslate) *ColElement {
+	var val ColTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ColElement) Writingsuggestions(a ColWritingsuggestions) *ColElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ColElement) Writingsuggestions(v ...ColWritingsuggestions) *ColElement {
+	var val ColWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

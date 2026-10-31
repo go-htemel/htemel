@@ -191,6 +191,12 @@ const (
 	BrWritingsuggestionsEmpty BrWritingsuggestions = ""
 )
 
+func (e *BrElement) Accesskey(r rune) *BrElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BrElement) AriaUnsafe(name string, s string) *BrElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -213,8 +219,14 @@ func (e *BrElement) Autocapitalize(a BrAutocapitalize) *BrElement {
 	return e
 }
 
-func (e *BrElement) Autocorrect(a BrAutocorrect) *BrElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Autocorrect(v ...BrAutocorrect) *BrElement {
+	var val BrAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -233,8 +245,14 @@ func (e *BrElement) Class(s ...string) *BrElement {
 	return e
 }
 
-func (e *BrElement) Contenteditable(a BrContenteditable) *BrElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Contenteditable(v ...BrContenteditable) *BrElement {
+	var val BrContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -273,8 +291,14 @@ func (e *BrElement) Enterkeyhint(a BrEnterkeyhint) *BrElement {
 	return e
 }
 
-func (e *BrElement) Hidden(a BrHidden) *BrElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Hidden(v ...BrHidden) *BrElement {
+	var val BrHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -361,8 +385,14 @@ func (e *BrElement) Slot(s string) *BrElement {
 	return e
 }
 
-func (e *BrElement) Spellcheck(a BrSpellcheck) *BrElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Spellcheck(v ...BrSpellcheck) *BrElement {
+	var val BrSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -385,14 +415,26 @@ func (e *BrElement) Title(s string) *BrElement {
 	return e
 }
 
-func (e *BrElement) Translate(a BrTranslate) *BrElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Translate(v ...BrTranslate) *BrElement {
+	var val BrTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BrElement) Writingsuggestions(a BrWritingsuggestions) *BrElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BrElement) Writingsuggestions(v ...BrWritingsuggestions) *BrElement {
+	var val BrWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

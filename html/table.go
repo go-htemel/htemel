@@ -247,6 +247,12 @@ const (
 	TableWritingsuggestionsEmpty TableWritingsuggestions = ""
 )
 
+func (e *TableElement) Accesskey(r rune) *TableElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TableElement) AriaUnsafe(name string, s string) *TableElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TableElement) Autocapitalize(a TableAutocapitalize) *TableElement {
 	return e
 }
 
-func (e *TableElement) Autocorrect(a TableAutocorrect) *TableElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Autocorrect(v ...TableAutocorrect) *TableElement {
+	var val TableAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TableElement) Class(s ...string) *TableElement {
 	return e
 }
 
-func (e *TableElement) Contenteditable(a TableContenteditable) *TableElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Contenteditable(v ...TableContenteditable) *TableElement {
+	var val TableContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TableElement) Enterkeyhint(a TableEnterkeyhint) *TableElement {
 	return e
 }
 
-func (e *TableElement) Hidden(a TableHidden) *TableElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Hidden(v ...TableHidden) *TableElement {
+	var val TableHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TableElement) Slot(s string) *TableElement {
 	return e
 }
 
-func (e *TableElement) Spellcheck(a TableSpellcheck) *TableElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Spellcheck(v ...TableSpellcheck) *TableElement {
+	var val TableSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TableElement) Title(s string) *TableElement {
 	return e
 }
 
-func (e *TableElement) Translate(a TableTranslate) *TableElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Translate(v ...TableTranslate) *TableElement {
+	var val TableTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TableElement) Writingsuggestions(a TableWritingsuggestions) *TableElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TableElement) Writingsuggestions(v ...TableWritingsuggestions) *TableElement {
+	var val TableWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

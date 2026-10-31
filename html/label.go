@@ -253,6 +253,12 @@ func (e *LabelElement) For(s string) *LabelElement {
 	return e
 }
 
+func (e *LabelElement) Accesskey(r rune) *LabelElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *LabelElement) AriaUnsafe(name string, s string) *LabelElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *LabelElement) Autocapitalize(a LabelAutocapitalize) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Autocorrect(a LabelAutocorrect) *LabelElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Autocorrect(v ...LabelAutocorrect) *LabelElement {
+	var val LabelAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *LabelElement) Class(s ...string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Contenteditable(a LabelContenteditable) *LabelElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Contenteditable(v ...LabelContenteditable) *LabelElement {
+	var val LabelContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *LabelElement) Enterkeyhint(a LabelEnterkeyhint) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Hidden(a LabelHidden) *LabelElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Hidden(v ...LabelHidden) *LabelElement {
+	var val LabelHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *LabelElement) Slot(s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Spellcheck(a LabelSpellcheck) *LabelElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Spellcheck(v ...LabelSpellcheck) *LabelElement {
+	var val LabelSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *LabelElement) Title(s string) *LabelElement {
 	return e
 }
 
-func (e *LabelElement) Translate(a LabelTranslate) *LabelElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Translate(v ...LabelTranslate) *LabelElement {
+	var val LabelTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *LabelElement) Writingsuggestions(a LabelWritingsuggestions) *LabelElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LabelElement) Writingsuggestions(v ...LabelWritingsuggestions) *LabelElement {
+	var val LabelWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -259,6 +259,12 @@ func (e *CanvasElement) Height(i int) *CanvasElement {
 	return e
 }
 
+func (e *CanvasElement) Accesskey(r rune) *CanvasElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *CanvasElement) AriaUnsafe(name string, s string) *CanvasElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -281,8 +287,14 @@ func (e *CanvasElement) Autocapitalize(a CanvasAutocapitalize) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Autocorrect(a CanvasAutocorrect) *CanvasElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Autocorrect(v ...CanvasAutocorrect) *CanvasElement {
+	var val CanvasAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -301,8 +313,14 @@ func (e *CanvasElement) Class(s ...string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Contenteditable(a CanvasContenteditable) *CanvasElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Contenteditable(v ...CanvasContenteditable) *CanvasElement {
+	var val CanvasContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -341,8 +359,14 @@ func (e *CanvasElement) Enterkeyhint(a CanvasEnterkeyhint) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Hidden(a CanvasHidden) *CanvasElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Hidden(v ...CanvasHidden) *CanvasElement {
+	var val CanvasHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -429,8 +453,14 @@ func (e *CanvasElement) Slot(s string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Spellcheck(a CanvasSpellcheck) *CanvasElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Spellcheck(v ...CanvasSpellcheck) *CanvasElement {
+	var val CanvasSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -453,14 +483,26 @@ func (e *CanvasElement) Title(s string) *CanvasElement {
 	return e
 }
 
-func (e *CanvasElement) Translate(a CanvasTranslate) *CanvasElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Translate(v ...CanvasTranslate) *CanvasElement {
+	var val CanvasTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *CanvasElement) Writingsuggestions(a CanvasWritingsuggestions) *CanvasElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CanvasElement) Writingsuggestions(v ...CanvasWritingsuggestions) *CanvasElement {
+	var val CanvasWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	NavWritingsuggestionsEmpty NavWritingsuggestions = ""
 )
 
+func (e *NavElement) Accesskey(r rune) *NavElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *NavElement) AriaUnsafe(name string, s string) *NavElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *NavElement) Autocapitalize(a NavAutocapitalize) *NavElement {
 	return e
 }
 
-func (e *NavElement) Autocorrect(a NavAutocorrect) *NavElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Autocorrect(v ...NavAutocorrect) *NavElement {
+	var val NavAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *NavElement) Class(s ...string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Contenteditable(a NavContenteditable) *NavElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Contenteditable(v ...NavContenteditable) *NavElement {
+	var val NavContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *NavElement) Enterkeyhint(a NavEnterkeyhint) *NavElement {
 	return e
 }
 
-func (e *NavElement) Hidden(a NavHidden) *NavElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Hidden(v ...NavHidden) *NavElement {
+	var val NavHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *NavElement) Slot(s string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Spellcheck(a NavSpellcheck) *NavElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Spellcheck(v ...NavSpellcheck) *NavElement {
+	var val NavSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *NavElement) Title(s string) *NavElement {
 	return e
 }
 
-func (e *NavElement) Translate(a NavTranslate) *NavElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Translate(v ...NavTranslate) *NavElement {
+	var val NavTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *NavElement) Writingsuggestions(a NavWritingsuggestions) *NavElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *NavElement) Writingsuggestions(v ...NavWritingsuggestions) *NavElement {
+	var val NavWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

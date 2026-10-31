@@ -419,8 +419,14 @@ func (e *ImageElement) PreserveAspectRatio(s string) *ImageElement {
 	return e
 }
 
-func (e *ImageElement) Crossorigin(a ImageCrossorigin) *ImageElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ImageElement) Crossorigin(v ...ImageCrossorigin) *ImageElement {
+	var val ImageCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }

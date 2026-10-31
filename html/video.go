@@ -270,8 +270,14 @@ func (e *VideoElement) Src(s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Crossorigin(a VideoCrossorigin) *VideoElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Crossorigin(v ...VideoCrossorigin) *VideoElement {
+	var val VideoCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }
@@ -282,8 +288,14 @@ func (e *VideoElement) Poster(s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Preload(a VideoPreload) *VideoElement {
-	e.attributes.Set("preload", string(a))
+// Preload sets the "preload" attribute. Called with no argument, Preload() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Preload(v ...VideoPreload) *VideoElement {
+	var val VideoPreload
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("preload", string(val))
 
 	return e
 }
@@ -340,6 +352,12 @@ func (e *VideoElement) Height(i int) *VideoElement {
 	return e
 }
 
+func (e *VideoElement) Accesskey(r rune) *VideoElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *VideoElement) AriaUnsafe(name string, s string) *VideoElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -362,8 +380,14 @@ func (e *VideoElement) Autocapitalize(a VideoAutocapitalize) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Autocorrect(a VideoAutocorrect) *VideoElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Autocorrect(v ...VideoAutocorrect) *VideoElement {
+	var val VideoAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -382,8 +406,14 @@ func (e *VideoElement) Class(s ...string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Contenteditable(a VideoContenteditable) *VideoElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Contenteditable(v ...VideoContenteditable) *VideoElement {
+	var val VideoContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -422,8 +452,14 @@ func (e *VideoElement) Enterkeyhint(a VideoEnterkeyhint) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Hidden(a VideoHidden) *VideoElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Hidden(v ...VideoHidden) *VideoElement {
+	var val VideoHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -510,8 +546,14 @@ func (e *VideoElement) Slot(s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Spellcheck(a VideoSpellcheck) *VideoElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Spellcheck(v ...VideoSpellcheck) *VideoElement {
+	var val VideoSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -534,14 +576,26 @@ func (e *VideoElement) Title(s string) *VideoElement {
 	return e
 }
 
-func (e *VideoElement) Translate(a VideoTranslate) *VideoElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Translate(v ...VideoTranslate) *VideoElement {
+	var val VideoTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *VideoElement) Writingsuggestions(a VideoWritingsuggestions) *VideoElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VideoElement) Writingsuggestions(v ...VideoWritingsuggestions) *VideoElement {
+	var val VideoWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

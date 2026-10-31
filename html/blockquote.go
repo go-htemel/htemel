@@ -253,6 +253,12 @@ func (e *BlockquoteElement) Cite(s string) *BlockquoteElement {
 	return e
 }
 
+func (e *BlockquoteElement) Accesskey(r rune) *BlockquoteElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BlockquoteElement) AriaUnsafe(name string, s string) *BlockquoteElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *BlockquoteElement) Autocapitalize(a BlockquoteAutocapitalize) *Blockquo
 	return e
 }
 
-func (e *BlockquoteElement) Autocorrect(a BlockquoteAutocorrect) *BlockquoteElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Autocorrect(v ...BlockquoteAutocorrect) *BlockquoteElement {
+	var val BlockquoteAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *BlockquoteElement) Class(s ...string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Contenteditable(a BlockquoteContenteditable) *BlockquoteElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Contenteditable(v ...BlockquoteContenteditable) *BlockquoteElement {
+	var val BlockquoteContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *BlockquoteElement) Enterkeyhint(a BlockquoteEnterkeyhint) *BlockquoteEl
 	return e
 }
 
-func (e *BlockquoteElement) Hidden(a BlockquoteHidden) *BlockquoteElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Hidden(v ...BlockquoteHidden) *BlockquoteElement {
+	var val BlockquoteHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *BlockquoteElement) Slot(s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Spellcheck(a BlockquoteSpellcheck) *BlockquoteElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Spellcheck(v ...BlockquoteSpellcheck) *BlockquoteElement {
+	var val BlockquoteSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *BlockquoteElement) Title(s string) *BlockquoteElement {
 	return e
 }
 
-func (e *BlockquoteElement) Translate(a BlockquoteTranslate) *BlockquoteElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Translate(v ...BlockquoteTranslate) *BlockquoteElement {
+	var val BlockquoteTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BlockquoteElement) Writingsuggestions(a BlockquoteWritingsuggestions) *BlockquoteElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BlockquoteElement) Writingsuggestions(v ...BlockquoteWritingsuggestions) *BlockquoteElement {
+	var val BlockquoteWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

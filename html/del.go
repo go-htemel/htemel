@@ -259,6 +259,12 @@ func (e *DelElement) Datetime(s string) *DelElement {
 	return e
 }
 
+func (e *DelElement) Accesskey(r rune) *DelElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DelElement) AriaUnsafe(name string, s string) *DelElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -281,8 +287,14 @@ func (e *DelElement) Autocapitalize(a DelAutocapitalize) *DelElement {
 	return e
 }
 
-func (e *DelElement) Autocorrect(a DelAutocorrect) *DelElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Autocorrect(v ...DelAutocorrect) *DelElement {
+	var val DelAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -301,8 +313,14 @@ func (e *DelElement) Class(s ...string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Contenteditable(a DelContenteditable) *DelElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Contenteditable(v ...DelContenteditable) *DelElement {
+	var val DelContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -341,8 +359,14 @@ func (e *DelElement) Enterkeyhint(a DelEnterkeyhint) *DelElement {
 	return e
 }
 
-func (e *DelElement) Hidden(a DelHidden) *DelElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Hidden(v ...DelHidden) *DelElement {
+	var val DelHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -429,8 +453,14 @@ func (e *DelElement) Slot(s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Spellcheck(a DelSpellcheck) *DelElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Spellcheck(v ...DelSpellcheck) *DelElement {
+	var val DelSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -453,14 +483,26 @@ func (e *DelElement) Title(s string) *DelElement {
 	return e
 }
 
-func (e *DelElement) Translate(a DelTranslate) *DelElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Translate(v ...DelTranslate) *DelElement {
+	var val DelTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DelElement) Writingsuggestions(a DelWritingsuggestions) *DelElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DelElement) Writingsuggestions(v ...DelWritingsuggestions) *DelElement {
+	var val DelWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

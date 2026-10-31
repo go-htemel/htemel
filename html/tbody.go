@@ -247,6 +247,12 @@ const (
 	TbodyWritingsuggestionsEmpty TbodyWritingsuggestions = ""
 )
 
+func (e *TbodyElement) Accesskey(r rune) *TbodyElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TbodyElement) AriaUnsafe(name string, s string) *TbodyElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TbodyElement) Autocapitalize(a TbodyAutocapitalize) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Autocorrect(a TbodyAutocorrect) *TbodyElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Autocorrect(v ...TbodyAutocorrect) *TbodyElement {
+	var val TbodyAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TbodyElement) Class(s ...string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Contenteditable(a TbodyContenteditable) *TbodyElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Contenteditable(v ...TbodyContenteditable) *TbodyElement {
+	var val TbodyContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TbodyElement) Enterkeyhint(a TbodyEnterkeyhint) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Hidden(a TbodyHidden) *TbodyElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Hidden(v ...TbodyHidden) *TbodyElement {
+	var val TbodyHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TbodyElement) Slot(s string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Spellcheck(a TbodySpellcheck) *TbodyElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Spellcheck(v ...TbodySpellcheck) *TbodyElement {
+	var val TbodySpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TbodyElement) Title(s string) *TbodyElement {
 	return e
 }
 
-func (e *TbodyElement) Translate(a TbodyTranslate) *TbodyElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Translate(v ...TbodyTranslate) *TbodyElement {
+	var val TbodyTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TbodyElement) Writingsuggestions(a TbodyWritingsuggestions) *TbodyElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TbodyElement) Writingsuggestions(v ...TbodyWritingsuggestions) *TbodyElement {
+	var val TbodyWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

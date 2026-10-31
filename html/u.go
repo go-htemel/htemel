@@ -247,6 +247,12 @@ const (
 	UWritingsuggestionsEmpty UWritingsuggestions = ""
 )
 
+func (e *UElement) Accesskey(r rune) *UElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *UElement) AriaUnsafe(name string, s string) *UElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *UElement) Autocapitalize(a UAutocapitalize) *UElement {
 	return e
 }
 
-func (e *UElement) Autocorrect(a UAutocorrect) *UElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Autocorrect(v ...UAutocorrect) *UElement {
+	var val UAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *UElement) Class(s ...string) *UElement {
 	return e
 }
 
-func (e *UElement) Contenteditable(a UContenteditable) *UElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Contenteditable(v ...UContenteditable) *UElement {
+	var val UContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *UElement) Enterkeyhint(a UEnterkeyhint) *UElement {
 	return e
 }
 
-func (e *UElement) Hidden(a UHidden) *UElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Hidden(v ...UHidden) *UElement {
+	var val UHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *UElement) Slot(s string) *UElement {
 	return e
 }
 
-func (e *UElement) Spellcheck(a USpellcheck) *UElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Spellcheck(v ...USpellcheck) *UElement {
+	var val USpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *UElement) Title(s string) *UElement {
 	return e
 }
 
-func (e *UElement) Translate(a UTranslate) *UElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Translate(v ...UTranslate) *UElement {
+	var val UTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *UElement) Writingsuggestions(a UWritingsuggestions) *UElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *UElement) Writingsuggestions(v ...UWritingsuggestions) *UElement {
+	var val UWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

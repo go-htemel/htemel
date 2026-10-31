@@ -215,6 +215,12 @@ func (e *EmbedElement) Height(i int) *EmbedElement {
 	return e
 }
 
+func (e *EmbedElement) Accesskey(r rune) *EmbedElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *EmbedElement) AriaUnsafe(name string, s string) *EmbedElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -237,8 +243,14 @@ func (e *EmbedElement) Autocapitalize(a EmbedAutocapitalize) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Autocorrect(a EmbedAutocorrect) *EmbedElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Autocorrect(v ...EmbedAutocorrect) *EmbedElement {
+	var val EmbedAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -257,8 +269,14 @@ func (e *EmbedElement) Class(s ...string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Contenteditable(a EmbedContenteditable) *EmbedElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Contenteditable(v ...EmbedContenteditable) *EmbedElement {
+	var val EmbedContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -297,8 +315,14 @@ func (e *EmbedElement) Enterkeyhint(a EmbedEnterkeyhint) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Hidden(a EmbedHidden) *EmbedElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Hidden(v ...EmbedHidden) *EmbedElement {
+	var val EmbedHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -385,8 +409,14 @@ func (e *EmbedElement) Slot(s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Spellcheck(a EmbedSpellcheck) *EmbedElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Spellcheck(v ...EmbedSpellcheck) *EmbedElement {
+	var val EmbedSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -409,14 +439,26 @@ func (e *EmbedElement) Title(s string) *EmbedElement {
 	return e
 }
 
-func (e *EmbedElement) Translate(a EmbedTranslate) *EmbedElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Translate(v ...EmbedTranslate) *EmbedElement {
+	var val EmbedTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *EmbedElement) Writingsuggestions(a EmbedWritingsuggestions) *EmbedElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *EmbedElement) Writingsuggestions(v ...EmbedWritingsuggestions) *EmbedElement {
+	var val EmbedWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

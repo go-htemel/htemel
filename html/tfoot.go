@@ -247,6 +247,12 @@ const (
 	TfootWritingsuggestionsEmpty TfootWritingsuggestions = ""
 )
 
+func (e *TfootElement) Accesskey(r rune) *TfootElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TfootElement) AriaUnsafe(name string, s string) *TfootElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TfootElement) Autocapitalize(a TfootAutocapitalize) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Autocorrect(a TfootAutocorrect) *TfootElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Autocorrect(v ...TfootAutocorrect) *TfootElement {
+	var val TfootAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TfootElement) Class(s ...string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Contenteditable(a TfootContenteditable) *TfootElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Contenteditable(v ...TfootContenteditable) *TfootElement {
+	var val TfootContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TfootElement) Enterkeyhint(a TfootEnterkeyhint) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Hidden(a TfootHidden) *TfootElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Hidden(v ...TfootHidden) *TfootElement {
+	var val TfootHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TfootElement) Slot(s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Spellcheck(a TfootSpellcheck) *TfootElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Spellcheck(v ...TfootSpellcheck) *TfootElement {
+	var val TfootSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TfootElement) Title(s string) *TfootElement {
 	return e
 }
 
-func (e *TfootElement) Translate(a TfootTranslate) *TfootElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Translate(v ...TfootTranslate) *TfootElement {
+	var val TfootTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TfootElement) Writingsuggestions(a TfootWritingsuggestions) *TfootElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TfootElement) Writingsuggestions(v ...TfootWritingsuggestions) *TfootElement {
+	var val TfootWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

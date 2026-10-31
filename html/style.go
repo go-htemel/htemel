@@ -262,6 +262,12 @@ func (e *StyleElement) Blocking(s string) *StyleElement {
 	return e
 }
 
+func (e *StyleElement) Accesskey(r rune) *StyleElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *StyleElement) AriaUnsafe(name string, s string) *StyleElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -284,8 +290,14 @@ func (e *StyleElement) Autocapitalize(a StyleAutocapitalize) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Autocorrect(a StyleAutocorrect) *StyleElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Autocorrect(v ...StyleAutocorrect) *StyleElement {
+	var val StyleAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -304,8 +316,14 @@ func (e *StyleElement) Class(s ...string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Contenteditable(a StyleContenteditable) *StyleElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Contenteditable(v ...StyleContenteditable) *StyleElement {
+	var val StyleContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -344,8 +362,14 @@ func (e *StyleElement) Enterkeyhint(a StyleEnterkeyhint) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Hidden(a StyleHidden) *StyleElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Hidden(v ...StyleHidden) *StyleElement {
+	var val StyleHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -432,8 +456,14 @@ func (e *StyleElement) Slot(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Spellcheck(a StyleSpellcheck) *StyleElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Spellcheck(v ...StyleSpellcheck) *StyleElement {
+	var val StyleSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -456,14 +486,26 @@ func (e *StyleElement) Title(s string) *StyleElement {
 	return e
 }
 
-func (e *StyleElement) Translate(a StyleTranslate) *StyleElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Translate(v ...StyleTranslate) *StyleElement {
+	var val StyleTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *StyleElement) Writingsuggestions(a StyleWritingsuggestions) *StyleElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *StyleElement) Writingsuggestions(v ...StyleWritingsuggestions) *StyleElement {
+	var val StyleWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

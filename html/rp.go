@@ -247,6 +247,12 @@ const (
 	RpWritingsuggestionsEmpty RpWritingsuggestions = ""
 )
 
+func (e *RpElement) Accesskey(r rune) *RpElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *RpElement) AriaUnsafe(name string, s string) *RpElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *RpElement) Autocapitalize(a RpAutocapitalize) *RpElement {
 	return e
 }
 
-func (e *RpElement) Autocorrect(a RpAutocorrect) *RpElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Autocorrect(v ...RpAutocorrect) *RpElement {
+	var val RpAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *RpElement) Class(s ...string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Contenteditable(a RpContenteditable) *RpElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Contenteditable(v ...RpContenteditable) *RpElement {
+	var val RpContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *RpElement) Enterkeyhint(a RpEnterkeyhint) *RpElement {
 	return e
 }
 
-func (e *RpElement) Hidden(a RpHidden) *RpElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Hidden(v ...RpHidden) *RpElement {
+	var val RpHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *RpElement) Slot(s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Spellcheck(a RpSpellcheck) *RpElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Spellcheck(v ...RpSpellcheck) *RpElement {
+	var val RpSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *RpElement) Title(s string) *RpElement {
 	return e
 }
 
-func (e *RpElement) Translate(a RpTranslate) *RpElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Translate(v ...RpTranslate) *RpElement {
+	var val RpTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *RpElement) Writingsuggestions(a RpWritingsuggestions) *RpElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RpElement) Writingsuggestions(v ...RpWritingsuggestions) *RpElement {
+	var val RpWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -261,6 +261,12 @@ func (e *OptgroupElement) Label(s string) *OptgroupElement {
 	return e
 }
 
+func (e *OptgroupElement) Accesskey(r rune) *OptgroupElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *OptgroupElement) AriaUnsafe(name string, s string) *OptgroupElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -283,8 +289,14 @@ func (e *OptgroupElement) Autocapitalize(a OptgroupAutocapitalize) *OptgroupElem
 	return e
 }
 
-func (e *OptgroupElement) Autocorrect(a OptgroupAutocorrect) *OptgroupElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Autocorrect(v ...OptgroupAutocorrect) *OptgroupElement {
+	var val OptgroupAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -303,8 +315,14 @@ func (e *OptgroupElement) Class(s ...string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Contenteditable(a OptgroupContenteditable) *OptgroupElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Contenteditable(v ...OptgroupContenteditable) *OptgroupElement {
+	var val OptgroupContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -343,8 +361,14 @@ func (e *OptgroupElement) Enterkeyhint(a OptgroupEnterkeyhint) *OptgroupElement 
 	return e
 }
 
-func (e *OptgroupElement) Hidden(a OptgroupHidden) *OptgroupElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Hidden(v ...OptgroupHidden) *OptgroupElement {
+	var val OptgroupHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -431,8 +455,14 @@ func (e *OptgroupElement) Slot(s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Spellcheck(a OptgroupSpellcheck) *OptgroupElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Spellcheck(v ...OptgroupSpellcheck) *OptgroupElement {
+	var val OptgroupSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -455,14 +485,26 @@ func (e *OptgroupElement) Title(s string) *OptgroupElement {
 	return e
 }
 
-func (e *OptgroupElement) Translate(a OptgroupTranslate) *OptgroupElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Translate(v ...OptgroupTranslate) *OptgroupElement {
+	var val OptgroupTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *OptgroupElement) Writingsuggestions(a OptgroupWritingsuggestions) *OptgroupElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *OptgroupElement) Writingsuggestions(v ...OptgroupWritingsuggestions) *OptgroupElement {
+	var val OptgroupWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

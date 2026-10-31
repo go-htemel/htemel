@@ -256,6 +256,12 @@ func (e *AreaElement) Referrerpolicy(s string) *AreaElement {
 	return e
 }
 
+func (e *AreaElement) Accesskey(r rune) *AreaElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AreaElement) AriaUnsafe(name string, s string) *AreaElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -278,8 +284,14 @@ func (e *AreaElement) Autocapitalize(a AreaAutocapitalize) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Autocorrect(a AreaAutocorrect) *AreaElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Autocorrect(v ...AreaAutocorrect) *AreaElement {
+	var val AreaAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -298,8 +310,14 @@ func (e *AreaElement) Class(s ...string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Contenteditable(a AreaContenteditable) *AreaElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Contenteditable(v ...AreaContenteditable) *AreaElement {
+	var val AreaContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -338,8 +356,14 @@ func (e *AreaElement) Enterkeyhint(a AreaEnterkeyhint) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Hidden(a AreaHidden) *AreaElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Hidden(v ...AreaHidden) *AreaElement {
+	var val AreaHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -426,8 +450,14 @@ func (e *AreaElement) Slot(s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Spellcheck(a AreaSpellcheck) *AreaElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Spellcheck(v ...AreaSpellcheck) *AreaElement {
+	var val AreaSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -450,14 +480,26 @@ func (e *AreaElement) Title(s string) *AreaElement {
 	return e
 }
 
-func (e *AreaElement) Translate(a AreaTranslate) *AreaElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Translate(v ...AreaTranslate) *AreaElement {
+	var val AreaTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AreaElement) Writingsuggestions(a AreaWritingsuggestions) *AreaElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AreaElement) Writingsuggestions(v ...AreaWritingsuggestions) *AreaElement {
+	var val AreaWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

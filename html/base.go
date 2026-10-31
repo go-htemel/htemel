@@ -203,6 +203,12 @@ func (e *BaseElement) Target(s string) *BaseElement {
 	return e
 }
 
+func (e *BaseElement) Accesskey(r rune) *BaseElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BaseElement) AriaUnsafe(name string, s string) *BaseElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -225,8 +231,14 @@ func (e *BaseElement) Autocapitalize(a BaseAutocapitalize) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Autocorrect(a BaseAutocorrect) *BaseElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Autocorrect(v ...BaseAutocorrect) *BaseElement {
+	var val BaseAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -245,8 +257,14 @@ func (e *BaseElement) Class(s ...string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Contenteditable(a BaseContenteditable) *BaseElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Contenteditable(v ...BaseContenteditable) *BaseElement {
+	var val BaseContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -285,8 +303,14 @@ func (e *BaseElement) Enterkeyhint(a BaseEnterkeyhint) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Hidden(a BaseHidden) *BaseElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Hidden(v ...BaseHidden) *BaseElement {
+	var val BaseHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -373,8 +397,14 @@ func (e *BaseElement) Slot(s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Spellcheck(a BaseSpellcheck) *BaseElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Spellcheck(v ...BaseSpellcheck) *BaseElement {
+	var val BaseSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -397,14 +427,26 @@ func (e *BaseElement) Title(s string) *BaseElement {
 	return e
 }
 
-func (e *BaseElement) Translate(a BaseTranslate) *BaseElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Translate(v ...BaseTranslate) *BaseElement {
+	var val BaseTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BaseElement) Writingsuggestions(a BaseWritingsuggestions) *BaseElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BaseElement) Writingsuggestions(v ...BaseWritingsuggestions) *BaseElement {
+	var val BaseWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

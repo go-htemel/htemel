@@ -191,6 +191,12 @@ const (
 	WbrWritingsuggestionsEmpty WbrWritingsuggestions = ""
 )
 
+func (e *WbrElement) Accesskey(r rune) *WbrElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *WbrElement) AriaUnsafe(name string, s string) *WbrElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -213,8 +219,14 @@ func (e *WbrElement) Autocapitalize(a WbrAutocapitalize) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Autocorrect(a WbrAutocorrect) *WbrElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Autocorrect(v ...WbrAutocorrect) *WbrElement {
+	var val WbrAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -233,8 +245,14 @@ func (e *WbrElement) Class(s ...string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Contenteditable(a WbrContenteditable) *WbrElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Contenteditable(v ...WbrContenteditable) *WbrElement {
+	var val WbrContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -273,8 +291,14 @@ func (e *WbrElement) Enterkeyhint(a WbrEnterkeyhint) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Hidden(a WbrHidden) *WbrElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Hidden(v ...WbrHidden) *WbrElement {
+	var val WbrHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -361,8 +385,14 @@ func (e *WbrElement) Slot(s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Spellcheck(a WbrSpellcheck) *WbrElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Spellcheck(v ...WbrSpellcheck) *WbrElement {
+	var val WbrSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -385,14 +415,26 @@ func (e *WbrElement) Title(s string) *WbrElement {
 	return e
 }
 
-func (e *WbrElement) Translate(a WbrTranslate) *WbrElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Translate(v ...WbrTranslate) *WbrElement {
+	var val WbrTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *WbrElement) Writingsuggestions(a WbrWritingsuggestions) *WbrElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *WbrElement) Writingsuggestions(v ...WbrWritingsuggestions) *WbrElement {
+	var val WbrWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

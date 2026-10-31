@@ -247,6 +247,12 @@ const (
 	AbbrWritingsuggestionsEmpty AbbrWritingsuggestions = ""
 )
 
+func (e *AbbrElement) Accesskey(r rune) *AbbrElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AbbrElement) AriaUnsafe(name string, s string) *AbbrElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *AbbrElement) Autocapitalize(a AbbrAutocapitalize) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Autocorrect(a AbbrAutocorrect) *AbbrElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Autocorrect(v ...AbbrAutocorrect) *AbbrElement {
+	var val AbbrAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *AbbrElement) Class(s ...string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Contenteditable(a AbbrContenteditable) *AbbrElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Contenteditable(v ...AbbrContenteditable) *AbbrElement {
+	var val AbbrContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *AbbrElement) Enterkeyhint(a AbbrEnterkeyhint) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Hidden(a AbbrHidden) *AbbrElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Hidden(v ...AbbrHidden) *AbbrElement {
+	var val AbbrHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *AbbrElement) Slot(s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Spellcheck(a AbbrSpellcheck) *AbbrElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Spellcheck(v ...AbbrSpellcheck) *AbbrElement {
+	var val AbbrSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *AbbrElement) Title(s string) *AbbrElement {
 	return e
 }
 
-func (e *AbbrElement) Translate(a AbbrTranslate) *AbbrElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Translate(v ...AbbrTranslate) *AbbrElement {
+	var val AbbrTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AbbrElement) Writingsuggestions(a AbbrWritingsuggestions) *AbbrElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AbbrElement) Writingsuggestions(v ...AbbrWritingsuggestions) *AbbrElement {
+	var val AbbrWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

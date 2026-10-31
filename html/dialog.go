@@ -269,6 +269,12 @@ func (e *DialogElement) Open(b bool) *DialogElement {
 	return e
 }
 
+func (e *DialogElement) Accesskey(r rune) *DialogElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DialogElement) AriaUnsafe(name string, s string) *DialogElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -291,8 +297,14 @@ func (e *DialogElement) Autocapitalize(a DialogAutocapitalize) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Autocorrect(a DialogAutocorrect) *DialogElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Autocorrect(v ...DialogAutocorrect) *DialogElement {
+	var val DialogAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -311,8 +323,14 @@ func (e *DialogElement) Class(s ...string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Contenteditable(a DialogContenteditable) *DialogElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Contenteditable(v ...DialogContenteditable) *DialogElement {
+	var val DialogContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -351,8 +369,14 @@ func (e *DialogElement) Enterkeyhint(a DialogEnterkeyhint) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Hidden(a DialogHidden) *DialogElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Hidden(v ...DialogHidden) *DialogElement {
+	var val DialogHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -439,8 +463,14 @@ func (e *DialogElement) Slot(s string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Spellcheck(a DialogSpellcheck) *DialogElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Spellcheck(v ...DialogSpellcheck) *DialogElement {
+	var val DialogSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -463,14 +493,26 @@ func (e *DialogElement) Title(s string) *DialogElement {
 	return e
 }
 
-func (e *DialogElement) Translate(a DialogTranslate) *DialogElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Translate(v ...DialogTranslate) *DialogElement {
+	var val DialogTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DialogElement) Writingsuggestions(a DialogWritingsuggestions) *DialogElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DialogElement) Writingsuggestions(v ...DialogWritingsuggestions) *DialogElement {
+	var val DialogWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

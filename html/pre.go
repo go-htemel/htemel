@@ -247,6 +247,12 @@ const (
 	PreWritingsuggestionsEmpty PreWritingsuggestions = ""
 )
 
+func (e *PreElement) Accesskey(r rune) *PreElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *PreElement) AriaUnsafe(name string, s string) *PreElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *PreElement) Autocapitalize(a PreAutocapitalize) *PreElement {
 	return e
 }
 
-func (e *PreElement) Autocorrect(a PreAutocorrect) *PreElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Autocorrect(v ...PreAutocorrect) *PreElement {
+	var val PreAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *PreElement) Class(s ...string) *PreElement {
 	return e
 }
 
-func (e *PreElement) Contenteditable(a PreContenteditable) *PreElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Contenteditable(v ...PreContenteditable) *PreElement {
+	var val PreContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *PreElement) Enterkeyhint(a PreEnterkeyhint) *PreElement {
 	return e
 }
 
-func (e *PreElement) Hidden(a PreHidden) *PreElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Hidden(v ...PreHidden) *PreElement {
+	var val PreHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *PreElement) Slot(s string) *PreElement {
 	return e
 }
 
-func (e *PreElement) Spellcheck(a PreSpellcheck) *PreElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Spellcheck(v ...PreSpellcheck) *PreElement {
+	var val PreSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *PreElement) Title(s string) *PreElement {
 	return e
 }
 
-func (e *PreElement) Translate(a PreTranslate) *PreElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Translate(v ...PreTranslate) *PreElement {
+	var val PreTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *PreElement) Writingsuggestions(a PreWritingsuggestions) *PreElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PreElement) Writingsuggestions(v ...PreWritingsuggestions) *PreElement {
+	var val PreWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

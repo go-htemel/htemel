@@ -247,6 +247,12 @@ const (
 	MenuWritingsuggestionsEmpty MenuWritingsuggestions = ""
 )
 
+func (e *MenuElement) Accesskey(r rune) *MenuElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MenuElement) AriaUnsafe(name string, s string) *MenuElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *MenuElement) Autocapitalize(a MenuAutocapitalize) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Autocorrect(a MenuAutocorrect) *MenuElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Autocorrect(v ...MenuAutocorrect) *MenuElement {
+	var val MenuAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *MenuElement) Class(s ...string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Contenteditable(a MenuContenteditable) *MenuElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Contenteditable(v ...MenuContenteditable) *MenuElement {
+	var val MenuContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *MenuElement) Enterkeyhint(a MenuEnterkeyhint) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Hidden(a MenuHidden) *MenuElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Hidden(v ...MenuHidden) *MenuElement {
+	var val MenuHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *MenuElement) Slot(s string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Spellcheck(a MenuSpellcheck) *MenuElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Spellcheck(v ...MenuSpellcheck) *MenuElement {
+	var val MenuSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *MenuElement) Title(s string) *MenuElement {
 	return e
 }
 
-func (e *MenuElement) Translate(a MenuTranslate) *MenuElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Translate(v ...MenuTranslate) *MenuElement {
+	var val MenuTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MenuElement) Writingsuggestions(a MenuWritingsuggestions) *MenuElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MenuElement) Writingsuggestions(v ...MenuWritingsuggestions) *MenuElement {
+	var val MenuWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

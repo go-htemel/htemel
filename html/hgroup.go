@@ -247,6 +247,12 @@ const (
 	HgroupWritingsuggestionsEmpty HgroupWritingsuggestions = ""
 )
 
+func (e *HgroupElement) Accesskey(r rune) *HgroupElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *HgroupElement) AriaUnsafe(name string, s string) *HgroupElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *HgroupElement) Autocapitalize(a HgroupAutocapitalize) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Autocorrect(a HgroupAutocorrect) *HgroupElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Autocorrect(v ...HgroupAutocorrect) *HgroupElement {
+	var val HgroupAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *HgroupElement) Class(s ...string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Contenteditable(a HgroupContenteditable) *HgroupElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Contenteditable(v ...HgroupContenteditable) *HgroupElement {
+	var val HgroupContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *HgroupElement) Enterkeyhint(a HgroupEnterkeyhint) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Hidden(a HgroupHidden) *HgroupElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Hidden(v ...HgroupHidden) *HgroupElement {
+	var val HgroupHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *HgroupElement) Slot(s string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Spellcheck(a HgroupSpellcheck) *HgroupElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Spellcheck(v ...HgroupSpellcheck) *HgroupElement {
+	var val HgroupSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *HgroupElement) Title(s string) *HgroupElement {
 	return e
 }
 
-func (e *HgroupElement) Translate(a HgroupTranslate) *HgroupElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Translate(v ...HgroupTranslate) *HgroupElement {
+	var val HgroupTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *HgroupElement) Writingsuggestions(a HgroupWritingsuggestions) *HgroupElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *HgroupElement) Writingsuggestions(v ...HgroupWritingsuggestions) *HgroupElement {
+	var val HgroupWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

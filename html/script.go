@@ -314,8 +314,14 @@ func (e *ScriptElement) Blocking(a ScriptBlocking) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Crossorigin(a ScriptCrossorigin) *ScriptElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Crossorigin(v ...ScriptCrossorigin) *ScriptElement {
+	var val ScriptCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }
@@ -334,6 +340,12 @@ func (e *ScriptElement) Integrity(s string) *ScriptElement {
 
 func (e *ScriptElement) Fetchpriority(a ScriptFetchpriority) *ScriptElement {
 	e.attributes.Set("fetchpriority", string(a))
+
+	return e
+}
+
+func (e *ScriptElement) Accesskey(r rune) *ScriptElement {
+	e.attributes.Set("accesskey", string(r))
 
 	return e
 }
@@ -360,8 +372,14 @@ func (e *ScriptElement) Autocapitalize(a ScriptAutocapitalize) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Autocorrect(a ScriptAutocorrect) *ScriptElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Autocorrect(v ...ScriptAutocorrect) *ScriptElement {
+	var val ScriptAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -380,8 +398,14 @@ func (e *ScriptElement) Class(s ...string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Contenteditable(a ScriptContenteditable) *ScriptElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Contenteditable(v ...ScriptContenteditable) *ScriptElement {
+	var val ScriptContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -420,8 +444,14 @@ func (e *ScriptElement) Enterkeyhint(a ScriptEnterkeyhint) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Hidden(a ScriptHidden) *ScriptElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Hidden(v ...ScriptHidden) *ScriptElement {
+	var val ScriptHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -508,8 +538,14 @@ func (e *ScriptElement) Slot(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Spellcheck(a ScriptSpellcheck) *ScriptElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Spellcheck(v ...ScriptSpellcheck) *ScriptElement {
+	var val ScriptSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -532,14 +568,26 @@ func (e *ScriptElement) Title(s string) *ScriptElement {
 	return e
 }
 
-func (e *ScriptElement) Translate(a ScriptTranslate) *ScriptElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Translate(v ...ScriptTranslate) *ScriptElement {
+	var val ScriptTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ScriptElement) Writingsuggestions(a ScriptWritingsuggestions) *ScriptElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ScriptElement) Writingsuggestions(v ...ScriptWritingsuggestions) *ScriptElement {
+	var val ScriptWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

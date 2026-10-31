@@ -247,6 +247,12 @@ const (
 	VarWritingsuggestionsEmpty VarWritingsuggestions = ""
 )
 
+func (e *VarElement) Accesskey(r rune) *VarElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *VarElement) AriaUnsafe(name string, s string) *VarElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *VarElement) Autocapitalize(a VarAutocapitalize) *VarElement {
 	return e
 }
 
-func (e *VarElement) Autocorrect(a VarAutocorrect) *VarElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Autocorrect(v ...VarAutocorrect) *VarElement {
+	var val VarAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *VarElement) Class(s ...string) *VarElement {
 	return e
 }
 
-func (e *VarElement) Contenteditable(a VarContenteditable) *VarElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Contenteditable(v ...VarContenteditable) *VarElement {
+	var val VarContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *VarElement) Enterkeyhint(a VarEnterkeyhint) *VarElement {
 	return e
 }
 
-func (e *VarElement) Hidden(a VarHidden) *VarElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Hidden(v ...VarHidden) *VarElement {
+	var val VarHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *VarElement) Slot(s string) *VarElement {
 	return e
 }
 
-func (e *VarElement) Spellcheck(a VarSpellcheck) *VarElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Spellcheck(v ...VarSpellcheck) *VarElement {
+	var val VarSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *VarElement) Title(s string) *VarElement {
 	return e
 }
 
-func (e *VarElement) Translate(a VarTranslate) *VarElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Translate(v ...VarTranslate) *VarElement {
+	var val VarTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *VarElement) Writingsuggestions(a VarWritingsuggestions) *VarElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *VarElement) Writingsuggestions(v ...VarWritingsuggestions) *VarElement {
+	var val VarWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

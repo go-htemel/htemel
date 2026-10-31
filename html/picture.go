@@ -247,6 +247,12 @@ const (
 	PictureWritingsuggestionsEmpty PictureWritingsuggestions = ""
 )
 
+func (e *PictureElement) Accesskey(r rune) *PictureElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *PictureElement) AriaUnsafe(name string, s string) *PictureElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *PictureElement) Autocapitalize(a PictureAutocapitalize) *PictureElement
 	return e
 }
 
-func (e *PictureElement) Autocorrect(a PictureAutocorrect) *PictureElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Autocorrect(v ...PictureAutocorrect) *PictureElement {
+	var val PictureAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *PictureElement) Class(s ...string) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Contenteditable(a PictureContenteditable) *PictureElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Contenteditable(v ...PictureContenteditable) *PictureElement {
+	var val PictureContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *PictureElement) Enterkeyhint(a PictureEnterkeyhint) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Hidden(a PictureHidden) *PictureElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Hidden(v ...PictureHidden) *PictureElement {
+	var val PictureHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *PictureElement) Slot(s string) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Spellcheck(a PictureSpellcheck) *PictureElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Spellcheck(v ...PictureSpellcheck) *PictureElement {
+	var val PictureSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *PictureElement) Title(s string) *PictureElement {
 	return e
 }
 
-func (e *PictureElement) Translate(a PictureTranslate) *PictureElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Translate(v ...PictureTranslate) *PictureElement {
+	var val PictureTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *PictureElement) Writingsuggestions(a PictureWritingsuggestions) *PictureElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PictureElement) Writingsuggestions(v ...PictureWritingsuggestions) *PictureElement {
+	var val PictureWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

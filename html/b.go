@@ -247,6 +247,12 @@ const (
 	BWritingsuggestionsEmpty BWritingsuggestions = ""
 )
 
+func (e *BElement) Accesskey(r rune) *BElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BElement) AriaUnsafe(name string, s string) *BElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *BElement) Autocapitalize(a BAutocapitalize) *BElement {
 	return e
 }
 
-func (e *BElement) Autocorrect(a BAutocorrect) *BElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Autocorrect(v ...BAutocorrect) *BElement {
+	var val BAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *BElement) Class(s ...string) *BElement {
 	return e
 }
 
-func (e *BElement) Contenteditable(a BContenteditable) *BElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Contenteditable(v ...BContenteditable) *BElement {
+	var val BContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *BElement) Enterkeyhint(a BEnterkeyhint) *BElement {
 	return e
 }
 
-func (e *BElement) Hidden(a BHidden) *BElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Hidden(v ...BHidden) *BElement {
+	var val BHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *BElement) Slot(s string) *BElement {
 	return e
 }
 
-func (e *BElement) Spellcheck(a BSpellcheck) *BElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Spellcheck(v ...BSpellcheck) *BElement {
+	var val BSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *BElement) Title(s string) *BElement {
 	return e
 }
 
-func (e *BElement) Translate(a BTranslate) *BElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Translate(v ...BTranslate) *BElement {
+	var val BTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BElement) Writingsuggestions(a BWritingsuggestions) *BElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BElement) Writingsuggestions(v ...BWritingsuggestions) *BElement {
+	var val BWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

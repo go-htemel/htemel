@@ -355,6 +355,12 @@ func (e *BodyElement) Onunload(s string) *BodyElement {
 	return e
 }
 
+func (e *BodyElement) Accesskey(r rune) *BodyElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BodyElement) AriaUnsafe(name string, s string) *BodyElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -377,8 +383,14 @@ func (e *BodyElement) Autocapitalize(a BodyAutocapitalize) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Autocorrect(a BodyAutocorrect) *BodyElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Autocorrect(v ...BodyAutocorrect) *BodyElement {
+	var val BodyAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -397,8 +409,14 @@ func (e *BodyElement) Class(s ...string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Contenteditable(a BodyContenteditable) *BodyElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Contenteditable(v ...BodyContenteditable) *BodyElement {
+	var val BodyContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -437,8 +455,14 @@ func (e *BodyElement) Enterkeyhint(a BodyEnterkeyhint) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Hidden(a BodyHidden) *BodyElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Hidden(v ...BodyHidden) *BodyElement {
+	var val BodyHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -525,8 +549,14 @@ func (e *BodyElement) Slot(s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Spellcheck(a BodySpellcheck) *BodyElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Spellcheck(v ...BodySpellcheck) *BodyElement {
+	var val BodySpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -549,14 +579,26 @@ func (e *BodyElement) Title(s string) *BodyElement {
 	return e
 }
 
-func (e *BodyElement) Translate(a BodyTranslate) *BodyElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Translate(v ...BodyTranslate) *BodyElement {
+	var val BodyTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BodyElement) Writingsuggestions(a BodyWritingsuggestions) *BodyElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BodyElement) Writingsuggestions(v ...BodyWritingsuggestions) *BodyElement {
+	var val BodyWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

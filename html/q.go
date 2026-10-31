@@ -253,6 +253,12 @@ func (e *QElement) Cite(s string) *QElement {
 	return e
 }
 
+func (e *QElement) Accesskey(r rune) *QElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *QElement) AriaUnsafe(name string, s string) *QElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *QElement) Autocapitalize(a QAutocapitalize) *QElement {
 	return e
 }
 
-func (e *QElement) Autocorrect(a QAutocorrect) *QElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Autocorrect(v ...QAutocorrect) *QElement {
+	var val QAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *QElement) Class(s ...string) *QElement {
 	return e
 }
 
-func (e *QElement) Contenteditable(a QContenteditable) *QElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Contenteditable(v ...QContenteditable) *QElement {
+	var val QContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *QElement) Enterkeyhint(a QEnterkeyhint) *QElement {
 	return e
 }
 
-func (e *QElement) Hidden(a QHidden) *QElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Hidden(v ...QHidden) *QElement {
+	var val QHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *QElement) Slot(s string) *QElement {
 	return e
 }
 
-func (e *QElement) Spellcheck(a QSpellcheck) *QElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Spellcheck(v ...QSpellcheck) *QElement {
+	var val QSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *QElement) Title(s string) *QElement {
 	return e
 }
 
-func (e *QElement) Translate(a QTranslate) *QElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Translate(v ...QTranslate) *QElement {
+	var val QTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *QElement) Writingsuggestions(a QWritingsuggestions) *QElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *QElement) Writingsuggestions(v ...QWritingsuggestions) *QElement {
+	var val QWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

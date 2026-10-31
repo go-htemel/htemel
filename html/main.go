@@ -247,6 +247,12 @@ const (
 	MainWritingsuggestionsEmpty MainWritingsuggestions = ""
 )
 
+func (e *MainElement) Accesskey(r rune) *MainElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MainElement) AriaUnsafe(name string, s string) *MainElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *MainElement) Autocapitalize(a MainAutocapitalize) *MainElement {
 	return e
 }
 
-func (e *MainElement) Autocorrect(a MainAutocorrect) *MainElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Autocorrect(v ...MainAutocorrect) *MainElement {
+	var val MainAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *MainElement) Class(s ...string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Contenteditable(a MainContenteditable) *MainElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Contenteditable(v ...MainContenteditable) *MainElement {
+	var val MainContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *MainElement) Enterkeyhint(a MainEnterkeyhint) *MainElement {
 	return e
 }
 
-func (e *MainElement) Hidden(a MainHidden) *MainElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Hidden(v ...MainHidden) *MainElement {
+	var val MainHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *MainElement) Slot(s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Spellcheck(a MainSpellcheck) *MainElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Spellcheck(v ...MainSpellcheck) *MainElement {
+	var val MainSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *MainElement) Title(s string) *MainElement {
 	return e
 }
 
-func (e *MainElement) Translate(a MainTranslate) *MainElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Translate(v ...MainTranslate) *MainElement {
+	var val MainTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MainElement) Writingsuggestions(a MainWritingsuggestions) *MainElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MainElement) Writingsuggestions(v ...MainWritingsuggestions) *MainElement {
+	var val MainWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

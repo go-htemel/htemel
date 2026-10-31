@@ -247,6 +247,12 @@ const (
 	TheadWritingsuggestionsEmpty TheadWritingsuggestions = ""
 )
 
+func (e *TheadElement) Accesskey(r rune) *TheadElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TheadElement) AriaUnsafe(name string, s string) *TheadElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TheadElement) Autocapitalize(a TheadAutocapitalize) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Autocorrect(a TheadAutocorrect) *TheadElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Autocorrect(v ...TheadAutocorrect) *TheadElement {
+	var val TheadAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TheadElement) Class(s ...string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Contenteditable(a TheadContenteditable) *TheadElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Contenteditable(v ...TheadContenteditable) *TheadElement {
+	var val TheadContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TheadElement) Enterkeyhint(a TheadEnterkeyhint) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Hidden(a TheadHidden) *TheadElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Hidden(v ...TheadHidden) *TheadElement {
+	var val TheadHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TheadElement) Slot(s string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Spellcheck(a TheadSpellcheck) *TheadElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Spellcheck(v ...TheadSpellcheck) *TheadElement {
+	var val TheadSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TheadElement) Title(s string) *TheadElement {
 	return e
 }
 
-func (e *TheadElement) Translate(a TheadTranslate) *TheadElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Translate(v ...TheadTranslate) *TheadElement {
+	var val TheadTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TheadElement) Writingsuggestions(a TheadWritingsuggestions) *TheadElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TheadElement) Writingsuggestions(v ...TheadWritingsuggestions) *TheadElement {
+	var val TheadWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

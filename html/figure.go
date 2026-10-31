@@ -247,6 +247,12 @@ const (
 	FigureWritingsuggestionsEmpty FigureWritingsuggestions = ""
 )
 
+func (e *FigureElement) Accesskey(r rune) *FigureElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *FigureElement) AriaUnsafe(name string, s string) *FigureElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *FigureElement) Autocapitalize(a FigureAutocapitalize) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Autocorrect(a FigureAutocorrect) *FigureElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Autocorrect(v ...FigureAutocorrect) *FigureElement {
+	var val FigureAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *FigureElement) Class(s ...string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Contenteditable(a FigureContenteditable) *FigureElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Contenteditable(v ...FigureContenteditable) *FigureElement {
+	var val FigureContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *FigureElement) Enterkeyhint(a FigureEnterkeyhint) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Hidden(a FigureHidden) *FigureElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Hidden(v ...FigureHidden) *FigureElement {
+	var val FigureHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *FigureElement) Slot(s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Spellcheck(a FigureSpellcheck) *FigureElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Spellcheck(v ...FigureSpellcheck) *FigureElement {
+	var val FigureSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *FigureElement) Title(s string) *FigureElement {
 	return e
 }
 
-func (e *FigureElement) Translate(a FigureTranslate) *FigureElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Translate(v ...FigureTranslate) *FigureElement {
+	var val FigureTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *FigureElement) Writingsuggestions(a FigureWritingsuggestions) *FigureElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigureElement) Writingsuggestions(v ...FigureWritingsuggestions) *FigureElement {
+	var val FigureWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -338,6 +338,12 @@ func (e *TextareaElement) Wrap(a TextareaWrap) *TextareaElement {
 	return e
 }
 
+func (e *TextareaElement) Accesskey(r rune) *TextareaElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TextareaElement) AriaUnsafe(name string, s string) *TextareaElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -360,8 +366,14 @@ func (e *TextareaElement) Autocapitalize(a TextareaAutocapitalize) *TextareaElem
 	return e
 }
 
-func (e *TextareaElement) Autocorrect(a TextareaAutocorrect) *TextareaElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Autocorrect(v ...TextareaAutocorrect) *TextareaElement {
+	var val TextareaAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -380,8 +392,14 @@ func (e *TextareaElement) Class(s ...string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Contenteditable(a TextareaContenteditable) *TextareaElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Contenteditable(v ...TextareaContenteditable) *TextareaElement {
+	var val TextareaContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -420,8 +438,14 @@ func (e *TextareaElement) Enterkeyhint(a TextareaEnterkeyhint) *TextareaElement 
 	return e
 }
 
-func (e *TextareaElement) Hidden(a TextareaHidden) *TextareaElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Hidden(v ...TextareaHidden) *TextareaElement {
+	var val TextareaHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -508,8 +532,14 @@ func (e *TextareaElement) Slot(s string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Spellcheck(a TextareaSpellcheck) *TextareaElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Spellcheck(v ...TextareaSpellcheck) *TextareaElement {
+	var val TextareaSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -532,14 +562,26 @@ func (e *TextareaElement) Title(s string) *TextareaElement {
 	return e
 }
 
-func (e *TextareaElement) Translate(a TextareaTranslate) *TextareaElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Translate(v ...TextareaTranslate) *TextareaElement {
+	var val TextareaTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TextareaElement) Writingsuggestions(a TextareaWritingsuggestions) *TextareaElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TextareaElement) Writingsuggestions(v ...TextareaWritingsuggestions) *TextareaElement {
+	var val TextareaWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

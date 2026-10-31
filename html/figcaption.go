@@ -247,6 +247,12 @@ const (
 	FigcaptionWritingsuggestionsEmpty FigcaptionWritingsuggestions = ""
 )
 
+func (e *FigcaptionElement) Accesskey(r rune) *FigcaptionElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *FigcaptionElement) AriaUnsafe(name string, s string) *FigcaptionElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *FigcaptionElement) Autocapitalize(a FigcaptionAutocapitalize) *Figcapti
 	return e
 }
 
-func (e *FigcaptionElement) Autocorrect(a FigcaptionAutocorrect) *FigcaptionElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Autocorrect(v ...FigcaptionAutocorrect) *FigcaptionElement {
+	var val FigcaptionAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *FigcaptionElement) Class(s ...string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Contenteditable(a FigcaptionContenteditable) *FigcaptionElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Contenteditable(v ...FigcaptionContenteditable) *FigcaptionElement {
+	var val FigcaptionContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *FigcaptionElement) Enterkeyhint(a FigcaptionEnterkeyhint) *FigcaptionEl
 	return e
 }
 
-func (e *FigcaptionElement) Hidden(a FigcaptionHidden) *FigcaptionElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Hidden(v ...FigcaptionHidden) *FigcaptionElement {
+	var val FigcaptionHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *FigcaptionElement) Slot(s string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Spellcheck(a FigcaptionSpellcheck) *FigcaptionElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Spellcheck(v ...FigcaptionSpellcheck) *FigcaptionElement {
+	var val FigcaptionSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *FigcaptionElement) Title(s string) *FigcaptionElement {
 	return e
 }
 
-func (e *FigcaptionElement) Translate(a FigcaptionTranslate) *FigcaptionElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Translate(v ...FigcaptionTranslate) *FigcaptionElement {
+	var val FigcaptionTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *FigcaptionElement) Writingsuggestions(a FigcaptionWritingsuggestions) *FigcaptionElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *FigcaptionElement) Writingsuggestions(v ...FigcaptionWritingsuggestions) *FigcaptionElement {
+	var val FigcaptionWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

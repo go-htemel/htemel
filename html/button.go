@@ -374,6 +374,12 @@ func (e *ButtonElement) Value(s string) *ButtonElement {
 	return e
 }
 
+func (e *ButtonElement) Accesskey(r rune) *ButtonElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *ButtonElement) AriaUnsafe(name string, s string) *ButtonElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -396,8 +402,14 @@ func (e *ButtonElement) Autocapitalize(a ButtonAutocapitalize) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Autocorrect(a ButtonAutocorrect) *ButtonElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Autocorrect(v ...ButtonAutocorrect) *ButtonElement {
+	var val ButtonAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -416,8 +428,14 @@ func (e *ButtonElement) Class(s ...string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Contenteditable(a ButtonContenteditable) *ButtonElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Contenteditable(v ...ButtonContenteditable) *ButtonElement {
+	var val ButtonContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -456,8 +474,14 @@ func (e *ButtonElement) Enterkeyhint(a ButtonEnterkeyhint) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Hidden(a ButtonHidden) *ButtonElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Hidden(v ...ButtonHidden) *ButtonElement {
+	var val ButtonHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -544,8 +568,14 @@ func (e *ButtonElement) Slot(s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Spellcheck(a ButtonSpellcheck) *ButtonElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Spellcheck(v ...ButtonSpellcheck) *ButtonElement {
+	var val ButtonSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -568,14 +598,26 @@ func (e *ButtonElement) Title(s string) *ButtonElement {
 	return e
 }
 
-func (e *ButtonElement) Translate(a ButtonTranslate) *ButtonElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Translate(v ...ButtonTranslate) *ButtonElement {
+	var val ButtonTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *ButtonElement) Writingsuggestions(a ButtonWritingsuggestions) *ButtonElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *ButtonElement) Writingsuggestions(v ...ButtonWritingsuggestions) *ButtonElement {
+	var val ButtonWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	PWritingsuggestionsEmpty PWritingsuggestions = ""
 )
 
+func (e *PElement) Accesskey(r rune) *PElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *PElement) AriaUnsafe(name string, s string) *PElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *PElement) Autocapitalize(a PAutocapitalize) *PElement {
 	return e
 }
 
-func (e *PElement) Autocorrect(a PAutocorrect) *PElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Autocorrect(v ...PAutocorrect) *PElement {
+	var val PAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *PElement) Class(s ...string) *PElement {
 	return e
 }
 
-func (e *PElement) Contenteditable(a PContenteditable) *PElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Contenteditable(v ...PContenteditable) *PElement {
+	var val PContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *PElement) Enterkeyhint(a PEnterkeyhint) *PElement {
 	return e
 }
 
-func (e *PElement) Hidden(a PHidden) *PElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Hidden(v ...PHidden) *PElement {
+	var val PHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *PElement) Slot(s string) *PElement {
 	return e
 }
 
-func (e *PElement) Spellcheck(a PSpellcheck) *PElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Spellcheck(v ...PSpellcheck) *PElement {
+	var val PSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *PElement) Title(s string) *PElement {
 	return e
 }
 
-func (e *PElement) Translate(a PTranslate) *PElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Translate(v ...PTranslate) *PElement {
+	var val PTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *PElement) Writingsuggestions(a PWritingsuggestions) *PElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *PElement) Writingsuggestions(v ...PWritingsuggestions) *PElement {
+	var val PWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

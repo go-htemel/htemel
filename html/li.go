@@ -253,6 +253,12 @@ func (e *LiElement) Value(i int) *LiElement {
 	return e
 }
 
+func (e *LiElement) Accesskey(r rune) *LiElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *LiElement) AriaUnsafe(name string, s string) *LiElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *LiElement) Autocapitalize(a LiAutocapitalize) *LiElement {
 	return e
 }
 
-func (e *LiElement) Autocorrect(a LiAutocorrect) *LiElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Autocorrect(v ...LiAutocorrect) *LiElement {
+	var val LiAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *LiElement) Class(s ...string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Contenteditable(a LiContenteditable) *LiElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Contenteditable(v ...LiContenteditable) *LiElement {
+	var val LiContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *LiElement) Enterkeyhint(a LiEnterkeyhint) *LiElement {
 	return e
 }
 
-func (e *LiElement) Hidden(a LiHidden) *LiElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Hidden(v ...LiHidden) *LiElement {
+	var val LiHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *LiElement) Slot(s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Spellcheck(a LiSpellcheck) *LiElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Spellcheck(v ...LiSpellcheck) *LiElement {
+	var val LiSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *LiElement) Title(s string) *LiElement {
 	return e
 }
 
-func (e *LiElement) Translate(a LiTranslate) *LiElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Translate(v ...LiTranslate) *LiElement {
+	var val LiTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *LiElement) Writingsuggestions(a LiWritingsuggestions) *LiElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LiElement) Writingsuggestions(v ...LiWritingsuggestions) *LiElement {
+	var val LiWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

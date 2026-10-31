@@ -253,6 +253,12 @@ func (e *DataElement) Value(s string) *DataElement {
 	return e
 }
 
+func (e *DataElement) Accesskey(r rune) *DataElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DataElement) AriaUnsafe(name string, s string) *DataElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *DataElement) Autocapitalize(a DataAutocapitalize) *DataElement {
 	return e
 }
 
-func (e *DataElement) Autocorrect(a DataAutocorrect) *DataElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Autocorrect(v ...DataAutocorrect) *DataElement {
+	var val DataAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *DataElement) Class(s ...string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Contenteditable(a DataContenteditable) *DataElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Contenteditable(v ...DataContenteditable) *DataElement {
+	var val DataContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *DataElement) Enterkeyhint(a DataEnterkeyhint) *DataElement {
 	return e
 }
 
-func (e *DataElement) Hidden(a DataHidden) *DataElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Hidden(v ...DataHidden) *DataElement {
+	var val DataHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *DataElement) Slot(s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Spellcheck(a DataSpellcheck) *DataElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Spellcheck(v ...DataSpellcheck) *DataElement {
+	var val DataSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *DataElement) Title(s string) *DataElement {
 	return e
 }
 
-func (e *DataElement) Translate(a DataTranslate) *DataElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Translate(v ...DataTranslate) *DataElement {
+	var val DataTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DataElement) Writingsuggestions(a DataWritingsuggestions) *DataElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DataElement) Writingsuggestions(v ...DataWritingsuggestions) *DataElement {
+	var val DataWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

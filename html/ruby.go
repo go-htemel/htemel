@@ -247,6 +247,12 @@ const (
 	RubyWritingsuggestionsEmpty RubyWritingsuggestions = ""
 )
 
+func (e *RubyElement) Accesskey(r rune) *RubyElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *RubyElement) AriaUnsafe(name string, s string) *RubyElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *RubyElement) Autocapitalize(a RubyAutocapitalize) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Autocorrect(a RubyAutocorrect) *RubyElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Autocorrect(v ...RubyAutocorrect) *RubyElement {
+	var val RubyAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *RubyElement) Class(s ...string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Contenteditable(a RubyContenteditable) *RubyElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Contenteditable(v ...RubyContenteditable) *RubyElement {
+	var val RubyContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *RubyElement) Enterkeyhint(a RubyEnterkeyhint) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Hidden(a RubyHidden) *RubyElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Hidden(v ...RubyHidden) *RubyElement {
+	var val RubyHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *RubyElement) Slot(s string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Spellcheck(a RubySpellcheck) *RubyElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Spellcheck(v ...RubySpellcheck) *RubyElement {
+	var val RubySpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *RubyElement) Title(s string) *RubyElement {
 	return e
 }
 
-func (e *RubyElement) Translate(a RubyTranslate) *RubyElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Translate(v ...RubyTranslate) *RubyElement {
+	var val RubyTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *RubyElement) Writingsuggestions(a RubyWritingsuggestions) *RubyElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *RubyElement) Writingsuggestions(v ...RubyWritingsuggestions) *RubyElement {
+	var val RubyWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

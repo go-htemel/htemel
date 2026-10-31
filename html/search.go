@@ -247,6 +247,12 @@ const (
 	SearchWritingsuggestionsEmpty SearchWritingsuggestions = ""
 )
 
+func (e *SearchElement) Accesskey(r rune) *SearchElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SearchElement) AriaUnsafe(name string, s string) *SearchElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SearchElement) Autocapitalize(a SearchAutocapitalize) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Autocorrect(a SearchAutocorrect) *SearchElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Autocorrect(v ...SearchAutocorrect) *SearchElement {
+	var val SearchAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SearchElement) Class(s ...string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Contenteditable(a SearchContenteditable) *SearchElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Contenteditable(v ...SearchContenteditable) *SearchElement {
+	var val SearchContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SearchElement) Enterkeyhint(a SearchEnterkeyhint) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Hidden(a SearchHidden) *SearchElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Hidden(v ...SearchHidden) *SearchElement {
+	var val SearchHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SearchElement) Slot(s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Spellcheck(a SearchSpellcheck) *SearchElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Spellcheck(v ...SearchSpellcheck) *SearchElement {
+	var val SearchSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SearchElement) Title(s string) *SearchElement {
 	return e
 }
 
-func (e *SearchElement) Translate(a SearchTranslate) *SearchElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Translate(v ...SearchTranslate) *SearchElement {
+	var val SearchTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SearchElement) Writingsuggestions(a SearchWritingsuggestions) *SearchElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SearchElement) Writingsuggestions(v ...SearchWritingsuggestions) *SearchElement {
+	var val SearchWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

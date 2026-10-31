@@ -253,6 +253,12 @@ func (e *SlotElement) Name(s string) *SlotElement {
 	return e
 }
 
+func (e *SlotElement) Accesskey(r rune) *SlotElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SlotElement) AriaUnsafe(name string, s string) *SlotElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *SlotElement) Autocapitalize(a SlotAutocapitalize) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Autocorrect(a SlotAutocorrect) *SlotElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Autocorrect(v ...SlotAutocorrect) *SlotElement {
+	var val SlotAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *SlotElement) Class(s ...string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Contenteditable(a SlotContenteditable) *SlotElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Contenteditable(v ...SlotContenteditable) *SlotElement {
+	var val SlotContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *SlotElement) Enterkeyhint(a SlotEnterkeyhint) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Hidden(a SlotHidden) *SlotElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Hidden(v ...SlotHidden) *SlotElement {
+	var val SlotHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *SlotElement) Slot(s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Spellcheck(a SlotSpellcheck) *SlotElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Spellcheck(v ...SlotSpellcheck) *SlotElement {
+	var val SlotSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *SlotElement) Title(s string) *SlotElement {
 	return e
 }
 
-func (e *SlotElement) Translate(a SlotTranslate) *SlotElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Translate(v ...SlotTranslate) *SlotElement {
+	var val SlotTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SlotElement) Writingsuggestions(a SlotWritingsuggestions) *SlotElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SlotElement) Writingsuggestions(v ...SlotWritingsuggestions) *SlotElement {
+	var val SlotWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

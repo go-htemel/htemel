@@ -283,6 +283,12 @@ func (e *MeterElement) Optimum(f float64) *MeterElement {
 	return e
 }
 
+func (e *MeterElement) Accesskey(r rune) *MeterElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *MeterElement) AriaUnsafe(name string, s string) *MeterElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -305,8 +311,14 @@ func (e *MeterElement) Autocapitalize(a MeterAutocapitalize) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Autocorrect(a MeterAutocorrect) *MeterElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Autocorrect(v ...MeterAutocorrect) *MeterElement {
+	var val MeterAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -325,8 +337,14 @@ func (e *MeterElement) Class(s ...string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Contenteditable(a MeterContenteditable) *MeterElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Contenteditable(v ...MeterContenteditable) *MeterElement {
+	var val MeterContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -365,8 +383,14 @@ func (e *MeterElement) Enterkeyhint(a MeterEnterkeyhint) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Hidden(a MeterHidden) *MeterElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Hidden(v ...MeterHidden) *MeterElement {
+	var val MeterHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -453,8 +477,14 @@ func (e *MeterElement) Slot(s string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Spellcheck(a MeterSpellcheck) *MeterElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Spellcheck(v ...MeterSpellcheck) *MeterElement {
+	var val MeterSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -477,14 +507,26 @@ func (e *MeterElement) Title(s string) *MeterElement {
 	return e
 }
 
-func (e *MeterElement) Translate(a MeterTranslate) *MeterElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Translate(v ...MeterTranslate) *MeterElement {
+	var val MeterTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *MeterElement) Writingsuggestions(a MeterWritingsuggestions) *MeterElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *MeterElement) Writingsuggestions(v ...MeterWritingsuggestions) *MeterElement {
+	var val MeterWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

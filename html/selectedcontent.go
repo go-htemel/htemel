@@ -247,6 +247,12 @@ const (
 	SelectedcontentWritingsuggestionsEmpty SelectedcontentWritingsuggestions = ""
 )
 
+func (e *SelectedcontentElement) Accesskey(r rune) *SelectedcontentElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SelectedcontentElement) AriaUnsafe(name string, s string) *SelectedcontentElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SelectedcontentElement) Autocapitalize(a SelectedcontentAutocapitalize)
 	return e
 }
 
-func (e *SelectedcontentElement) Autocorrect(a SelectedcontentAutocorrect) *SelectedcontentElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Autocorrect(v ...SelectedcontentAutocorrect) *SelectedcontentElement {
+	var val SelectedcontentAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SelectedcontentElement) Class(s ...string) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Contenteditable(a SelectedcontentContenteditable) *SelectedcontentElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Contenteditable(v ...SelectedcontentContenteditable) *SelectedcontentElement {
+	var val SelectedcontentContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SelectedcontentElement) Enterkeyhint(a SelectedcontentEnterkeyhint) *Se
 	return e
 }
 
-func (e *SelectedcontentElement) Hidden(a SelectedcontentHidden) *SelectedcontentElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Hidden(v ...SelectedcontentHidden) *SelectedcontentElement {
+	var val SelectedcontentHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SelectedcontentElement) Slot(s string) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Spellcheck(a SelectedcontentSpellcheck) *SelectedcontentElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Spellcheck(v ...SelectedcontentSpellcheck) *SelectedcontentElement {
+	var val SelectedcontentSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SelectedcontentElement) Title(s string) *SelectedcontentElement {
 	return e
 }
 
-func (e *SelectedcontentElement) Translate(a SelectedcontentTranslate) *SelectedcontentElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Translate(v ...SelectedcontentTranslate) *SelectedcontentElement {
+	var val SelectedcontentTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SelectedcontentElement) Writingsuggestions(a SelectedcontentWritingsuggestions) *SelectedcontentElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SelectedcontentElement) Writingsuggestions(v ...SelectedcontentWritingsuggestions) *SelectedcontentElement {
+	var val SelectedcontentWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

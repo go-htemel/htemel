@@ -247,6 +247,12 @@ const (
 	DdWritingsuggestionsEmpty DdWritingsuggestions = ""
 )
 
+func (e *DdElement) Accesskey(r rune) *DdElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DdElement) AriaUnsafe(name string, s string) *DdElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *DdElement) Autocapitalize(a DdAutocapitalize) *DdElement {
 	return e
 }
 
-func (e *DdElement) Autocorrect(a DdAutocorrect) *DdElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Autocorrect(v ...DdAutocorrect) *DdElement {
+	var val DdAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *DdElement) Class(s ...string) *DdElement {
 	return e
 }
 
-func (e *DdElement) Contenteditable(a DdContenteditable) *DdElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Contenteditable(v ...DdContenteditable) *DdElement {
+	var val DdContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *DdElement) Enterkeyhint(a DdEnterkeyhint) *DdElement {
 	return e
 }
 
-func (e *DdElement) Hidden(a DdHidden) *DdElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Hidden(v ...DdHidden) *DdElement {
+	var val DdHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *DdElement) Slot(s string) *DdElement {
 	return e
 }
 
-func (e *DdElement) Spellcheck(a DdSpellcheck) *DdElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Spellcheck(v ...DdSpellcheck) *DdElement {
+	var val DdSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *DdElement) Title(s string) *DdElement {
 	return e
 }
 
-func (e *DdElement) Translate(a DdTranslate) *DdElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Translate(v ...DdTranslate) *DdElement {
+	var val DdTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DdElement) Writingsuggestions(a DdWritingsuggestions) *DdElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DdElement) Writingsuggestions(v ...DdWritingsuggestions) *DdElement {
+	var val DdWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

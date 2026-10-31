@@ -219,8 +219,14 @@ func (e *LinkElement) Href(s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Crossorigin(a LinkCrossorigin) *LinkElement {
-	e.attributes.Set("crossorigin", string(a))
+// Crossorigin sets the "crossorigin" attribute. Called with no argument, Crossorigin() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Crossorigin(v ...LinkCrossorigin) *LinkElement {
+	var val LinkCrossorigin
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("crossorigin", string(val))
 
 	return e
 }
@@ -311,6 +317,12 @@ func (e *LinkElement) Fetchpriority(a LinkFetchpriority) *LinkElement {
 	return e
 }
 
+func (e *LinkElement) Accesskey(r rune) *LinkElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *LinkElement) AriaUnsafe(name string, s string) *LinkElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -333,8 +345,14 @@ func (e *LinkElement) Autocapitalize(a LinkAutocapitalize) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Autocorrect(a LinkAutocorrect) *LinkElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Autocorrect(v ...LinkAutocorrect) *LinkElement {
+	var val LinkAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -353,8 +371,14 @@ func (e *LinkElement) Class(s ...string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Contenteditable(a LinkContenteditable) *LinkElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Contenteditable(v ...LinkContenteditable) *LinkElement {
+	var val LinkContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -393,8 +417,14 @@ func (e *LinkElement) Enterkeyhint(a LinkEnterkeyhint) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Hidden(a LinkHidden) *LinkElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Hidden(v ...LinkHidden) *LinkElement {
+	var val LinkHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -481,8 +511,14 @@ func (e *LinkElement) Slot(s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Spellcheck(a LinkSpellcheck) *LinkElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Spellcheck(v ...LinkSpellcheck) *LinkElement {
+	var val LinkSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -505,14 +541,26 @@ func (e *LinkElement) Title(s string) *LinkElement {
 	return e
 }
 
-func (e *LinkElement) Translate(a LinkTranslate) *LinkElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Translate(v ...LinkTranslate) *LinkElement {
+	var val LinkTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *LinkElement) Writingsuggestions(a LinkWritingsuggestions) *LinkElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LinkElement) Writingsuggestions(v ...LinkWritingsuggestions) *LinkElement {
+	var val LinkWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

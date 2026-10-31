@@ -247,6 +247,12 @@ const (
 	BdiWritingsuggestionsEmpty BdiWritingsuggestions = ""
 )
 
+func (e *BdiElement) Accesskey(r rune) *BdiElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *BdiElement) AriaUnsafe(name string, s string) *BdiElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *BdiElement) Autocapitalize(a BdiAutocapitalize) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Autocorrect(a BdiAutocorrect) *BdiElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Autocorrect(v ...BdiAutocorrect) *BdiElement {
+	var val BdiAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *BdiElement) Class(s ...string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Contenteditable(a BdiContenteditable) *BdiElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Contenteditable(v ...BdiContenteditable) *BdiElement {
+	var val BdiContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *BdiElement) Enterkeyhint(a BdiEnterkeyhint) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Hidden(a BdiHidden) *BdiElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Hidden(v ...BdiHidden) *BdiElement {
+	var val BdiHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *BdiElement) Slot(s string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Spellcheck(a BdiSpellcheck) *BdiElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Spellcheck(v ...BdiSpellcheck) *BdiElement {
+	var val BdiSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *BdiElement) Title(s string) *BdiElement {
 	return e
 }
 
-func (e *BdiElement) Translate(a BdiTranslate) *BdiElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Translate(v ...BdiTranslate) *BdiElement {
+	var val BdiTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *BdiElement) Writingsuggestions(a BdiWritingsuggestions) *BdiElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *BdiElement) Writingsuggestions(v ...BdiWritingsuggestions) *BdiElement {
+	var val BdiWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

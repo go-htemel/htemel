@@ -424,8 +424,14 @@ func (e *AElement) Type(s string) *AElement {
 	return e
 }
 
-func (e *AElement) Referrerpolicy(a AReferrerpolicy) *AElement {
-	e.attributes.Set("referrerpolicy", string(a))
+// Referrerpolicy sets the "referrerpolicy" attribute. Called with no argument, Referrerpolicy() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AElement) Referrerpolicy(v ...AReferrerpolicy) *AElement {
+	var val AReferrerpolicy
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("referrerpolicy", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	CodeWritingsuggestionsEmpty CodeWritingsuggestions = ""
 )
 
+func (e *CodeElement) Accesskey(r rune) *CodeElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *CodeElement) AriaUnsafe(name string, s string) *CodeElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *CodeElement) Autocapitalize(a CodeAutocapitalize) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Autocorrect(a CodeAutocorrect) *CodeElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Autocorrect(v ...CodeAutocorrect) *CodeElement {
+	var val CodeAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *CodeElement) Class(s ...string) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Contenteditable(a CodeContenteditable) *CodeElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Contenteditable(v ...CodeContenteditable) *CodeElement {
+	var val CodeContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *CodeElement) Enterkeyhint(a CodeEnterkeyhint) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Hidden(a CodeHidden) *CodeElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Hidden(v ...CodeHidden) *CodeElement {
+	var val CodeHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *CodeElement) Slot(s string) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Spellcheck(a CodeSpellcheck) *CodeElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Spellcheck(v ...CodeSpellcheck) *CodeElement {
+	var val CodeSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *CodeElement) Title(s string) *CodeElement {
 	return e
 }
 
-func (e *CodeElement) Translate(a CodeTranslate) *CodeElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Translate(v ...CodeTranslate) *CodeElement {
+	var val CodeTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *CodeElement) Writingsuggestions(a CodeWritingsuggestions) *CodeElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *CodeElement) Writingsuggestions(v ...CodeWritingsuggestions) *CodeElement {
+	var val CodeWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -261,6 +261,12 @@ func (e *DetailsElement) Open(b bool) *DetailsElement {
 	return e
 }
 
+func (e *DetailsElement) Accesskey(r rune) *DetailsElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *DetailsElement) AriaUnsafe(name string, s string) *DetailsElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -283,8 +289,14 @@ func (e *DetailsElement) Autocapitalize(a DetailsAutocapitalize) *DetailsElement
 	return e
 }
 
-func (e *DetailsElement) Autocorrect(a DetailsAutocorrect) *DetailsElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Autocorrect(v ...DetailsAutocorrect) *DetailsElement {
+	var val DetailsAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -303,8 +315,14 @@ func (e *DetailsElement) Class(s ...string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Contenteditable(a DetailsContenteditable) *DetailsElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Contenteditable(v ...DetailsContenteditable) *DetailsElement {
+	var val DetailsContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -343,8 +361,14 @@ func (e *DetailsElement) Enterkeyhint(a DetailsEnterkeyhint) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Hidden(a DetailsHidden) *DetailsElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Hidden(v ...DetailsHidden) *DetailsElement {
+	var val DetailsHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -431,8 +455,14 @@ func (e *DetailsElement) Slot(s string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Spellcheck(a DetailsSpellcheck) *DetailsElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Spellcheck(v ...DetailsSpellcheck) *DetailsElement {
+	var val DetailsSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -455,14 +485,26 @@ func (e *DetailsElement) Title(s string) *DetailsElement {
 	return e
 }
 
-func (e *DetailsElement) Translate(a DetailsTranslate) *DetailsElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Translate(v ...DetailsTranslate) *DetailsElement {
+	var val DetailsTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *DetailsElement) Writingsuggestions(a DetailsWritingsuggestions) *DetailsElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *DetailsElement) Writingsuggestions(v ...DetailsWritingsuggestions) *DetailsElement {
+	var val DetailsWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

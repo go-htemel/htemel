@@ -316,6 +316,12 @@ func (e *IframeElement) Loading(a IframeLoading) *IframeElement {
 	return e
 }
 
+func (e *IframeElement) Accesskey(r rune) *IframeElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *IframeElement) AriaUnsafe(name string, s string) *IframeElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -338,8 +344,14 @@ func (e *IframeElement) Autocapitalize(a IframeAutocapitalize) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Autocorrect(a IframeAutocorrect) *IframeElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Autocorrect(v ...IframeAutocorrect) *IframeElement {
+	var val IframeAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -358,8 +370,14 @@ func (e *IframeElement) Class(s ...string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Contenteditable(a IframeContenteditable) *IframeElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Contenteditable(v ...IframeContenteditable) *IframeElement {
+	var val IframeContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -398,8 +416,14 @@ func (e *IframeElement) Enterkeyhint(a IframeEnterkeyhint) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Hidden(a IframeHidden) *IframeElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Hidden(v ...IframeHidden) *IframeElement {
+	var val IframeHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -486,8 +510,14 @@ func (e *IframeElement) Slot(s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Spellcheck(a IframeSpellcheck) *IframeElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Spellcheck(v ...IframeSpellcheck) *IframeElement {
+	var val IframeSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -510,14 +540,26 @@ func (e *IframeElement) Title(s string) *IframeElement {
 	return e
 }
 
-func (e *IframeElement) Translate(a IframeTranslate) *IframeElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Translate(v ...IframeTranslate) *IframeElement {
+	var val IframeTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *IframeElement) Writingsuggestions(a IframeWritingsuggestions) *IframeElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IframeElement) Writingsuggestions(v ...IframeWritingsuggestions) *IframeElement {
+	var val IframeWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

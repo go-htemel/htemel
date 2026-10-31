@@ -247,6 +247,12 @@ const (
 	IWritingsuggestionsEmpty IWritingsuggestions = ""
 )
 
+func (e *IElement) Accesskey(r rune) *IElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *IElement) AriaUnsafe(name string, s string) *IElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *IElement) Autocapitalize(a IAutocapitalize) *IElement {
 	return e
 }
 
-func (e *IElement) Autocorrect(a IAutocorrect) *IElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Autocorrect(v ...IAutocorrect) *IElement {
+	var val IAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *IElement) Class(s ...string) *IElement {
 	return e
 }
 
-func (e *IElement) Contenteditable(a IContenteditable) *IElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Contenteditable(v ...IContenteditable) *IElement {
+	var val IContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *IElement) Enterkeyhint(a IEnterkeyhint) *IElement {
 	return e
 }
 
-func (e *IElement) Hidden(a IHidden) *IElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Hidden(v ...IHidden) *IElement {
+	var val IHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *IElement) Slot(s string) *IElement {
 	return e
 }
 
-func (e *IElement) Spellcheck(a ISpellcheck) *IElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Spellcheck(v ...ISpellcheck) *IElement {
+	var val ISpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *IElement) Title(s string) *IElement {
 	return e
 }
 
-func (e *IElement) Translate(a ITranslate) *IElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Translate(v ...ITranslate) *IElement {
+	var val ITranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *IElement) Writingsuggestions(a IWritingsuggestions) *IElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *IElement) Writingsuggestions(v ...IWritingsuggestions) *IElement {
+	var val IWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

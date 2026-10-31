@@ -247,6 +247,12 @@ const (
 	H5WritingsuggestionsEmpty H5Writingsuggestions = ""
 )
 
+func (e *H5Element) Accesskey(r rune) *H5Element {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *H5Element) AriaUnsafe(name string, s string) *H5Element {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *H5Element) Autocapitalize(a H5Autocapitalize) *H5Element {
 	return e
 }
 
-func (e *H5Element) Autocorrect(a H5Autocorrect) *H5Element {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Autocorrect(v ...H5Autocorrect) *H5Element {
+	var val H5Autocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *H5Element) Class(s ...string) *H5Element {
 	return e
 }
 
-func (e *H5Element) Contenteditable(a H5Contenteditable) *H5Element {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Contenteditable(v ...H5Contenteditable) *H5Element {
+	var val H5Contenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *H5Element) Enterkeyhint(a H5Enterkeyhint) *H5Element {
 	return e
 }
 
-func (e *H5Element) Hidden(a H5Hidden) *H5Element {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Hidden(v ...H5Hidden) *H5Element {
+	var val H5Hidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *H5Element) Slot(s string) *H5Element {
 	return e
 }
 
-func (e *H5Element) Spellcheck(a H5Spellcheck) *H5Element {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Spellcheck(v ...H5Spellcheck) *H5Element {
+	var val H5Spellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *H5Element) Title(s string) *H5Element {
 	return e
 }
 
-func (e *H5Element) Translate(a H5Translate) *H5Element {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Translate(v ...H5Translate) *H5Element {
+	var val H5Translate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *H5Element) Writingsuggestions(a H5Writingsuggestions) *H5Element {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *H5Element) Writingsuggestions(v ...H5Writingsuggestions) *H5Element {
+	var val H5Writingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

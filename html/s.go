@@ -247,6 +247,12 @@ const (
 	SWritingsuggestionsEmpty SWritingsuggestions = ""
 )
 
+func (e *SElement) Accesskey(r rune) *SElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *SElement) AriaUnsafe(name string, s string) *SElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *SElement) Autocapitalize(a SAutocapitalize) *SElement {
 	return e
 }
 
-func (e *SElement) Autocorrect(a SAutocorrect) *SElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Autocorrect(v ...SAutocorrect) *SElement {
+	var val SAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *SElement) Class(s ...string) *SElement {
 	return e
 }
 
-func (e *SElement) Contenteditable(a SContenteditable) *SElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Contenteditable(v ...SContenteditable) *SElement {
+	var val SContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *SElement) Enterkeyhint(a SEnterkeyhint) *SElement {
 	return e
 }
 
-func (e *SElement) Hidden(a SHidden) *SElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Hidden(v ...SHidden) *SElement {
+	var val SHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *SElement) Slot(s string) *SElement {
 	return e
 }
 
-func (e *SElement) Spellcheck(a SSpellcheck) *SElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Spellcheck(v ...SSpellcheck) *SElement {
+	var val SSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *SElement) Title(s string) *SElement {
 	return e
 }
 
-func (e *SElement) Translate(a STranslate) *SElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Translate(v ...STranslate) *SElement {
+	var val STranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *SElement) Writingsuggestions(a SWritingsuggestions) *SElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *SElement) Writingsuggestions(v ...SWritingsuggestions) *SElement {
+	var val SWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

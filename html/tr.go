@@ -247,6 +247,12 @@ const (
 	TrWritingsuggestionsEmpty TrWritingsuggestions = ""
 )
 
+func (e *TrElement) Accesskey(r rune) *TrElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TrElement) AriaUnsafe(name string, s string) *TrElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TrElement) Autocapitalize(a TrAutocapitalize) *TrElement {
 	return e
 }
 
-func (e *TrElement) Autocorrect(a TrAutocorrect) *TrElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Autocorrect(v ...TrAutocorrect) *TrElement {
+	var val TrAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TrElement) Class(s ...string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Contenteditable(a TrContenteditable) *TrElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Contenteditable(v ...TrContenteditable) *TrElement {
+	var val TrContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TrElement) Enterkeyhint(a TrEnterkeyhint) *TrElement {
 	return e
 }
 
-func (e *TrElement) Hidden(a TrHidden) *TrElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Hidden(v ...TrHidden) *TrElement {
+	var val TrHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TrElement) Slot(s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Spellcheck(a TrSpellcheck) *TrElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Spellcheck(v ...TrSpellcheck) *TrElement {
+	var val TrSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TrElement) Title(s string) *TrElement {
 	return e
 }
 
-func (e *TrElement) Translate(a TrTranslate) *TrElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Translate(v ...TrTranslate) *TrElement {
+	var val TrTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TrElement) Writingsuggestions(a TrWritingsuggestions) *TrElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TrElement) Writingsuggestions(v ...TrWritingsuggestions) *TrElement {
+	var val TrWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

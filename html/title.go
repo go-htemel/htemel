@@ -247,6 +247,12 @@ const (
 	TitleWritingsuggestionsEmpty TitleWritingsuggestions = ""
 )
 
+func (e *TitleElement) Accesskey(r rune) *TitleElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TitleElement) AriaUnsafe(name string, s string) *TitleElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *TitleElement) Autocapitalize(a TitleAutocapitalize) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Autocorrect(a TitleAutocorrect) *TitleElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Autocorrect(v ...TitleAutocorrect) *TitleElement {
+	var val TitleAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *TitleElement) Class(s ...string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Contenteditable(a TitleContenteditable) *TitleElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Contenteditable(v ...TitleContenteditable) *TitleElement {
+	var val TitleContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *TitleElement) Enterkeyhint(a TitleEnterkeyhint) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Hidden(a TitleHidden) *TitleElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Hidden(v ...TitleHidden) *TitleElement {
+	var val TitleHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *TitleElement) Slot(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Spellcheck(a TitleSpellcheck) *TitleElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Spellcheck(v ...TitleSpellcheck) *TitleElement {
+	var val TitleSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *TitleElement) Title(s string) *TitleElement {
 	return e
 }
 
-func (e *TitleElement) Translate(a TitleTranslate) *TitleElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Translate(v ...TitleTranslate) *TitleElement {
+	var val TitleTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TitleElement) Writingsuggestions(a TitleWritingsuggestions) *TitleElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TitleElement) Writingsuggestions(v ...TitleWritingsuggestions) *TitleElement {
+	var val TitleWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

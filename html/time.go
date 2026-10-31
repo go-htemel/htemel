@@ -253,6 +253,12 @@ func (e *TimeElement) Datetime(s string) *TimeElement {
 	return e
 }
 
+func (e *TimeElement) Accesskey(r rune) *TimeElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *TimeElement) AriaUnsafe(name string, s string) *TimeElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -275,8 +281,14 @@ func (e *TimeElement) Autocapitalize(a TimeAutocapitalize) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Autocorrect(a TimeAutocorrect) *TimeElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Autocorrect(v ...TimeAutocorrect) *TimeElement {
+	var val TimeAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -295,8 +307,14 @@ func (e *TimeElement) Class(s ...string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Contenteditable(a TimeContenteditable) *TimeElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Contenteditable(v ...TimeContenteditable) *TimeElement {
+	var val TimeContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -335,8 +353,14 @@ func (e *TimeElement) Enterkeyhint(a TimeEnterkeyhint) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Hidden(a TimeHidden) *TimeElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Hidden(v ...TimeHidden) *TimeElement {
+	var val TimeHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -423,8 +447,14 @@ func (e *TimeElement) Slot(s string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Spellcheck(a TimeSpellcheck) *TimeElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Spellcheck(v ...TimeSpellcheck) *TimeElement {
+	var val TimeSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -447,14 +477,26 @@ func (e *TimeElement) Title(s string) *TimeElement {
 	return e
 }
 
-func (e *TimeElement) Translate(a TimeTranslate) *TimeElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Translate(v ...TimeTranslate) *TimeElement {
+	var val TimeTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *TimeElement) Writingsuggestions(a TimeWritingsuggestions) *TimeElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *TimeElement) Writingsuggestions(v ...TimeWritingsuggestions) *TimeElement {
+	var val TimeWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

@@ -247,6 +247,12 @@ const (
 	AsideWritingsuggestionsEmpty AsideWritingsuggestions = ""
 )
 
+func (e *AsideElement) Accesskey(r rune) *AsideElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *AsideElement) AriaUnsafe(name string, s string) *AsideElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *AsideElement) Autocapitalize(a AsideAutocapitalize) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Autocorrect(a AsideAutocorrect) *AsideElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Autocorrect(v ...AsideAutocorrect) *AsideElement {
+	var val AsideAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *AsideElement) Class(s ...string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Contenteditable(a AsideContenteditable) *AsideElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Contenteditable(v ...AsideContenteditable) *AsideElement {
+	var val AsideContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *AsideElement) Enterkeyhint(a AsideEnterkeyhint) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Hidden(a AsideHidden) *AsideElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Hidden(v ...AsideHidden) *AsideElement {
+	var val AsideHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *AsideElement) Slot(s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Spellcheck(a AsideSpellcheck) *AsideElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Spellcheck(v ...AsideSpellcheck) *AsideElement {
+	var val AsideSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *AsideElement) Title(s string) *AsideElement {
 	return e
 }
 
-func (e *AsideElement) Translate(a AsideTranslate) *AsideElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Translate(v ...AsideTranslate) *AsideElement {
+	var val AsideTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *AsideElement) Writingsuggestions(a AsideWritingsuggestions) *AsideElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *AsideElement) Writingsuggestions(v ...AsideWritingsuggestions) *AsideElement {
+	var val AsideWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }

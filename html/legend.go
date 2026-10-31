@@ -247,6 +247,12 @@ const (
 	LegendWritingsuggestionsEmpty LegendWritingsuggestions = ""
 )
 
+func (e *LegendElement) Accesskey(r rune) *LegendElement {
+	e.attributes.Set("accesskey", string(r))
+
+	return e
+}
+
 func (e *LegendElement) AriaUnsafe(name string, s string) *LegendElement {
 	tag := strings.ToLower("aria-" + name)
 
@@ -269,8 +275,14 @@ func (e *LegendElement) Autocapitalize(a LegendAutocapitalize) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Autocorrect(a LegendAutocorrect) *LegendElement {
-	e.attributes.Set("autocorrect", string(a))
+// Autocorrect sets the "autocorrect" attribute. Called with no argument, Autocorrect() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Autocorrect(v ...LegendAutocorrect) *LegendElement {
+	var val LegendAutocorrect
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("autocorrect", string(val))
 
 	return e
 }
@@ -289,8 +301,14 @@ func (e *LegendElement) Class(s ...string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Contenteditable(a LegendContenteditable) *LegendElement {
-	e.attributes.Set("contenteditable", string(a))
+// Contenteditable sets the "contenteditable" attribute. Called with no argument, Contenteditable() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Contenteditable(v ...LegendContenteditable) *LegendElement {
+	var val LegendContenteditable
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("contenteditable", string(val))
 
 	return e
 }
@@ -329,8 +347,14 @@ func (e *LegendElement) Enterkeyhint(a LegendEnterkeyhint) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Hidden(a LegendHidden) *LegendElement {
-	e.attributes.Set("hidden", string(a))
+// Hidden sets the "hidden" attribute. Called with no argument, Hidden() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Hidden(v ...LegendHidden) *LegendElement {
+	var val LegendHidden
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("hidden", string(val))
 
 	return e
 }
@@ -417,8 +441,14 @@ func (e *LegendElement) Slot(s string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Spellcheck(a LegendSpellcheck) *LegendElement {
-	e.attributes.Set("spellcheck", string(a))
+// Spellcheck sets the "spellcheck" attribute. Called with no argument, Spellcheck() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Spellcheck(v ...LegendSpellcheck) *LegendElement {
+	var val LegendSpellcheck
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("spellcheck", string(val))
 
 	return e
 }
@@ -441,14 +471,26 @@ func (e *LegendElement) Title(s string) *LegendElement {
 	return e
 }
 
-func (e *LegendElement) Translate(a LegendTranslate) *LegendElement {
-	e.attributes.Set("translate", string(a))
+// Translate sets the "translate" attribute. Called with no argument, Translate() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Translate(v ...LegendTranslate) *LegendElement {
+	var val LegendTranslate
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("translate", string(val))
 
 	return e
 }
 
-func (e *LegendElement) Writingsuggestions(a LegendWritingsuggestions) *LegendElement {
-	e.attributes.Set("writingsuggestions", string(a))
+// Writingsuggestions sets the "writingsuggestions" attribute. Called with no argument, Writingsuggestions() renders the
+// bare attribute (empty value); with arguments the last one is used.
+func (e *LegendElement) Writingsuggestions(v ...LegendWritingsuggestions) *LegendElement {
+	var val LegendWritingsuggestions
+	if len(v) > 0 {
+		val = v[len(v)-1]
+	}
+	e.attributes.Set("writingsuggestions", string(val))
 
 	return e
 }
