@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## v0.2.0 — 2026-10-31
+
+Highlights: every attribute value is now escaped and attribute order is deterministic; boolean attributes render correctly; rendering is ~4x faster with `htemel.Render`; new `svg`, `mathml` and `datastar` packages; `Each`/`ForEach`/`If`, `URL`, `Attribute`/`Attrs` helpers; variadic `Hidden()`-style setters; CI, lint, fuzz and golden tests.
 
 Generated packages now come from [go-htemel/spec v0.3.0](https://github.com/go-htemel/spec), whose html and svg data is built by `specgen2` from webref, browser-compat-data and the WHATWG index tables instead of hand-written lists. New `mathml` package (31 elements). The setter changes below follow from corrected attribute types; removed setters were attributes that do not exist in the standards. `svg.Svg().Xmlns(...)` is gone because the namespace declaration is ignored in HTML; use `.Attr("xmlns", ...)` for standalone SVG files.
 
