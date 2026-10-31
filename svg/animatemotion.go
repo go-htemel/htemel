@@ -147,6 +147,23 @@ func (e *AnimateMotionElement) BoolAttr(name string, on bool) *AnimateMotionElem
 	return e
 }
 
+// Attrs applies each attribute in order (see htemel.Attribute); attributes with an empty name are
+// skipped. Use it with helper packages that build attributes as values, such as datastar.
+func (e *AnimateMotionElement) Attrs(attrs ...htemel.Attribute) *AnimateMotionElement {
+	htemel.Apply(e, attrs...)
+	return e
+}
+
+// SetAttr implements htemel.Element. It is Attr without the chainable return value.
+func (e *AnimateMotionElement) SetAttr(name, value string) {
+	e.attributes.Set(name, value)
+}
+
+// SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
+func (e *AnimateMotionElement) SetAttrUnsafe(name, value string) {
+	e.attributes.SetUnsafe(name, value)
+}
+
 type AnimateMotionRestart string
 
 const (

@@ -147,6 +147,23 @@ func (e *TdElement) BoolAttr(name string, on bool) *TdElement {
 	return e
 }
 
+// Attrs applies each attribute in order (see htemel.Attribute); attributes with an empty name are
+// skipped. Use it with helper packages that build attributes as values, such as datastar.
+func (e *TdElement) Attrs(attrs ...htemel.Attribute) *TdElement {
+	htemel.Apply(e, attrs...)
+	return e
+}
+
+// SetAttr implements htemel.Element. It is Attr without the chainable return value.
+func (e *TdElement) SetAttr(name, value string) {
+	e.attributes.Set(name, value)
+}
+
+// SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
+func (e *TdElement) SetAttrUnsafe(name, value string) {
+	e.attributes.SetUnsafe(name, value)
+}
+
 type TdAutocapitalize string
 
 const (

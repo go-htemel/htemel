@@ -147,6 +147,23 @@ func (e *FeConvolveMatrixElement) BoolAttr(name string, on bool) *FeConvolveMatr
 	return e
 }
 
+// Attrs applies each attribute in order (see htemel.Attribute); attributes with an empty name are
+// skipped. Use it with helper packages that build attributes as values, such as datastar.
+func (e *FeConvolveMatrixElement) Attrs(attrs ...htemel.Attribute) *FeConvolveMatrixElement {
+	htemel.Apply(e, attrs...)
+	return e
+}
+
+// SetAttr implements htemel.Element. It is Attr without the chainable return value.
+func (e *FeConvolveMatrixElement) SetAttr(name, value string) {
+	e.attributes.Set(name, value)
+}
+
+// SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
+func (e *FeConvolveMatrixElement) SetAttrUnsafe(name, value string) {
+	e.attributes.SetUnsafe(name, value)
+}
+
 type FeConvolveMatrixEdgeMode string
 
 const (

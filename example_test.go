@@ -85,3 +85,23 @@ func ExampleURL() {
 	// "#"
 	// true
 }
+
+func ExampleAttribute() {
+	// Attributes are values, so helpers can build them without knowing the element type.
+	// Every generated element applies them with Attrs; a zero Attribute is skipped.
+	busy := true
+	_ = html.Button().Text("Save").Attrs(
+		htemel.Attr("data-on:click", "@post('/save')"),
+		htemel.Attr("aria-busy", "true").If(busy),
+		htemel.Attr("data-hidden", "").If(!busy),
+	).Render(os.Stdout)
+	// Output: <button data-on:click="@post(&#39;/save&#39;)" aria-busy="true">Save</button>
+}
+
+func ExampleApply() {
+	// Apply sets attributes through the htemel.Element interface that all generated elements implement.
+	var el htemel.Element = html.Span()
+	htemel.Apply(el, htemel.Attr("data-text", "$name"))
+	_ = el.Render(os.Stdout)
+	// Output: <span data-text="$name"></span>
+}

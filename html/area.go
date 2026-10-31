@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/go-htemel/htemel"
 	"github.com/go-htemel/htemel/internal/render"
 )
 
@@ -89,6 +90,23 @@ func (e *AreaElement) AttrUnsafe(name, value string) *AreaElement {
 func (e *AreaElement) BoolAttr(name string, on bool) *AreaElement {
 	e.attributes.SetBool(name, on)
 	return e
+}
+
+// Attrs applies each attribute in order (see htemel.Attribute); attributes with an empty name are
+// skipped. Use it with helper packages that build attributes as values, such as datastar.
+func (e *AreaElement) Attrs(attrs ...htemel.Attribute) *AreaElement {
+	htemel.Apply(e, attrs...)
+	return e
+}
+
+// SetAttr implements htemel.Element. It is Attr without the chainable return value.
+func (e *AreaElement) SetAttr(name, value string) {
+	e.attributes.Set(name, value)
+}
+
+// SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
+func (e *AreaElement) SetAttrUnsafe(name, value string) {
+	e.attributes.SetUnsafe(name, value)
 }
 
 type AreaShape string

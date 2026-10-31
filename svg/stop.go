@@ -147,6 +147,23 @@ func (e *StopElement) BoolAttr(name string, on bool) *StopElement {
 	return e
 }
 
+// Attrs applies each attribute in order (see htemel.Attribute); attributes with an empty name are
+// skipped. Use it with helper packages that build attributes as values, such as datastar.
+func (e *StopElement) Attrs(attrs ...htemel.Attribute) *StopElement {
+	htemel.Apply(e, attrs...)
+	return e
+}
+
+// SetAttr implements htemel.Element. It is Attr without the chainable return value.
+func (e *StopElement) SetAttr(name, value string) {
+	e.attributes.Set(name, value)
+}
+
+// SetAttrUnsafe implements htemel.Element. It is AttrUnsafe without the chainable return value.
+func (e *StopElement) SetAttrUnsafe(name, value string) {
+	e.attributes.SetUnsafe(name, value)
+}
+
 type StopXmlSpace string
 
 const (

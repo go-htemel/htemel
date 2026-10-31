@@ -68,6 +68,7 @@ func generateElement(dir, pkg string, e *spec.Element) error {
 		AddClassFunc,
 		ToggleClassFunc,
 		AttrFunc,
+		AttrsFunc,
 		BuildAttributes(e),
 		RenderFunc,
 	}
@@ -113,7 +114,7 @@ func fmtFiles(dir string) error {
 
 // elementMethods are the methods every generated element has regardless of its attributes; an
 // attribute whose setter name equals one of these would not compile.
-var elementMethods = []string{"With", "AddClass", "ToggleClass", "Attr", "AttrUnsafe", "BoolAttr", "Render"}
+var elementMethods = []string{"With", "AddClass", "ToggleClass", "Attr", "AttrUnsafe", "BoolAttr", "Attrs", "SetAttr", "SetAttrUnsafe", "Render"}
 
 // containerMethods are the extra methods of non-void elements.
 var containerMethods = []string{"Children", "Text", "Textf", "If", "IfElse", "IfThen"}
