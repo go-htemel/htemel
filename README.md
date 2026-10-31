@@ -152,6 +152,32 @@ func Card(title string, children ...Node) Node {
 
 `With` is still available when you need the typed element itself inside a function. The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `Each`, an inline SVG icon, and a page wrapper that accepts children.
 
+#### Forwarding Attributes
+
+Every generated element has an `Attrs` method that takes `htemel.Attribute` values, so a component can accept attributes from its caller and pass them on. `Attr` and `AttrUnsafe` build an attribute, and `If` returns the attribute only when the condition holds:
+
+```go
+func Button(label string, attrs ...htemel.Attribute) htemel.Node {
+    return html.Button().Attrs(attrs...).Text(label)
+}
+
+// At the call site:
+htemel.RenderString(Button("Save",
+    htemel.Attr("data-x", "y"),
+    htemel.Attr("aria-label", `say "hi" & <bye>`),
+    htemel.Attr("title", "shown").If(false),
+    htemel.Attr("hidden", "").If(true),
+))
+```
+
+**Output**:
+
+```html
+<button data-x="y" aria-label="say &#34;hi&#34; &amp; &lt;bye&gt;" hidden>Save</button>
+```
+
+An empty value renders a bare attribute, and the zero attribute that `If(false)` returns is skipped.
+
 ## SVG
 
 The `svg` package generates the SVG elements, with tag and attribute names kept in their SVG case (`viewBox`, `linearGradient`, `feGaussianBlur`). SVG nodes are plain `Node` values, so they nest directly inside HTML elements.
@@ -186,6 +212,34 @@ Button().Children(PlusIcon(), Text("Add"))
 - Presentation attributes such as `fill`, `stroke` and `opacity` are available on every element. Animation timing uses `fill="freeze"`, which collides with the paint `fill` method, so set it with `.Attr("fill", "freeze")`.
 - Reference other elements with `svg.Use().Href("#id")`, and define them in `svg.Defs()`.
 - The element and attribute list is hand-curated in `specs/svg.json` and generated into `svg/`.
+
+## Datastar
+
+The `datastar` package provides typed helpers for [Datastar](https://data-star.dev) attributes and action expressions. Each helper returns an `htemel.Attribute`, which any generated element accepts through `Attrs`:
+
+```go
+html.Div().Attrs(datastar.Signals(map[string]any{"count": 0})).Children(
+    html.Button().Attrs(
+        datastar.OnClick(datastar.Post("/inc"), datastar.Debounce(300*time.Millisecond)),
+        datastar.Indicator("busy"),
+        datastar.Attr("disabled", "$busy"),
+    ).Text("+"),
+    html.Span().Attrs(datastar.Text("$count")),
+)
+```
+
+**Output**:
+
+```html
+<div data-signals="{&#34;count&#34;:0}"><button data-on:click__debounce.300ms="@post(&#39;/inc&#39;)" data-indicator:busy data-attr:disabled="$busy">+</button><span data-text="$count"></span></div>
+```
+
+- `Signals` JSON-encodes its argument, so maps and structs with `json` tags both work. It panics on a value that cannot be encoded; `MarshalSignals` returns the error instead, and `SignalsJSON` takes a hand-written object literal.
+- Modifiers follow a `__` after the attribute name and are passed as trailing arguments, such as `Debounce`, `Throttle`, `Window`, `Prevent`, `Once`, `Outside` and `ViewTransition`. Modifiers with arguments chain further methods, for example `Debounce(300*time.Millisecond).Leading()`.
+- `Get`, `Post`, `Put`, `Patch` and `Delete` return an action expression as a quoted string, such as `@post('/inc')`, and `SetAll` and `ToggleAll` return the other action forms. These go in the expression argument of `OnClick`, `On` and the like.
+- `Custom(plugin, key, value, mods...)` builds any Datastar attribute the package does not cover.
+
+The package targets Datastar v1.0 and emits the v1 colon key syntax (`data-on:click`, `data-signals:name`). It was written without access to the live reference, so check the attribute list at https://data-star.dev/reference/attributes against the Datastar version you use. If your build uses hyphenated keys (`data-on-click`), the separator is a single change in `datastar.Custom`.
 
 ## Escaping and Safety
 

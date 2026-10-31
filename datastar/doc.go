@@ -26,9 +26,10 @@
 // The helpers target Datastar v1.0 and its key syntax, where an attribute's key follows a colon:
 // data-on:click, data-signals:count, data-class:hidden, data-attr:disabled, data-bind:name.
 // (Release candidates before v1.0.0-RC.6 used a hyphen instead, as in data-on-click; those
-// versions are not supported.) The attribute list follows the v1.0 reference at
-// https://data-star.dev/reference/attributes as of late 2025; check it when upgrading Datastar,
-// since attribute names and modifiers have changed between releases. Helpers for
+// versions are not supported.) The attribute list was written from knowledge of the v1.0
+// release without access to the live reference, so verify it against
+// https://data-star.dev/reference/attributes for the Datastar version you ship; attribute
+// names and modifiers have changed between releases. Helpers for
 // Datastar Pro attributes are marked as such. For anything not covered here, build the attribute
 // directly with htemel.Attr, or with Custom and the modifier API.
 //
