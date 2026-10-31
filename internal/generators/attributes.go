@@ -3,7 +3,6 @@ package generators
 import (
 	"bytes"
 	"sort"
-	"strings"
 	"text/template"
 
 	"github.com/go-htemel/spec"
@@ -33,7 +32,7 @@ func BuildAttributes(e *spec.Element) func() (*template.Template, ImportSet) {
 			switch a := attr.(type) {
 			case *spec.AttributeTypeString:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(s string) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(s string) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", s)
 	
 	return e
@@ -41,7 +40,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(s string) *
 `)
 			case *spec.AttributeTypeChar:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(r rune) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(r rune) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", string(r))
 	
 	return e
@@ -49,7 +48,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(r rune) *` 
 `)
 			case *spec.AttributeTypeNumber:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(i int) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(i int) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", strconv.Itoa(i))
 	
 	return e
@@ -57,7 +56,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(i int) *` +
 `)
 			case *spec.AttributeTypeFloat:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(f float64) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(f float64) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", strconv.FormatFloat(f, 'g', -1, 64))
 	
 	return e
@@ -65,16 +64,16 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(f float64) 
 `)
 			case *spec.AttributeTypeBool:
 				buf.WriteString(`
-// ` + pascalCase(a.Name) + ` sets the boolean attribute "` + a.Name + `". When b is true it renders bare;
+// ` + goIdent(a.Name) + ` sets the boolean attribute "` + a.Name + `". When b is true it renders bare;
 // when false the attribute is omitted (and removed if previously set).
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(b bool) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(b bool) *` + goIdent(e.Tag) + `Element {
 	e.attributes.SetBool("` + a.Name + `", b)
 	
 	return e
 }
 `)
 			case *spec.AttributeTypeEnum:
-				typeName := titleCase(e.Tag) + pascalCase(a.Name)
+				typeName := goIdent(e.Tag) + goIdent(a.Name)
 
 				addTypes.WriteString("\ntype " + typeName + " string\n")
 
@@ -85,7 +84,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(b bool) *` 
 				}
 				sort.Strings(allowedKeys)
 				for _, allowed := range allowedKeys {
-					fixed := strings.ReplaceAll(titleCase(allowed), "-", "")
+					fixed := goIdent(allowed)
 					addTypes.WriteString("\t" + typeName + fixed + " " + typeName + " = \"" + allowed + "\"\n")
 				}
 
@@ -96,7 +95,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(b bool) *` 
 				addTypes.WriteString(")\n")
 
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(a ` + typeName + `) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(a ` + typeName + `) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", string(a))
 	
 	return e
@@ -105,14 +104,14 @@ func (e *` + titleCase(e.Tag) + `Element) ` + pascalCase(a.Name) + `(a ` + typeN
 				if a.AllowCustom {
 					// Generate func to return a custom attribute value
 					buf.WriteString(`
-func  ` + titleCase(e.Tag) + pascalCase(a.Name) + `Custom(s string) ` + typeName + ` {
+func  ` + goIdent(e.Tag) + goIdent(a.Name) + `Custom(s string) ` + typeName + ` {
 	return ` + typeName + `(s)
 }
 `)
 				}
 			case *spec.AttributeTypeSST:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + titleCase(a.Name) + `(s ...string) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(s ...string) *` + goIdent(e.Tag) + `Element {
 	e.attributes.Set("` + a.Name + `", strings.Join(s, " "))
 	
 	return e
@@ -120,7 +119,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + titleCase(a.Name) + `(s ...string)
 `)
 			case *spec.AttributeTypePrefixedCustom:
 				buf.WriteString(`
-func (e *` + titleCase(e.Tag) + `Element) ` + titleCase(a.Name) + `Unsafe(name string, s string) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `Unsafe(name string, s string) *` + goIdent(e.Tag) + `Element {
 	tag := strings.ToLower("` + a.Name + `-" + name)
 	
 	e.attributes.SetUnsafe(tag, s)
@@ -128,7 +127,7 @@ func (e *` + titleCase(e.Tag) + `Element) ` + titleCase(a.Name) + `Unsafe(name s
 	return e
 }
 
-func (e *` + titleCase(e.Tag) + `Element) ` + titleCase(a.Name) + `(name string, s string) *` + titleCase(e.Tag) + `Element {
+func (e *` + goIdent(e.Tag) + `Element) ` + goIdent(a.Name) + `(name string, s string) *` + goIdent(e.Tag) + `Element {
 	tag := strings.ToLower("` + a.Name + `-" + name)
 
 	e.attributes.Set(tag, s)

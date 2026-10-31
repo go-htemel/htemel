@@ -1,0 +1,456 @@
+{
+  "name": "SVG",
+  "attributes": [
+    {
+      "name": "id",
+      "description": "The id attribute.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "class",
+      "description": "The class attribute.",
+      "attribute_type": "AttributeTypeSST"
+    },
+    {
+      "name": "style",
+      "description": "The style attribute.",
+      "attribute_type": "AttributeTypeString"
+    },
+    {
+      "name": "tabindex",
+      "description": "The tabindex attribute.",
+      "attribute_type": "AttributeTypeNumber"
+    },
+    {
+      "name": "xml:space",
+      "description": "The xml:space attribute.",
+      "attribute_type": "AttributeTypeString"
+    }
+  ],
+  "elements": [
+    {
+      "tag": "svg",
+      "description": "The <svg> element.",
+      "attributes": [
+        {
+          "name": "viewBox",
+          "description": "The viewBox attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "preserveAspectRatio",
+          "description": "The preserveAspectRatio attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "The width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "description": "The height attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xmlns",
+          "description": "The xmlns attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xmlns:xlink",
+          "description": "The xmlns:xlink attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "g",
+      "description": "The <g> element.",
+      "attributes": [
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "path",
+      "description": "The <path> element.",
+      "attributes": [
+        {
+          "name": "d",
+          "description": "The d attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "circle",
+      "description": "The <circle> element.",
+      "attributes": [
+        {
+          "name": "cx",
+          "description": "The cx attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "cy",
+          "description": "The cy attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "r",
+          "description": "The r attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "rect",
+      "description": "The <rect> element.",
+      "attributes": [
+        {
+          "name": "x",
+          "description": "The x attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "The y attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "width",
+          "description": "The width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "height",
+          "description": "The height attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "clipPath",
+      "description": "The <clipPath> element.",
+      "attributes": [
+        {
+          "name": "clipPathUnits",
+          "description": "The clipPathUnits attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    },
+    {
+      "tag": "linearGradient",
+      "description": "The <linearGradient> element.",
+      "attributes": [
+        {
+          "name": "x1",
+          "description": "The x1 attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "x2",
+          "description": "The x2 attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y1",
+          "description": "The y1 attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y2",
+          "description": "The y2 attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "The xlink:href attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    },
+    {
+      "tag": "stop",
+      "description": "The <stop> element.",
+      "attributes": [
+        {
+          "name": "offset",
+          "description": "The offset attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stop-color",
+          "description": "The stop-color attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    },
+    {
+      "tag": "text",
+      "description": "The <text> element.",
+      "attributes": [
+        {
+          "name": "x",
+          "description": "The x attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "y",
+          "description": "The y attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "font-size",
+          "description": "The font-size attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "fill",
+          "description": "The fill attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke",
+          "description": "The stroke attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-width",
+          "description": "The stroke-width attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stroke-linecap",
+          "description": "The stroke-linecap attribute.",
+          "allowed": {
+            "butt": {},
+            "round": {},
+            "square": {}
+          },
+          "allow_empty": false,
+          "allow_custom": false,
+          "attribute_type": "AttributeTypeEnum"
+        },
+        {
+          "name": "opacity",
+          "description": "The opacity attribute.",
+          "attribute_type": "AttributeTypeFloat"
+        }
+      ]
+    },
+    {
+      "tag": "tspan",
+      "description": "The <tspan> element.",
+      "attributes": [
+        {
+          "name": "dx",
+          "description": "The dx attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "dy",
+          "description": "The dy attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    },
+    {
+      "tag": "feGaussianBlur",
+      "description": "The <feGaussianBlur> element.",
+      "attributes": [
+        {
+          "name": "in",
+          "description": "The in attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "stdDeviation",
+          "description": "The stdDeviation attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    },
+    {
+      "tag": "script",
+      "description": "The <script> element.",
+      "attributes": [
+        {
+          "name": "type",
+          "description": "The type attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "href",
+          "description": "The href attribute.",
+          "attribute_type": "AttributeTypeString"
+        },
+        {
+          "name": "xlink:href",
+          "description": "The xlink:href attribute.",
+          "attribute_type": "AttributeTypeString"
+        }
+      ]
+    }
+  ]
+}

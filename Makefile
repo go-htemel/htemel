@@ -17,10 +17,12 @@ lint:
 		go vet ./...; \
 	fi
 
+GENERATED_DIRS := html/ svg/
+
 check-generated: generate
-	@if [ -n "$$(git status --porcelain html/)" ]; then \
-		echo "html/ is out of date; run 'make generate' and commit the result"; \
-		git status --porcelain html/; \
+	@if [ -n "$$(git status --porcelain $(GENERATED_DIRS))" ]; then \
+		echo "generated code is out of date; run 'make generate' and commit the result"; \
+		git status --porcelain $(GENERATED_DIRS); \
 		exit 1; \
 	fi
 

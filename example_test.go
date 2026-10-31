@@ -1,6 +1,8 @@
 package htemel_test
 
 import (
+	"errors"
+	"fmt"
 	"os"
 
 	"github.com/go-htemel/htemel"
@@ -59,4 +61,27 @@ func Example_basicPage() {
 
 	page.Render(os.Stdout)
 	// Output: <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Greetings</title></head><body><h1 class="title">Hello</h1><p>Welcome, &lt;guest&gt;!</p><ul><li>One</li><li>Two</li></ul></body></html>
+}
+
+func ExampleEach() {
+	names := []string{"Ada", "Grace", "<Linus>"}
+	html.Ul().Children(
+		htemel.Each(names, func(n string) htemel.Node {
+			return html.Li().Text(n)
+		}),
+	).Render(os.Stdout)
+	// Output: <ul><li>Ada</li><li>Grace</li><li>&lt;Linus&gt;</li></ul>
+}
+
+func ExampleURL() {
+	for _, in := range []string{"https://example.com/a", "/docs", "javascript:alert(1)"} {
+		fmt.Printf("%q\n", htemel.URLOr(in, "#"))
+	}
+	_, err := htemel.URL("java\tscript:alert(1)")
+	fmt.Println(errors.Is(err, htemel.ErrUnsafeURL))
+	// Output:
+	// "https://example.com/a"
+	// "/docs"
+	// "#"
+	// true
 }

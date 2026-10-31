@@ -6,7 +6,6 @@ require golang.org/x/net v0.43.0
 
 require (
 	github.com/go-htemel/spec v0.1.1
-	golang.org/x/text v0.28.0
 	golang.org/x/tools v0.35.0
 )
 

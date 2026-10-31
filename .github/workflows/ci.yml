@@ -44,4 +44,5 @@ jobs:
       - name: Generated code is current
         run: |
           go generate ./...
-          git diff --exit-code -- html/
+          git status --porcelain -- html/ svg/
+          test -z "$(git status --porcelain -- html/ svg/)"
