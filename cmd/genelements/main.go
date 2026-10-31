@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"os"
 	"path/filepath"
 	"slices"
@@ -51,18 +52,7 @@ func generate(pkg string, e *spec.Element) error {
 		return err
 	}
 
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	_, err = f.Write(buf.Bytes())
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(path, buf.Bytes(), 0o644)
 }
 
 func fmtFiles(dir string) error {
@@ -98,14 +88,27 @@ func fmtFiles(dir string) error {
 }
 
 func main() {
+	specPath := flag.String("spec", "specs/html.json", "path to the element spec JSON file")
+	outDir := flag.String("out", "", "output directory for generated files (default: lower-cased spec name, e.g. html)")
+	flag.Parse()
+
 	sp := spec.Spec{}
 
-	specFile, err := os.ReadFile("specs/html.json")
+	specFile, err := os.ReadFile(*specPath)
 	if err != nil {
 		panic(err)
 	}
 
 	if err = json.Unmarshal(specFile, &sp); err != nil {
+		panic(err)
+	}
+
+	out := *outDir
+	if out == "" {
+		out = strings.ToLower(sp.Name)
+	}
+
+	if err = os.MkdirAll(out, 0o755); err != nil {
 		panic(err)
 	}
 
@@ -119,12 +122,12 @@ func main() {
 			}
 		}
 
-		if err = generate(strings.ToLower(sp.Name), e); err != nil {
+		if err = generate(out, e); err != nil {
 			panic(err)
 		}
 	}
 
-	err = fmtFiles("html")
+	err = fmtFiles(out)
 	if err != nil {
 		panic(err)
 	}

@@ -48,7 +48,7 @@ func MainLayout(children ...Node) Node {
 
 func Navigation(menuItems ...Node) Node {
     return Nav(
-		// Child elements can be added using the Children method
+        // Child elements can be added using the Children method
         Ul().Class("flex list-none").Children(
             Group(menuItems...),
         ),
@@ -57,7 +57,7 @@ func Navigation(menuItems ...Node) Node {
 
 func main() {
     loggedIn := true
-	// Or, if you prefer, children can be passed directly to the base element
+    // Or, if you prefer, children can be passed directly to the base element
     MainLayout(
         DivTernary(
             loggedIn,
@@ -78,34 +78,10 @@ func main() {
 **Output**:
 
 ```html
-<!DOCTYPE html>
-<html class="h-dvh bg-gray-200" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0">
-    <title>
-        Example htemel Page
-    </title>
-    <link href="site.css" rel="stylesheet">
-</head>
-<body id="app-content">
-<div>
-    <nav id="main-navigation">
-        <ul class="flex list-none">
-        </ul>
-    </nav>
-    <div>
-        <h4 class="text-xl font-semibold">
-            Logged In
-        </h4>
-        <p>
-            Welcome back!
-        </p>
-    </div>
-</div>
-</body>
-</html>
+<!DOCTYPE html><html class="h-dvh bg-gray-200" lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Example htemel Page</title><link href="site.css" rel="stylesheet"></head><body id="app-content"><div><nav id="main-navigation"><ul class="flex list-none"></ul></nav><div><p>Welcome back!</p></div></div></body></html>
 ```
+
+The renderer does not add indentation or newlines.
 
 ### Controlling Element Placement
 
@@ -116,12 +92,12 @@ package main
 
 import (
     "os"
-	
+
     . "github.com/go-htemel/htemel/html"
 )
 
 func main() {
-    div := html.Div().
+    div := Div().
         Children(
             P().Text("Start Text").Children(
                 Span().Text("Spanned Text"),
@@ -135,9 +111,47 @@ func main() {
 **Output**:
 
 ```html
-<div>
-    Start Text<span>Spanned Text</span>End Text
-</div>
+<div><p>Start Text<span>Spanned Text</span>End Text</p></div>
+```
+
+### Writing Components
+
+A component is a plain Go function that returns a `Node`. Arguments are ordinary Go values, and children are passed as `...Node`:
+
+```go
+func Card(title string, children ...Node) Node {
+    return Div().Class("card").Children(
+        H2().Text(title),
+        Div().Class("card-body").Children(children...),
+    )
+}
+```
+
+- Use `With` to build repeated content from a loop. It passes the typed element to a callback, so the loop can add children to it:
+
+  ```go
+  func ItemList(items []string) Node {
+      return Ul().Class("list").With(func(ul *UlElement) {
+          for _, item := range items {
+              ul.Children(Li().Text(item))
+          }
+      })
+  }
+  ```
+
+- Use `Group` to return several sibling nodes without a wrapping element.
+
+The [webapp example](examples/webapp/views/layout.go) shows these patterns in a complete application: a shared layout, a navigation component built with `With`, and a page wrapper that accepts children.
+
+## Escaping and Safety
+
+- `Text` HTML-escapes its input, so user data is safe to pass to it. `TextUnsafe` writes its input verbatim and should only receive trusted markup.
+- Attribute values are always escaped. This covers `Attr`, `Data`, `Aria`, the typed setters (such as `Title` or `Href`), and `Generic` attributes. `AttrUnsafe` and `DataUnsafe` skip escaping, so only use them with trusted values.
+- `script` and `style` take raw text through `Text`, with no HTML escaping, so only pass trusted code. The one rewrite is that a `</script` or `</style` sequence (in any case) is changed to `<\/script` or `<\/style`, so the content cannot close the element early.
+- URL attributes such as `href` and `src` are escaped but not scheme-filtered. `Href("javascript:...")` renders as given. Validate untrusted URLs (for example, allow only `http`, `https`, or relative paths) before passing them to `Href`.
+
+```go
+P().Text(`<img src=x onerror="alert(1)">`) // <p>&lt;img src=x onerror=&#34;alert(1)&#34;&gt;</p>
 ```
 
 ## Goals
@@ -147,7 +161,7 @@ The primary goal of **htemel** is to provide a **compile-time safe** method for 
 **Example**:
 
 ```go
-html.Link().HttpEquiv(html.MetaHttpEquivContentType)
+html.Meta().HttpEquiv(html.MetaHttpEquivContentType)
 ```
 
 Attributes are mutually exclusive per element, with the most recent chain call taking precedence:
@@ -172,6 +186,11 @@ After evaluating alternatives like `templ`, `gomponents`, and `gostar`, none ful
 - **gostar**: Showed potential but appeared unmaintained, with challenges in implementing custom components like TailwindPlus.
 
 Thus, **htemel** was created to address these gaps with a focus on type safety and extensibility.
+
+## Development
+
+- `go generate ./...` regenerates the `html` package from `specs/html.json`. Files in `html/` are generated, so change the generator or the spec rather than editing them by hand.
+- `go test ./...` runs the test suite.
 
 ## Contributing
 

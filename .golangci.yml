@@ -1,0 +1,49 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - revive
+    - gocritic
+    - bodyclose
+  settings:
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: package-comments
+          disabled: true
+  exclusions:
+    generated: disable
+    rules:
+      # Generated element code: keep govet/staticcheck, skip stylistic linters.
+      - path: ^html/
+        linters:
+          - revive
+          - gocritic
+          - misspell
+          - errcheck
+          - unused
+
+      # Examples intentionally use dot imports and ignore write errors for brevity.
+      - path: ^examples/
+        linters:
+          - errcheck
+          - staticcheck
+      - path: _test\.go$
+        linters:
+          - errcheck
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

@@ -1,5 +1,7 @@
 package htemel
 
+//go:generate go run ./cmd/genelements
+
 import (
 	"fmt"
 	"io"
