@@ -58,7 +58,7 @@ func Navigation(menuItems ...Node) Node {
 func main() {
     loggedIn := true
     // Or, if you prefer, children can be passed directly to the base element
-    MainLayout(
+    page := MainLayout(
         DivTernary(
             loggedIn,
             Group(
@@ -71,7 +71,10 @@ func main() {
                 P().Text("Please log in."),
             ),
         ),
-    ).Render(os.Stdout)
+    )
+
+    // htemel.Render buffers writes; use page.Render(w) directly only when w is already buffered.
+    Render(os.Stdout, page)
 }
 ```
 
@@ -82,6 +85,10 @@ func main() {
 ```
 
 The renderer does not add indentation or newlines.
+
+### Rendering
+
+Every `Node` has `Render(w io.Writer) error`, which writes directly to `w` with no buffering of its own. When `w` is an unbuffered destination such as an `http.ResponseWriter` or `os.Stdout`, use `htemel.Render(w, node)`, which wraps it in a buffer and flushes once, or `htemel.RenderString` / `htemel.RenderBytes` to get the output in memory. Calling `node.Render(w)` directly is fine when `w` is already a `*bytes.Buffer`, `*strings.Builder` or `*bufio.Writer`.
 
 ### Controlling Element Placement
 
