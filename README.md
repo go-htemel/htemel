@@ -236,10 +236,10 @@ html.Div().Attrs(datastar.Signals(map[string]any{"count": 0})).Children(
 
 - `Signals` JSON-encodes its argument, so maps and structs with `json` tags both work. It panics on a value that cannot be encoded; `MarshalSignals` returns the error instead, and `SignalsJSON` takes a hand-written object literal.
 - Modifiers follow a `__` after the attribute name and are passed as trailing arguments, such as `Debounce`, `Throttle`, `Window`, `Prevent`, `Once`, `Outside` and `ViewTransition`. Modifiers with arguments chain further methods, for example `Debounce(300*time.Millisecond).Leading()`.
-- `Get`, `Post`, `Put`, `Patch` and `Delete` return an action expression as a quoted string, such as `@post('/inc')`, and `SetAll` and `ToggleAll` return the other action forms. These go in the expression argument of `OnClick`, `On` and the like.
+- `Get`, `Post`, `Put`, `Patch`, `Delete` and `Query` return an action expression as a quoted string, such as `@post('/inc')`; pass `RequestOptions{...}.String()` for the options object. `SetAll`, `ToggleAll`, `Peek` and the Pro `Clipboard`, `Fit` and `Intl` return the other action forms. These go in the expression argument of `OnClick`, `On` and the like.
 - `Custom(plugin, key, value, mods...)` builds any Datastar attribute the package does not cover.
 
-The package targets Datastar v1.0 and emits the v1 colon key syntax (`data-on:click`, `data-signals:name`). It was written without access to the live reference, so check the attribute list at https://data-star.dev/reference/attributes against the Datastar version you use. If your build uses hyphenated keys (`data-on-click`), the separator is a single change in `datastar.Custom`.
+The package targets Datastar v1 and emits the v1 colon key syntax (`data-on:click`, `data-signals:name`). It was verified against the Datastar v1.0.4 reference ([attributes](https://data-star.dev/reference/attributes), [actions](https://data-star.dev/reference/actions)) on 2026-10-31, including the Pro attributes and actions, which are marked "Pro" in the doc comments. Names and modifiers change between Datastar releases, so re-check the reference when you upgrade.
 
 ## Escaping and Safety
 

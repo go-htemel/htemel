@@ -91,8 +91,12 @@ func Computed(name, expr string, mods ...Modifier) htemel.Attribute {
 	return Custom("computed", signalKey(name), expr, mods...)
 }
 
+// Computeds returns data-computed with an object literal mapping signal names to callables that
+// return the value: Computeds("{total: () => $a + $b}").
+func Computeds(obj string) htemel.Attribute { return Custom("computed", "", obj) }
+
 // Bind returns data-bind:<signal>, two-way binding the element's value to the signal (creating it
-// if needed).
+// if needed). Use Prop and Event to bind a custom element's own property and events.
 func Bind(signal string, mods ...Modifier) htemel.Attribute {
 	return Custom("bind", signalKey(signal), "", mods...)
 }
@@ -198,7 +202,8 @@ func OnKeyDown(expr string, mods ...Modifier) htemel.Attribute {
 	return On("keydown", expr, mods...)
 }
 
-// OnIntersect returns data-on-intersect, running expr when the element enters the viewport.
+// OnIntersect returns data-on-intersect, running expr when the element enters the viewport (see
+// Exit, Half, Full and Threshold to change when).
 func OnIntersect(expr string, mods ...Modifier) htemel.Attribute {
 	return Custom("on-intersect", "", expr, mods...)
 }
@@ -221,13 +226,33 @@ func OnSignalPatchFilter(filter string) htemel.Attribute {
 
 // Datastar Pro attributes. These need the Pro build of Datastar.
 
-// Persist returns data-persist, persisting signals in localStorage (sessionStorage with Session).
-// filter is an optional object such as "{include: /^draft/}"; pass "" for all signals. Pro.
-func Persist(filter string, mods ...Modifier) htemel.Attribute {
-	return Custom("persist", "", filter, mods...)
+// Animate returns data-animate, which animates element attributes over time, updating whenever the
+// signals used in expr change. Pro. The v1.0.4 reference documents no syntax for it beyond that
+// description, so expr is written verbatim; use Custom for a keyed form.
+func Animate(expr string, mods ...Modifier) htemel.Attribute {
+	return Custom("animate", "", expr, mods...)
 }
 
-// QueryString returns data-query-string, syncing signals with the URL query string. Pro.
+// MatchMedia returns data-match-media:<signal>, a signal that is true while the media query
+// matches, such as MatchMedia("isDark", "prefers-color-scheme: dark"). query is quoted for you and
+// passed to window.matchMedia; write explicit parentheses for complex queries. Pro.
+func MatchMedia(signal, query string, mods ...Modifier) htemel.Attribute {
+	return Custom("match-media", signalKey(signal), Quote(query), mods...)
+}
+
+// ViewTransitionName returns data-view-transition, setting the view-transition-name style to the
+// result of expr. Pro. (ViewTransition is the unrelated __viewtransition modifier.)
+func ViewTransitionName(expr string) htemel.Attribute { return Custom("view-transition", "", expr) }
+
+// Persist returns data-persist, persisting signals in localStorage (sessionStorage with Session).
+// key is the optional storage key (data-persist:<key>; Datastar uses "datastar" when empty) and
+// filter an optional object such as "{include: /^draft/}"; pass "" for the defaults. Pro.
+func Persist(key, filter string, mods ...Modifier) htemel.Attribute {
+	return Custom("persist", key, filter, mods...)
+}
+
+// QueryString returns data-query-string, syncing signals with the URL query string; see Filter and
+// History for its modifiers. Pro.
 func QueryString(filter string, mods ...Modifier) htemel.Attribute {
 	return Custom("query-string", "", filter, mods...)
 }

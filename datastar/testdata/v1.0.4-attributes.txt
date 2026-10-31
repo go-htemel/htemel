@@ -1,0 +1,34 @@
+# Datastar v1.0.4 attributes, extracted from https://data-star.dev/reference/attributes on 2026-10-31.
+# Section: free
+data-attr
+data-bind
+data-class
+data-computed
+data-effect
+data-ignore
+data-ignore-morph
+data-indicator
+data-init
+data-json-signals
+data-on
+data-on-intersect
+data-on-interval
+data-on-signal-patch
+data-on-signal-patch-filter
+data-preserve-attr
+data-ref
+data-show
+data-signals
+data-style
+data-text
+# Section: pro
+data-animate
+data-custom-validity
+data-match-media
+data-on-raf
+data-on-resize
+data-persist
+data-query-string
+data-replace-url
+data-scroll-into-view
+data-view-transition
